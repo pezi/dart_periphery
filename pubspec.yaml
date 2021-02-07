@@ -1,7 +1,7 @@
 name: dart_periphery
 version: 0.7.0-beta
 description: Dart port of the c-periphery library
-homepage: https://github.com/danrubel/rpi_gpio.dart
+homepage: https://github.com/pezi/dart_periphery
 environment:
   sdk: '>=2.10.0 <3.0.0'
 

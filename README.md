@@ -20,7 +20,7 @@ Abstract from the project web site:
 >
 >interface access in userspace Linux. c-periphery simplifies and consolidates the native Linux APIs to these interfaces. c-periphery is useful in embedded Linux environments (including Raspberry Pi, BeagleBone, etc. platforms) for interfacing with external peripherals. c-periphery is re-entrant, has no dependencies outside the standard C library and Linux, compiles into a static library for easy integration with other projects, and is MIT licensed
 
-**dart_periphery** binds the c-periphery library with help of the [dart:ffi](https://dart.dev/guides/libraries/c-interop) mechanism. A glue library handles the Dart specfic parts. Nevertheless **dart_periphery** tries to be close as possible to the orginal library. See following [documentation](https://github.com/vsergeev/c-periphery/tree/master/docs). Thanks to **Vanya Sergeev** for his great job!
+**dart_periphery** binds the c-periphery library with the help of the [dart:ffi](https://dart.dev/guides/libraries/c-interop) mechanism. A glue library handles the Dart specfic parts. Nevertheless **dart_periphery** tries to be close as possible to the orginal library. See following [documentation](https://github.com/vsergeev/c-periphery/tree/master/docs). Thanks to **Vanya Sergeev** for his great job!
 
 ## Why c-periphery?
 
@@ -34,7 +34,7 @@ The number of GPIO libraries/interfaces is becoming increasingly smaller.
 * GPIO
 * I2C
 * Serial
-* Led (onboard Leds) 
+* Led (onboard leds) 
 
 ## Examples
 
@@ -185,7 +185,7 @@ cd ~
 wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.10.5/sdk/dartsdk-linux-arm-release.zip
 unzip dartsdk-linux-arm-release.zip
 sudo mv dart-sdk /opt/
-sudo chmod o+rx /opt/dart-sdk
+sudo chmod +rx /opt/dart-sdk
 ```
 
 ### ARMv8
@@ -194,7 +194,7 @@ sudo chmod o+rx /opt/dart-sdk
 wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.10.5/sdk/dartsdk-linux-arm64-release.zip
 unzip dartsdk-linux-arm64-release.zip
 sudo mv dart-sdk /opt/
-chmod o+rx /opt/dart-sdk
+sudo chmod +rx /opt/dart-sdk
 ```
 
 
@@ -209,7 +209,7 @@ add for bash as default
 nano ~/.profile
 ```
 
-and following command
+following command
 
 ```
 export PATH=$PATH:/opt/dart-sdk/bin
@@ -239,7 +239,7 @@ Currently **dart_perphery** ships with prebuild native libraries for Armv7 and A
 * `dart_periphery_64.1.0.0.so` ➔ `/usr/local/lib/libperiphery.so`
 * `dart_periphery_static_64.1.0.0.so`  (includes libperiphery.a)
 
-This **glue** library contains the Dart specific part for accessing the **c-periphery** library. As default **dart_perphery** loads the static linked library.
+These **glue** libraries contain the Dart specific part to the **c-periphery** library. As default **dart_perphery** loads the static linked library.
 
 Following methods can be used to overwite the loading of the static linked library.
 But be aware, any of these methods must be called before any **dart_perphery** interface is used!
@@ -268,14 +268,14 @@ setCustomLibrary(String absolutePath)
 This method can be helpful in any case of a problem and for a currently not supporetd platform - e.g x86 based SoC
 
 For building a custom libray please review following information
-* make file [] 
+* [make file](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/build_all.sh) 
 *  [c-periphery](https://github.com/vsergeev/c-periphery) - section Static or Shared Library. 
 
 
 
 For a dart native binary, which can be deployed
 ```
-dart compile exe i22_example.dart
+dart compile exe i2c_example.dart
 ```
 
 call
@@ -284,7 +284,7 @@ call
 void useLocalLibrary([bool staticLib = true])
 ```
 
-to use the static or shared glue library with the correct bitness. The appropriate library [] should be in same dirctory as the exe.
+to use the static or shared glue library with the correct bitness. The appropriate [library](https://github.com/pezi/dart_periphery/blob/main/lib/src/native) should be in same dirctory as the exe.
 
 
 
@@ -307,17 +307,19 @@ Port the missing c-periphery bindings
 * PWM (ported, but not tested)
 * SPI
 * MMIO
+* Add GPIO documentation for different SoCs
 * Writing API test cases
-* Improve build scripts of the native library 
+* Improve build process of the native libraries
 
 ## Future steps
 
-* If possible, developing a flutter desktop app for the Raspberry Pi with bindings to **dart_perphery**. 
+* If possible, developing a flutter desktop app for the Raspberry Pi with bindings to **dart_perphery**.
 * Port hardware devices from the [ mattjlewis / diozero Java Project](https://github.com/mattjlewis/diozero/tree/master/diozero-core/src/main/java/com/diozero/devices) to **dart_periphery**: e.g.BME680, SGP30 etc.
 In most cases it is easy to find code snippets for the most sensors, but the implementations of the diozero Project have a high level.
 
 ## Help wanted
 
-* Testing
-* Code review - this is my first public Dart project, I am a Java developer and probably I tend to do program in the the Java manner.
+* Testing **dart_periphery** on different [SoC platforms](https://www.armbian.com/download/)
+* Documentation review - I am not a native speaker.
+* Code review - this is my first public Dart project, I am a Java developer and probably I tend to solve problems rather in the Java than in the Dart way.
 
