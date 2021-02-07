@@ -2,6 +2,8 @@ name: dart_periphery
 version: 0.7.0-beta
 description: Dart port of the c-periphery library
 homepage: https://github.com/pezi/dart_periphery
+repository: https://github.com/pezi/dart_periphery
+issue_tracker: https://github.com/pezi/dart_periphery/issues
 environment:
   sdk: '>=2.10.0 <3.0.0'
 
