@@ -1,11 +1,13 @@
 
-# Introduction
+# dart_periphery
+
+![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
+
+## Introduction
 
 **dart_periphery** is a Dart port of the native [c-periphery library](https://github.com/vsergeev/c-periphery).
 
-![alt text](https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Raspberry_Pi_4_Model_B_-_Side.jpg/220px-Raspberry_Pi_4_Model_B_-_Side.jpg "Logo Title Text 1")
-
-## What is c-periphery?  
+### What is c-periphery?  
 
 Abstract from the project web site:
 
@@ -39,6 +41,9 @@ The number of GPIO libraries/interfaces is becoming increasingly smaller.
 ## Examples
 
 ### GPIO
+
+
+![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/pi.jpg "Led demo")
 
 ``` dart
 void main() {
@@ -77,6 +82,8 @@ void main() {
 
 ### I2C
 
+![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/bme280.jpg "BME280 Sensor")
+
 ``` dart
 import 'package:dart_periphery/dart_periphery.dart';
 
@@ -102,6 +109,8 @@ void main() {
 ```
 
 ### Serial
+
+![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/cozir.jpg "CozIR Sensor")
 
 ``` dart
 import 'package:dart_periphery/dart_periphery.dart';
@@ -232,7 +241,7 @@ Dart SDK version: 2.10.5 (stable) (Tue Jan 19 13:05:37 2021 +0100) on "linux_arm
 
 ## Native library
 
-Currently **dart_perphery** ships with prebuild native libraries for Armv7 and Armv8 in two flavours - static and dynamic linking.
+Currently **dart_perphery** ships with prebuild native libraries for ARMv7 and ARMv8 in two flavours - static and dynamic linking.
 
 * `dart_periphery_32.1.0.0.so` ➔ `/usr/local/lib/libperiphery.so`
 * `dart_periphery_static_32.1.0.0.so` (includes libperiphery.a)
