@@ -68,8 +68,8 @@
         <li class="section-title"><a href="../../dart_periphery/I2C-class.html#instance-methods">Methods</a></li>
         <li><a href="../../dart_periphery/I2C/dispose.html">dispose</a></li>
         <li><a href="../../dart_periphery/I2C/getErrno.html">getErrno</a></li>
+        <li><a href="../../dart_periphery/I2C/getI2Cfd.html">getI2Cfd</a></li>
         <li><a href="../../dart_periphery/I2C/getI2Cinfo.html">getI2Cinfo</a></li>
-        <li><a href="../../dart_periphery/I2C/getSerialFD.html">getSerialFD</a></li>
         <li class="inherited"><a href="https://api.dart.dev/beta/2.12.0-133.7.beta/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
         <li><a href="../../dart_periphery/I2C/readByte.html">readByte</a></li>
         <li><a href="../../dart_periphery/I2C/readByteReg.html">readByteReg</a></li>
@@ -112,9 +112,9 @@
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
       <pre class="language-dart"><code class="language-dart">void writeWord(int address, int wordValue) {
-  List&lt;I2Cmsg&gt; data = [];
+  var data = &lt;I2Cmsg&gt;[];
   data.add(I2Cmsg.buffer(address, [], [wordValue | 0xff, wordValue &gt;&gt; 8]));
-  NativeI2CmsgHelper result = transfer(data);
+  var result = transfer(data);
   result.dispose();
 }</code></pre>
     </section>
@@ -129,7 +129,7 @@
 <footer>
   <span class="no-break">
     dart_periphery
-      0.7.0-beta
+      0.7.6-beta
   </span>
 
 </footer>

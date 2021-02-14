@@ -135,7 +135,7 @@ vmin can be between 0 and 255. vtime can be between 0 and 25.5 seconds, with a r
       <h2><span>Implementation</span></h2>
       <pre class="language-dart"><code class="language-dart">double getVTIME() {
   _checkStatus();
-  double vtime = _nativeGetVTIME(_serialHandle);
+  var vtime = _nativeGetVTIME(_serialHandle);
   _checkError(vtime.toInt());
   return vtime;
 }</code></pre>
@@ -151,7 +151,7 @@ vmin can be between 0 and 255. vtime can be between 0 and 25.5 seconds, with a r
 <footer>
   <span class="no-break">
     dart_periphery
-      0.7.0-beta
+      0.7.6-beta
   </span>
 
 </footer>

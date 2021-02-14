@@ -3,12 +3,13 @@
 
 import 'dart:io';
 import 'dart:convert';
-import "package:path/path.dart";
+import 'package:path/path.dart';
 
 const pkgName = 'dart_periphery';
 
 class PlatformException implements Exception {
   String error;
+  @override
   String toString() => error;
   PlatformException(this.error);
 }
@@ -58,7 +59,7 @@ void main() {
   }
 
   var location = findPackagePath(Directory.current.path);
-  String path = normalize(join(location, 'src', 'native'));
+  var path = normalize(join(location, 'src', 'native'));
 
   Process.run('./build.sh', [], workingDirectory: path)
       .then((ProcessResult results) {

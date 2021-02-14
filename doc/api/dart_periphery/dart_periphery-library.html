@@ -67,7 +67,7 @@
           <span class="name "><a href="../dart_periphery/BME280-class.html">BME280</a></span>         
         </dt>
         <dd>
-          B <a href="../dart_periphery/BME280-class.html">[...]</a>
+          BME280 sensor <a href="../dart_periphery/BME280-class.html">[...]</a>
         </dd>
         <dt id="BME280result">
           <span class="name "><a href="../dart_periphery/BME280result-class.html">BME280result</a></span>         
@@ -131,6 +131,12 @@ memory.
         <dd>
           Helper class for <a href="../dart_periphery/GPIO/pollMultiple.html">GPIO.pollMultiple</a>. <a href="../dart_periphery/PollMultipleEvent-class.html">[...]</a>
         </dd>
+        <dt id="PWM">
+          <span class="name "><a href="../dart_periphery/PWM-class.html">PWM</a></span>         
+        </dt>
+        <dd>
+           
+        </dd>
         <dt id="Serial">
           <span class="name "><a href="../dart_periphery/Serial-class.html">Serial</a></span>         
         </dt>
@@ -172,6 +178,15 @@ memory.
           Converts a <code>databits</code> enum to an int value; 
                   
 </dd>
+        <dt id="getCperipheryVersion" class="callable">
+          <span class="name"><a href="../dart_periphery/getCperipheryVersion.html">getCperipheryVersion</a></span><span class="signature">(<wbr>)
+            <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/beta/2.12.0-133.7.beta/dart-core/String-class.html">String</a></span>
+          </span>
+                  </dt>
+        <dd>
+          Returns the c-periphery version. 
+                  
+</dd>
         <dt id="getGPIOerrorCode" class="callable">
           <span class="name"><a href="../dart_periphery/getGPIOerrorCode.html">getGPIOerrorCode</a></span><span class="signature">(<wbr><span class="parameter" id="getGPIOerrorCode-param-value"><span class="type-annotation"><a href="https://api.dart.dev/beta/2.12.0-133.7.beta/dart-core/int-class.html">int</a></span> <span class="parameter-name">value</span></span>)
             <span class="returntype parameter">&#8594; <a href="../dart_periphery/GPIOerrorCode-class.html">GPIOerrorCode</a></span>
@@ -197,6 +212,15 @@ memory.
                   </dt>
         <dd>
           Converts the native error code <code>value</code> to <code>LedErrorCode</code>. 
+                  
+</dd>
+        <dt id="getPWMerrorCode" class="callable">
+          <span class="name"><a href="../dart_periphery/getPWMerrorCode.html">getPWMerrorCode</a></span><span class="signature">(<wbr><span class="parameter" id="getPWMerrorCode-param-value"><span class="type-annotation"><a href="https://api.dart.dev/beta/2.12.0-133.7.beta/dart-core/int-class.html">int</a></span> <span class="parameter-name">value</span></span>)
+            <span class="returntype parameter">&#8594; <a href="../dart_periphery/PWMerrorCode-class.html">PWMerrorCode</a></span>
+          </span>
+                  </dt>
+        <dd>
+          Converts the native error code <code>value</code> to <a href="../dart_periphery/PWMerrorCode-class.html">PWMerrorCode</a>. 
                   
 </dd>
         <dt id="getSerialErrorCode" class="callable">
@@ -236,7 +260,7 @@ memory.
                   
 </dd>
         <dt id="useLocalLibrary" class="callable">
-          <span class="name"><a href="../dart_periphery/useLocalLibrary.html">useLocalLibrary</a></span><span class="signature">(<wbr><span class="parameter" id="useLocalLibrary-param-staticLib">[<span class="type-annotation"><a href="https://api.dart.dev/beta/2.12.0-133.7.beta/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">staticLib</span> = <span class="default-value">true</span>]</span>)
+          <span class="name"><a href="../dart_periphery/useLocalLibrary.html">useLocalLibrary</a></span><span class="signature">(<wbr><span class="parameter" id="useLocalLibrary-param-staticLibFlag">[<span class="type-annotation"><a href="https://api.dart.dev/beta/2.12.0-133.7.beta/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">staticLibFlag</span> = <span class="default-value">true</span>]</span>)
             <span class="returntype parameter">&#8594; void</span>
           </span>
                   </dt>
@@ -326,6 +350,18 @@ memory.
         <dd>
            
         </dd>
+        <dt id="Polarity">
+          <span class="name "><a href="../dart_periphery/Polarity-class.html">Polarity</a></span>         
+        </dt>
+        <dd>
+          Polarity of the PWM output. 
+        </dd>
+        <dt id="PWMerrorCode">
+          <span class="name "><a href="../dart_periphery/PWMerrorCode-class.html">PWMerrorCode</a></span>         
+        </dt>
+        <dd>
+          PWM error code 
+        </dd>
         <dt id="SerialErrorCode">
           <span class="name "><a href="../dart_periphery/SerialErrorCode-class.html">SerialErrorCode</a></span>         
         </dt>
@@ -364,6 +400,12 @@ memory.
         <dd>
            
         </dd>
+        <dt id="PWMexception">
+          <span class="name "><a href="../dart_periphery/PWMexception-class.html">PWMexception</a></span>         
+        </dt>
+        <dd>
+           
+        </dd>
         <dt id="SerialException">
           <span class="name "><a href="../dart_periphery/SerialException-class.html">SerialException</a></span>         
         </dt>
@@ -390,6 +432,7 @@ memory.
       <li><a href="../dart_periphery/NativeI2Cmsg-class.html">NativeI2Cmsg</a></li>
       <li><a href="../dart_periphery/NativeI2CmsgHelper-class.html">NativeI2CmsgHelper</a></li>
       <li><a href="../dart_periphery/PollMultipleEvent-class.html">PollMultipleEvent</a></li>
+      <li><a href="../dart_periphery/PWM-class.html">PWM</a></li>
       <li><a href="../dart_periphery/Serial-class.html">Serial</a></li>
       <li><a href="../dart_periphery/SerialReadEvent-class.html">SerialReadEvent</a></li>
     
@@ -400,9 +443,11 @@ memory.
       <li class="section-title"><a href="../dart_periphery/dart_periphery-library.html#functions">Functions</a></li>
       <li><a href="../dart_periphery/baudrate2Int.html">baudrate2Int</a></li>
       <li><a href="../dart_periphery/databits2Int.html">databits2Int</a></li>
+      <li><a href="../dart_periphery/getCperipheryVersion.html">getCperipheryVersion</a></li>
       <li><a href="../dart_periphery/getGPIOerrorCode.html">getGPIOerrorCode</a></li>
       <li><a href="../dart_periphery/getI2CerrorCode.html">getI2CerrorCode</a></li>
       <li><a href="../dart_periphery/getLedErrorCode.html">getLedErrorCode</a></li>
+      <li><a href="../dart_periphery/getPWMerrorCode.html">getPWMerrorCode</a></li>
       <li><a href="../dart_periphery/getSerialErrorCode.html">getSerialErrorCode</a></li>
       <li><a href="../dart_periphery/I2CmsgFlags2Int.html">I2CmsgFlags2Int</a></li>
       <li><a href="../dart_periphery/setCustomLibrary.html">setCustomLibrary</a></li>
@@ -422,6 +467,8 @@ memory.
       <li><a href="../dart_periphery/I2CerrorCode-class.html">I2CerrorCode</a></li>
       <li><a href="../dart_periphery/I2CmsgFlags-class.html">I2CmsgFlags</a></li>
       <li><a href="../dart_periphery/Parity-class.html">Parity</a></li>
+      <li><a href="../dart_periphery/Polarity-class.html">Polarity</a></li>
+      <li><a href="../dart_periphery/PWMerrorCode-class.html">PWMerrorCode</a></li>
       <li><a href="../dart_periphery/SerialErrorCode-class.html">SerialErrorCode</a></li>
       <li><a href="../dart_periphery/StopBits-class.html">StopBits</a></li>
     
@@ -430,6 +477,7 @@ memory.
       <li><a href="../dart_periphery/GPIOexception-class.html">GPIOexception</a></li>
       <li><a href="../dart_periphery/I2Cexception-class.html">I2Cexception</a></li>
       <li><a href="../dart_periphery/LedException-class.html">LedException</a></li>
+      <li><a href="../dart_periphery/PWMexception-class.html">PWMexception</a></li>
       <li><a href="../dart_periphery/SerialException-class.html">SerialException</a></li>
     </ol>
   </div><!--/sidebar-offcanvas-right-->
@@ -439,7 +487,7 @@ memory.
 <footer>
   <span class="no-break">
     dart_periphery
-      0.7.0-beta
+      0.7.6-beta
   </span>
 
 </footer>

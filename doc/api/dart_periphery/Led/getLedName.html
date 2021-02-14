@@ -105,13 +105,13 @@
       <h2><span>Implementation</span></h2>
       <pre class="language-dart"><code class="language-dart">String getLedName() {
   _checkStatus();
-  final Pointer&lt;Utf8&gt; ptr = _nativeName(_ledHandle);
+  final ptr = _nativeName(_ledHandle);
   if (ptr.address == 0) {
     &#47;&#47; throw an exception
     _checkError(getErrno());
-    return &quot;?&quot;;
+    return &#39;?&#39;;
   }
-  String name = Utf8.fromUtf8(ptr);
+  var name = Utf8.fromUtf8(ptr);
   free(ptr);
   return name;
 }</code></pre>
@@ -127,7 +127,7 @@
 <footer>
   <span class="no-break">
     dart_periphery
-      0.7.0-beta
+      0.7.6-beta
   </span>
 
 </footer>

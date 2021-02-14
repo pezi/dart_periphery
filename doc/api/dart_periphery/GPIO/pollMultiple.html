@@ -136,19 +136,17 @@ negative for a blocking poll. Returns a <a href="../../dart_periphery/PollMultip
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
       <pre class="language-dart"><code class="language-dart">static PollMultipleEvent pollMultiple(List&lt;GPIO&gt; gpios, int timeoutMillis) {
-  final Pointer&lt;Pointer&lt;Void&gt;&gt; ptr =
-      allocate&lt;Pointer&lt;Void&gt;&gt;(count: gpios.length);
-  int index = 0;
-  for (GPIO g in gpios) {
+  final ptr = allocate&lt;Pointer&lt;Void&gt;&gt;(count: gpios.length);
+  var index = 0;
+  for (var g in gpios) {
     g._checkStatus();
     ptr.elementAt(index++).value = g._gpioHandle;
   }
-  Pointer&lt;_PoolMultiple&gt; result =
-      _nativeMultiplePoll(ptr, gpios.length, timeoutMillis);
+  var result = _nativeMultiplePoll(ptr, gpios.length, timeoutMillis);
   try {
     _checkError(result.ref.result);
-    List&lt;bool&gt; list = [];
-    for (int i = 0; i &lt; gpios.length; ++i) {
+    var list = &lt;bool&gt;[];
+    for (var i = 0; i &lt; gpios.length; ++i) {
       list.add(result.ref.ready.elementAt(index).value == 1 ? true : false);
     }
     return PollMultipleEvent(gpios, result.ref.result, list);
@@ -172,7 +170,7 @@ negative for a blocking poll. Returns a <a href="../../dart_periphery/PollMultip
 <footer>
   <span class="no-break">
     dart_periphery
-      0.7.0-beta
+      0.7.6-beta
   </span>
 
 </footer>

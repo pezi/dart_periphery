@@ -134,7 +134,7 @@ to change the default character device path.</p>
       <h2><span>Implementation</span></h2>
       <pre class="language-dart"><code class="language-dart">GPIO.advanced(this.line, GPIOconfig config, [this.chip = 0])
     : path = _gpioBasePath + chip.toString(),
-      name = &quot;&quot;,
+      name = &#39;&#39;,
       direction = config.direction {
   _gpioHandle = _checkHandle(_nativeOpenAdvanced(
       Utf8.toUtf8(path),
@@ -158,7 +158,7 @@ to change the default character device path.</p>
 <footer>
   <span class="no-break">
     dart_periphery
-      0.7.0-beta
+      0.7.6-beta
   </span>
 
 </footer>

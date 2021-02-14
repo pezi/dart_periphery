@@ -6,23 +6,23 @@ import 'package:dart_periphery/dart_periphery.dart';
 import 'dart:io';
 
 void main() {
-  GPIOconfig config = GPIOconfig();
+  var config = GPIOconfig();
   config.direction = GPIOdirection.GPIO_DIR_OUT;
+  print('Native c-periphery Version : ' + getCperipheryVersion());
+  print('GPIO test');
+  var gpio = GPIO(18, GPIOdirection.GPIO_DIR_OUT);
+  var gpio2 = GPIO(16, GPIOdirection.GPIO_DIR_OUT);
+  var gpio3 = GPIO.advanced(5, config);
 
-  print("GPIO test");
-  GPIO gpio = GPIO(18, GPIOdirection.GPIO_DIR_OUT);
-  GPIO gpio2 = GPIO(16, GPIOdirection.GPIO_DIR_OUT);
-  GPIO gpio3 = GPIO.advanced(5, config);
+  print('GPIO info: ' + gpio.getGPIOinfo());
 
-  print("GPIO info: " + gpio.getGPIOinfo());
+  print('GPIO native file handle: ' + gpio.getGPIOfd().toString());
+  print('GPIO chip name: ' + gpio.getGPIOchipName());
+  print('GPIO chip label: ' + gpio.getGPIOchipLabel());
+  print('GPIO chip name: ' + gpio.getGPIOchipName());
+  print('CPIO chip label: ' + gpio.getGPIOchipLabel());
 
-  print("GPIO native file handle: " + gpio.getGPIOfd().toString());
-  print("GPIO chip name: " + gpio.getGPIOchipName());
-  print("GPIO chip label: " + gpio.getGPIOchipLabel());
-  print("GPIO chip name: " + gpio.getGPIOchipName());
-  print("CPIO chip label: " + gpio.getGPIOchipLabel());
-
-  for (int i = 0; i < 10; ++i) {
+  for (var i = 0; i < 10; ++i) {
     gpio.write(true);
     gpio2.write(true);
     gpio3.write(true);

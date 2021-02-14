@@ -134,7 +134,7 @@ For sysfs GPIOs, the edge event should be consumed with <a href="../../dart_peri
       <h2><span>Implementation</span></h2>
       <pre class="language-dart"><code class="language-dart">GPIOpolling poll(int timeoutMillis) {
   _checkStatus();
-  int error = _nativePoll(_gpioHandle, timeoutMillis);
+  var error = _nativePoll(_gpioHandle, timeoutMillis);
   _checkError(error);
   return error == 0 ? GPIOpolling.SUCCESS : GPIOpolling.TIMEOUT;
 }</code></pre>
@@ -150,7 +150,7 @@ For sysfs GPIOs, the edge event should be consumed with <a href="../../dart_peri
 <footer>
   <span class="no-break">
     dart_periphery
-      0.7.0-beta
+      0.7.6-beta
   </span>
 
 </footer>

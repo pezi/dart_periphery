@@ -133,10 +133,10 @@ This method is intended for use with character device GPIOs and is unsupported b
       <h2><span>Implementation</span></h2>
       <pre class="language-dart"><code class="language-dart">GPIOreadEvent readEvent(int timeoutMillis) {
   _checkStatus();
-  Pointer&lt;_ReadEvent&gt; event = _nativeReadEvent(_gpioHandle, timeoutMillis);
+  var event = _nativeReadEvent(_gpioHandle, timeoutMillis);
   try {
     _checkError(event.ref.error_code);
-    GPIOreadEvent result = GPIOreadEvent(event.ref);
+    var result = GPIOreadEvent(event.ref);
     return result;
   } finally {
     free(event);
@@ -154,7 +154,7 @@ This method is intended for use with character device GPIOs and is unsupported b
 <footer>
   <span class="no-break">
     dart_periphery
-      0.7.0-beta
+      0.7.6-beta
   </span>
 
 </footer>

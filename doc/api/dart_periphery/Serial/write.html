@@ -135,13 +135,13 @@ Returns the number of bytes written on success,</p>
   if (list.isEmpty) {
     return 0;
   }
-  final Pointer&lt;Int8&gt; ptr = allocate&lt;Int8&gt;(count: list.length);
+  var ptr = allocate&lt;Int8&gt;(count: list.length);
   try {
-    int index = 0;
-    for (int i in list) {
+    var index = 0;
+    for (var i in list) {
       ptr.elementAt(index++).value = i;
     }
-    int result = _nativeWrite(_serialHandle, ptr, list.length);
+    var result = _nativeWrite(_serialHandle, ptr, list.length);
     return _checkError(result);
   } finally {
     free(ptr);
@@ -159,7 +159,7 @@ Returns the number of bytes written on success,</p>
 <footer>
   <span class="no-break">
     dart_periphery
-      0.7.0-beta
+      0.7.6-beta
   </span>
 
 </footer>

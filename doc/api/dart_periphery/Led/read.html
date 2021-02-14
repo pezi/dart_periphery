@@ -105,7 +105,7 @@
       <h2><span>Implementation</span></h2>
       <pre class="language-dart"><code class="language-dart">bool read() {
   _checkStatus();
-  int error = _nativeRead(_ledHandle);
+  var error = _nativeRead(_ledHandle);
   _checkError(error);
   return error == 0 ? false : true;
 }</code></pre>
@@ -121,7 +121,7 @@
 <footer>
   <span class="no-break">
     dart_periphery
-      0.7.0-beta
+      0.7.6-beta
   </span>
 
 </footer>

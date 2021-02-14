@@ -68,8 +68,8 @@
         <li class="section-title"><a href="../../dart_periphery/I2C-class.html#instance-methods">Methods</a></li>
         <li><a href="../../dart_periphery/I2C/dispose.html">dispose</a></li>
         <li><a href="../../dart_periphery/I2C/getErrno.html">getErrno</a></li>
+        <li><a href="../../dart_periphery/I2C/getI2Cfd.html">getI2Cfd</a></li>
         <li><a href="../../dart_periphery/I2C/getI2Cinfo.html">getI2Cinfo</a></li>
-        <li><a href="../../dart_periphery/I2C/getSerialFD.html">getSerialFD</a></li>
         <li class="inherited"><a href="https://api.dart.dev/beta/2.12.0-133.7.beta/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
         <li><a href="../../dart_periphery/I2C/readByte.html">readByte</a></li>
         <li><a href="../../dart_periphery/I2C/readByteReg.html">readByteReg</a></li>
@@ -111,13 +111,13 @@
       <h2><span>Implementation</span></h2>
       <pre class="language-dart"><code class="language-dart">String getI2Cinfo() {
   _checkStatus();
-  final Pointer&lt;Utf8&gt; ptr = _nativeInfo(_i2cHandle);
+  final ptr = _nativeInfo(_i2cHandle);
   if (ptr.address == 0) {
     &#47;&#47; throw an exception
     _checkError(getErrno());
-    return &quot;?&quot;;
+    return &#39;?&#39;;
   }
-  String text = Utf8.fromUtf8(ptr);
+  var text = Utf8.fromUtf8(ptr);
   free(ptr);
   return text;
 }</code></pre>
@@ -133,7 +133,7 @@
 <footer>
   <span class="no-break">
     dart_periphery
-      0.7.0-beta
+      0.7.6-beta
   </span>
 
 </footer>

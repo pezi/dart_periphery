@@ -143,7 +143,7 @@ negative for a blocking read.</p>
       <h2><span>Implementation</span></h2>
       <pre class="language-dart"><code class="language-dart">SerialReadEvent read(int len, int timeout) {
   _checkStatus();
-  Pointer&lt;_ReadEvent&gt; event = _nativeReadEvent(_serialHandle, len, timeout);
+  var event = _nativeReadEvent(_serialHandle, len, timeout);
   try {
     _checkError(event.ref.count);
     return SerialReadEvent(event.ref);
@@ -166,7 +166,7 @@ negative for a blocking read.</p>
 <footer>
   <span class="no-break">
     dart_periphery
-      0.7.0-beta
+      0.7.6-beta
   </span>
 
 </footer>

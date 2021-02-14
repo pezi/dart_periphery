@@ -63,6 +63,7 @@
       <li><a href="../dart_periphery/NativeI2Cmsg-class.html">NativeI2Cmsg</a></li>
       <li><a href="../dart_periphery/NativeI2CmsgHelper-class.html">NativeI2CmsgHelper</a></li>
       <li><a href="../dart_periphery/PollMultipleEvent-class.html">PollMultipleEvent</a></li>
+      <li><a href="../dart_periphery/PWM-class.html">PWM</a></li>
       <li><a href="../dart_periphery/Serial-class.html">Serial</a></li>
       <li><a href="../dart_periphery/SerialReadEvent-class.html">SerialReadEvent</a></li>
     
@@ -73,9 +74,11 @@
       <li class="section-title"><a href="../dart_periphery/dart_periphery-library.html#functions">Functions</a></li>
       <li><a href="../dart_periphery/baudrate2Int.html">baudrate2Int</a></li>
       <li><a href="../dart_periphery/databits2Int.html">databits2Int</a></li>
+      <li><a href="../dart_periphery/getCperipheryVersion.html">getCperipheryVersion</a></li>
       <li><a href="../dart_periphery/getGPIOerrorCode.html">getGPIOerrorCode</a></li>
       <li><a href="../dart_periphery/getI2CerrorCode.html">getI2CerrorCode</a></li>
       <li><a href="../dart_periphery/getLedErrorCode.html">getLedErrorCode</a></li>
+      <li><a href="../dart_periphery/getPWMerrorCode.html">getPWMerrorCode</a></li>
       <li><a href="../dart_periphery/getSerialErrorCode.html">getSerialErrorCode</a></li>
       <li><a href="../dart_periphery/I2CmsgFlags2Int.html">I2CmsgFlags2Int</a></li>
       <li><a href="../dart_periphery/setCustomLibrary.html">setCustomLibrary</a></li>
@@ -95,6 +98,8 @@
       <li><a href="../dart_periphery/I2CerrorCode-class.html">I2CerrorCode</a></li>
       <li><a href="../dart_periphery/I2CmsgFlags-class.html">I2CmsgFlags</a></li>
       <li><a href="../dart_periphery/Parity-class.html">Parity</a></li>
+      <li><a href="../dart_periphery/Polarity-class.html">Polarity</a></li>
+      <li><a href="../dart_periphery/PWMerrorCode-class.html">PWMerrorCode</a></li>
       <li><a href="../dart_periphery/SerialErrorCode-class.html">SerialErrorCode</a></li>
       <li><a href="../dart_periphery/StopBits-class.html">StopBits</a></li>
     
@@ -103,6 +108,7 @@
       <li><a href="../dart_periphery/GPIOexception-class.html">GPIOexception</a></li>
       <li><a href="../dart_periphery/I2Cexception-class.html">I2Cexception</a></li>
       <li><a href="../dart_periphery/LedException-class.html">LedException</a></li>
+      <li><a href="../dart_periphery/PWMexception-class.html">PWMexception</a></li>
       <li><a href="../dart_periphery/SerialException-class.html">SerialException</a></li>
     </ol>
   </div>
@@ -189,6 +195,15 @@
           Returns the libc errno of the last failure that occurred. 
                   
 </dd>
+        <dt id="getI2Cfd" class="callable">
+          <span class="name"><a href="../dart_periphery/I2C/getI2Cfd.html">getI2Cfd</a></span><span class="signature">(<wbr>)
+            <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/beta/2.12.0-133.7.beta/dart-core/int-class.html">int</a></span>
+          </span>
+                  </dt>
+        <dd>
+          Returns the file descriptor (for the underlying i2c-dev device) of the I2C handle. 
+                  
+</dd>
         <dt id="getI2Cinfo" class="callable">
           <span class="name"><a href="../dart_periphery/I2C/getI2Cinfo.html">getI2Cinfo</a></span><span class="signature">(<wbr>)
             <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/beta/2.12.0-133.7.beta/dart-core/String-class.html">String</a></span>
@@ -196,15 +211,6 @@
                   </dt>
         <dd>
           Returns a string representation of the I2C handle. 
-                  
-</dd>
-        <dt id="getSerialFD" class="callable">
-          <span class="name"><a href="../dart_periphery/I2C/getSerialFD.html">getSerialFD</a></span><span class="signature">(<wbr>)
-            <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/beta/2.12.0-133.7.beta/dart-core/int-class.html">int</a></span>
-          </span>
-                  </dt>
-        <dd>
-          Returns the file descriptor (for the underlying i2c-dev device) of the I2C handle. 
                   
 </dd>
         <dt id="noSuchMethod" class="callable inherited">
@@ -355,8 +361,8 @@
       <li class="section-title"><a href="../dart_periphery/I2C-class.html#instance-methods">Methods</a></li>
       <li><a href="../dart_periphery/I2C/dispose.html">dispose</a></li>
       <li><a href="../dart_periphery/I2C/getErrno.html">getErrno</a></li>
+      <li><a href="../dart_periphery/I2C/getI2Cfd.html">getI2Cfd</a></li>
       <li><a href="../dart_periphery/I2C/getI2Cinfo.html">getI2Cinfo</a></li>
-      <li><a href="../dart_periphery/I2C/getSerialFD.html">getSerialFD</a></li>
       <li class="inherited"><a href="https://api.dart.dev/beta/2.12.0-133.7.beta/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
       <li><a href="../dart_periphery/I2C/readByte.html">readByte</a></li>
       <li><a href="../dart_periphery/I2C/readByteReg.html">readByteReg</a></li>
@@ -384,7 +390,7 @@
 <footer>
   <span class="no-break">
     dart_periphery
-      0.7.0-beta
+      0.7.6-beta
   </span>
 
 </footer>

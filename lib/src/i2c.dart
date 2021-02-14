@@ -10,6 +10,7 @@
 import 'dart:ffi';
 import 'library.dart';
 import 'package:ffi/ffi.dart';
+import 'signature.dart';
 
 /*
     #define I2C_M_TEN		0x0010
@@ -93,9 +94,9 @@ class NativeI2CmsgHelper {
       return;
     }
     _isFreed = true;
-    int index = 0;
-    for (int i = 0; i < size; ++i) {
-      Pointer<NativeI2Cmsg> msg = _messages.elementAt(index++);
+    var index = 0;
+    for (var i = 0; i < size; ++i) {
+      var msg = _messages.elementAt(index++);
       if (msg.ref.buf.address != 0) {
         free(msg.ref.buf);
       }
@@ -123,8 +124,7 @@ class I2Cmsg {
   /// [flags] list results [NativeI2Cmsg.flags] = 0.
   /// The message flags specify whether the message is a read (I2C_M_RD) or write (0) transaction, as well
   /// as additional options selected by the bitwise OR of their bitmasks.
-  I2Cmsg(this.addr, List<I2CmsgFlags> this.flags, this.len)
-      : predefined = const [];
+  I2Cmsg(this.addr, this.flags, this.len) : predefined = const [];
 
   /// Constructs an I2C message with the I2C device address [addr],
   /// [flags] list and a [predefined] transfer buffer. An empty
@@ -132,27 +132,26 @@ class I2Cmsg {
   /// The message flags specify whether the message is a read (I2C_M_RD) or write (0) transaction, as well
   /// as additional options selected by the bitwise OR of their bitmasks.
   I2Cmsg.buffer(this.addr, this.flags, this.predefined)
-      : len = predefined.length {}
+      : len = predefined.length;
 
   static Pointer<NativeI2Cmsg> _toNative(List<I2Cmsg> list) {
-    final Pointer<NativeI2Cmsg> ptr =
-        allocate<NativeI2Cmsg>(count: list.length);
-    int index = 0;
-    for (I2Cmsg data in list) {
-      Pointer<NativeI2Cmsg> msg = ptr.elementAt(index++);
+    final ptr = allocate<NativeI2Cmsg>(count: list.length);
+    var index = 0;
+    for (var data in list) {
+      var msg = ptr.elementAt(index++);
       msg.ref.addr = data.addr;
       msg.ref.len = data.len;
-      int flags = 0;
+      var flags = 0;
       if (data.flags.isNotEmpty) {
-        for (I2CmsgFlags f in data.flags) {
+        for (var f in data.flags) {
           flags |= I2CmsgFlags2Int(f);
         }
       }
       msg.ref.flags = flags;
       msg.ref.buf = allocate<Int8>(count: data.len);
       if (data.predefined.isNotEmpty) {
-        int count = 0;
-        for (int value in data.predefined) {
+        var count = 0;
+        for (var value in data.predefined) {
           msg.ref.buf.elementAt(count++).value = value;
         }
       }
@@ -204,7 +203,7 @@ I2CerrorCode getI2CerrorCode(int value) {
 
 int _checkError(int value) {
   if (value < 0) {
-    I2CerrorCode errorCode = getI2CerrorCode(value);
+    var errorCode = getI2CerrorCode(value);
     throw I2Cexception(errorCode, errorCode.toString());
   }
   return value;
@@ -225,32 +224,20 @@ class I2Cexception implements Exception {
 final DynamicLibrary _peripheryLib = getPeripheryLib();
 
 // i2c_t* dart_i2c_open(const char *path)
-typedef _dart_i2c_open = Pointer<Void> Function(Pointer<Utf8> path);
-typedef _I2Copen = Pointer<Void> Function(Pointer<Utf8> path);
-final _nativeOpen = _peripheryLib
-    .lookup<NativeFunction<_dart_i2c_open>>('dart_i2c_open')
-    .asFunction<_I2Copen>();
+final _nativeOpen = voidUtf8M('dart_i2c_open');
 
 // int dart_i2c_dispose(i2c_t *i2c)
-typedef _dart_i2c_dispose = Int32 Function(Pointer<Void> handle);
-typedef _I2Cdispose = int Function(Pointer<Void> handle);
-final _nativeDispose = _peripheryLib
-    .lookup<NativeFunction<_dart_i2c_dispose>>('dart_i2c_dispose')
-    .asFunction<_I2Cdispose>();
+final _nativeDispose = intVoidM('dart_i2c_dispose');
 
 // int dart_i2c_errno(i2c_t *i2c)
-typedef _dart_i2c_errno = Int32 Function(Pointer<Void> handle);
-typedef _I2Cerrno = int Function(Pointer<Void> handle);
 final _nativeErrno = _peripheryLib
-    .lookup<NativeFunction<_dart_i2c_errno>>('dart_i2c_errno')
-    .asFunction<_I2Cerrno>();
+    .lookup<NativeFunction<intVoidS>>('dart_i2c_errno')
+    .asFunction<intVoidF>();
 
 // const char *dart_i2c_errmsg(i2c_t *i2c)
-typedef _dart_i2c_errmsg = Pointer<Utf8> Function(Pointer<Void> length);
-typedef _I2Cerrmsg = Pointer<Utf8> Function(Pointer<Void> length);
 final _nativeErrmsg = _peripheryLib
-    .lookup<NativeFunction<_dart_i2c_errmsg>>('dart_i2c_errmsg')
-    .asFunction<_I2Cerrmsg>();
+    .lookup<NativeFunction<utf8VoidS>>('dart_i2c_errmsg')
+    .asFunction<utf8VoidF>();
 
 //  int dart_i2c_transfer(i2c_t *i2c, struct i2c_msg *msgs, size_t count)
 typedef _dart_i2c_transfer = Int32 Function(
@@ -269,11 +256,7 @@ final _nativeFD = _peripheryLib
     .asFunction<_I2Cfd>();
 
 // char *dart_i2c_info(i2c_t *i2c)
-typedef _dart_i2c_info = Pointer<Utf8> Function(Pointer<Void> handle);
-typedef _I2Cinfo = Pointer<Utf8> Function(Pointer<Void> handle);
-final _nativeInfo = _peripheryLib
-    .lookup<NativeFunction<_dart_i2c_info>>('dart_i2c_info')
-    .asFunction<_I2Cinfo>();
+final _nativeInfo = utf8VoidM('dart_i2c_info');
 
 String _getErrmsg(Pointer<Void> handle) {
   return Utf8.fromUtf8(_nativeErrmsg(handle));
@@ -281,7 +264,7 @@ String _getErrmsg(Pointer<Void> handle) {
 
 /// I2C wrapper functions for Linux userspace i2c-dev devices.
 class I2C {
-  static const String _i2cBasePath = "/dev/i2c-";
+  static const String _i2cBasePath = '/dev/i2c-';
   Pointer<Void> _i2cHandle;
   final String path;
   final int busNum;
@@ -295,7 +278,7 @@ class I2C {
   void _checkStatus() {
     if (_invalid) {
       throw I2Cexception(I2CerrorCode.I2C_ERROR_CLOSE,
-          "I2C interface has the status released.");
+          'I2C interface has the status released.');
     }
   }
 
@@ -318,62 +301,62 @@ class I2C {
   /// resources [NativeI2Cmsg.allocate()] must be called by the user.
   NativeI2CmsgHelper transfer(List<I2Cmsg> data) {
     _checkStatus();
-    Pointer<NativeI2Cmsg> nativeMsg = I2Cmsg._toNative(data);
+    var nativeMsg = I2Cmsg._toNative(data);
     _checkError(_nativeTransfer(_i2cHandle, nativeMsg, data.length));
     return NativeI2CmsgHelper(nativeMsg, data.length);
   }
 
   /// Writes a [byteValue] to the I2C device with the [address].
   void writeByte(int address, int byteValue) {
-    List<I2Cmsg> data = [];
+    var data = <I2Cmsg>[];
     data.add(I2Cmsg.buffer(address, [], [byteValue]));
-    NativeI2CmsgHelper result = transfer(data);
+    var result = transfer(data);
     result.dispose();
   }
 
   /// Writes a [byteValue] to the [register] of the I2C device with the [address].
   void writeByteReg(int address, int register, int byteValue) {
-    List<I2Cmsg> data = [];
+    var data = <I2Cmsg>[];
     data.add(I2Cmsg.buffer(address, [], [register]));
     data.add(I2Cmsg.buffer(address, [], [byteValue]));
-    NativeI2CmsgHelper result = transfer(data);
+    var result = transfer(data);
     result.dispose();
   }
 
   /// Writes a list of [byteValue] to the [register] of the I2C device with the [address].
   void writeBytesReg(int address, int register, List<int> byteValue) {
-    List<I2Cmsg> data = [];
+    var data = <I2Cmsg>[];
     data.add(I2Cmsg.buffer(address, [], [register]));
     data.add(I2Cmsg.buffer(address, [], byteValue));
-    NativeI2CmsgHelper result = transfer(data);
+    var result = transfer(data);
     result.dispose();
   }
 
   /// Writes a [wordValue] to the I2C device with the [address].
   void writeWord(int address, int wordValue) {
-    List<I2Cmsg> data = [];
+    var data = <I2Cmsg>[];
     data.add(I2Cmsg.buffer(address, [], [wordValue | 0xff, wordValue >> 8]));
-    NativeI2CmsgHelper result = transfer(data);
+    var result = transfer(data);
     result.dispose();
   }
 
   /// Writes a [wordValue] to the [register] of the I2C device with the [address].
   void writeWordReg(int address, int register, int wordValue) {
-    List<I2Cmsg> data = [];
+    var data = <I2Cmsg>[];
     data.add(I2Cmsg.buffer(address, [], [register]));
     data.add(I2Cmsg.buffer(address, [], [wordValue | 0xff, wordValue >> 8]));
-    NativeI2CmsgHelper result = transfer(data);
+    var result = transfer(data);
     result.dispose();
   }
 
   /// Reads a byte from the I2C device with the [address].
   int readByte(int address) {
-    List<I2Cmsg> data = [];
+    var data = <I2Cmsg>[];
     data.add(I2Cmsg(address, [I2CmsgFlags.I2C_M_RD], 1));
-    NativeI2CmsgHelper result = transfer(data);
+    var result = transfer(data);
     try {
-      Pointer<Int8> ptr = result._messages.elementAt(0).ref.buf;
-      int value = ptr.elementAt(0).value & 0xff;
+      var ptr = result._messages.elementAt(0).ref.buf;
+      var value = ptr.elementAt(0).value;
       return value;
     } finally {
       result.dispose();
@@ -382,13 +365,14 @@ class I2C {
 
   /// Reads a byte from [register] of the I2C device with the [address].
   int readByteReg(int address, int register) {
-    List<I2Cmsg> data = [];
+    var data = <I2Cmsg>[];
     data.add(I2Cmsg.buffer(address, [], [register]));
     data.add(I2Cmsg(address, [I2CmsgFlags.I2C_M_RD], 1));
-    NativeI2CmsgHelper result = transfer(data);
+    var result = transfer(data);
     try {
-      Pointer<Int8> ptr = result._messages.elementAt(1).ref.buf;
-      int value = ptr.elementAt(0).value & 0xff;
+      var ptr = result._messages.elementAt(1).ref.buf;
+      var value = ptr.elementAt(0).value;
+
       return value;
     } finally {
       result.dispose();
@@ -397,13 +381,13 @@ class I2C {
 
   /// Reads a word from the I2C device with the [address].
   int readWord(int address) {
-    List<I2Cmsg> data = [];
+    var data = <I2Cmsg>[];
     data.add(I2Cmsg(address, [I2CmsgFlags.I2C_M_RD], 2));
-    NativeI2CmsgHelper result = transfer(data);
+    var result = transfer(data);
     try {
-      Pointer<Int8> ptr = result._messages.elementAt(0).ref.buf;
-      int value = (ptr.elementAt(0).value & 0xff) +
-          (ptr.elementAt(1).value & 0xff) * 256;
+      var ptr = result._messages.elementAt(0).ref.buf;
+      var value = (ptr.elementAt(0).value & 0xff) |
+          (ptr.elementAt(1).value & 0xff) << 8;
       return value;
     } finally {
       result.dispose();
@@ -412,19 +396,19 @@ class I2C {
 
   /// Reads a [len] bytes from [register] of the I2C device with the [address].
   List<int> readBytesReg(int address, int register, int len) {
-    List<I2Cmsg> data = [];
+    var data = <I2Cmsg>[];
     data.add(I2Cmsg.buffer(address, [], [register]));
     data.add(I2Cmsg(address, [I2CmsgFlags.I2C_M_RD], len));
 
-    NativeI2CmsgHelper result = transfer(data);
-    NativeI2Cmsg msg2 = result._messages.elementAt(1).ref;
+    var result = transfer(data);
+    var msg2 = result._messages.elementAt(1).ref;
     try {
-      int read = msg2.len;
+      var read = msg2.len;
 
-      Pointer<Int8> ptr = msg2.buf;
-      List<int> list = [];
-      for (int i = 0; i < read; ++i) {
-        list.add(ptr.elementAt(i).value & 0xff);
+      var ptr = msg2.buf;
+      var list = <int>[];
+      for (var i = 0; i < read; ++i) {
+        list.add(ptr.elementAt(i).value);
       }
       return list;
     } finally {
@@ -440,7 +424,7 @@ class I2C {
   }
 
   /// Returns the file descriptor (for the underlying i2c-dev device) of the I2C handle.
-  int getSerialFD() {
+  int getI2Cfd() {
     _checkStatus();
     return _checkError(_nativeFD(_i2cHandle));
   }
@@ -448,13 +432,13 @@ class I2C {
   /// Returns a string representation of the I2C handle.
   String getI2Cinfo() {
     _checkStatus();
-    final Pointer<Utf8> ptr = _nativeInfo(_i2cHandle);
+    final ptr = _nativeInfo(_i2cHandle);
     if (ptr.address == 0) {
       // throw an exception
       _checkError(getErrno());
-      return "?";
+      return '?';
     }
-    String text = Utf8.fromUtf8(ptr);
+    var text = Utf8.fromUtf8(ptr);
     free(ptr);
     return text;
   }

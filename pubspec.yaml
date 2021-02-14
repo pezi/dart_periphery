@@ -1,6 +1,8 @@
 name: dart_periphery
-version: 0.7.0-beta
-description: Dart port of the c-periphery library
+version: 0.8.0-beta
+description:  >- 
+  dart_periphery is a Dart port of the native c-periphery library for Linux Peripheral I/O (GPIO, LED, PWM, SPI, I2C, MMIO and Serial peripheral I/O).
+
 homepage: https://github.com/pezi/dart_periphery
 repository: https://github.com/pezi/dart_periphery
 issue_tracker: https://github.com/pezi/dart_periphery/issues
@@ -11,6 +13,10 @@ dependencies:
   ffi: ^0.1.3
   system_info: ^0.1.3
   path: ^1.7.0
+  # If you use `package:pedantic/pedantic.dart`, add a normal dependency.
+  pedantic: ^1.9.2
+  process: ^3.0.13
+
  
 dev_dependencies:
   test: ^1.5.3

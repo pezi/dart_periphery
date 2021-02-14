@@ -2,9 +2,12 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+export 'src/version.dart' show getCperipheryVersion;
 export 'src/library.dart'
     show useSharedLibray, setCustomLibrary, useLocalLibrary;
 export 'src/led.dart' show Led, LedException, getLedErrorCode;
+export 'src/pwm.dart'
+    show PWM, PWMexception, getPWMerrorCode, Polarity, PWMerrorCode;
 export 'src/gpio.dart'
     show
         GPIOpolling,
@@ -44,4 +47,13 @@ export 'src/i2c.dart'
         getI2CerrorCode,
         I2Cexception,
         I2C;
-export 'src/bme280.dart' show BME280result, BME280;
+export 'src/spi.dart'
+    show SPI, SPImode, SPIexception, getSPIerrorCode, BitOrder;
+export 'src/bme280.dart'
+    show
+        BME280result,
+        BME280,
+        BME280model,
+        BME280exception,
+        BMP280_ID,
+        BME280_ID;

@@ -117,7 +117,7 @@
       <pre class="language-dart"><code class="language-dart">void init() {
   &#47;&#47; Read 24 bytes of data from address 0x88(136)
   &#47;&#47; byte[] b1 = new byte[24];
-  List&lt;int&gt; b1 = device.readBytesReg(i2cAddress, 0x88, 24);
+  var b1 = device.readBytesReg(i2cAddress, 0x88, 24);
 
   &#47;&#47; Convert the data
   &#47;&#47; temp coefficients
@@ -204,7 +204,7 @@
 <footer>
   <span class="no-break">
     dart_periphery
-      0.7.0-beta
+      0.7.6-beta
   </span>
 
 </footer>

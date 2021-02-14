@@ -25,7 +25,7 @@
 <header id="title">
   <button id="sidenav-left-toggle" type="button">&nbsp;</button>
   <ol class="breadcrumbs gt-separated dark hidden-xs">
-    <li><a href="https://github.com/danrubel/rpi_gpio.dart">dart_periphery package</a></li>
+    <li><a href="https://github.com/pezi/dart_periphery">dart_periphery package</a></li>
   </ol>
   <div class="self-name">dart_periphery</div>
   <form class="search navbar-right" role="search">
@@ -43,7 +43,7 @@
     </header>
     
     <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
-      <li><a href="https://github.com/danrubel/rpi_gpio.dart">dart_periphery package</a></li>
+      <li><a href="https://github.com/pezi/dart_periphery">dart_periphery package</a></li>
     </ol>
     
     <h5 class="hidden-xs"><span class="package-name">dart_periphery</span> <span class="package-kind">package</span></h5>
@@ -55,10 +55,12 @@
 
   <div id="dartdoc-main-content" class="col-xs-12 col-sm-9 col-md-8 main-content">
       <section class="desc markdown">
-        <h1 id="introduction">Introduction</h1>
-<p><strong>dart_periphery</strong> is a Dart port of the native <a href="https://github.com/vsergeev/c-periphery">c-periphery library</a>.</p>
-<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Raspberry_Pi_4_Model_B_-_Side.jpg/220px-Raspberry_Pi_4_Model_B_-_Side.jpg" alt="alt text" title="Logo Title Text 1"></p>
-<h2 id="what-is-c-periphery">What is c-periphery?</h2>
+        <h1 id="dart_periphery">dart_periphery</h1>
+<p><img src="https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg" alt="alt text" title="Title"></p>
+<h2 id="introduction">Introduction</h2>
+<p><strong>dart_periphery</strong> is a Dart port of the native <a href="https://github.com/vsergeev/c-periphery">c-periphery library</a>
+  for Linux Peripheral I/O (GPIO, LED, PWM, SPI, I2C, MMIO and Serial peripheral I/O). This package is specially intended for SoCs like Raspberry Pi, Nano Pi, Banana Pi et al.</p>
+<h3 id="what-is-c-periphery">What is c-periphery?</h3>
 <p>Abstract from the project web site:</p>
 <blockquote>
 <p>c-periphery is a small C library for</p>
@@ -73,11 +75,11 @@
 </ul>
 <p>interface access in userspace Linux. c-periphery simplifies and consolidates the native Linux APIs to these interfaces. c-periphery is useful in embedded Linux environments (including Raspberry Pi, BeagleBone, etc. platforms) for interfacing with external peripherals. c-periphery is re-entrant, has no dependencies outside the standard C library and Linux, compiles into a static library for easy integration with other projects, and is MIT licensed</p>
 </blockquote>
-<p><strong>dart_periphery</strong> binds the c-periphery library with help of the <a href="https://dart.dev/guides/libraries/c-interop">dart:ffi</a> mechanism. A glue library handles the Dart specfic parts. Nevertheless <strong>dart_periphery</strong> tries to be close as possible to the orginal library. See following <a href="https://github.com/vsergeev/c-periphery/tree/master/docs">documentation</a>. Thanks to <strong>Vanya Sergeev</strong> for his great job!</p>
+<p><strong>dart_periphery</strong> binds the c-periphery library with the help of the <a href="https://dart.dev/guides/libraries/c-interop">dart:ffi</a> mechanism. A glue library handles the Dart specfic parts. Nevertheless <strong>dart_periphery</strong> tries to be close as possible to the orginal library. See following <a href="https://github.com/vsergeev/c-periphery/tree/master/docs">documentation</a>. Thanks to <strong>Vanya Sergeev</strong> for his great job!</p>
 <h2 id="why-c-periphery">Why c-periphery?</h2>
 <p>The number of GPIO libraries/interfaces is becoming increasingly smaller.</p>
 <ul>
-<li>The famous wiringpi library is <a href="http://wiringpi.com/wiringpi-deprecated/">deprected</a>.</li>
+<li>The famous wiringpi library is <a href="https://hackaday.com/2019/09/18/wiringpi-library-to-be-deprecated">deprected</a>.</li>
 <li>GPIO sysfs is <a href="https://www.raspberrypi.org/forums/viewtopic.php?t=274416">deprected</a>.</li>
 </ul>
 <p><strong>dart_periphery</strong> currently has beta status. Following interfaces are ported:</p>
@@ -85,28 +87,33 @@
 <li>GPIO</li>
 <li>I2C</li>
 <li>Serial</li>
-<li>Led (onboard Leds)</li>
+<li>PWM</li>
+<li>Led (onboard leds)</li>
 </ul>
 <h2 id="examples">Examples</h2>
 <h3 id="gpio">GPIO</h3>
-<pre class="language-dart"><code class="language-dart">void main() {
-  GPIOconfig config = GPIOconfig();
+<p><img src="https://raw.githubusercontent.com/pezi/dart_periphery_img/main/pi.jpg" alt="alt text" title="Led demo"></p>
+<pre class="language-dart"><code class="language-dart">import 'package:dart_periphery/dart_periphery.dart';
+import 'dart:io';
+
+void main() {
+  var config = GPIOconfig();
   config.direction = GPIOdirection.GPIO_DIR_OUT;
+  print('Native c-periphery Version : ' + getCperipheryVersion());
+  print('GPIO test');
+  var gpio = GPIO(18, GPIOdirection.GPIO_DIR_OUT);
+  var gpio2 = GPIO(16, GPIOdirection.GPIO_DIR_OUT);
+  var gpio3 = GPIO.advanced(5, config);
 
-  print("GPIO test");
-  GPIO gpio = GPIO(18, GPIOdirection.GPIO_DIR_OUT);
-  GPIO gpio2 = GPIO(16, GPIOdirection.GPIO_DIR_OUT);
-  GPIO gpio3 = GPIO.advanced(5, config);
+  print('GPIO info: ' + gpio.getGPIOinfo());
 
-  print("GPIO info: " + gpio.getGPIOinfo());
+  print('GPIO native file handle: ' + gpio.getGPIOfd().toString());
+  print('GPIO chip name: ' + gpio.getGPIOchipName());
+  print('GPIO chip label: ' + gpio.getGPIOchipLabel());
+  print('GPIO chip name: ' + gpio.getGPIOchipName());
+  print('CPIO chip label: ' + gpio.getGPIOchipLabel());
 
-  print("GPIO native file handle: " + gpio.getGPIOfd().toString());
-  print("GPIO chip name: " + gpio.getGPIOchipName());
-  print("GPIO chip label: " + gpio.getGPIOchipLabel());
-  print("GPIO chip name: " + gpio.getGPIOchipName());
-  print("CPIO chip label: " + gpio.getGPIOchipLabel());
-
-  for (int i = 0; i &lt; 10; ++i) {
+  for (var i = 0; i &lt; 10; ++i) {
     gpio.write(true);
     gpio2.write(true);
     gpio3.write(true);
@@ -123,6 +130,7 @@
 }
 </code></pre>
 <h3 id="i2c">I2C</h3>
+<p><img src="https://raw.githubusercontent.com/pezi/dart_periphery_img/main/bme280.jpg" alt="alt text" title="BME280 Sensor"></p>
 <pre class="language-dart"><code class="language-dart">import 'package:dart_periphery/dart_periphery.dart';
 
 /// https://wiki.seeedstudio.com/Grove-Barometer_Sensor-BME280/
@@ -131,21 +139,22 @@
 void main() {
   // Select the right I2C bus number /dev/i2c-0
   // 1 for Raspbery Pi, 0 for NanoPi
-  I2C i2c = I2C(1);
+  var i2c = I2C(1);
   try {
-    print("I2C info:" + i2c.getI2Cinfo());
-    BME280 bme280 = BME280(i2c);
+    print('I2C info:' + i2c.getI2Cinfo());
+    var bme280 = BME280(i2c);
     bme280.init();
-    BME280result r = bme280.get();
-    print("Temperature [°] " + r.temperature.toStringAsFixed(1));
-    print("Humidity [%] " + r.humidity.toStringAsFixed(1));
-    print("Pressure [hPa] " + r.pressure.toStringAsFixed(1));
+    var r = bme280.get();
+    print('Temperature [°] ' + r.temperature.toStringAsFixed(1));
+    print('Humidity [%] ' + r.humidity.toStringAsFixed(1));
+    print('Pressure [hPa] ' + r.pressure.toStringAsFixed(1));
   } finally {
     i2c.dispose();
   }
 }
 </code></pre>
 <h3 id="serial">Serial</h3>
+<p><img src="https://raw.githubusercontent.com/pezi/dart_periphery_img/main/cozir.jpg" alt="alt text" title="CozIR Sensor"></p>
 <pre class="language-dart"><code class="language-dart">import 'package:dart_periphery/dart_periphery.dart';
 import 'dart:io';
 
@@ -153,26 +162,26 @@ import 'dart:io';
 /// [COZIR CO2 Sensor](https://co2meters.com/Documentation/Manuals/Manual_GC_0024_0025_0026_Revised8.pdf)
 ///
 void main() {
-  print("Serial test - COZIR CO2 Sensor");
-  Serial s = new Serial("/dev/serial0", Baudrate.B9600);
+  print('Serial test - COZIR CO2 Sensor');
+  var s = Serial('/dev/serial0', Baudrate.B9600);
   try {
-    print("Serial interface info: " + s.getSerialInfo());
+    print('Serial interface info: ' + s.getSerialInfo());
 
     // Return firmware version and sensor serialnumber - two line
-    s.writeString("Y\r\n");
-    SerialReadEvent event = s.read(256, 1000);
+    s.writeString('Y\r\n');
+    var event = s.read(256, 1000);
     print(event.toString());
 
     // Request temperature, humidity and CO2 level.
-    s.writeString("M 4164\r\n");
+    s.writeString('M 4164\r\n');
     // Select polling mode
-    s.writeString("K 2\r\n");
+    s.writeString('K 2\r\n');
     // print any response
     event = s.read(256, 1000);
-    print("Response " + event.toString());
+    print('Response ' + event.toString());
     sleep(Duration(seconds: 1));
-    for (int i = 0; i &lt; 5; ++i) {
-      s.writeString("Q\r\n");
+    for (var i = 0; i &lt; 5; ++i) {
+      s.writeString('Q\r\n');
       event = s.read(256, 1000);
       print(event.toString());
       sleep(Duration(seconds: 5));
@@ -186,28 +195,29 @@ void main() {
 <pre class="language-dart"><code class="language-dart">import 'package:dart_periphery/dart_periphery.dart';
 import 'dart:io';
 
+
 void main() {
-  /// Nano Pi power led  - see 'ls /sys/class/leds/'
-  Led led = Led('nanopi:red:pwr');
+  /// Nano Pi power led - see 'ls /sys/class/leds/'
+  var led = Led('nanopi:red:pwr');
   try {
-    print("Led handle: " + led.getLedInfo());
-    print("Led name: " + led.getLedName());
-    print("Led brightness: " + led.getBrightness().toString());
-    print("Led maximum brightness: " + led.getMaxBrightness().toString());
-    bool inverse = !led.read();
-    print("Original led status: " + (!inverse).toString());
-    print("Toggle led");
+    print('Led handle: ' + led.getLedInfo());
+    print('Led name: ' + led.getLedName());
+    print('Led brightness: ' + led.getBrightness().toString());
+    print('Led maximum brightness: ' + led.getMaxBrightness().toString());
+    var inverse = !led.read();
+    print('Original led status: ' + (!inverse).toString());
+    print('Toggle led');
     led.write(inverse);
     sleep(Duration(seconds: 5));
     inverse = !inverse;
-    print("Toggle led");
+    print('Toggle led');
     led.write(inverse);
     sleep(Duration(seconds: 5));
-    print("Toggle led");
+    print('Toggle led');
     inverse = !inverse;
     led.write(inverse);
     sleep(Duration(seconds: 5));
-    print("Toggle led");
+    print('Toggle led');
     led.write(!inverse);
   } finally {
     led.dispose();
@@ -215,95 +225,120 @@ void main() {
 }
 
 </code></pre>
-<h2 id="install-dart-on-raspian-and-armbian">Install dart on Raspian and Armbian</h2>
+<h3 id="pwm">PWM</h3>
+<p>Ensure that PWM is correct enabled. e.g. see the following <a href="https://jumpnowtek.com/rpi/Using-the-Raspberry-Pi-Hardware-PWM-timers.html">doucmentation</a> for the Raspberry Pi.</p>
+<pre class="language-dart"><code class="language-dart">import 'package:dart_periphery/dart_periphery.dart';
+import 'dart:io';
+
+void main() {
+  var pwm = PWM(0, 0);
+  try {
+    print(pwm.getPWMinfo());
+    pwm.setPeriodNs(10000000);
+    pwm.setDutyCycleNs(8000000);
+    print(pwm.getPeriodNs());
+    pwm.enable();
+    print("Wait 20 seconds");
+    sleep(Duration(seconds: 20));
+    pwm.disable();
+  } finally {
+    pwm.dispose();
+  }
+}
+</code></pre>
+<h2 id="install-dart-on-raspian-and-armbian">Install Dart on Raspian and Armbian</h2>
 <h3 id="armv7">ARMv7</h3>
-<pre class="language-dart"><code>cd ~
+<pre class="language-bash"><code class="language-bash">cd ~
 wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.10.5/sdk/dartsdk-linux-arm-release.zip
 unzip dartsdk-linux-arm-release.zip
 sudo mv dart-sdk /opt/
-sudo chmod o+rx /opt/dart-sdk
+sudo chmod +rx /opt/dart-sdk
 </code></pre>
 <h3 id="armv8">ARMv8</h3>
-<pre class="language-dart"><code>wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.10.5/sdk/dartsdk-linux-arm64-release.zip
+<pre class="language-bash"><code class="language-bash">wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.10.5/sdk/dartsdk-linux-arm64-release.zip
 unzip dartsdk-linux-arm64-release.zip
 sudo mv dart-sdk /opt/
-chmod o+rx /opt/dart-sdk
+sudo chmod +rx /opt/dart-sdk
 </code></pre>
-<pre class="language-dart"><code>nano ~/.profile
+<pre class="language-bash"><code class="language-bash">nano ~/.profile
 </code></pre>
 <p>add for bash as default</p>
-<pre class="language-dart"><code>nano ~/.profile
+<pre class="language-bash"><code class="language-bash">nano ~/.profile
 </code></pre>
-<p>and following command</p>
-<pre class="language-dart"><code>export PATH=$PATH:/opt/dart-sdk/bin
+<p>following command</p>
+<pre class="language-bash"><code class="language-bash">export PATH=$PATH:/opt/dart-sdk/bin
 </code></pre>
 <p>at the end of the file and call</p>
-<pre class="language-dart"><code>source ~/.profile
+<pre class="language-bash"><code class="language-bash">source ~/.profile
 </code></pre>
 <p>to apply the changes.</p>
 <p>Test the installion</p>
-<pre class="language-dart"><code>root@nanopineo2:~# dart --version
+<pre class="language-bash"><code class="language-bash">root@nanopineo2:~# dart --version
 Dart SDK version: 2.10.5 (stable) (Tue Jan 19 13:05:37 2021 +0100) on "linux_arm64"
 </code></pre>
 <h2 id="native-library">Native library</h2>
-<p>Currently <strong>dart_perphery</strong> ships with prebuild native libraries for Armv7 and Armv8 in two flavours - static and dynamic linking.</p>
+<p>Currently <strong>dart_periphery</strong> ships with prebuild native libraries for ARMv7 and ARMv8 in two flavours - static and dynamic linking.</p>
 <ul>
 <li><code>dart_periphery_32.1.0.0.so</code> ➔ <code>/usr/local/lib/libperiphery.so</code></li>
 <li><code>dart_periphery_static_32.1.0.0.so</code> (includes libperiphery.a)</li>
 <li><code>dart_periphery_64.1.0.0.so</code> ➔ <code>/usr/local/lib/libperiphery.so</code></li>
 <li><code>dart_periphery_static_64.1.0.0.so</code>  (includes libperiphery.a)</li>
 </ul>
-<p>This <strong>glue</strong> library contains the Dart specific part for accessing the <strong>c-periphery</strong> library. As default <strong>dart_perphery</strong> loads the static linked library.</p>
+<p>These <strong>glue</strong> libraries contain the Dart specific part to the <strong>c-periphery</strong> library. As default <strong>dart_periphery</strong> loads the static linked library.</p>
 <p>Following methods can be used to overwite the loading of the static linked library.
-But be aware, any of these methods must be called before any <strong>dart_perphery</strong> interface is used!</p>
-<pre class="language-dart"><code>useSharedLibray();
+But be aware, any of these methods must be called before any <strong>dart_periphery</strong> interface is used!</p>
+<pre class="language-dart"><code class="language-dart">useSharedLibray();
 </code></pre>
-<p>If this method is called, <strong>dart_perphery</strong> loads the shadred library. For this case c-pheriphery must be installed as a shared library. See for <a href="https://github.com/vsergeev/c-periphery">details</a> - section Shared Library.</p>
+<p>If this method is called, <strong>dart_periphery</strong> loads the shadred library. For this case c-pheriphery must be installed as a shared library. See for <a href="https://github.com/vsergeev/c-periphery">details</a> - section Shared Library.</p>
 <p>The glue library, flavour shared, can be rebuild with following command:</p>
-<pre class="language-dart"><code>pub global activate dart_periphery
+<pre class="language-bash"><code class="language-bash">pub global activate dart_periphery
 </code></pre>
-<pre class="language-dart"><code>pub global run dart_periphery:build_lib
+<pre class="language-bash"><code class="language-bash">pub global run dart_periphery:build_lib
 </code></pre>
 <p>To load a custom libaray call</p>
-<pre class="language-dart"><code>setCustomLibrary(String absolutePath)
+<pre class="language-dart"><code class="language-dart">setCustomLibrary(String absolutePath)
 </code></pre>
 <p>This method can be helpful in any case of a problem and for a currently not supporetd platform - e.g x86 based SoC</p>
 <p>For building a custom libray please review following information</p>
 <ul>
-<li>make file []</li>
+<li><a href="https://github.com/pezi/dart_periphery/blob/main/lib/src/native/build_all.sh">make file</a></li>
 <li><a href="https://github.com/vsergeev/c-periphery">c-periphery</a> - section Static or Shared Library.</li>
 </ul>
 <p>For a dart native binary, which can be deployed</p>
-<pre class="language-dart"><code>dart compile exe i22_example.dart
+<pre class="language-bash"><code class="language-bash">dart compile exe i2c_example.dart
 </code></pre>
 <p>call</p>
-<pre class="language-dart"><code>void useLocalLibrary([bool staticLib = true])
+<pre class="language-dart"><code class="language-dart">void useLocalLibrary([bool staticLib = true])
 </code></pre>
-<p>to use the static or shared glue library with the correct bitness. The appropriate library [] should be in same dirctory as the exe.</p>
+<p>to use the static or shared glue library with the correct bitness. The appropriate <a href="https://github.com/pezi/dart_periphery/blob/main/lib/src/native">library</a> should be in same dirctory as the exe.</p>
 <h2 id="tested-hardware">Tested hardware</h2>
-<p>Raspbery Pi 3 Model B (Raspian)</p>
-<p><a href="http://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO">Nano Pi</a>
+<p>Raspberry Pi 3 Model B (Raspian)</p>
+<p><a href="https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO">Nano Pi</a>
 with <a href="https://www.armbian.com/">Armbian</a></p>
-<p><a href="http://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO2">Nano Pi Neo2</a> with a Allwinner H5, Quad-core 64-bit CPU with <a href="https://www.armbian.com/">Armbian</a></p>
+<p><a href="https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO2">Nano Pi Neo2</a> with a Allwinner H5, Quad-core 64-bit CPU with <a href="https://www.armbian.com/">Armbian</a></p>
 <h2 id="next-steps">Next steps</h2>
 <p>Port the missing c-periphery bindings</p>
 <ul>
-<li>PWM (ported, but not tested)</li>
 <li>SPI</li>
 <li>MMIO</li>
-<li>Writing API test cases</li>
-<li>Improve build scripts of the native library</li>
+</ul>
+<p>Improvemnts</p>
+<ul>
+<li>Add GPIO documentation for different SoCs.</li>
+<li>Writing API test cases.</li>
+<li>Improve build process of the native libraries.</li>
 </ul>
 <h2 id="future-steps">Future steps</h2>
 <ul>
-<li>If possible, developing a flutter desktop app for the Raspberry Pi with bindings to <strong>dart_perphery</strong>.</li>
-<li>Port hardware devices from the <a href="https://github.com/mattjlewis/diozero/tree/master/diozero-core/src/main/java/com/diozero/devices"> mattjlewis / diozero Java Project</a> to <strong>dart_periphery</strong>: e.g.BME680, SGP30 etc.
+<li>If possible, developing a flutter desktop app for the Raspberry Pi with bindings to <strong>dart_periphery</strong>.</li>
+<li>Port hardware devices from the <a href="https://github.com/mattjlewis/diozero/tree/master/diozero-core/src/main/java/com/diozero/devices">mattjlewis / diozero Java Project</a> to <strong>dart_periphery</strong>: e.g. BME680, SGP30 etc.
 In most cases it is easy to find code snippets for the most sensors, but the implementations of the diozero Project have a high level.</li>
 </ul>
 <h2 id="help-wanted">Help wanted</h2>
 <ul>
-<li>Testing</li>
-<li>Code review - this is my first public Dart project, I am a Java developer and probably I tend to do program in the the Java manner.</li>
+<li>Testing <strong>dart_periphery</strong> on different <a href="https://www.armbian.com/download/">SoC platforms</a></li>
+<li>Documentation review - I am not a native speaker.</li>
+<li>Code review - this is my first public Dart project, I am a Java developer and probably I tend to solve problems rather in the Java than in the Dart way.</li>
 </ul>
       </section>
       
@@ -329,7 +364,7 @@ In most cases it is easy to find code snippets for the most sensors, but the imp
 <footer>
   <span class="no-break">
     dart_periphery
-      0.7.0-beta
+      0.7.6-beta
   </span>
 
 </footer>

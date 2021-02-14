@@ -7,26 +7,26 @@ import 'dart:io';
 
 void main() {
   /// Nano Pi power led - see 'ls /sys/class/leds/'
-  Led led = Led('nanopi:red:pwr');
+  var led = Led('nanopi:red:pwr');
   try {
-    print("Led handle: " + led.getLedInfo());
-    print("Led name: " + led.getLedName());
-    print("Led brightness: " + led.getBrightness().toString());
-    print("Led maximum brightness: " + led.getMaxBrightness().toString());
-    bool inverse = !led.read();
-    print("Original led status: " + (!inverse).toString());
-    print("Toggle led");
+    print('Led handle: ' + led.getLedInfo());
+    print('Led name: ' + led.getLedName());
+    print('Led brightness: ' + led.getBrightness().toString());
+    print('Led maximum brightness: ' + led.getMaxBrightness().toString());
+    var inverse = !led.read();
+    print('Original led status: ' + (!inverse).toString());
+    print('Toggle led');
     led.write(inverse);
     sleep(Duration(seconds: 5));
     inverse = !inverse;
-    print("Toggle led");
+    print('Toggle led');
     led.write(inverse);
     sleep(Duration(seconds: 5));
-    print("Toggle led");
+    print('Toggle led');
     inverse = !inverse;
     led.write(inverse);
     sleep(Duration(seconds: 5));
-    print("Toggle led");
+    print('Toggle led');
     led.write(!inverse);
   } finally {
     led.dispose();

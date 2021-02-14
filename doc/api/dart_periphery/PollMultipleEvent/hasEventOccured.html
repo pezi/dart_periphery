@@ -100,8 +100,8 @@
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
       <pre class="language-dart"><code class="language-dart">bool hasEventOccured(GPIO gpio) {
-  int index = 0;
-  for (GPIO g in gpios) {
+  var index = 0;
+  for (var g in gpios) {
     if (g._gpioHandle == gpio._gpioHandle) {
       return eventOccured[index];
     }
@@ -121,7 +121,7 @@
 <footer>
   <span class="no-break">
     dart_periphery
-      0.7.0-beta
+      0.7.6-beta
   </span>
 
 </footer>

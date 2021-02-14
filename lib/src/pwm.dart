@@ -62,7 +62,7 @@ enum _PWMpropertyEnum {
   CHANNEL
 }
 
-// PWMproperty_t *dart_pwm_get_property(pwm_t *pwm,PWMpropertyEnum_t prop)
+// PWMproperty_t *dart_pwm_get_property(pwm_t *pwm,int prop)
 typedef _dart_pwm_get_property = Pointer<Void> Function(
     Pointer<Void> handle, Int32 prop);
 typedef _PWMgetProperty = Pointer<Void> Function(
@@ -71,7 +71,7 @@ final _nativeGetProperty = _peripheryLib
     .lookup<NativeFunction<_dart_pwm_get_property>>('dart_pwm_get_property')
     .asFunction<_PWMgetProperty>();
 
-// int dart_pwm_get_property(pwm_t *pwm,PWMpropertyEnum_t prop,PWMproperty_t *data)
+// int dart_pwm_set_property(pwm_t *pwm,PWMpropertyEnum_t prop,PWMproperty_t *data)
 typedef _dart_pwm_set_property = Int32 Function(
     Pointer<Void> handle, Int32 prop, Pointer<Void> value);
 typedef _PWMsetProperty = int Function(
@@ -131,7 +131,7 @@ final _nativeInfo = _peripheryLib
 
 int _checkError(int value) {
   if (value < 0) {
-    PWMerrorCode errorCode = getPWMerrorCode(value);
+    var errorCode = getPWMerrorCode(value);
     throw PWMexception(errorCode, errorCode.toString());
   }
   return value;
@@ -192,14 +192,12 @@ class PWM {
   /// Enables the PWM output.
   void enable() {
     _checkStatus();
-    _invalid = true;
     _checkError(_nativeEnable(_pwmHandle));
   }
 
   /// Disables the PWM output.
-  void disables() {
+  void disable() {
     _checkStatus();
-    _invalid = true;
     _checkError(_nativeDisable(_pwmHandle));
   }
 
@@ -210,15 +208,15 @@ class PWM {
   }
 
   /// Returns a string representation of the PWM handle.
-  String getLedInfo() {
+  String getPWMinfo() {
     _checkStatus();
-    final Pointer<Utf8> ptr = _nativeInfo(_pwmHandle);
+    final ptr = _nativeInfo(_pwmHandle);
     if (ptr.address == 0) {
       // throw an exception
       _checkError(getErrno());
-      return "?";
+      return '';
     }
-    String text = Utf8.fromUtf8(ptr);
+    var text = Utf8.fromUtf8(ptr);
     free(ptr);
     return text;
   }
@@ -226,12 +224,10 @@ class PWM {
   /// Gets the period in nanoseconds of the PWM.
   int getPeriodNs() {
     _checkStatus();
-    final Pointer<Int64> ptr =
-        _nativeGetProperty(_pwmHandle, _PWMpropertyEnum.PERIOD_NS.index)
-            as Pointer<Int64>;
+    final ptr = _nativeGetProperty(_pwmHandle, _PWMpropertyEnum.PERIOD_NS.index)
+        .cast<Int64>();
     try {
       return _checkError(ptr.value);
-      ;
     } finally {
       free(ptr);
     }
@@ -240,18 +236,18 @@ class PWM {
   /// Sets the period in [nanoseconds] of the PWM.
   void setPeriodNs(int nanoseconds) {
     _checkStatus();
-    Pointer<Int64> ptr = allocate<Int64>(count: 1);
+    final ptr = allocate<Int64>(count: 1);
     ptr.value = nanoseconds;
     _checkError(_nativeSetProperty(
-        _pwmHandle, _PWMpropertyEnum.PERIOD_NS.index, ptr as Pointer<Void>));
+        _pwmHandle, _PWMpropertyEnum.PERIOD_NS.index, ptr.cast<Void>()));
   }
 
   /// Gets the duty cycle in nanoseconds of the PWM.
-  int getDutyCylceNs() {
+  int getDutyCycleNs() {
     _checkStatus();
-    final Pointer<Int64> ptr =
+    final ptr =
         _nativeGetProperty(_pwmHandle, _PWMpropertyEnum.DUTY_CYCLE_NS.index)
-            as Pointer<Int64>;
+            .cast<Int64>();
     try {
       return _checkError(ptr.value);
     } finally {
@@ -260,20 +256,19 @@ class PWM {
   }
 
   /// Sets the duty cycle in [nanoseconds] of the PWM.
-  void setDutyCylcNs(int nanoseconds) {
+  void setDutyCycleNs(int nanoseconds) {
     _checkStatus();
-    Pointer<Int64> ptr = allocate<Int64>(count: 1);
+    final ptr = allocate<Int64>(count: 1);
     ptr.value = nanoseconds;
-    _checkError(_nativeSetProperty(_pwmHandle,
-        _PWMpropertyEnum.DUTY_CYCLE_NS.index, ptr as Pointer<Void>));
+    _checkError(_nativeSetProperty(
+        _pwmHandle, _PWMpropertyEnum.DUTY_CYCLE_NS.index, ptr.cast<Void>()));
   }
 
   /// Gets the period in seconds of the PWM.
   double getPeriod() {
     _checkStatus();
-    final Pointer<Double> ptr =
-        _nativeGetProperty(_pwmHandle, _PWMpropertyEnum.PERIOD.index)
-            as Pointer<Double>;
+    final ptr = _nativeGetProperty(_pwmHandle, _PWMpropertyEnum.PERIOD.index)
+        .cast<Double>();
     try {
       _checkError(ptr.value.toInt());
       return ptr.value;
@@ -285,18 +280,18 @@ class PWM {
   /// Sets the period in [seconds] of the PWM.
   void setPeriod(double seconds) {
     _checkStatus();
-    Pointer<Double> ptr = allocate<Double>(count: 1);
+    var ptr = allocate<Double>(count: 1);
     ptr.value = seconds;
     _checkError(_nativeSetProperty(
-        _pwmHandle, _PWMpropertyEnum.PERIOD.index, ptr as Pointer<Void>));
+        _pwmHandle, _PWMpropertyEnum.PERIOD.index, ptr.cast<Void>()));
   }
 
   /// Gets the duty cycle as a ratio between 0.0 to 1.0 in second of the PWM.
-  double getDutyCylce() {
+  double getDutyCycle() {
     _checkStatus();
-    final Pointer<Double> ptr =
+    final ptr =
         _nativeGetProperty(_pwmHandle, _PWMpropertyEnum.DUTY_CYCLE.index)
-            as Pointer<Double>;
+            .cast<Double>();
     try {
       _checkError(ptr.value.toInt());
       return ptr.value;
@@ -306,20 +301,20 @@ class PWM {
   }
 
   /// Sets the [dutyCycle] as a ratio between 0.0 to 1.0 in second of the PWM.
-  void setDutyCylce(double dutyCycle) {
+  void setDutyCycle(double dutyCycle) {
     _checkStatus();
-    Pointer<Double> ptr = allocate<Double>(count: 1);
+    final ptr = allocate<Double>(count: 1);
     ptr.value = dutyCycle;
     _checkError(_nativeSetProperty(
-        _pwmHandle, _PWMpropertyEnum.DUTY_CYCLE.index, ptr as Pointer<Void>));
+        _pwmHandle, _PWMpropertyEnum.DUTY_CYCLE.index, ptr.cast<Void>()));
   }
 
   /// Gets the frequency in Hz of the PWM.
   double getFrequency() {
     _checkStatus();
-    final Pointer<Double> ptr =
-        _nativeGetProperty(_pwmHandle, _PWMpropertyEnum.FREQUENCY.index)
-            as Pointer<Double>;
+    final ptr = _nativeGetProperty(_pwmHandle, _PWMpropertyEnum.FREQUENCY.index)
+        .cast<Double>();
+
     try {
       _checkError(ptr.value.toInt());
       return ptr.value;
@@ -331,18 +326,17 @@ class PWM {
   /// Sets the [frequency] in Hz of the PWM.
   void setFrequency(double frequency) {
     _checkStatus();
-    Pointer<Double> ptr = allocate<Double>(count: 1);
+    final ptr = allocate<Double>(count: 1);
     ptr.value = frequency;
     _checkError(_nativeSetProperty(
-        _pwmHandle, _PWMpropertyEnum.FREQUENCY.index, ptr as Pointer<Void>));
+        _pwmHandle, _PWMpropertyEnum.FREQUENCY.index, ptr.cast<Void>()));
   }
 
   /// Returns the polarity of the PWM.
   Polarity getPolarity() {
     _checkStatus();
-    final Pointer<Int32> ptr =
-        _nativeGetProperty(_pwmHandle, _PWMpropertyEnum.POLARITY.index)
-            as Pointer<Int32>;
+    final ptr = _nativeGetProperty(_pwmHandle, _PWMpropertyEnum.POLARITY.index)
+        as Pointer<Int32>;
     try {
       _checkError(ptr.value);
       switch (ptr.value) {
@@ -351,7 +345,7 @@ class PWM {
         case 1:
           return Polarity.PWM_POLARITY_INVERSED;
         default:
-          throw PWMexception(PWMerrorCode.PWM_ERROR_QUERY, "Unkown polarity");
+          throw PWMexception(PWMerrorCode.PWM_ERROR_QUERY, 'Unkown polarity');
       }
     } finally {
       free(ptr);
@@ -361,18 +355,17 @@ class PWM {
   /// Sets the output [polarity] of the PWM.
   void setPolarity(Polarity polarity) {
     _checkStatus();
-    Pointer<Int32> ptr = allocate<Int32>(count: 1);
+    final ptr = allocate<Int32>(count: 1);
     ptr.value = polarity.index;
     _checkError(_nativeSetProperty(
-        _pwmHandle, _PWMpropertyEnum.POLARITY.index, ptr as Pointer<Void>));
+        _pwmHandle, _PWMpropertyEnum.POLARITY.index, ptr.cast<Void>()));
   }
 
   /// Return the chip number of the PWM handle.
   int getChip() {
     _checkStatus();
-    final Pointer<Int32> ptr =
-        _nativeGetProperty(_pwmHandle, _PWMpropertyEnum.CHIP.index)
-            as Pointer<Int32>;
+    final ptr = _nativeGetProperty(_pwmHandle, _PWMpropertyEnum.CHIP.index)
+        as Pointer<Int32>;
     try {
       return _checkError(ptr.value);
     } finally {
@@ -383,9 +376,8 @@ class PWM {
   /// Returns the channel number of the PWM handle.
   int getChannel() {
     _checkStatus();
-    final Pointer<Int32> ptr =
-        _nativeGetProperty(_pwmHandle, _PWMpropertyEnum.CHANNEL.index)
-            as Pointer<Int32>;
+    final ptr = _nativeGetProperty(_pwmHandle, _PWMpropertyEnum.CHANNEL.index)
+        as Pointer<Int32>;
     try {
       return _checkError(ptr.value);
     } finally {

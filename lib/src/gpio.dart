@@ -10,6 +10,7 @@
 import 'dart:ffi';
 import 'library.dart';
 import 'package:ffi/ffi.dart';
+import 'signature.dart';
 
 enum _GPIOproperties {
   DIRECTION,
@@ -172,8 +173,8 @@ class PollMultipleEvent {
 
   /// Checks if an edge event occured for a [gpio]
   bool hasEventOccured(GPIO gpio) {
-    int index = 0;
-    for (GPIO g in gpios) {
+    var index = 0;
+    for (var g in gpios) {
       if (g._gpioHandle == gpio._gpioHandle) {
         return eventOccured[index];
       }
@@ -212,7 +213,7 @@ class GPIOconfig {
         bias = GPIObias.GPIO_BIAS_DEFAULT,
         drive = GPIOdrive.GPIO_DRIVE_DEFAULT,
         inverted = false,
-        label = "";
+        label = '';
 }
 
 /// GPIO exception
@@ -320,48 +321,22 @@ final _nativeOpenSysfs = _peripheryLib
     .asFunction<_GPIOopenSysfs>();
 
 // int dart_gpio_write(gpio_t *gpio, bool value)
-typedef _dart_gpio_write = Int32 Function(Pointer<Void>, Int32 value);
-typedef _GPIOwrite = int Function(Pointer<Void>, int value);
-final _nativeWrite = _peripheryLib
-    .lookup<NativeFunction<_dart_gpio_write>>('dart_gpio_write')
-    .asFunction<_GPIOwrite>();
+final _nativeWrite = intVoidIntM('dart_gpio_write');
 
 // int dart_gpio_read(gpio_t *gpio)
-typedef _dart_gpio_read = Int32 Function(Pointer<Void>);
-typedef _GPIOread = int Function(Pointer<Void>);
-final _nativeRead = _peripheryLib
-    .lookup<NativeFunction<_dart_gpio_read>>('dart_gpio_read')
-    .asFunction<_GPIOread>();
+final _nativeRead = intVoidM('dart_gpio_read');
 
-//
 // int dart_gpio_dispose(gpio_t *gpio)
-typedef _dart_gpio_dispose = Int32 Function(Pointer<Void> handle);
-typedef _GPIOdispose = int Function(Pointer<Void> handle);
-final _nativeDispose = _peripheryLib
-    .lookup<NativeFunction<_dart_gpio_dispose>>('dart_gpio_dispose')
-    .asFunction<_GPIOdispose>();
+final _nativeDispose = intVoidM('dart_gpio_dispose');
 
-// int dart_gpio_errno(gpio_t *gpio)
-typedef _dart_gpio_errno = Int32 Function(Pointer<Void> handle);
-typedef _GPIOerrno = int Function(Pointer<Void> handle);
-final _nativeErrno = _peripheryLib
-    .lookup<NativeFunction<_dart_gpio_errno>>('dart_gpio_errno')
-    .asFunction<_GPIOerrno>();
+// int dart_gpio_errno(gpio_t *gpio);
+final _nativeErrno = intVoidM('dart_gpio_errno');
 
 // const char *dart_gpio_errmsg(gpio_t *gpio)
-typedef _dart_gpio_errmsg = Pointer<Utf8> Function(Pointer<Void> handle);
-typedef _GPIOerrmsg = Pointer<Utf8> Function(Pointer<Void> hanlde);
-final _nativeErrmsg = _peripheryLib
-    .lookup<NativeFunction<_dart_gpio_errmsg>>('dart_gpio_errmsg')
-    .asFunction<_GPIOerrmsg>();
+final _nativeErrmsg = utf8VoidM('dart_gpio_errmsg');
 
-// int dart_gpio_get_property(gpio_t *gpio, GPIOproperty_t property)
-typedef _dart_gpio_get_property = Int32 Function(
-    Pointer<Void>, Int32 gpioProperty);
-typedef _GPIOgetProperty = int Function(Pointer<Void>, int gpioPropery);
-final _nativeGetGPIOproperty = _peripheryLib
-    .lookup<NativeFunction<_dart_gpio_get_property>>('dart_gpio_get_property')
-    .asFunction<_GPIOgetProperty>();
+// int dart_gpio_get_property(gpio_t *gpio, GPIOproperty_t property));
+final _nativeGetGPIOproperty = intVoidIntM('dart_gpio_get_property');
 
 // int dart_gpio_set_property(gpio_t *gpio, GPIOproperty_t property, int value)
 typedef _dart_gpio_set_property = Int32 Function(
@@ -382,11 +357,7 @@ final _nativeReadEvent = _peripheryLib
     .asFunction<_GPIOreadEvent>();
 
 // int dart_gpio_poll(gpio_t *gpio, int timeout_ms)
-typedef _dart_gpio_poll = Int32 Function(Pointer<Void>, Int32 timeoutMillis);
-typedef _GPIOpoll = int Function(Pointer<Void>, int timeoutMillis);
-final _nativePoll = _peripheryLib
-    .lookup<NativeFunction<_dart_gpio_poll>>('dart_gpio_poll')
-    .asFunction<_GPIOpoll>();
+final _nativePoll = intVoidIntM('dart_gpio_poll');
 
 // poll_multiple_t *dart_gpio_poll_multiple(gpio_t **gpios, size_t count, int timeout_ms)
 typedef _dart_gpio_multiple_poll = Pointer<_PoolMultiple> Function(
@@ -398,14 +369,7 @@ final _nativeMultiplePoll = _peripheryLib
     .asFunction<_GPIOmultiplePoll>();
 
 // char *dart_gpio_get_text_property(gpio_t *gpio, GPIOtextProperty_t property)
-typedef _dart_gpio_get_text_property = Pointer<Utf8> Function(
-    Pointer<Void>, Int32 property);
-typedef _GPIOgetTextProperty = Pointer<Utf8> Function(
-    Pointer<Void>, int property);
-final _nativeGetTextProperty = _peripheryLib
-    .lookup<NativeFunction<_dart_gpio_get_text_property>>(
-        'dart_gpio_get_text_property')
-    .asFunction<_GPIOgetTextProperty>();
+final _nativeGetTextProperty = utf8VoidIntM('dart_gpio_get_text_property');
 
 String _getErrmsg(Pointer<Void> handle) {
   return Utf8.fromUtf8(_nativeErrmsg(handle));
@@ -413,7 +377,7 @@ String _getErrmsg(Pointer<Void> handle) {
 
 int _checkError(int value) {
   if (value < 0) {
-    GPIOerrorCode errorCode = getGPIOerrorCode(value);
+    var errorCode = getGPIOerrorCode(value);
     throw GPIOexception(errorCode, errorCode.toString());
   }
   return value;
@@ -425,7 +389,7 @@ int _checkError(int value) {
 /// c-periphery contains Linux kernel headers older than 4.8 (i.e. linux/gpio.h is missing), then only legacy
 /// sysfs GPIOs will be supported.
 class GPIO {
-  static String _gpioBasePath = "/dev/gpiochip";
+  static String _gpioBasePath = '/dev/gpiochip';
 
   /// GPIO chip device path e.g. /dev/gpiochip0
   final String path;
@@ -477,7 +441,7 @@ class GPIO {
   /// Use [GPIO.setBaseGPIOpath] to change the default character device path.
   GPIO(this.line, this.direction, [this.chip = 0])
       : path = _gpioBasePath + chip.toString(),
-        name = "" {
+        name = '' {
     _gpioHandle =
         _checkHandle(_nativeOpen(Utf8.toUtf8(path), line, direction.index));
   }
@@ -497,7 +461,7 @@ class GPIO {
   /// to change the default character device path.
   GPIO.advanced(this.line, GPIOconfig config, [this.chip = 0])
       : path = _gpioBasePath + chip.toString(),
-        name = "",
+        name = '',
         direction = config.direction {
     _gpioHandle = _checkHandle(_nativeOpenAdvanced(
         Utf8.toUtf8(path),
@@ -531,8 +495,8 @@ class GPIO {
   /// Opens the sysfs GPIO with the specified [line] and [direction].
   GPIO.sysfs(this.line, this.direction)
       : chip = -1,
-        path = "",
-        name = "" {
+        path = '',
+        name = '' {
     _gpioHandle = _checkHandle(
         _nativeOpenSysfs(Utf8.toUtf8(path), line, direction.index));
   }
@@ -543,19 +507,17 @@ class GPIO {
   /// [timeoutMillis] can be positive for a timeout in milliseconds, zero for a non-blocking poll, or
   /// negative for a blocking poll. Returns a [PollMultipleEvent()]
   static PollMultipleEvent pollMultiple(List<GPIO> gpios, int timeoutMillis) {
-    final Pointer<Pointer<Void>> ptr =
-        allocate<Pointer<Void>>(count: gpios.length);
-    int index = 0;
-    for (GPIO g in gpios) {
+    final ptr = allocate<Pointer<Void>>(count: gpios.length);
+    var index = 0;
+    for (var g in gpios) {
       g._checkStatus();
       ptr.elementAt(index++).value = g._gpioHandle;
     }
-    Pointer<_PoolMultiple> result =
-        _nativeMultiplePoll(ptr, gpios.length, timeoutMillis);
+    var result = _nativeMultiplePoll(ptr, gpios.length, timeoutMillis);
     try {
       _checkError(result.ref.result);
-      List<bool> list = [];
-      for (int i = 0; i < gpios.length; ++i) {
+      var list = <bool>[];
+      for (var i = 0; i < gpios.length; ++i) {
         list.add(result.ref.ready.elementAt(index).value == 1 ? true : false);
       }
       return PollMultipleEvent(gpios, result.ref.result, list);
@@ -577,7 +539,7 @@ class GPIO {
   /// Reads the state of the GPIO line.
   bool read() {
     _checkStatus();
-    int error = _nativeRead(_gpioHandle);
+    var error = _nativeRead(_gpioHandle);
     _checkError(error);
     return error == 0 ? false : true;
   }
@@ -587,7 +549,7 @@ class GPIO {
   /// For sysfs GPIOs, the edge event should be consumed with [GPIO.read].
   GPIOpolling poll(int timeoutMillis) {
     _checkStatus();
-    int error = _nativePoll(_gpioHandle, timeoutMillis);
+    var error = _nativePoll(_gpioHandle, timeoutMillis);
     _checkError(error);
     return error == 0 ? GPIOpolling.SUCCESS : GPIOpolling.TIMEOUT;
   }
@@ -596,10 +558,10 @@ class GPIO {
   /// This method is intended for use with character device GPIOs and is unsupported by sysfs GPIOs.
   GPIOreadEvent readEvent(int timeoutMillis) {
     _checkStatus();
-    Pointer<_ReadEvent> event = _nativeReadEvent(_gpioHandle, timeoutMillis);
+    var event = _nativeReadEvent(_gpioHandle, timeoutMillis);
     try {
       _checkError(event.ref.error_code);
-      GPIOreadEvent result = GPIOreadEvent(event.ref);
+      var result = GPIOreadEvent(event.ref);
       return result;
     } finally {
       free(event);
@@ -710,13 +672,13 @@ class GPIO {
 
   String _getTextProperty(_GPIOtextProperty prop) {
     _checkStatus();
-    final Pointer<Utf8> ptr = _nativeGetTextProperty(_gpioHandle, prop.index);
+    final ptr = _nativeGetTextProperty(_gpioHandle, prop.index);
     if (ptr.address == 0) {
       // throw an exception
       _checkError(getErrno());
-      return "?";
+      return '?';
     }
-    String text = Utf8.fromUtf8(ptr);
+    var text = Utf8.fromUtf8(ptr);
     free(ptr);
     return text;
   }

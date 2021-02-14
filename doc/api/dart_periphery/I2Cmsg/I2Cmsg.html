@@ -103,8 +103,7 @@ as additional options selected by the bitwise OR of their bitmasks.</p>
     
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
-      <pre class="language-dart"><code class="language-dart">I2Cmsg(this.addr, List&lt;I2CmsgFlags&gt; this.flags, this.len)
-    : predefined = const [];</code></pre>
+      <pre class="language-dart"><code class="language-dart">I2Cmsg(this.addr, this.flags, this.len) : predefined = const [];</code></pre>
     </section>
 
   </div> <!-- /.main-content -->
@@ -117,7 +116,7 @@ as additional options selected by the bitwise OR of their bitmasks.</p>
 <footer>
   <span class="no-break">
     dart_periphery
-      0.7.0-beta
+      0.7.6-beta
   </span>
 
 </footer>

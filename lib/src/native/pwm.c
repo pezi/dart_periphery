@@ -72,36 +72,36 @@ typedef union PWMproperty {
     int intValue;
 } PWMproperty_t;
 
-int dart_pwm_get_property(pwm_t *pwm,PWMpropertyEnum_t prop,PWMproperty_t *data) {
+int dart_pwm_set_property(pwm_t *pwm,PWMpropertyEnum_t prop, PWMproperty_t *data) {
     int value = 0;
     switch(prop) {
         case PERIOD_NS:
             value = pwm_set_period_ns(pwm,data->longValue);
             break;
          case DUTY_CYCLE_NS:
-            value = pwm_set_duty_cycle_ns(pwm,data->longValue); 
+            value = pwm_set_duty_cycle_ns(pwm,data->longValue);
             break;
         case PERIOD:
             value = pwm_set_period(pwm,data->doubleValue);
             break;
         case DUTY_CYCLE:
-            value = pwm_set_duty_cycle(pwm,data->doubleValue); 
+            value = pwm_set_duty_cycle(pwm,data->doubleValue);
             break;
         case FREQUENCY:
-            value = pwm_set_frequency(pwm,data->doubleValue); 
+            value = pwm_set_frequency(pwm,data->doubleValue);
             break;
         case POLARITY:
-            value = pwm_set_polarity(pwm,data->intValue); 
-            break;  
+            value = pwm_set_polarity(pwm,data->intValue);
+            break;
         case CHIP:
         case CHANNEL:
             break;
     }
-    free(data);
-    return value;           
+    return value;
 }
 
-PWMproperty_t *dart_pwm_set_property(pwm_t *pwm,PWMpropertyEnum_t prop) {
+
+PWMproperty_t *dart_pwm_get_property(pwm_t *pwm,PWMpropertyEnum_t prop) {
     PWMproperty_t *value = (PWMproperty_t *)malloc(sizeof(PWMproperty_t));
     int error = 0;
     uint64_t ns;

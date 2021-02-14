@@ -111,6 +111,9 @@
 (<wbr>)
       
     </section>
+    <section class="desc markdown">
+      <p>Returns a <a href="../../dart_periphery/BME280result-class.html">BME280result</a></p>
+    </section>
     
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
@@ -128,30 +131,28 @@
   &#47;&#47; Read 8 bytes of data from address 0xF7(247)
   &#47;&#47; pressure msb1, pressure msb, pressure lsb, temp msb1, temp msb, temp lsb,
   &#47;&#47; humidity lsb, humidity msb
-  List&lt;int&gt; data = device.readBytesReg(i2cAddress, 0xF7, 8);
+  final data = device.readBytesReg(i2cAddress, 0xF7, 8);
 
   &#47;&#47; Convert pressure and temperature data to 19-bits
-  int adc_p = (((data[0] &amp; 0xFF) * 65536) +
+  final adc_p = (((data[0] &amp; 0xFF) * 65536) +
           ((data[1] &amp; 0xFF) * 256) +
           (data[2] &amp; 0xF0)) &gt;&gt;
       4;
-  int adc_t = (((data[3] &amp; 0xFF) * 65536) +
+  var adc_t = (((data[3] &amp; 0xFF) * 65536) +
           ((data[4] &amp; 0xFF) * 256) +
           (data[5] &amp; 0xF0)) &gt;&gt;
       4;
   &#47;&#47; Convert the humidity data
-  int adc_h = ((data[6] &amp; 0xFF) * 256 + (data[7] &amp; 0xFF));
+  var adc_h = ((data[6] &amp; 0xFF) * 256 + (data[7] &amp; 0xFF));
 
   &#47;&#47; Temperature offset calculations
-  double var1 =
-      ((adc_t.toDouble()) &#47; 16384.0 - (dig_T1.toDouble()) &#47; 1024.0) *
-          (dig_T2.toDouble());
-  double var2 = (((adc_t.toDouble()) &#47; 131072.0 -
-              (dig_T1.toDouble()) &#47; 8192.0) *
+  var var1 = ((adc_t.toDouble()) &#47; 16384.0 - (dig_T1.toDouble()) &#47; 1024.0) *
+      (dig_T2.toDouble());
+  var var2 = (((adc_t.toDouble()) &#47; 131072.0 - (dig_T1.toDouble()) &#47; 8192.0) *
           ((adc_t.toDouble()) &#47; 131072.0 - (dig_T1.toDouble()) &#47; 8192.0)) *
       (dig_T3.toDouble());
-  double t_fine = (var1 + var2).truncateToDouble();
-  double cTemp = (var1 + var2) &#47; 5120.0;
+  var t_fine = (var1 + var2).truncateToDouble();
+  var cTemp = (var1 + var2) &#47; 5120.0;
 
   &#47;&#47; Pressure offset calculations
   var1 = (t_fine.toDouble() &#47; 2.0) - 64000.0;
@@ -162,14 +163,14 @@
           (dig_P2.toDouble()) * var1) &#47;
       524288.0;
   var1 = (1.0 + var1 &#47; 32768.0) * (dig_P1.toDouble());
-  double p = 1048576.0 - adc_p.toDouble();
+  var p = 1048576.0 - adc_p.toDouble();
   p = (p - (var2 &#47; 4096.0)) * 6250.0 &#47; var1;
   var1 = (dig_P9.toDouble()) * p * p &#47; 2147483648.0;
   var2 = p * (dig_P8.toDouble()) &#47; 32768.0;
-  double pressure = (p + (var1 + var2 + (dig_P7.toDouble())) &#47; 16.0) &#47; 100;
+  var pressure = (p + (var1 + var2 + (dig_P7.toDouble())) &#47; 16.0) &#47; 100;
 
   &#47;&#47; Humidity offset calculations
-  double var_H = ((t_fine) - 76800.0);
+  var var_H = ((t_fine) - 76800.0);
   var_H = (adc_h - (dig_H4 * 64.0 + dig_H5 &#47; 16384.0 * var_H)) *
       (dig_H2 &#47;
           65536.0 *
@@ -178,14 +179,14 @@
                   67108864.0 *
                   var_H *
                   (1.0 + dig_H3 &#47; 67108864.0 * var_H)));
-  double humidity = var_H * (1.0 - dig_H1 * var_H &#47; 524288.0);
+  var humidity = var_H * (1.0 - dig_H1 * var_H &#47; 524288.0);
   if (humidity &gt; 100.0) {
     humidity = 100.0;
   } else if (humidity &lt; 0.0) {
     humidity = 0.0;
   }
 
-  return new BME280result(cTemp, pressure, humidity);
+  return BME280result(cTemp, pressure, humidity);
 }</code></pre>
     </section>
 
@@ -199,7 +200,7 @@
 <footer>
   <span class="no-break">
     dart_periphery
-      0.7.0-beta
+      0.7.6-beta
   </span>
 
 </footer>

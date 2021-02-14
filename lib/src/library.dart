@@ -1,13 +1,17 @@
-import "package:system_info/system_info.dart";
+// Copyright (c) 2021, the Dart project authors.  Please see the AUTHORS file
+// for details. All rights reserved. Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
+
+import 'package:system_info/system_info.dart';
 import 'dart:ffi';
 import 'dart:io';
 import 'dart:convert';
-import 'package:ffi/ffi.dart';
-import "package:path/path.dart";
+// import 'package:ffi/ffi.dart';
+import 'package:path/path.dart';
 
 const pkgName = 'dart_periphery';
 
-const String version = "1.0.0";
+const String version = '1.0.0';
 
 String staticLib =
     'dart_periphery_static_${SysInfo.userSpaceBitness}.${version}.so';
@@ -16,10 +20,10 @@ String sharedLib = 'dart_periphery_${SysInfo.userSpaceBitness}.${version}.so';
 String library = staticLib;
 
 DynamicLibrary _peripheryLib;
-String _peripheryLibPath = "";
+String _peripheryLibPath = '';
 
 /// Build a file path.
-String toFilePath(String parent, String path, {bool windows}) {
+String toFilePath(String parent, String path, {bool windows = false}) {
   var uri = Uri.parse(path);
   path = uri.toFilePath(windows: windows);
   if (isRelative(path)) {
@@ -29,7 +33,7 @@ String toFilePath(String parent, String path, {bool windows}) {
 }
 
 /// Find our package path in the current project
-String findPackagePath(String currentPath, {bool windows}) {
+String findPackagePath(String currentPath, {bool windows = false}) {
   String findPath(File file) {
     var lines = LineSplitter.split(file.readAsStringSync());
     for (var line in lines) {
@@ -58,6 +62,7 @@ String findPackagePath(String currentPath, {bool windows}) {
 }
 
 class PlatformException implements Exception {
+  @override
   String toString() => 'dart_periphery is only supported for Linux';
 }
 
@@ -72,8 +77,8 @@ void setCustomLibrary(String absolutePath) {
 }
 
 /// dart_periphery loads the static or the shared library in the actual directory.
-void useLocalLibrary([bool staticLib = true]) {
-  _peripheryLibPath = './' + (!staticLib ? sharedLib : staticLib);
+void useLocalLibrary([bool staticLibFlag = true]) {
+  _peripheryLibPath = './' + (!staticLibFlag ? sharedLib : staticLib);
 }
 
 DynamicLibrary getPeripheryLib() {
@@ -81,15 +86,13 @@ DynamicLibrary getPeripheryLib() {
     throw PlatformException();
   }
   String path;
-  if (!_peripheryLibPath.isEmpty) {
+  if (_peripheryLibPath.isNotEmpty) {
     path = _peripheryLibPath;
   } else {
     var location = findPackagePath(Directory.current.path);
     path = normalize(join(location, 'src', 'native', library));
   }
 
-  if (_peripheryLib == null) {
-    _peripheryLib = DynamicLibrary.open(path.toString());
-  }
+  _peripheryLib ??= DynamicLibrary.open(path.toString());
   return _peripheryLib;
 }
