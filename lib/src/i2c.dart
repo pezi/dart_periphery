@@ -11,6 +11,7 @@ import 'dart:ffi';
 import 'library.dart';
 import 'package:ffi/ffi.dart';
 import 'signature.dart';
+import 'hardware/util.dart';
 
 /*
     #define I2C_M_TEN		0x0010
@@ -307,6 +308,8 @@ class I2C {
   }
 
   /// Writes a [byteValue] to the I2C device with the [address].
+  ///
+  /// Some I2C devices can directly be written without an explizit register.
   void writeByte(int address, int byteValue) {
     var data = <I2Cmsg>[];
     data.add(I2Cmsg.buffer(address, [], [byteValue]));
@@ -317,39 +320,110 @@ class I2C {
   /// Writes a [byteValue] to the [register] of the I2C device with the [address].
   void writeByteReg(int address, int register, int byteValue) {
     var data = <I2Cmsg>[];
-    data.add(I2Cmsg.buffer(address, [], [register]));
-    data.add(I2Cmsg.buffer(address, [], [byteValue]));
+    data.add(I2Cmsg.buffer(address, [], [register, byteValue]));
     var result = transfer(data);
     result.dispose();
   }
 
-  /// Writes a list of [byteValue] to the [register] of the I2C device with the [address].
-  void writeBytesReg(int address, int register, List<int> byteValue) {
+  /// Writes [byteData] to the [register] of the I2C device with the [address].
+  void writeBytesReg(int address, int register, List<int> byteData) {
     var data = <I2Cmsg>[];
-    data.add(I2Cmsg.buffer(address, [], [register]));
-    data.add(I2Cmsg.buffer(address, [], byteValue));
+    var bData = <int>[];
+    bData.add(register);
+    bData.addAll(byteData);
+    data.add(I2Cmsg.buffer(address, [], bData));
     var result = transfer(data);
     result.dispose();
   }
 
-  /// Writes a [wordValue] to the I2C device with the [address].
-  void writeWord(int address, int wordValue) {
+  /// Writes [byteData] to the I2C device with the [address].
+  ///
+  /// Some I2C devices can directly be written without an explizit register.
+  void writeBytes(int address, List<int> byteData) {
     var data = <I2Cmsg>[];
-    data.add(I2Cmsg.buffer(address, [], [wordValue | 0xff, wordValue >> 8]));
+    data.add(I2Cmsg.buffer(address, [], byteData));
     var result = transfer(data);
     result.dispose();
   }
 
-  /// Writes a [wordValue] to the [register] of the I2C device with the [address].
-  void writeWordReg(int address, int register, int wordValue) {
+  /// Writes a [wordValue] to the I2C device with the [address]. Default [BitOrder order = BitOrder.MSB_LAST].
+  ///
+  /// Some I2C devices can directly be written without an explizit register.
+  void writeWord(int address, int wordValue,
+      [BitOrder order = BitOrder.MSB_LAST]) {
     var data = <I2Cmsg>[];
-    data.add(I2Cmsg.buffer(address, [], [register]));
-    data.add(I2Cmsg.buffer(address, [], [wordValue | 0xff, wordValue >> 8]));
+    var array = <int>[];
+    if (order == BitOrder.MSB_LAST) {
+      array = [wordValue | 0xff, wordValue >> 8];
+    } else {
+      array = [wordValue >> 8, wordValue | 0xff];
+    }
+    data.add(I2Cmsg.buffer(address, [], array));
     var result = transfer(data);
     result.dispose();
+  }
+
+  /// Writes a [wordValue] to the [register] of the I2C device with the [address]. Default [BitOrder order = BitOrder.MSB_LAST].
+  ///
+  /// The bit order depends on the I2C device.
+  void writeWordReg(int address, int register, int wordValue,
+      [BitOrder order = BitOrder.MSB_LAST]) {
+    var data = <I2Cmsg>[];
+    var array = <int>[];
+    array.add(register);
+    if (order == BitOrder.MSB_LAST) {
+      array.add(wordValue | 0xff);
+      array.add(wordValue >> 8);
+    } else {
+      array.add(wordValue >> 8);
+      array.add(wordValue | 0xff);
+    }
+    data.add(I2Cmsg.buffer(address, [], array));
+    var result = transfer(data);
+    result.dispose();
+  }
+
+  /// Reads a word from the I2C device with the [address]. Default [BitOrder order = BitOrder.MSB_LAST].
+  ///
+  /// Some I2C devices can directly be written without an explizit register. The bit order depends on the I2C device.
+  int readWord(int address, [BitOrder order = BitOrder.MSB_LAST]) {
+    var data = <I2Cmsg>[];
+    data.add(I2Cmsg(address, [I2CmsgFlags.I2C_M_RD], 2));
+    var result = transfer(data);
+    try {
+      var ptr = result._messages.elementAt(0).ref.buf;
+      var value = (ptr.elementAt(order == BitOrder.MSB_LAST ? 0 : 1).value &
+              0xff) |
+          (ptr.elementAt(order == BitOrder.MSB_LAST ? 1 : 0).value & 0xff) << 8;
+      return value;
+    } finally {
+      result.dispose();
+    }
+  }
+
+  /// Reads a word from [register] of the I2C device with the [address]. Default [BitOrder order = BitOrder.MSB_LAST].
+  ///
+  /// The bit order depends on the I2C device.
+  int readWordReg(int address, int register,
+      [BitOrder order = BitOrder.MSB_LAST]) {
+    var data = <I2Cmsg>[];
+    data.add(I2Cmsg.buffer(address, [], [register]));
+    data.add(I2Cmsg(address, [I2CmsgFlags.I2C_M_RD], 2));
+    var result = transfer(data);
+    try {
+      var ptr = result._messages.elementAt(0).ref.buf;
+      var value = (ptr.elementAt(order == BitOrder.MSB_LAST ? 0 : 1).value &
+              0xff) |
+          (ptr.elementAt(order == BitOrder.MSB_LAST ? 1 : 0).value & 0xff) << 8;
+      return value;
+    } finally {
+      result.dispose();
+    }
   }
 
   /// Reads a byte from the I2C device with the [address].
+  ///
+  /// Some I2C devices can directly be read without explizit register.
   int readByte(int address) {
     var data = <I2Cmsg>[];
     data.add(I2Cmsg(address, [I2CmsgFlags.I2C_M_RD], 1));
@@ -379,27 +453,34 @@ class I2C {
     }
   }
 
-  /// Reads a word from the I2C device with the [address].
-  int readWord(int address) {
-    var data = <I2Cmsg>[];
-    data.add(I2Cmsg(address, [I2CmsgFlags.I2C_M_RD], 2));
-    var result = transfer(data);
-    try {
-      var ptr = result._messages.elementAt(0).ref.buf;
-      var value = (ptr.elementAt(0).value & 0xff) |
-          (ptr.elementAt(1).value & 0xff) << 8;
-      return value;
-    } finally {
-      result.dispose();
-    }
-  }
-
-  /// Reads a [len] bytes from [register] of the I2C device with the [address].
+  /// Reads [len] bytes from [register] of the I2C device with the [address].
+  ///
+  /// Some I2C devices can directly be read without explizit register.
   List<int> readBytesReg(int address, int register, int len) {
     var data = <I2Cmsg>[];
     data.add(I2Cmsg.buffer(address, [], [register]));
     data.add(I2Cmsg(address, [I2CmsgFlags.I2C_M_RD], len));
 
+    var result = transfer(data);
+    var msg2 = result._messages.elementAt(1).ref;
+    try {
+      var read = msg2.len;
+
+      var ptr = msg2.buf;
+      var list = <int>[];
+      for (var i = 0; i < read; ++i) {
+        list.add(ptr.elementAt(i).value);
+      }
+      return list;
+    } finally {
+      result.dispose();
+    }
+  }
+
+  /// Reads [len] bytes from [register] of the I2C device with the [address].
+  List<int> readBytes(int address, int len) {
+    var data = <I2Cmsg>[];
+    data.add(I2Cmsg(address, [I2CmsgFlags.I2C_M_RD], len));
     var result = transfer(data);
     var msg2 = result._messages.elementAt(1).ref;
     try {

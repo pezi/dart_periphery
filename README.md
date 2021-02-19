@@ -1,4 +1,5 @@
 
+
 # dart_periphery
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
@@ -7,6 +8,8 @@
 
 **dart_periphery** is a Dart port of the native [c-periphery library](https://github.com/vsergeev/c-periphery)
   for Linux Peripheral I/O (GPIO, LED, PWM, SPI, I2C, MMIO and Serial peripheral I/O). This package is specially intended for SoCs like Raspberry Pi, Nano Pi, Banana Pi et al.
+
+Go to [https://pub.dev/packages/dart_periphery](https://pub.dev/packages/dart_periphery) to import this package.
 
 ### What is c-periphery?  
 
@@ -37,6 +40,7 @@ The number of GPIO libraries/interfaces is becoming increasingly smaller.
 
 * GPIO
 * I2C
+* SPI 
 * Serial
 * PWM
 * Led (onboard leds)
@@ -54,7 +58,7 @@ import 'dart:io';
 void main() {
   var config = GPIOconfig();
   config.direction = GPIOdirection.GPIO_DIR_OUT;
-  print('Native c-periphery Version : ' + getCperipheryVersion());
+  print('Native c-periphery Version :  ${getCperipheryVersion()}');
   print('GPIO test');
   var gpio = GPIO(18, GPIOdirection.GPIO_DIR_OUT);
   var gpio2 = GPIO(16, GPIOdirection.GPIO_DIR_OUT);
@@ -62,11 +66,11 @@ void main() {
 
   print('GPIO info: ' + gpio.getGPIOinfo());
 
-  print('GPIO native file handle: ' + gpio.getGPIOfd().toString());
-  print('GPIO chip name: ' + gpio.getGPIOchipName());
-  print('GPIO chip label: ' + gpio.getGPIOchipLabel());
-  print('GPIO chip name: ' + gpio.getGPIOchipName());
-  print('CPIO chip label: ' + gpio.getGPIOchipLabel());
+  print('GPIO native file handle: ${gpio.getGPIOfd()}');
+  print('GPIO chip name: ${gpio.getGPIOchipName()}');
+  print('GPIO chip label: ${gpio.getGPIOchipLabel()}');
+  print('GPIO chip name: ${gpio.getGPIOchipName()}');
+  print('CPIO chip label: ${gpio.getGPIOchipLabel()}');
 
   for (var i = 0; i < 10; ++i) {
     gpio.write(true);
@@ -83,6 +87,7 @@ void main() {
   gpio2.dispose();
   gpio3.dispose();
 }
+
 ```
 
 ### I2C
@@ -92,20 +97,44 @@ void main() {
 ``` dart
 import 'package:dart_periphery/dart_periphery.dart';
 
-/// https://wiki.seeedstudio.com/Grove-Barometer_Sensor-BME280/
-/// Grove - Temp&Humi&Barometer Sensor (BME280) is a breakout board for Bosch BMP280 high-precision,
-/// low-power combined humidity, pressure, and temperature sensor
+/// https://wiki.seeedstudio.com/Grove-TempAndHumi_Sensor-SHT31/
+/// Grove - Temp&Humi Sensor(SHT31) is a highly reliable, accurate, quick response and
+/// integrated temperature & humidity sensor.
 void main() {
-  // Select the right I2C bus number /dev/i2c-0
-  // 1 for Raspbery Pi, 0 for NanoPi
+  // Select the right I2C bus number /dev/i2c-?
+  // 1 for Raspbery Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
   var i2c = I2C(1);
   try {
     print('I2C info:' + i2c.getI2Cinfo());
     var bme280 = BME280(i2c);
     var r = bme280.getValues();
-    print('Temperature [°] ' + r.temperature.toStringAsFixed(1));
-    print('Humidity [%] ' + r.humidity.toStringAsFixed(1));
-    print('Pressure [hPa] ' + r.pressure.toStringAsFixed(1));
+    print('Temperature [°] ${r.temperature.toStringAsFixed(1)}');
+    print('Humidity [%] ${r.humidity.toStringAsFixed(1)}');
+    print('Pressure [hPa] ${r.pressure.toStringAsFixed(1)}');
+  } finally {
+    i2c.dispose();
+  }
+}
+```
+
+``` dart
+import 'package:dart_periphery/dart_periphery.dart';
+
+/// Grove - Temp&Humi Sensor(SHT31) is a highly reliable, accurate, 
+/// quick response and integrated temperature & humidity sensor.
+void main() {
+  // Select the right I2C bus number /dev/i2c-?
+  // 1 for Raspbery Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
+  var i2c = I2C(1);
+  try {
+    var sht31 = SHT31(i2c);
+    print(sht31.getStatus());
+    print('Serial number ${sht31.getSerialNumber()}');
+    print('Sensor heater active: ${sht31.isHeaterOn()}');
+
+    var r = sht31.getValues();
+    print('SHT31 [t°] ${r.temperature.toStringAsFixed(2)}');
+    print('SHT31 [%°] ${r.humidity.toStringAsFixed(2)}');
   } finally {
     i2c.dispose();
   }
@@ -117,21 +146,21 @@ void main() {
 ``` dart
 import 'package:dart_periphery/dart_periphery.dart';
 
-/// https://wiki.seeedstudio.com/Grove-Barometer_Sensor-BME280/
-/// Grove - Temp&Humi&Barometer Sensor (BME280) is a breakout board for Bosch BMP280 high-precision,
-/// low-power combined humidity, pressure, and temperature sensor
 void main() {
+  // Select the right I2C bus number /dev/i2c-0
+  // 1 for Raspbery Pi, 0 for NanoPi
   var spi = SPI(0, 0, SPImode.MODE0, 1000000);
   try {
     print('SPI info:' + spi.getSPIinfo());
     var bme280 = BME280.spi(spi);
     var r = bme280.getValues();
-    print('Temperature [°] ' + r.temperature.toStringAsFixed(1));
-    print('Humidity [%] ' + r.humidity.toStringAsFixed(1));
-    print('Pressure [hPa] ' + r.pressure.toStringAsFixed(1));
+    print('Temperature [°] ${r.temperature.toStringAsFixed(1)}');
+    print('Humidity [%] ${r.humidity.toStringAsFixed(1)}');
+    print('Pressure [hPa] ${r.pressure.toStringAsFixed(1)}');
   } finally {
     spi.dispose();
   }
+}
 ````
 
 ### Serial
@@ -162,7 +191,7 @@ void main() {
     s.writeString('K 2\r\n');
     // print any response
     event = s.read(256, 1000);
-    print('Response ' + event.toString());
+    print('Response ${event.toString()}');
     sleep(Duration(seconds: 1));
     for (var i = 0; i < 5; ++i) {
       s.writeString('Q\r\n');
@@ -182,17 +211,16 @@ void main() {
 import 'package:dart_periphery/dart_periphery.dart';
 import 'dart:io';
 
-
 void main() {
   /// Nano Pi power led - see 'ls /sys/class/leds/'
   var led = Led('nanopi:red:pwr');
   try {
-    print('Led handle: ' + led.getLedInfo());
-    print('Led name: ' + led.getLedName());
-    print('Led brightness: ' + led.getBrightness().toString());
-    print('Led maximum brightness: ' + led.getMaxBrightness().toString());
+    print('Led handle: ${led.getLedInfo()}');
+    print('Led name: ${led.getLedName()}');
+    print('Led brightness: ${led.getBrightness()}');
+    print('Led maximum brightness: ${led.getMaxBrightness()}');
     var inverse = !led.read();
-    print('Original led status: ' + (!inverse).toString());
+    print('Original led status: ${(!inverse)}');
     print('Toggle led');
     led.write(inverse);
     sleep(Duration(seconds: 5));
@@ -351,16 +379,19 @@ to use the static or shared glue library with the correct bitness. The appropria
 
 Raspberry Pi 3 Model B (Raspian)
 
-[Nano Pi](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO)
+[Nano Pi](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO) with a Allwinner H3, Quad-core 32-bit CPU
 with [Armbian](https://www.armbian.com/)
 
-[Nano Pi Neo2](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO2) with a Allwinner H5, Quad-core 64-bit CPU with [Armbian](https://www.armbian.com/)
+[Nano Pi Neo2](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO2) with a Allwinner H5, Quad-core 64-bit CPU, OS: [Armbian](https://www.armbian.com/)
+
+[Banana Pi BPI-M1](https://en.wikipedia.org/wiki/Banana_Pi#Banana_Pi_BPI-M1) with a Allwinner A20 Dual-core, 
+OS: [Armbian](https://www.armbian.com/)
+
 
 ## Next steps
 
 Port the missing c-periphery bindings
 
-* SPI
 * MMIO
 
 Improvemnts

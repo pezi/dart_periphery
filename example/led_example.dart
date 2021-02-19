@@ -9,12 +9,12 @@ void main() {
   /// Nano Pi power led - see 'ls /sys/class/leds/'
   var led = Led('nanopi:red:pwr');
   try {
-    print('Led handle: ' + led.getLedInfo());
-    print('Led name: ' + led.getLedName());
-    print('Led brightness: ' + led.getBrightness().toString());
-    print('Led maximum brightness: ' + led.getMaxBrightness().toString());
+    print('Led handle: ${led.getLedInfo()}');
+    print('Led name: ${led.getLedName()}');
+    print('Led brightness: ${led.getBrightness()}');
+    print('Led maximum brightness: ${led.getMaxBrightness()}');
     var inverse = !led.read();
-    print('Original led status: ' + (!inverse).toString());
+    print('Original led status: ${(!inverse)}');
     print('Toggle led');
     led.write(inverse);
     sleep(Duration(seconds: 5));

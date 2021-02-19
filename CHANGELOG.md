@@ -1,3 +1,9 @@
+## 0.8.3-beta 2021-02-18
+
+* Add SHT31 sensor support - temperature and humidity
+* Fix BME280 error
+* Fix i2c writeXXXReg implementation  
+
 ## 0.8.0-beta 2021-02-14
 
 * Release SPI support

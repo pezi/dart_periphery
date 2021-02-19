@@ -47,13 +47,22 @@ export 'src/i2c.dart'
         getI2CerrorCode,
         I2Cexception,
         I2C;
-export 'src/spi.dart'
-    show SPI, SPImode, SPIexception, getSPIerrorCode, BitOrder;
-export 'src/bme280.dart'
+export 'src/spi.dart' show SPI, SPImode, SPIexception, getSPIerrorCode;
+export 'src/hardware/util.dart' show BitOrder;
+export 'src/hardware/bme280.dart'
     show
         BME280result,
         BME280,
         BME280model,
         BME280exception,
         BMP280_ID,
-        BME280_ID;
+        BME280_ID,
+        BME280_DEFAULT_I2C_ADDRESS,
+        BME280_ALTERNATIVE_I2C_ADDRESS;
+export 'src/hardware/sht31.dart'
+    show
+        SHT31,
+        SHT31result,
+        SHT31excpetion,
+        SHT31_ALTERNATIE_I2C_ADDRESS,
+        SHT31_DEFAULT_I2C_ADDRESS;

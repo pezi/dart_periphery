@@ -8,7 +8,7 @@ import 'dart:io';
 void main() {
   var config = GPIOconfig();
   config.direction = GPIOdirection.GPIO_DIR_OUT;
-  print('Native c-periphery Version : ' + getCperipheryVersion());
+  print('Native c-periphery Version :  ${getCperipheryVersion()}');
   print('GPIO test');
   var gpio = GPIO(18, GPIOdirection.GPIO_DIR_OUT);
   var gpio2 = GPIO(16, GPIOdirection.GPIO_DIR_OUT);
@@ -16,11 +16,11 @@ void main() {
 
   print('GPIO info: ' + gpio.getGPIOinfo());
 
-  print('GPIO native file handle: ' + gpio.getGPIOfd().toString());
-  print('GPIO chip name: ' + gpio.getGPIOchipName());
-  print('GPIO chip label: ' + gpio.getGPIOchipLabel());
-  print('GPIO chip name: ' + gpio.getGPIOchipName());
-  print('CPIO chip label: ' + gpio.getGPIOchipLabel());
+  print('GPIO native file handle: ${gpio.getGPIOfd()}');
+  print('GPIO chip name: ${gpio.getGPIOchipName()}');
+  print('GPIO chip label: ${gpio.getGPIOchipLabel()}');
+  print('GPIO chip name: ${gpio.getGPIOchipName()}');
+  print('CPIO chip label: ${gpio.getGPIOchipLabel()}');
 
   for (var i = 0; i < 10; ++i) {
     gpio.write(true);

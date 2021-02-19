@@ -11,6 +11,7 @@ import 'dart:ffi';
 import 'library.dart';
 import 'package:ffi/ffi.dart';
 import 'signature.dart';
+import 'hardware/util.dart';
 
 enum _SPIproperty {
   MODE,
@@ -50,8 +51,6 @@ enum SPIerrorCode {
 }
 
 enum SPImode { MODE0, MODE1, MODE2, MODE3 }
-
-enum BitOrder { MSB_FIRST, MSB_LAST }
 
 /// SPI exception
 class SPIexception implements Exception {
