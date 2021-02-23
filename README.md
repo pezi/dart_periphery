@@ -1,8 +1,8 @@
 
-
 # dart_periphery
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
+
 
 ## Important hint for Dart user
 
@@ -11,8 +11,7 @@ Go to [https://pub.dev/packages/dart_periphery](https://pub.dev/packages/dart_pe
 ## Introduction
 
 **dart_periphery** is a Dart port of the native [c-periphery library](https://github.com/vsergeev/c-periphery)
-  for Linux Peripheral I/O (GPIO, LED, PWM, SPI, I2C, MMIO and Serial peripheral I/O). This package is specially intended for SoCs like Raspberry Pi, Nano Pi, Banana Pi et al.
-
+  for Linux Peripheral I/O (GPIO, LED, PWM, SPI, I2C, MMIO and Serial peripheral I/O). This package is specially intended for SoCs like Raspberry Pi, NanoPi, Banana Pi et al.
 
 ### What is c-periphery?  
 
@@ -30,20 +29,20 @@ Abstract from the project web site:
 >
 >interface access in userspace Linux. c-periphery simplifies and consolidates the native Linux APIs to these interfaces. c-periphery is useful in embedded Linux environments (including Raspberry Pi, BeagleBone, etc. platforms) for interfacing with external peripherals. c-periphery is re-entrant, has no dependencies outside the standard C library and Linux, compiles into a static library for easy integration with other projects, and is MIT licensed
 
-**dart_periphery** binds the c-periphery library with the help of the [dart:ffi](https://dart.dev/guides/libraries/c-interop) mechanism. A glue library handles the Dart specfic parts. Nevertheless **dart_periphery** tries to be close as possible to the orginal library. See following [documentation](https://github.com/vsergeev/c-periphery/tree/master/docs). Thanks to **Vanya Sergeev** for his great job!
+**dart_periphery** binds the c-periphery library with the help of the [dart:ffi](https://dart.dev/guides/libraries/c-interop) mechanism. A glue library handles the Dart specific parts. Nevertheless, **dart_periphery** tries to be close as possible to the original library. See following [documentation](https://github.com/vsergeev/c-periphery/tree/master/docs). Thanks to **Vanya Sergeev** for his great job!
 
 ## Why c-periphery?
 
 The number of GPIO libraries/interfaces is becoming increasingly smaller.
 
-* The famous wiringpi library is [deprected](https://hackaday.com/2019/09/18/wiringpi-library-to-be-deprecated).
-* GPIO sysfs is [deprected](https://www.raspberrypi.org/forums/viewtopic.php?t=274416).
+* The famous wiringpi library is [deprecated](https://hackaday.com/2019/09/18/wiringpi-library-to-be-deprecated).
+* GPIO sysfs is [deprecated](https://www.raspberrypi.org/forums/viewtopic.php?t=274416).
 
 **dart_periphery** currently has beta status. Following interfaces are ported:
 
 * GPIO
 * I2C
-* SPI 
+* SPI
 * Serial
 * PWM
 * Led (onboard leds)
@@ -183,7 +182,7 @@ void main() {
   try {
     print('Serial interface info: ' + s.getSerialInfo());
 
-    // Return firmware version and sensor serialnumber - two line
+    // Return firmware version and sensor serial number - two lines
     s.writeString('Y\r\n');
     var event = s.read(256, 1000);
     print(event.toString());
@@ -246,7 +245,7 @@ void main() {
 
 ### PWM
 
-Ensure that PWM is correct enabled. e.g. see the following [doucmentation](https://jumpnowtek.com/rpi/Using-the-Raspberry-Pi-Hardware-PWM-timers.html) for the Raspberry Pi.
+Ensure that PWM is correct enabled. e.g. see the following [documentation](https://jumpnowtek.com/rpi/Using-the-Raspberry-Pi-Hardware-PWM-timers.html) for the Raspberry Pi.
 
 ``` dart
 import 'package:dart_periphery/dart_periphery.dart';
@@ -332,14 +331,14 @@ Currently **dart_periphery** ships with prebuild native libraries for ARMv7 and 
 
 These **glue** libraries contain the Dart specific part to the **c-periphery** library. As default **dart_periphery** loads the static linked library.
 
-Following methods can be used to overwite the loading of the static linked library.
+Following methods can be used to overwrite the loading of the static linked library.
 But be aware, any of these methods must be called before any **dart_periphery** interface is used!
 
 ``` dart
 useSharedLibray();
 ```
 
-If this method is called, **dart_periphery** loads the shadred library. For this case c-pheriphery must be installed as a shared library. See for [details](https://github.com/vsergeev/c-periphery) - section Shared Library.
+If this method is called, **dart_periphery** loads the shared library. For this case c-pheriphery must be installed as a shared library. See for [details](https://github.com/vsergeev/c-periphery) - section Shared Library.
 
 The glue library, flavour shared, can be rebuild with following command:
 
@@ -351,15 +350,15 @@ pub global activate dart_periphery
 pub global run dart_periphery:build_lib
 ```
 
-To load a custom libaray call
+To load a custom library call
 
 ``` dart
 setCustomLibrary(String absolutePath)
 ```
 
-This method can be helpful in any case of a problem and for a currently not supporetd platform - e.g x86 based SoC
+This method can be helpful in any case of a problem and for a currently not supported platform - e.g x86 based SoC
 
-For building a custom libray please review following information
+For building a custom library please review following information
 
 * [make file](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/build_all.sh)
 * [c-periphery](https://github.com/vsergeev/c-periphery) - section Static or Shared Library.
@@ -382,14 +381,13 @@ to use the static or shared glue library with the correct bitness. The appropria
 
 Raspberry Pi 3 Model B (Raspian)
 
-[Nano Pi](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO) with a Allwinner H3, Quad-core 32-bit CPU
-with [Armbian](https://www.armbian.com/)
+[NanoPi](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO) with a Allwinner H3, Quad-core 32-bit CPU, OS: [Armbian](https://www.armbian.com/)
 
-[Nano Pi Neo2](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO2) with a Allwinner H5, Quad-core 64-bit CPU, OS: [Armbian](https://www.armbian.com/)
+[NanoPi M1](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_M1) with a Allwinner H3, Quad-core 32-bit CPU: OS [Armbian](https://www.armbian.com/)
 
-[Banana Pi BPI-M1](https://en.wikipedia.org/wiki/Banana_Pi#Banana_Pi_BPI-M1) with a Allwinner A20 Dual-core, 
-OS: [Armbian](https://www.armbian.com/)
+[NanoPi Neo2](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO2) with a Allwinner H5, Quad-core 64-bit CPU, OS: [Armbian](https://www.armbian.com/)
 
+[Banana Pi BPI-M1](https://en.wikipedia.org/wiki/Banana_Pi#Banana_Pi_BPI-M1) with a Allwinner A20 Dual-core, OS: [Armbian](https://www.armbian.com/)
 
 ## Next steps
 
@@ -397,7 +395,7 @@ Port the missing c-periphery bindings
 
 * MMIO
 
-Improvemnts
+Improvements
 
 * Add GPIO documentation for different SoCs.
 * Writing API test cases.

@@ -66,3 +66,13 @@ export 'src/hardware/sht31.dart'
         SHT31excpetion,
         SHT31_ALTERNATIE_I2C_ADDRESS,
         SHT31_DEFAULT_I2C_ADDRESS;
+export 'src/hardware/extension_hat.dart'
+    show
+        DigitalValue,
+        PINMODE,
+        NanoHatHub,
+        LedBarColor,
+        LedBarLed,
+        BakeBitLedBar,
+        GrovePiPlusHat,
+        GroveBaseHat;

@@ -14,7 +14,7 @@ void main() {
   try {
     print('Serial interface info: ' + s.getSerialInfo());
 
-    // Return firmware version and sensor serialnumber - two line
+    // Return firmware version and sensor serial number - two lines
     s.writeString('Y\r\n');
     var event = s.read(256, 1000);
     print(event.toString());

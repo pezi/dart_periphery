@@ -14,6 +14,7 @@ class ByteBuffer {
       : bitOrder = isI2C ? BitOrder.MSB_LAST : BitOrder.MSB_FIRST,
         index = isI2C ? 0 : 1;
 
+  /// Retuen
   int getInt16() {
     int pos1, pos2;
     if (bitOrder == BitOrder.MSB_FIRST) {

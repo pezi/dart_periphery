@@ -275,10 +275,16 @@ class SPI {
       }
 
       _checkError(_nativeTransfer(_spiHandle, inPtr, outPtr, data.length));
-      var result = <int>[];
 
+      List<int> result;
+      if (reuseBuffer) {
+        data.clear();
+        result = data;
+      } else {
+        result = <int>[];
+      }
       for (var i = 0; i < data.length; ++i) {
-        result.add(outPtr.value);
+        result.add(outPtr.elementAt(i).value);
       }
       return result;
     } finally {
