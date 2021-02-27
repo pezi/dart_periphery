@@ -374,7 +374,7 @@ const int RPI_HAT_PID = 0x04;
 const int RPI_ZERO_HAT_PID = 0x05;
 
 /// Grove Base Hat for Raspberry Pi
-/// 
+///
 /// https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi/
 class GroveBaseHat {
   I2C i2c;

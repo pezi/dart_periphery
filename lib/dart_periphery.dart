@@ -48,6 +48,8 @@ export 'src/i2c.dart'
         I2Cexception,
         I2C;
 export 'src/spi.dart' show SPI, SPImode, SPIexception, getSPIerrorCode;
+export 'src/mmio.dart'
+    show MMIO, MMIOexception, MMIOerrorCode, getMMIOerrorCode;
 export 'src/hardware/util.dart' show BitOrder;
 export 'src/hardware/bme280.dart'
     show

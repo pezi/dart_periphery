@@ -33,5 +33,5 @@ if [ ! -f "$FILE" ]; then
     exit 1
 fi
 
-gcc -I/usr/local/include/periphery/  -Wall -fPIC -O3 -shared gpio.c serial.c i2c.c led.c pwm.c version.c spi.c -lperiphery  -lpthread -o dart_periphery_${BITNESS}.1.0.0.so
+gcc -I/usr/local/include/periphery/  -Wall -fPIC -O3 -shared gpio.c serial.c i2c.c led.c pwm.c version.c spi.c mmio.c -lperiphery  -lpthread -o dart_periphery_${BITNESS}.1.0.0.so
 

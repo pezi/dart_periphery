@@ -3,7 +3,6 @@
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
 
-
 ## Important hint for Dart user
 
 Go to [https://pub.dev/packages/dart_periphery](https://pub.dev/packages/dart_periphery) to import this package.
@@ -24,7 +23,7 @@ Abstract from the project web site:
 >* PWM,
 >* SPI,
 >* I2C,
->* MMIO
+>* MMIO (Memory Mapped I/O)
 >* Serial peripheral I/O
 >
 >interface access in userspace Linux. c-periphery simplifies and consolidates the native Linux APIs to these interfaces. c-periphery is useful in embedded Linux environments (including Raspberry Pi, BeagleBone, etc. platforms) for interfacing with external peripherals. c-periphery is re-entrant, has no dependencies outside the standard C library and Linux, compiles into a static library for easy integration with other projects, and is MIT licensed
@@ -38,14 +37,15 @@ The number of GPIO libraries/interfaces is becoming increasingly smaller.
 * The famous wiringpi library is [deprecated](https://hackaday.com/2019/09/18/wiringpi-library-to-be-deprecated).
 * GPIO sysfs is [deprecated](https://www.raspberrypi.org/forums/viewtopic.php?t=274416).
 
-**dart_periphery** currently has beta status. Following interfaces are ported:
+**dart_periphery** currently has beta status. All interfaces are ported:
 
-* GPIO
-* I2C
-* SPI
-* Serial
-* PWM
-* Led (onboard leds)
+* [GPIO](#GPIO)
+* [I2C](#I2C)
+* [SPI](#SPI)
+* [Serial](#Serial)
+* [PWM](#PWM)
+* [Led](#LED) (onboard leds)
+* [MMIO](#MMIO) (Memory Mapped I/O)
 
 ## Examples
 
@@ -99,9 +99,9 @@ void main() {
 ``` dart
 import 'package:dart_periphery/dart_periphery.dart';
 
-/// https://wiki.seeedstudio.com/Grove-TempAndHumi_Sensor-SHT31/
-/// Grove - Temp&Humi Sensor(SHT31) is a highly reliable, accurate, quick response and
-/// integrated temperature & humidity sensor.
+/// https://wiki.seeedstudio.com/Grove-Barometer_Sensor-BME280/
+/// Grove - Temp&Humi&Barometer Sensor (BME280) is a breakout board for Bosch BMP280 high-precision,
+/// low-power combined humidity, pressure, and temperature sensor.
 void main() {
   // Select the right I2C bus number /dev/i2c-?
   // 1 for Raspbery Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
@@ -117,7 +117,12 @@ void main() {
     i2c.dispose();
   }
 }
+
 ```
+
+___
+
+![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/sht31.jpg "SHT31 Sensor")
 
 ``` dart
 import 'package:dart_periphery/dart_periphery.dart';
@@ -149,8 +154,6 @@ void main() {
 import 'package:dart_periphery/dart_periphery.dart';
 
 void main() {
-  // Select the right I2C bus number /dev/i2c-0
-  // 1 for Raspbery Pi, 0 for NanoPi
   var spi = SPI(0, 0, SPImode.MODE0, 1000000);
   try {
     print('SPI info:' + spi.getSPIinfo());
@@ -208,6 +211,8 @@ void main() {
 ```
 
 ### Led
+
+![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/led.jpg "Power led")
 
 ``` dart
 import 'package:dart_periphery/dart_periphery.dart';
@@ -268,6 +273,77 @@ void main() {
 }
 ```
 
+### MMIO (Memory Mapped I/O)
+
+Turn on a led at pin 18 using MMIO. This example is derived from [elinux.org](https://elinux.org/RPi_GPIO_Code_Samples#Direct_register_access).
+
+``` dart
+import 'package:dart_periphery/dart_periphery.dart';
+import 'dart:io';
+
+const int BCM2708_PERI_BASE = 0x3F000000; // Raspberry Pi 3
+const int GPIO_BASE = BCM2708_PERI_BASE + 0x200000;
+const int BLOCK_SIZE = 4 * 1024;
+
+/// Helper class for the hardcore bit manipulation.
+class MemMappedGPIO {
+  MMIO mmio;
+  MemMappedGPIO(this.mmio);
+
+  // #define INP_GPIO(g) *(gpio+((g)/10)) &= ~(7<<(((g)%10)*3))
+  void setPinInput(final int pin) {
+    var offset = (pin ~/ 10) * 4;
+    var value = mmio[offset];
+    value &= (~(7 << (((pin) % 10) * 3)));
+    mmio[offset] = value;
+  }
+
+  // #define OUT_GPIO(g) *(gpio+((g)/10)) |=  (1<<(((g)%10)*3))
+  void setPinOutput(final int pin) {
+    setPinInput(pin);
+    var offset = (pin ~/ 10) * 4;
+    var value = mmio[offset];
+    value |= (1 << (((pin) % 10) * 3));
+    mmio[offset] = value;
+  }
+
+  // #define GPIO_SET *(gpio+7) - sets bits which are 1 ignores bits which are 0
+  void setPinHigh(int pin) {
+    mmio[7 * 4] = 1 << pin;
+  }
+
+  // #define GPIO_CLR *(gpio+10) - clears bits which are 1 ignores bits which are 0
+  void setPinLow(int pin) {
+    mmio[10 * 4] = 1 << pin;
+  }
+
+  // #define GET_GPIO(g) (*(gpio+13)&(1<<g)) - 0 if LOW, (1<<g) if HIGH
+  int getPin(int pin) {
+    return mmio[13 * 4] & (1 << pin);
+  }
+}
+
+void main() {
+  // Needs root rights and the GPIO_BASE must be correct!
+  // var mmio = MMIO(GPIO_BASE, BLOCK_SIZE);
+  
+  var mmio = MMIO.advanced(0, BLOCK_SIZE, '/dev/gpiomem');
+  var gpio = MemMappedGPIO(mmio);
+  try {
+    print(mmio.getMMIOinfo());
+    var pin = 18;
+    print('Led (pin=18) on');
+    gpio.setPinOutput(pin);
+    gpio.setPinHigh(pin);
+    sleep(Duration(seconds: 10));
+    gpio.setPinLow(pin);
+    print('Led (pin=18) off');
+  } finally {
+    mmio.dispose();
+  }
+}
+```
+
 ## Install Dart on Raspian and Armbian
 
 ### ARMv7
@@ -320,7 +396,7 @@ root@nanopineo2:~# dart --version
 Dart SDK version: 2.10.5 (stable) (Tue Jan 19 13:05:37 2021 +0100) on "linux_arm64"
 ```
 
-## Native library
+## Native libraries
 
 Currently **dart_periphery** ships with prebuild native libraries for ARMv7 and ARMv8 in two flavours - static and dynamic linking.
 
@@ -329,7 +405,7 @@ Currently **dart_periphery** ships with prebuild native libraries for ARMv7 and 
 * `dart_periphery_64.1.0.0.so` ➔ `/usr/local/lib/libperiphery.so`
 * `dart_periphery_static_64.1.0.0.so`  (includes libperiphery.a)
 
-These **glue** libraries contain the Dart specific part to the **c-periphery** library. As default **dart_periphery** loads the static linked library.
+These **glue** libraries contain the Dart specific part of the **c-periphery** library. As default **dart_periphery** loads the static linked library.
 
 Following methods can be used to overwrite the loading of the static linked library.
 But be aware, any of these methods must be called before any **dart_periphery** interface is used!
@@ -377,25 +453,25 @@ void useLocalLibrary([bool staticLib = true])
 
 to use the static or shared glue library with the correct bitness. The appropriate [library](https://github.com/pezi/dart_periphery/blob/main/lib/src/native) should be in same dirctory as the exe.
 
-## Tested hardware
+## Tested SoC hardware
 
-Raspberry Pi 3 Model B (Raspian)
+* [Raspberry Pi 3 Model B](https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/), OS: Raspian
+* [NanoPi](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO) with a Allwinner H3, Quad-core 32-bit CPU, OS: [Armbian](https://www.armbian.com/)
+* [NanoPi M1](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_M1) with a Allwinner H3, Quad-core 32-bit CPU: OS [Armbian](https://www.armbian.com/)
+* [NanoPi Neo2](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO2) with a Allwinner H5, Quad-core 64-bit CPU, OS: [Armbian](https://www.armbian.com/)
+* [Banana Pi BPI-M1](https://en.wikipedia.org/wiki/Banana_Pi#Banana_Pi_BPI-M1) with a Allwinner A20 Dual-core, OS: [Armbian](https://www.armbian.com/)
 
-[NanoPi](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO) with a Allwinner H3, Quad-core 32-bit CPU, OS: [Armbian](https://www.armbian.com/)
+## Supported devices (sensors, actuators, expansion hats and displays)
 
-[NanoPi M1](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_M1) with a Allwinner H3, Quad-core 32-bit CPU: OS [Armbian](https://www.armbian.com/)
-
-[NanoPi Neo2](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO2) with a Allwinner H5, Quad-core 64-bit CPU, OS: [Armbian](https://www.armbian.com/)
-
-[Banana Pi BPI-M1](https://en.wikipedia.org/wiki/Banana_Pi#Banana_Pi_BPI-M1) with a Allwinner A20 Dual-core, OS: [Armbian](https://www.armbian.com/)
+* [BME280](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme280_example.dart): Temperature, humidity and pressure sensor.
+* [SHT31](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht31_example.dart): Temperature and humidity sensor.
+* [CozIR](https://github.com/pezi/dart_periphery/blob/main/example/serial_cozir_example.dart): CO<sub>2</sub>, temperature and humidity sensor.
+* FriendlyARM BakeBit Set
+* Grove Base Hat/GrovePi Plus
+* SGP30 (in progress)
+* SSD1306 OLED (in progress)
 
 ## Next steps
-
-Port the missing c-periphery bindings
-
-* MMIO
-
-Improvements
 
 * Add GPIO documentation for different SoCs.
 * Writing API test cases.

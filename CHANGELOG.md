@@ -1,5 +1,14 @@
+## 0.8.7-beta 2021-02-24
+
+* Release MMIO (Memory Mapped I/O) support.
+
+## 0.8.6-beta 2021-02-24
+
+* Improve documentation
+ 
 ## 0.8.5-beta 2021-02-21
 
+* Add [example/spi_loopback.dart](https://github.com/pezi/dart_periphery/blob/main/example/spi_loopback.dart)
 * Fix SPI transfer() implementation.
 
 ## 0.8.4-beta 2021-02-19

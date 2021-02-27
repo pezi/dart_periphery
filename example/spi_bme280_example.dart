@@ -8,8 +8,6 @@ import 'package:dart_periphery/dart_periphery.dart';
 /// Grove - Temp&Humi&Barometer Sensor (BME280) is a breakout board for Bosch BMP280 high-precision,
 /// low-power combined humidity, pressure, and temperature sensor
 void main() {
-  // Select the right I2C bus number /dev/i2c-0
-  // 1 for Raspbery Pi, 0 for NanoPi
   var spi = SPI(0, 0, SPImode.MODE0, 1000000);
   try {
     print('SPI info:' + spi.getSPIinfo());
