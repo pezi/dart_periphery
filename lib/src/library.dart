@@ -6,8 +6,8 @@ import 'package:system_info/system_info.dart';
 import 'dart:ffi';
 import 'dart:io';
 import 'dart:convert';
-// import 'package:ffi/ffi.dart';
 import 'package:path/path.dart';
+import 'version.dart';
 
 const pkgName = 'dart_periphery';
 
@@ -19,7 +19,8 @@ String sharedLib = 'dart_periphery_${SysInfo.userSpaceBitness}.${version}.so';
 
 String library = staticLib;
 
-DynamicLibrary _peripheryLib;
+// ignore: avoid_init_to_null
+DynamicLibrary _peripheryLib = null;
 String _peripheryLibPath = '';
 
 /// Build a file path.
@@ -81,18 +82,40 @@ void useLocalLibrary([bool staticLibFlag = true]) {
   _peripheryLibPath = './' + (!staticLibFlag ? sharedLib : staticLib);
 }
 
+enum LibraryErrorCode { LIBRARY_NOT_FOUND, LIBRARY_VERSION_MISMATCH }
+
+/// Library exception
+class LibraryException implements Exception {
+  final String errorMsg;
+  final LibraryErrorCode errorCode;
+  LibraryException(this.errorCode, this.errorMsg);
+  @override
+  String toString() => errorMsg;
+}
+
 DynamicLibrary getPeripheryLib() {
   if (!Platform.isLinux) {
     throw PlatformException();
+  }
+  if (_peripheryLib != null) {
+    return _peripheryLib;
   }
   String path;
   if (_peripheryLibPath.isNotEmpty) {
     path = _peripheryLibPath;
   } else {
     var location = findPackagePath(Directory.current.path);
+    if (location == null) {
+      throw LibraryException(LibraryErrorCode.LIBRARY_NOT_FOUND,
+          "Unable to find native lib '$library'. Non standard environment e.g. flutter-pi? Use 'setCustomLibrary(String absolutePath)' or create an issue https://github.com/pezi/dart_periphery/issues");
+    }
     path = normalize(join(location, 'src', 'native', library));
   }
-
   _peripheryLib ??= DynamicLibrary.open(path.toString());
+  var glueLibVer = getDartPeripheryGlueLibVersion();
+  if (glueLibVer != DART_PERIPHERY_GLUE_LIBVERSION) {
+    throw LibraryException(LibraryErrorCode.LIBRARY_VERSION_MISMATCH,
+        'Version native lib $glueLibVer != Dart package version $DART_PERIPHERY_GLUE_LIBVERSION');
+  }
   return _peripheryLib;
 }

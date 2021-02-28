@@ -3,10 +3,6 @@
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
 
-## Important hint for Dart user
-
-Go to [https://pub.dev/packages/dart_periphery](https://pub.dev/packages/dart_periphery) to import this package.
-
 ## Introduction
 
 **dart_periphery** is a Dart port of the native [c-periphery library](https://github.com/vsergeev/c-periphery)
@@ -273,9 +269,9 @@ void main() {
 }
 ```
 
-### MMIO (Memory Mapped I/O)
+### MMIO
 
-Turn on a led at pin 18 using MMIO. This example is derived from [elinux.org](https://elinux.org/RPi_GPIO_Code_Samples#Direct_register_access).
+**Memory Mapped I/O**: Turn on a led at pin 18 using MMIO. This direct register access example is derived from [elinux.org](https://elinux.org/RPi_GPIO_Code_Samples#Direct_register_access).
 
 ``` dart
 import 'package:dart_periphery/dart_periphery.dart';
@@ -471,15 +467,20 @@ to use the static or shared glue library with the correct bitness. The appropria
 * SGP30 (in progress)
 * SSD1306 OLED (in progress)
 
+## flutter-pi
+
+**dart_periphery** works with flutter-pi, a light-weight [Flutter Engine Embedder](https://github.com/ardera/flutter-pi) for Raspberry Pi. In this environment the function
+
+``` dart
+setCustomLibrary(String absolutePath)
+```
+must be called to provide the absolute path of the [native glue library](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/dart_periphery_static_32.1.0.0.so). See native libraries for details.
+
 ## Next steps
 
 * Add GPIO documentation for different SoCs.
 * Writing API test cases.
 * Improve build process of the native libraries.
-
-## Future steps
-
-* If possible, developing a flutter desktop app for the Raspberry Pi with bindings to **dart_periphery**.
 * Port hardware devices from the [mattjlewis / diozero Java Project](https://github.com/mattjlewis/diozero/tree/master/diozero-core/src/main/java/com/diozero/devices) to **dart_periphery**: e.g. BME680, SGP30 etc.
 In most cases it is easy to find code snippets for the most sensors, but the implementations of the diozero Project have a high level.
 

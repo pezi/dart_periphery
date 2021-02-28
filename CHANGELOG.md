@@ -1,6 +1,11 @@
+## 0.8.8-beta 2021-02-28
+
+* Add correct exception for loading native libraries inside flutter-pi  
+* Update README.md for [flutter-pi](https://github.com/ardera/flutter-pi)
+
 ## 0.8.7-beta 2021-02-24
 
-* Release MMIO (Memory Mapped I/O) support.
+* Release [MMIO (Memory Mapped I/O) support](https://github.com/pezi/dart_periphery/blob/main/example/mmio_example.dart). 
 
 ## 0.8.6-beta 2021-02-24
 
