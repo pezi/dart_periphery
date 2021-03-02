@@ -107,7 +107,7 @@ DynamicLibrary getPeripheryLib() {
     var location = findPackagePath(Directory.current.path);
     if (location == null) {
       throw LibraryException(LibraryErrorCode.LIBRARY_NOT_FOUND,
-          "Unable to find native lib '$library'. Non standard environment e.g. flutter-pi? Use 'setCustomLibrary(String absolutePath)' or create an issue https://github.com/pezi/dart_periphery/issues");
+          "Unable to find native lib '$library'. Non standard environment e.g. flutter-pi? Use 'setCustomLibrary(String absolutePath)' - see documentation https://github.com/pezi/dart_periphery, or create an issue https://github.com/pezi/dart_periphery/issues");
     }
     path = normalize(join(location, 'src', 'native', library));
   }

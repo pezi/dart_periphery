@@ -141,7 +141,7 @@ String _getErrmsg(Pointer<Void> handle) {
   return Utf8.fromUtf8(_nativeErrmsg(handle));
 }
 
-// PWM exception
+/// PWM exception
 class PWMexception implements Exception {
   final PWMerrorCode errorCode;
   final String errorMsg;
@@ -155,7 +155,7 @@ class PWMexception implements Exception {
 
 final DynamicLibrary _peripheryLib = getPeripheryLib();
 
-// PWM wrapper functions for Linux userspace sysfs PWMs.
+/// PWM wrapper functions for Linux userspace sysfs PWMs.
 class PWM {
   final int chip;
   final int channel;

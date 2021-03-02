@@ -3,6 +3,7 @@
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
 
+
 ## Important hint for Dart user
 
 Go to [https://pub.dev/packages/dart_periphery](https://pub.dev/packages/dart_periphery) to import this package.
@@ -414,7 +415,7 @@ But be aware, any of these methods must be called before any **dart_periphery** 
 useSharedLibray();
 ```
 
-If this method is called, **dart_periphery** loads the shared library. For this case c-pheriphery must be installed as a shared library. See for [details](https://github.com/vsergeev/c-periphery) - section Shared Library.
+If this method is called, **dart_periphery** loads the shared library. For this case c-periphery must be installed as a shared library. See for [details](https://github.com/vsergeev/c-periphery) - section Shared Library.
 
 The glue library, flavour shared, can be rebuild with following command:
 
@@ -426,13 +427,13 @@ pub global activate dart_periphery
 pub global run dart_periphery:build_lib
 ```
 
-To load a custom library call
+To load a custom library. call
 
 ``` dart
 setCustomLibrary(String absolutePath)
 ```
 
-This method can be helpful in any case of a problem and for a currently not supported platform - e.g x86 based SoC
+This method can be helpful in any case of a problem and for a currently not supported platform - e.g x86 based SoC.
 
 For building a custom library please review following information
 
@@ -453,6 +454,16 @@ void useLocalLibrary([bool staticLib = true])
 
 to use the static or shared glue library with the correct bitness. The appropriate [library](https://github.com/pezi/dart_periphery/blob/main/lib/src/native) should be in same dirctory as the exe.
 
+## flutter-pi
+
+**dart_periphery** works with flutter-pi, a light-weight [Flutter Engine Embedder](https://github.com/ardera/flutter-pi) for Raspberry Pi. In this environment the function
+
+``` dart
+setCustomLibrary(String absolutePath)
+```
+must be called to provide the absolute path of the [native glue library](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/dart_periphery_static_32.1.0.0.so). See last seection, native libraries for details.
+
+
 ## Tested SoC hardware
 
 * [Raspberry Pi 3 Model B](https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/), OS: Raspian
@@ -470,15 +481,6 @@ to use the static or shared glue library with the correct bitness. The appropria
 * Grove Base Hat/GrovePi Plus
 * SGP30 (in progress)
 * SSD1306 OLED (in progress)
-
-## flutter-pi
-
-**dart_periphery** works with flutter-pi, a light-weight [Flutter Engine Embedder](https://github.com/ardera/flutter-pi) for Raspberry Pi. In this environment the function
-
-``` dart
-setCustomLibrary(String absolutePath)
-```
-must be called to provide the absolute path of the [native glue library](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/dart_periphery_static_32.1.0.0.so). See native libraries for details.
 
 ## Next steps
 

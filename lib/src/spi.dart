@@ -50,6 +50,7 @@ enum SPIerrorCode {
   SPI_ERROR_UNSUPPORTED
 }
 
+/// SPI modes
 enum SPImode { MODE0, MODE1, MODE2, MODE3 }
 
 /// SPI exception
@@ -173,16 +174,32 @@ int _checkError(int value) {
 
 /// SPI wrapper functions for Linux userspace <tt>spidev</tt> devices.
 class SPI {
+  /// SPI bus number:  /dev/spidev[bus].[chip]
   final int bus;
+
+  /// SPI chip number:  /dev/spidev[bus].[chip]
   final int chip;
-  String path;
+
+  /// SPI device path:  /dev/spidev[bus].[chip]
+  final String path;
+
+  /// SPI mode
   final SPImode mode;
+
+  /// SPI bus speed
   final int maxSpeed;
-  Pointer<Void> _spiHandle;
+
+  /// SPI bit order
   final BitOrder bitOrder;
+
+  /// SPI transfer word size
   final int bitsPerWord;
+
+  /// SPI extra flags
   final int extraFlags;
+
   bool _invalid = false;
+  Pointer<Void> _spiHandle;
 
   void _checkSPI(int bus, int chip) {
     if (bus < 0) {
@@ -193,7 +210,7 @@ class SPI {
     }
   }
 
-  /// Opens the spidev device at the  path ("/dev/spidev[bus].[chip]"), with the specified
+  /// Opens the SPI device at the  path ("/dev/spidev[bus].[chip]"), with the specified
   /// SPI [mode], specified [maxspeed] in hertz, and the defaults of MSB_FIRST bit order,
   /// and 8 bits per word.
   ///
@@ -201,38 +218,37 @@ class SPI {
   SPI(this.bus, this.chip, this.mode, this.maxSpeed)
       : bitOrder = BitOrder.MSB_FIRST,
         bitsPerWord = 8,
-        extraFlags = 0 {
+        extraFlags = 0,
+        path = '/dev/spidev$bus.$chip' {
     _checkSPI(bus, chip);
-    path = '/dev/spidev$bus.$chip';
     _spiHandle =
         _checkHandle(_nativeOpen(Utf8.toUtf8(path), mode.index, maxSpeed));
   }
 
-  /// Opens the spidev device at the specified path ("/dev/spidev[bus].[chip]"), with the specified SPI mode,
-  /// [maxSspeed] in hertz, [bitOrder], [bitsPerWord], and [extraflags].
+  /// Opens the SPI device at the specified path ("/dev/spidev[bus].[chip]"), with the specified SPI mode,
+  /// [maxSpeed] in hertz, [bitOrder], [bitsPerWord], and [extraflags].
   ///
   /// SPI mode can be 0, 1, 2, or 3. [bitOrder] can be [BitOrder.MSB_FIRST] or
   /// [BitOrder.LSB_FIRST], [bitsPerWord] specifies the transfer word size.
-  /// [extraflags] specified additional flags bitwise-ORed with the SPI mode.
+  /// [extraFlags] specified additional flags bitwise-ORed with the SPI mode.
   SPI.openAdvanced(this.bus, this.chip, this.mode, this.maxSpeed, this.bitOrder,
-      this.bitsPerWord, this.extraFlags) {
+      this.bitsPerWord, this.extraFlags)
+      : path = '/dev/spidev$bus.$chip' {
     _checkSPI(bus, chip);
-    path = '/dev/spidev$bus.$chip';
     _spiHandle = _checkHandle(_nativeAdvanced(Utf8.toUtf8(path), mode.index,
         maxSpeed, bitOrder.index, bitsPerWord, extraFlags));
   }
 
-  /// Opens the spidev device at the specified path ("/dev/spidev[bus].[chip]"), with the specified SPI mode,
-  /// [maxSspeed] in hertz, [bitOrder], [bitsPerWord], and [extraflags]. This open function is the same as
-  /// [SPI.openAdvanced()], except that extra_flags can be 32-bits.
+  /// Opens the SPI device at the specified [path], with the specified SPI mode,
+  /// [maxSpeed] in hertz, [bitOrder], [bitsPerWord], and [extraflags]. This open function is the same as
+  /// [SPI.openAdvanced], except that extra_flags can be 32-bits.
   ///
   /// SPI mode can be 0, 1, 2, or 3. [bitOrder] can be [BitOrder.MSB_FIRST] or
   /// [BitOrder.LSB_FIRST], [bitsPerWord] specifies the transfer word size.
-  /// [extraflags] specified additional flags bitwise-ORed with the SPI mode.
+  /// [extraFlags] specified additional flags bitwise-ORed with the SPI mode.
   SPI.openAdvanced2(this.bus, this.chip, this.path, this.mode, this.maxSpeed,
       this.bitOrder, this.bitsPerWord, this.extraFlags) {
     _checkSPI(bus, chip);
-    path = '/dev/spidev$bus.$chip';
     _spiHandle = _checkHandle(_nativeAdvanced2(Utf8.toUtf8(path), mode.index,
         maxSpeed, bitOrder.index, bitsPerWord, extraFlags));
   }

@@ -98,7 +98,7 @@ String _getErrmsg(Pointer<Void> handle) {
   return Utf8.fromUtf8(_nativeErrmsg(handle));
 }
 
-// Led exception
+/// Led exception
 class LedException implements Exception {
   final LedErrorCode errorCode;
   final String errorMsg;

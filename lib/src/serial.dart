@@ -94,6 +94,7 @@ class SerialException implements Exception {
   String toString() => errorMsg;
 }
 
+/// Serial baudrate
 enum Baudrate {
   B50,
   B75,
@@ -126,10 +127,13 @@ enum Baudrate {
   B4000000,
 }
 
+/// Number of data bits
 enum DataBits { DB5, DB6, DB7, DB8 }
 
+/// Number of stop bits
 enum StopBits { SB1, SB2 }
 
+/// Serial error codes
 enum SerialErrorCode {
   /// Error code for not able to map the native C enum
   ERROR_CODE_NOT_MAPPABLE,
@@ -153,6 +157,7 @@ enum SerialErrorCode {
   SERIAL_ERROR_CLOSE
 }
 
+// Serial parity
 enum Parity {
   PARITY_NONE,
   PARITY_ODD,
@@ -361,7 +366,7 @@ class Serial {
     }
   }
 
-  /// Opens the <tt>tty</tt> device at the specified path (e.g. "/dev/ttyUSB0"), with the specified baudrate, and the
+  /// Opens the <tt>tty</tt> device at the specified [path] (e.g. "/dev/ttyUSB0"), with the specified [baudrate], and the
   /// defaults of 8 data bits, no parity, 1 stop bit, software flow control (xonxoff) off, hardware flow control (rtscts) off.
   Serial(this.path, this.baudrate)
       : databits = DataBits.DB8,
@@ -374,8 +379,8 @@ class Serial {
     print(_serialHandle);
   }
 
-  /// Opens the <tt>tty</tt> device at the specified path (e.g. "/dev/ttyUSB0"), with the specified baudrate, data bits,
-  /// parity, stop bits, software flow control (xonxoff), and hardware flow control (rtscts) settings.
+  /// Opens the <tt>tty</tt> device at the specified [path] (e.g. "/dev/ttyUSB0"), with the specified [baudrate], [databits],
+  /// [parity], [stopbits], software flow control ([xonxoff]), and hardware flow control ([rtscts]) settings.
   ///
   /// serial should be a valid pointer to an allocated Serial handle structure. databits can be 5, 6, 7, or 8.
   /// parity can be PARITY_NONE, PARITY_ODD, or PARITY_EVEN . StopBits can be 1 or 2.

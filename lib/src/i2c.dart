@@ -72,7 +72,7 @@ class NativeI2Cmsg extends Struct {
 }
 
 /// Helper class which stores an array of native 'struct i2c_msg' messages.
-/// The user must call [NativeI2CmsgHelper.dispose()] to free the allocated
+/// The user must call [NativeI2CmsgHelper.dispose] to free the allocated
 /// memory.
 class NativeI2CmsgHelper {
   final Pointer<NativeI2Cmsg> _messages;
@@ -482,7 +482,7 @@ class I2C {
     var data = <I2Cmsg>[];
     data.add(I2Cmsg(address, [I2CmsgFlags.I2C_M_RD], len));
     var result = transfer(data);
-    var msg2 = result._messages.elementAt(1).ref;
+    var msg2 = result._messages.elementAt(0).ref;
     try {
       var read = msg2.len;
 

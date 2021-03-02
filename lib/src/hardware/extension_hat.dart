@@ -185,7 +185,7 @@ class ArduinoBasedHat {
     throw error;
   }
 
-  //// Reads an analog value from a given [pin].
+  /// Reads an analog value from a given [pin].
   int analogRead(int pin) {
     autoWait();
     I2Cexception error;
@@ -362,7 +362,7 @@ class BakeBitLedBar {
 /// https://wiki.seeedstudio.com/GrovePi_Plus/
 ///
 /// Do not use this hardware
-/// - UART is not working correct.
+/// - UART is not working correct with some devices e.g. CozIR CO2 sensor
 /// - Problems using more than 2 I2C devices
 /// - Problems using I2C and SPI bus at the same time
 class GrovePiPlusHat extends ArduinoBasedHat {

@@ -3,41 +3,50 @@
 // BSD-style license that can be found in the LICENSE file.
 
 enum BitOrder { MSB_FIRST, MSB_LAST }
+enum ByteBufferSrc { I2C, SPI, UNDEFINED }
 
-///
+/// Helper class for reading 16/8-bit values from a byte array.
 class ByteBuffer {
   final List<int> data;
   final BitOrder bitOrder;
-  final bool isI2C;
-  int index;
-  ByteBuffer(this.data, this.isI2C)
-      : bitOrder = isI2C ? BitOrder.MSB_LAST : BitOrder.MSB_FIRST,
-        index = isI2C ? 0 : 1;
+  final ByteBufferSrc dataSource;
+  int _index;
 
-  /// Retuen
+  /// Creates a byte buffer with [data] and a default [bitOrder]. [dataSource] defines the source, a I2C or a SPI read operation.
+  ///
+  /// For [dataSource] = [ByteBufferSrc.SPI] the internal buffer index starts with 1.
+  ByteBuffer(this.data, this.dataSource, this.bitOrder)
+      : _index = (dataSource == ByteBufferSrc.I2C ||
+                dataSource == ByteBufferSrc.UNDEFINED)
+            ? 0
+            : 1;
+
+  /// Returns a signed 16-bit value.
   int getInt16() {
     int pos1, pos2;
     if (bitOrder == BitOrder.MSB_FIRST) {
-      pos1 = index + 1;
-      pos2 = index;
+      pos1 = _index + 1;
+      pos2 = _index;
     } else {
-      pos1 = index;
-      pos2 = index + 1;
+      pos1 = _index;
+      pos2 = _index + 1;
     }
     var value = (data[pos1] & 0xFF) | (data[pos2] & 0xFF) << 8;
     if (value > 32768) {
       value -= 65536;
     }
-    index += 2;
+    _index += 2;
     return value;
   }
 
+  /// Returns a signed 8-bit value.
   int getInt8() {
-    return data[index++];
+    return data[_index++];
   }
 
+  /// Skips [value] bytes.
   void skipBytes(int value) {
-    index += value;
+    _index += value;
   }
 }
 
@@ -62,6 +71,7 @@ int crc8(List<int> data) {
   return crc & 0xff;
 }
 
+/// Checks the CRC of byte buffer with following order: [byte<sub>1</sub>,byte<sub>2</sub>,crc,...]
 bool checkCRC(List<int> data) {
   if (data.length % 3 != 0) {
     return false;

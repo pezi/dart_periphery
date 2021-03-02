@@ -31,7 +31,7 @@ enum _GPIOtextProperty {
   GPIO_INFO
 }
 
-/// Result codes of the [GPIO.poll()].
+/// Result codes of the [GPIO.poll].
 enum GPIOpolling { SUCCESS, TIMEOUT }
 
 /// Mapped native GPIO error codes with the same index, but different leading sign.
@@ -198,7 +198,7 @@ class _PoolMultiple extends Struct {
   Pointer<Int8> ready;
 }
 
-/// Configuration class for [GPIO.advanced()] and [GPIO.nameAdvanced()].
+/// Configuration class for [GPIO.advanced] and [GPIO.nameAdvanced].
 class GPIOconfig {
   GPIOdirection direction;
   GPIOedge edge;
@@ -216,32 +216,35 @@ class GPIOconfig {
         label = '';
 }
 
+extension GPIOerrorCodeConvert on int {
+  /// Converts the native error code [value] to [GPIOerrorCode].
+  GPIOerrorCode getGPIOerrorCode() {
+    var value = this;
+    // must be negative
+    if (value >= 0) {
+      return GPIOerrorCode.ERROR_CODE_NOT_MAPPABLE;
+    }
+    value = -value;
+
+    // check range
+    if (value > GPIOerrorCode.GPIO_ERROR_CLOSE.index) {
+      return GPIOerrorCode.ERROR_CODE_NOT_MAPPABLE;
+    }
+
+    return GPIOerrorCode.values[value];
+  }
+}
+
 /// GPIO exception
 class GPIOexception implements Exception {
   final GPIOerrorCode errorCode;
   final String errorMsg;
   GPIOexception(this.errorCode, this.errorMsg);
   GPIOexception.errorCode(int code, Pointer<Void> handle)
-      : errorCode = getGPIOerrorCode(code),
+      : errorCode = code.getGPIOerrorCode(),
         errorMsg = _getErrmsg(handle);
   @override
   String toString() => errorMsg;
-}
-
-/// Converts the native error code [value] to [GPIOerrorCode].
-GPIOerrorCode getGPIOerrorCode(int value) {
-  // must be negative
-  if (value >= 0) {
-    return GPIOerrorCode.ERROR_CODE_NOT_MAPPABLE;
-  }
-  value = -value;
-
-  // check range
-  if (value > GPIOerrorCode.GPIO_ERROR_CLOSE.index) {
-    return GPIOerrorCode.ERROR_CODE_NOT_MAPPABLE;
-  }
-
-  return GPIOerrorCode.values[value];
 }
 
 final DynamicLibrary _peripheryLib = getPeripheryLib();
@@ -377,8 +380,8 @@ String _getErrmsg(Pointer<Void> handle) {
 
 int _checkError(int value) {
   if (value < 0) {
-    var errorCode = getGPIOerrorCode(value);
-    throw GPIOexception(errorCode, errorCode.toString());
+    throw GPIOexception(
+        value.getGPIOerrorCode(), value.getGPIOerrorCode().toString());
   }
   return value;
 }
@@ -475,7 +478,7 @@ class GPIO {
   }
 
   /// Opens the character device GPIO with the specified GPIO [name] and the configuration [config] at the default character
-  /// device GPIO with the [chip] number. The default chip numer is 0, with the path /dev/gpiochip0. Use [GPIO.setBaseGPIOpath]
+  /// device GPIO with the [chip] number. The default chip numer is 0, with the path <tt>/dev/gpiochip0</tt>. Use [GPIO.setBaseGPIOpath]
   /// to change the default character device path.
   GPIO.nameAdvanced(this.name, GPIOconfig config, [this.chip = 0])
       : path = _gpioBasePath + chip.toString(),

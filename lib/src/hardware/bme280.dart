@@ -91,39 +91,46 @@ class BME280result {
 
 /// BME280/BMP280 sensor for temperature, pressure and humidity (BME280 only).
 class BME280 {
-  I2C i2c;
-  SPI spi;
-  bool isI2C;
-  int i2cAddress;
-  BME280model model;
+  final I2C i2c;
+  final SPI spi;
+  final bool isI2C;
+  final int i2cAddress;
+  BME280model _model;
+  final BitOrder bitOrder;
 
-  int digT1;
-  int digT2;
-  int digT3;
-  int digP1;
-  int digP2;
-  int digP3;
-  int digP4;
-  int digP5;
-  int digP6;
-  int digP7;
-  int digP8;
-  int digP9;
-  int digH1;
-  int digH2;
-  int digH3;
-  int digH4;
-  int digH5;
-  int digH6;
+  int _digT1;
+  int _digT2;
+  int _digT3;
+  int _digP1;
+  int _digP2;
+  int _digP3;
+  int _digP4;
+  int _digP5;
+  int _digP6;
+  int _digP7;
+  int _digP8;
+  int _digP9;
+  int _digH1;
+  int _digH2;
+  int _digH3;
+  int _digH4;
+  int _digH5;
+  int _digH6;
 
   /// Opens a BME280 or BMP280 sensor conntected with the [i2c] at the [i2cAddress = BME280_DEFAULT_I2C_ADDRESS] .
   BME280(this.i2c, [this.i2cAddress = BME280_DEFAULT_I2C_ADDRESS])
-      : isI2C = true {
+      : isI2C = true,
+        bitOrder = BitOrder.MSB_LAST,
+        spi = null {
     _init();
   }
 
   /// Opens a BME280 or BMP280 sensor connected with the [spi] bus.
-  BME280.spi(this.spi) : isI2C = false {
+  BME280.spi(this.spi)
+      : isI2C = false,
+        bitOrder = spi.bitOrder,
+        i2c = null,
+        i2cAddress = -1 {
     _init();
   }
 
@@ -131,10 +138,10 @@ class BME280 {
     // get model
     switch (_readByte(ID_REG)) {
       case BMP280_ID:
-        model = BME280model.BMP280;
+        _model = BME280model.BMP280;
         break;
       case BME280_ID:
-        model = BME280model.BME280;
+        _model = BME280model.BME280;
         break;
       default:
         throw BME280exception('Unknown model');
@@ -145,53 +152,57 @@ class BME280 {
     _setStandbyAndFilterModes(STANDBY_1_S, FILTER_OFF);
   }
 
+  BME280model getModel() => _model;
+
   void _readCoefficients() {
     while (_readByte(STATUS_REG) & 0x01 != 0) {
       sleep(Duration(milliseconds: 10));
     }
     var buffer = ByteBuffer(
-        _readByteBlock(CALIB_00_REG, model == BME280model.BMP280 ? 24 : 26),
-        isI2C);
+        _readByteBlock(CALIB_00_REG, _model == BME280model.BMP280 ? 24 : 26),
+        isI2C ? ByteBufferSrc.I2C : ByteBufferSrc.SPI,
+        bitOrder);
 
     // Temperature coefficients
-    digT1 = buffer.getInt16() & 0xffff;
-    digT2 = buffer.getInt16();
-    digT3 = buffer.getInt16();
+    _digT1 = buffer.getInt16() & 0xffff;
+    _digT2 = buffer.getInt16();
+    _digT3 = buffer.getInt16();
 
     // Pressure coefficients
-    digP1 = buffer.getInt16() & 0xffff;
-    digP2 = buffer.getInt16();
-    digP3 = buffer.getInt16();
-    digP4 = buffer.getInt16();
-    digP5 = buffer.getInt16();
-    digP6 = buffer.getInt16();
-    digP7 = buffer.getInt16();
-    digP8 = buffer.getInt16();
-    digP9 = buffer.getInt16();
+    _digP1 = buffer.getInt16() & 0xffff;
+    _digP2 = buffer.getInt16();
+    _digP3 = buffer.getInt16();
+    _digP4 = buffer.getInt16();
+    _digP5 = buffer.getInt16();
+    _digP6 = buffer.getInt16();
+    _digP7 = buffer.getInt16();
+    _digP8 = buffer.getInt16();
+    _digP9 = buffer.getInt16();
 
-    if (model == BME280model.BME280) {
+    if (_model == BME280model.BME280) {
       // Skip 1 byte
       buffer.skipBytes(1);
       // Read 1 byte of data from address 0xA1(161)
-      digH1 = buffer.getInt8() & 0xff;
+      _digH1 = buffer.getInt8() & 0xff;
 
       // Read 7 bytes of data from address 0xE1(225)
-      buffer = ByteBuffer(_readByteBlock(CALIB_26_REG, 7), isI2C);
+      buffer = ByteBuffer(_readByteBlock(CALIB_26_REG, 7),
+          isI2C ? ByteBufferSrc.I2C : ByteBufferSrc.SPI, bitOrder);
 
       // Humidity coefficients
-      digH2 = buffer.getInt16();
-      digH3 = buffer.getInt8() & 0xff;
+      _digH2 = buffer.getInt16();
+      _digH3 = buffer.getInt8() & 0xff;
       var b1_3 = buffer.getInt8();
       var b1_4 = buffer.getInt8();
-      digH4 = (b1_3 << 4) | (b1_4 & 0xF);
-      digH5 = ((b1_4 & 0xF0) >> 4) | (buffer.getInt8() << 4);
-      digH6 = buffer.getInt8();
+      _digH4 = (b1_3 << 4) | (b1_4 & 0xF);
+      _digH5 = ((b1_4 & 0xF0) >> 4) | (buffer.getInt8() << 4);
+      _digH6 = buffer.getInt8();
     }
   }
 
   void _setOperatingModes(int tempOversampling, int pressOversampling,
       int humOversampling, int operatingMode) {
-    if (model == BME280model.BME280) {
+    if (_model == BME280model.BME280) {
       // Humidity over sampling rate = 1
       _writeByte(CTRL_HUM_REG, humOversampling);
     }
@@ -209,8 +220,9 @@ class BME280 {
   BME280result getValues() {
     // Read the pressure, temperature, and humidity registers
     var buffer = ByteBuffer(
-        _readByteBlock(PRESS_MSB_REG, model == BME280model.BMP280 ? 6 : 8),
-        isI2C);
+        _readByteBlock(PRESS_MSB_REG, _model == BME280model.BMP280 ? 6 : 8),
+        isI2C ? ByteBufferSrc.I2C : ByteBufferSrc.SPI,
+        bitOrder);
 
     // Unpack the raw 20-bit unsigned pressure value
     var adc_p = ((buffer.getInt8() & 0xff) << 12) |
@@ -221,51 +233,51 @@ class BME280 {
         ((buffer.getInt8() & 0xff) << 4) |
         ((buffer.getInt8() & 0xf0) >> 4);
     var adc_h = 0;
-    if (model == BME280model.BME280) {
+    if (_model == BME280model.BME280) {
       // Unpack the raw 16-bit unsigned humidity value
       adc_h = ((buffer.getInt8() & 0xff) << 8) | (buffer.getInt8() & 0xff);
     }
 
-    var tvar1 = (((adc_t >> 3) - (digT1 << 1)) * digT2) >> 11;
-    var tvar2 =
-        (((((adc_t >> 4) - digT1) * ((adc_t >> 4) - digT1)) >> 12) * digT3) >>
-            14;
+    var tvar1 = (((adc_t >> 3) - (_digT1 << 1)) * _digT2) >> 11;
+    var tvar2 = (((((adc_t >> 4) - _digT1) * ((adc_t >> 4) - _digT1)) >> 12) *
+            _digT3) >>
+        14;
     var t_fine = tvar1 + tvar2;
 
     var temp = (t_fine * 5 + 128) >> 8;
 
     var pvar1 = t_fine - 128000;
-    var pvar2 = pvar1 * pvar1 * digP6;
-    pvar2 = pvar2 + ((pvar1 * digP5) << 17);
-    pvar2 = pvar2 + ((digP4) << 35);
-    pvar1 = ((pvar1 * pvar1 * digP3) >> 8) + ((pvar1 * digP2) << 12);
-    pvar1 = (((1 << 47) + pvar1)) * digP1 >> 33;
+    var pvar2 = pvar1 * pvar1 * _digP6;
+    pvar2 = pvar2 + ((pvar1 * _digP5) << 17);
+    pvar2 = pvar2 + ((_digP4) << 35);
+    pvar1 = ((pvar1 * pvar1 * _digP3) >> 8) + ((pvar1 * _digP2) << 12);
+    pvar1 = (((1 << 47) + pvar1)) * _digP1 >> 33;
     int pressure;
     if (pvar1 == 0) {
       pressure = 0; // Avoid exception caused by division by zero
     } else {
       pressure = 1048576 - adc_p;
       pressure = (((pressure << 31) - pvar2) * 3125) ~/ pvar1;
-      pvar1 = (digP9 * (pressure >> 13) * (pressure >> 13)) >> 25;
-      pvar2 = (digP8 * pressure) >> 19;
-      pressure = ((pressure + pvar1 + pvar2) >> 8) + (digP7 << 4);
+      pvar1 = (_digP9 * (pressure >> 13) * (pressure >> 13)) >> 25;
+      pvar2 = (_digP8 * pressure) >> 19;
+      pressure = ((pressure + pvar1 + pvar2) >> 8) + (_digP7 << 4);
     }
 
     var humidity = 0;
-    if (model == BME280model.BME280) {
+    if (_model == BME280model.BME280) {
       var v_x1_u32r = t_fine - 76800;
       v_x1_u32r =
-          ((((adc_h << 14) - (digH4 << 20) - (digH5 * v_x1_u32r)) + 16384) >>
+          ((((adc_h << 14) - (_digH4 << 20) - (_digH5 * v_x1_u32r)) + 16384) >>
                   15) *
-              (((((((v_x1_u32r * digH6) >> 10) *
-                                      (((v_x1_u32r * digH3) >> 11) + 32768)) >>
+              (((((((v_x1_u32r * _digH6) >> 10) *
+                                      (((v_x1_u32r * _digH3) >> 11) + 32768)) >>
                                   10) +
                               2097152) *
-                          digH2 +
+                          _digH2 +
                       8192) >>
                   14);
       v_x1_u32r = v_x1_u32r -
-          (((((v_x1_u32r >> 15) * (v_x1_u32r >> 15)) >> 7) * digH1) >> 4);
+          (((((v_x1_u32r >> 15) * (v_x1_u32r >> 15)) >> 7) * _digH1) >> 4);
       v_x1_u32r = v_x1_u32r < 0 ? 0 : v_x1_u32r;
       v_x1_u32r = v_x1_u32r > 419430400 ? 419430400 : v_x1_u32r;
       humidity = (v_x1_u32r) >> 12;

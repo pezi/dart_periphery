@@ -28,7 +28,7 @@ String getCperipheryVersion() {
   return Utf8.fromUtf8(_nativeVersion());
 }
 
-const String DART_PERIPHERY_VERSION = '0.8.8-beta';
+const String DART_PERIPHERY_VERSION = '0.8.9-beta';
 const String DART_PERIPHERY_GLUE_LIBVERSION = 'GLUE_LIB_VERSION_0.8.7';
 
 String getDartPeripheryGlueLibVersion() {

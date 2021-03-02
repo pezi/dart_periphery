@@ -1,3 +1,9 @@
+## 0.8.9-beta 2021-02-29
+
+* Fix SPI.openAdvanced2()
+* Fix I2C.readBytes() 
+* Add first version of MPU6050 support 
+
 ## 0.8.8-beta 2021-02-28
 
 * Add correct exception for loading native libraries inside flutter-pi  
