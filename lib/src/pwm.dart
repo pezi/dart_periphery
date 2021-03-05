@@ -138,7 +138,7 @@ int _checkError(int value) {
 }
 
 String _getErrmsg(Pointer<Void> handle) {
-  return Utf8.fromUtf8(_nativeErrmsg(handle));
+  return _nativeErrmsg(handle).toDartString();
 }
 
 /// PWM exception
@@ -155,31 +155,30 @@ class PWMexception implements Exception {
 
 final DynamicLibrary _peripheryLib = getPeripheryLib();
 
+Pointer<Void> _checkHandle(Pointer<Void> handle) {
+  // handle 0 indicates an internal error
+  if (handle.address == 0) {
+    throw PWMexception(
+        PWMerrorCode.PWM_ERROR_OPEN, 'Error opening PWM chip/channel');
+  }
+  return handle;
+}
+
 /// PWM wrapper functions for Linux userspace sysfs PWMs.
 class PWM {
   final int chip;
   final int channel;
-  Pointer<Void> _pwmHandle;
+  final Pointer<Void> _pwmHandle;
   bool _invalid = false;
 
-  PWM(this.chip, this.channel) {
-    _pwmHandle = _checkHandle(_nativeOpen(chip, channel));
-  }
+  PWM(this.chip, this.channel)
+      : _pwmHandle = _checkHandle(_nativeOpen(chip, channel));
 
   void _checkStatus() {
     if (_invalid) {
       throw PWMexception(PWMerrorCode.PWM_ERROR_CLOSE,
           'PWM interface has the status released.');
     }
-  }
-
-  Pointer<Void> _checkHandle(Pointer<Void> handle) {
-    // handle 0 indicates an internal error
-    if (handle.address == 0) {
-      throw PWMexception(
-          PWMerrorCode.PWM_ERROR_OPEN, 'Error opening PWM chip/channel');
-    }
-    return handle;
   }
 
   /// Releases all interal native resoures.
@@ -216,8 +215,8 @@ class PWM {
       _checkError(getErrno());
       return '';
     }
-    var text = Utf8.fromUtf8(ptr);
-    free(ptr);
+    var text = ptr.toDartString();
+    malloc.free(ptr);
     return text;
   }
 
@@ -229,14 +228,14 @@ class PWM {
     try {
       return _checkError(ptr.value);
     } finally {
-      free(ptr);
+      malloc.free(ptr);
     }
   }
 
   /// Sets the period in [nanoseconds] of the PWM.
   void setPeriodNs(int nanoseconds) {
     _checkStatus();
-    final ptr = allocate<Int64>(count: 1);
+    final ptr = malloc<Int64>(1);
     ptr.value = nanoseconds;
     _checkError(_nativeSetProperty(
         _pwmHandle, _PWMpropertyEnum.PERIOD_NS.index, ptr.cast<Void>()));
@@ -251,14 +250,14 @@ class PWM {
     try {
       return _checkError(ptr.value);
     } finally {
-      free(ptr);
+      malloc.free(ptr);
     }
   }
 
   /// Sets the duty cycle in [nanoseconds] of the PWM.
   void setDutyCycleNs(int nanoseconds) {
     _checkStatus();
-    final ptr = allocate<Int64>(count: 1);
+    final ptr = malloc<Int64>(1);
     ptr.value = nanoseconds;
     _checkError(_nativeSetProperty(
         _pwmHandle, _PWMpropertyEnum.DUTY_CYCLE_NS.index, ptr.cast<Void>()));
@@ -273,14 +272,14 @@ class PWM {
       _checkError(ptr.value.toInt());
       return ptr.value;
     } finally {
-      free(ptr);
+      malloc.free(ptr);
     }
   }
 
   /// Sets the period in [seconds] of the PWM.
   void setPeriod(double seconds) {
     _checkStatus();
-    var ptr = allocate<Double>(count: 1);
+    var ptr = malloc<Double>(1);
     ptr.value = seconds;
     _checkError(_nativeSetProperty(
         _pwmHandle, _PWMpropertyEnum.PERIOD.index, ptr.cast<Void>()));
@@ -296,14 +295,14 @@ class PWM {
       _checkError(ptr.value.toInt());
       return ptr.value;
     } finally {
-      free(ptr);
+      malloc.free(ptr);
     }
   }
 
   /// Sets the [dutyCycle] as a ratio between 0.0 to 1.0 in second of the PWM.
   void setDutyCycle(double dutyCycle) {
     _checkStatus();
-    final ptr = allocate<Double>(count: 1);
+    final ptr = malloc<Double>(1);
     ptr.value = dutyCycle;
     _checkError(_nativeSetProperty(
         _pwmHandle, _PWMpropertyEnum.DUTY_CYCLE.index, ptr.cast<Void>()));
@@ -319,14 +318,14 @@ class PWM {
       _checkError(ptr.value.toInt());
       return ptr.value;
     } finally {
-      free(ptr);
+      malloc.free(ptr);
     }
   }
 
   /// Sets the [frequency] in Hz of the PWM.
   void setFrequency(double frequency) {
     _checkStatus();
-    final ptr = allocate<Double>(count: 1);
+    final ptr = malloc<Double>(1);
     ptr.value = frequency;
     _checkError(_nativeSetProperty(
         _pwmHandle, _PWMpropertyEnum.FREQUENCY.index, ptr.cast<Void>()));
@@ -348,14 +347,14 @@ class PWM {
           throw PWMexception(PWMerrorCode.PWM_ERROR_QUERY, 'Unkown polarity');
       }
     } finally {
-      free(ptr);
+      malloc.free(ptr);
     }
   }
 
   /// Sets the output [polarity] of the PWM.
   void setPolarity(Polarity polarity) {
     _checkStatus();
-    final ptr = allocate<Int32>(count: 1);
+    final ptr = malloc<Int32>(1);
     ptr.value = polarity.index;
     _checkError(_nativeSetProperty(
         _pwmHandle, _PWMpropertyEnum.POLARITY.index, ptr.cast<Void>()));
@@ -369,7 +368,7 @@ class PWM {
     try {
       return _checkError(ptr.value);
     } finally {
-      free(ptr);
+      malloc.free(ptr);
     }
   }
 
@@ -381,7 +380,7 @@ class PWM {
     try {
       return _checkError(ptr.value);
     } finally {
-      free(ptr);
+      malloc.free(ptr);
     }
   }
 }

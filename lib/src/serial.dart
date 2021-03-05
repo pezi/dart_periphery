@@ -34,17 +34,17 @@ enum _SerialProperty {
 //
 class _ReadEvent extends Struct {
   @Int32()
-  int count;
-  Pointer<Int8> data;
-  factory _ReadEvent.allocate() => allocate<_ReadEvent>().ref;
+  external int count;
+  external Pointer<Int8> data;
+  factory _ReadEvent.allocate() => malloc<_ReadEvent>().ref;
 }
 
 /// Result of a [Serial.read()] operation.
 class SerialReadEvent {
   /// timeout flag of [Serial.read()] operation
-  bool isTimeout;
-  int count;
-  List<int> data;
+  bool isTimeout = false;
+  int count = 0;
+  List<int> data = [];
   SerialReadEvent(_ReadEvent event) {
     if (event.count == 0) {
       isTimeout = true;
@@ -327,7 +327,7 @@ int stopbits2Int(StopBits stopbits) {
 }
 
 String _getErrmsg(Pointer<Void> handle) {
-  return Utf8.fromUtf8(_nativeErrmsg(handle));
+  return _nativeErrmsg(handle).toDartString();
 }
 
 int _checkError(int value) {
@@ -336,6 +336,15 @@ int _checkError(int value) {
     throw SerialException(errorCode, errorCode.toString());
   }
   return value;
+}
+
+Pointer<Void> _checkHandle(Pointer<Void> handle) {
+  // handle 0 indicates an internal error
+  if (handle.address == 0) {
+    throw SerialException(
+        SerialErrorCode.SERIAL_ERROR_OPEN, 'Error opening serial port');
+  }
+  return handle;
 }
 
 /// Serial wrapper functions for Linux userspace termios tty devices.
@@ -347,17 +356,8 @@ class Serial {
   final StopBits stopbits;
   final bool xonxoff;
   final bool rtsct;
-  Pointer<Void> _serialHandle;
+  final Pointer<Void> _serialHandle;
   bool _invalid = false;
-
-  Pointer<Void> _checkHandle(Pointer<Void> handle) {
-    // handle 0 indicates an internal error
-    if (handle.address == 0) {
-      throw SerialException(
-          SerialErrorCode.SERIAL_ERROR_OPEN, 'Error opening serial port');
-    }
-    return handle;
-  }
 
   void _checkStatus() {
     if (_invalid) {
@@ -373,11 +373,9 @@ class Serial {
         parity = Parity.PARITY_NONE,
         stopbits = StopBits.SB1,
         rtsct = false,
-        xonxoff = false {
-    _serialHandle =
-        _checkHandle(_nativeOpen(Utf8.toUtf8(path), baudrate2Int(baudrate)));
-    print(_serialHandle);
-  }
+        xonxoff = false,
+        _serialHandle = _checkHandle(
+            _nativeOpen(path.toNativeUtf8(), baudrate2Int(baudrate)));
 
   /// Opens the <tt>tty</tt> device at the specified [path] (e.g. "/dev/ttyUSB0"), with the specified [baudrate], [databits],
   /// [parity], [stopbits], software flow control ([xonxoff]), and hardware flow control ([rtscts]) settings.
@@ -385,16 +383,15 @@ class Serial {
   /// serial should be a valid pointer to an allocated Serial handle structure. databits can be 5, 6, 7, or 8.
   /// parity can be PARITY_NONE, PARITY_ODD, or PARITY_EVEN . StopBits can be 1 or 2.
   Serial.advanced(this.path, this.baudrate, this.databits, this.parity,
-      this.stopbits, this.xonxoff, this.rtsct) {
-    _serialHandle = _checkHandle(_nativeOpenAdvanced(
-        Utf8.toUtf8(path),
-        baudrate2Int(baudrate),
-        databits2Int(databits),
-        parity.index,
-        stopbits2Int(stopbits),
-        xonxoff ? 1 : 0,
-        rtsct ? 1 : 0));
-  }
+      this.stopbits, this.xonxoff, this.rtsct)
+      : _serialHandle = _checkHandle(_nativeOpenAdvanced(
+            path.toNativeUtf8(),
+            baudrate2Int(baudrate),
+            databits2Int(databits),
+            parity.index,
+            stopbits2Int(stopbits),
+            xonxoff ? 1 : 0,
+            rtsct ? 1 : 0));
 
   /// Polls for data available for reading from the serial port.
   ///
@@ -441,9 +438,9 @@ class Serial {
       return SerialReadEvent(event.ref);
     } finally {
       if (event.ref.data.address != 0) {
-        free(event.ref.data);
+        malloc.free(event.ref.data);
       }
-      free(event);
+      malloc.free(event);
     }
   }
 
@@ -460,7 +457,7 @@ class Serial {
     if (list.isEmpty) {
       return 0;
     }
-    var ptr = allocate<Int8>(count: list.length);
+    var ptr = malloc<Int8>(list.length);
     try {
       var index = 0;
       for (var i in list) {
@@ -469,7 +466,7 @@ class Serial {
       var result = _nativeWrite(_serialHandle, ptr, list.length);
       return _checkError(result);
     } finally {
-      free(ptr);
+      malloc.free(ptr);
     }
   }
 
@@ -647,8 +644,8 @@ class Serial {
       _checkError(getErrno());
       return '?';
     }
-    var text = Utf8.fromUtf8(ptr);
-    free(ptr);
+    var text = ptr.toDartString();
+    malloc.free(ptr);
     return text;
   }
 }

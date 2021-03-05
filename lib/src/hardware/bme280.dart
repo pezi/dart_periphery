@@ -91,37 +91,36 @@ class BME280result {
 
 /// BME280/BMP280 sensor for temperature, pressure and humidity (BME280 only).
 class BME280 {
-  final I2C i2c;
-  final SPI spi;
+  late final I2C i2c;
+  late final SPI spi;
   final bool isI2C;
   final int i2cAddress;
-  BME280model _model;
+  late BME280model _model;
   final BitOrder bitOrder;
 
-  int _digT1;
-  int _digT2;
-  int _digT3;
-  int _digP1;
-  int _digP2;
-  int _digP3;
-  int _digP4;
-  int _digP5;
-  int _digP6;
-  int _digP7;
-  int _digP8;
-  int _digP9;
-  int _digH1;
-  int _digH2;
-  int _digH3;
-  int _digH4;
-  int _digH5;
-  int _digH6;
+  int _digT1 = 0;
+  int _digT2 = 0;
+  int _digT3 = 0;
+  int _digP1 = 0;
+  int _digP2 = 0;
+  int _digP3 = 0;
+  int _digP4 = 0;
+  int _digP5 = 0;
+  int _digP6 = 0;
+  int _digP7 = 0;
+  int _digP8 = 0;
+  int _digP9 = 0;
+  int _digH1 = 0;
+  int _digH2 = 0;
+  int _digH3 = 0;
+  int _digH4 = 0;
+  int _digH5 = 0;
+  int _digH6 = 0;
 
   /// Opens a BME280 or BMP280 sensor conntected with the [i2c] at the [i2cAddress = BME280_DEFAULT_I2C_ADDRESS] .
   BME280(this.i2c, [this.i2cAddress = BME280_DEFAULT_I2C_ADDRESS])
       : isI2C = true,
-        bitOrder = BitOrder.MSB_LAST,
-        spi = null {
+        bitOrder = BitOrder.MSB_LAST {
     _init();
   }
 
@@ -129,7 +128,6 @@ class BME280 {
   BME280.spi(this.spi)
       : isI2C = false,
         bitOrder = spi.bitOrder,
-        i2c = null,
         i2cAddress = -1 {
     _init();
   }

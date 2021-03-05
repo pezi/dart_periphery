@@ -351,23 +351,19 @@ void main() {
 
 ``` bash
 cd ~
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.10.5/sdk/dartsdk-linux-arm-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.12.0/sdk/dartsdk-linux-arm-release.zip
 unzip dartsdk-linux-arm-release.zip
 sudo mv dart-sdk /opt/
-sudo chmod +rx /opt/dart-sdk
+sudo chmod -R +rx /opt/dart-sdk
 ```
 
 ### ARMv8
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.10.5/sdk/dartsdk-linux-arm64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.12.0/sdk/dartsdk-linux-arm64-release.zip
 unzip dartsdk-linux-arm64-release.zip
 sudo mv dart-sdk /opt/
-sudo chmod +rx /opt/dart-sdk
-```
-
-``` bash
-nano ~/.profile
+sudo chmod -R +rx /opt/dart-sdk
 ```
 
 add for bash as default
@@ -393,8 +389,8 @@ to apply the changes.
 Test the installion
 
 ``` bash
-root@nanopineo2:~# dart --version
-Dart SDK version: 2.10.5 (stable) (Tue Jan 19 13:05:37 2021 +0100) on "linux_arm64"
+root@bananapi:~# dart --version
+Dart SDK version: 2.12.0 (stable) (Thu Feb 25 19:50:53 2021 +0100) on "linux_arm"
 ```
 
 ## Native libraries
@@ -461,7 +457,7 @@ to use the static or shared glue library with the correct bitness. The appropria
 ``` dart
 setCustomLibrary(String absolutePath)
 ```
-must be called to provide the absolute path of the [native glue library](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/dart_periphery_static_32.1.0.0.so). See last seection, native libraries for details.
+must be called to provide the absolute path of the [native glue library](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/dart_periphery_static_32.1.0.0.so). See last section, native libraries for details.
 
 
 ## Tested SoC hardware
@@ -488,7 +484,6 @@ must be called to provide the absolute path of the [native glue library](https:/
 * Writing API test cases.
 * Improve build process of the native libraries.
 * Port hardware devices from the [mattjlewis / diozero Java Project](https://github.com/mattjlewis/diozero/tree/master/diozero-core/src/main/java/com/diozero/devices) to **dart_periphery**: e.g. BME680, SGP30 etc.
-In most cases it is easy to find code snippets for the most sensors, but the implementations of the diozero Project have a high level.
 
 ## Help wanted
 

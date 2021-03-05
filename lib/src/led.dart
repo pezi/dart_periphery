@@ -95,7 +95,7 @@ int _checkError(int value) {
 }
 
 String _getErrmsg(Pointer<Void> handle) {
-  return Utf8.fromUtf8(_nativeErrmsg(handle));
+  return _nativeErrmsg(handle).toDartString();
 }
 
 /// Led exception
@@ -112,32 +112,30 @@ class LedException implements Exception {
 
 final DynamicLibrary _peripheryLib = getPeripheryLib();
 
+Pointer<Void> _checkHandle(Pointer<Void> handle) {
+  // handle 0 indicates an internal error
+  if (handle.address == 0) {
+    throw LedException(LedErrorCode.LED_ERROR_OPEN, 'Error opening led');
+  }
+  return handle;
+}
+
 /// LED wrapper functions for Linux userspace sysfs LEDs.
 class Led {
   final String name;
-  Pointer<Void> _ledHandle;
+  final Pointer<Void> _ledHandle;
   bool _invalid = false;
 
   /// Open the sysfs LED with the specified name.
   ///
   /// 'ls /sys/class/leds/' to list all available leds.
-  Led(this.name) {
-    _ledHandle = _checkHandle(_nativeOpen(Utf8.toUtf8(name)));
-  }
+  Led(this.name) : _ledHandle = _checkHandle(_nativeOpen(name.toNativeUtf8()));
 
   void _checkStatus() {
     if (_invalid) {
       throw LedException(LedErrorCode.LED_ERROR_CLOSE,
           'Led interface has the status released.');
     }
-  }
-
-  Pointer<Void> _checkHandle(Pointer<Void> handle) {
-    // handle 0 indicates an internal error
-    if (handle.address == 0) {
-      throw LedException(LedErrorCode.LED_ERROR_OPEN, 'Error opening led');
-    }
-    return handle;
   }
 
   /// Sets the state of the led to [value].
@@ -194,8 +192,8 @@ class Led {
       _checkError(getErrno());
       return '?';
     }
-    var text = Utf8.fromUtf8(ptr);
-    free(ptr);
+    var text = ptr.toDartString();
+    malloc.free(ptr);
     return text;
   }
 
@@ -208,8 +206,8 @@ class Led {
       _checkError(getErrno());
       return '?';
     }
-    var name = Utf8.fromUtf8(ptr);
-    free(ptr);
+    var name = ptr.toDartString();
+    malloc.free(ptr);
     return name;
   }
 }

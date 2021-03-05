@@ -4,6 +4,7 @@
 
 import 'package:system_info/system_info.dart';
 import 'dart:ffi';
+import 'package:ffi/ffi.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:path/path.dart';
@@ -14,13 +15,13 @@ const pkgName = 'dart_periphery';
 const String version = '1.0.0';
 
 String staticLib =
-    'dart_periphery_static_${SysInfo.userSpaceBitness}.${version}.so';
-String sharedLib = 'dart_periphery_${SysInfo.userSpaceBitness}.${version}.so';
+    'dart_periphery_static_${SysInfo.userSpaceBitness}.$version.so';
+String sharedLib = 'dart_periphery_${SysInfo.userSpaceBitness}.$version.so';
 
 String library = staticLib;
 
-// ignore: avoid_init_to_null
-DynamicLibrary _peripheryLib = null;
+late DynamicLibrary _peripheryLib;
+bool isPeripheryLibLoaded = false;
 String _peripheryLibPath = '';
 
 /// Build a file path.
@@ -47,7 +48,7 @@ String findPackagePath(String currentPath, {bool windows = false}) {
         }
       }
     }
-    return null;
+    return '';
   }
 
   var file = File(join(currentPath, '.packages'));
@@ -56,7 +57,7 @@ String findPackagePath(String currentPath, {bool windows = false}) {
   } else {
     var parent = dirname(currentPath);
     if (parent == currentPath) {
-      return null;
+      return '';
     }
     return findPackagePath(parent);
   }
@@ -93,11 +94,14 @@ class LibraryException implements Exception {
   String toString() => errorMsg;
 }
 
+typedef _dart_periphery_version_info = Pointer<Utf8> Function();
+typedef _PeripheryVersion = Pointer<Utf8> Function();
+
 DynamicLibrary getPeripheryLib() {
   if (!Platform.isLinux) {
     throw PlatformException();
   }
-  if (_peripheryLib != null) {
+  if (isPeripheryLibLoaded) {
     return _peripheryLib;
   }
   String path;
@@ -105,17 +109,23 @@ DynamicLibrary getPeripheryLib() {
     path = _peripheryLibPath;
   } else {
     var location = findPackagePath(Directory.current.path);
-    if (location == null) {
+    if (location.isEmpty) {
       throw LibraryException(LibraryErrorCode.LIBRARY_NOT_FOUND,
           "Unable to find native lib '$library'. Non standard environment e.g. flutter-pi? Use 'setCustomLibrary(String absolutePath)' - see documentation https://github.com/pezi/dart_periphery, or create an issue https://github.com/pezi/dart_periphery/issues");
     }
     path = normalize(join(location, 'src', 'native', library));
   }
-  _peripheryLib ??= DynamicLibrary.open(path.toString());
-  var glueLibVer = getDartPeripheryGlueLibVersion();
+  _peripheryLib = DynamicLibrary.open(path.toString());
+
+  var _internalVersion = _peripheryLib
+      .lookup<NativeFunction<_dart_periphery_version_info>>('dart_get_version')
+      .asFunction<_PeripheryVersion>();
+  var glueLibVer = _internalVersion().toDartString();
+
   if (glueLibVer != DART_PERIPHERY_GLUE_LIBVERSION) {
     throw LibraryException(LibraryErrorCode.LIBRARY_VERSION_MISMATCH,
         'Version native lib $glueLibVer != Dart package version $DART_PERIPHERY_GLUE_LIBVERSION');
   }
+  isPeripheryLibLoaded = true;
   return _peripheryLib;
 }

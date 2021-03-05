@@ -119,7 +119,7 @@ int _checkError(int value) {
 }
 
 String _getErrmsg(Pointer<Void> handle) {
-  return Utf8.fromUtf8(_nativeErrmsg(handle));
+  return _nativeErrmsg(handle).toDartString();
 }
 
 // MMIO exception
@@ -136,9 +136,17 @@ class MMIOexception implements Exception {
 
 const int MASK_32 = 0xFFFFFFFF;
 
+Pointer<Void> _checkHandle(Pointer<Void> handle) {
+  // handle 0 indicates an internal error
+  if (handle.address == 0) {
+    throw MMIOexception(MMIOerrorCode.MMIO_ERROR_OPEN, 'Error opening MMIO');
+  }
+  return handle;
+}
+
 /// MMIO wrapper functions for the Linux userspace <tt>/dev/mem</tt> device.
 class MMIO {
-  Pointer<Void> _mmioHandle;
+  final Pointer<Void> _mmioHandle;
   bool _invalid = false;
   int base;
   int size;
@@ -148,19 +156,18 @@ class MMIO {
   /// the default <tt>/dev/mem</tt> memory character device.
   ///
   /// Neither base nor size need be aligned to a page boundary.
-  MMIO(this.base, this.size) : path = '' {
-    _mmioHandle = _checkHandle(_nativeOpen(base, size));
-  }
+  MMIO(this.base, this.size)
+      : path = '',
+        _mmioHandle = _checkHandle(_nativeOpen(base, size));
 
   /// Map the region of physical memory specified by the [base] physical address and [size] in bytes, using
   /// the specified memory character device [path].
   ///
   /// This open function can be used with sandboxed memory character devices, e.g. <tt>/dev/gpiomem</tt>.
   /// Neither base nor size need be aligned to a page boundary.
-  MMIO.advanced(this.base, this.size, this.path) {
-    _mmioHandle =
-        _checkHandle(_nativeOpenAdvanced(base, size, Utf8.toUtf8(path)));
-  }
+  MMIO.advanced(this.base, this.size, this.path)
+      : _mmioHandle =
+            _checkHandle(_nativeOpenAdvanced(base, size, path.toNativeUtf8()));
 
   /// Reads 32-bits from mapped physical memory, starting at the specified byte offset, relative to the
   /// base address the MMIO handle was opened with.
@@ -195,7 +202,7 @@ class MMIO {
   /// Reads an byte array from mapped physical memory, starting at the specified byte offset, relative to the
   /// base address the MMIO handle was opened with.
   List<int> read(int offset, int len) {
-    var buf = allocate<Uint8>(count: len);
+    var buf = malloc<Uint8>(len);
     try {
       _checkError(_native_read_buf(_mmioHandle, offset, buf, len));
       var data = <int>[];
@@ -204,7 +211,7 @@ class MMIO {
       }
       return data;
     } finally {
-      free(buf);
+      malloc.free(buf);
     }
   }
 
@@ -229,14 +236,14 @@ class MMIO {
   /// Writes an byte array from mapped physical memory, starting at the specified byte offset, relative to the
   /// base address the MMIO handle was opened with.
   void write(int offset, List<int> data) {
-    var buf = allocate<Uint8>(count: data.length);
+    var buf = malloc<Uint8>(data.length);
     try {
       for (var i = 0; i < data.length; ++i) {
         buf.elementAt(i).value = data[i];
       }
       _checkError(_native_write_buf(_mmioHandle, offset, buf, data.length));
     } finally {
-      free(buf);
+      malloc.free(buf);
     }
   }
 
@@ -245,14 +252,6 @@ class MMIO {
 
   /// Fast access for [MMIO.write32]
   operator []=(int i, int value) => write32(i, value); // set
-
-  Pointer<Void> _checkHandle(Pointer<Void> handle) {
-    // handle 0 indicates an internal error
-    if (handle.address == 0) {
-      throw MMIOexception(MMIOerrorCode.MMIO_ERROR_OPEN, 'Error opening MMIO');
-    }
-    return handle;
-  }
 
   void _checkStatus() {
     if (_invalid) {
@@ -283,8 +282,8 @@ class MMIO {
       _checkError(getErrno());
       return '?';
     }
-    var text = Utf8.fromUtf8(ptr);
-    free(ptr);
+    var text = ptr.toDartString();
+    malloc.free(ptr);
     return text;
   }
 }

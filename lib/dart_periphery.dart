@@ -20,7 +20,8 @@ export 'src/gpio.dart'
         GPIOreadEvent,
         PollMultipleEvent,
         GPIOconfig,
-        GPIOexception;
+        GPIOexception,
+        getGPIOerrorCode;
 export 'src/serial.dart'
     show
         SerialReadEvent,

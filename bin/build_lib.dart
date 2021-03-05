@@ -15,7 +15,7 @@ class PlatformException implements Exception {
 }
 
 /// Build a file path.
-String toFilePath(String parent, String path, {bool windows}) {
+String toFilePath(String parent, String path, {bool windows = false}) {
   var uri = Uri.parse(path);
   path = uri.toFilePath(windows: windows);
   if (isRelative(path)) {
@@ -25,7 +25,7 @@ String toFilePath(String parent, String path, {bool windows}) {
 }
 
 /// Find our package path in the current project
-String findPackagePath(String currentPath, {bool windows}) {
+String findPackagePath(String currentPath, {bool windows = false}) {
   String findPath(File file) {
     var lines = LineSplitter.split(file.readAsStringSync());
     for (var line in lines) {
@@ -38,7 +38,7 @@ String findPackagePath(String currentPath, {bool windows}) {
         }
       }
     }
-    return null;
+    return '';
   }
 
   var file = File(join(currentPath, '.packages'));

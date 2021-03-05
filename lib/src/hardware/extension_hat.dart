@@ -68,7 +68,7 @@ int RETRY = 3;
 class ArduinoBasedHat {
   final I2C i2c;
   bool _autoWait = false;
-  int _lastAction;
+  int _lastAction = 0;
 
   /// Sets the [i2c] bus.
   ArduinoBasedHat(this.i2c);
@@ -98,7 +98,7 @@ class ArduinoBasedHat {
   /// Reads a byte array from the I2C bus.
   List<int> read_i2c_block(int len) {
     autoWait();
-    I2Cexception error;
+    var error = I2Cexception.empty();
     for (var i = 0; i < RETRY; ++i) {
       try {
         var data = i2c.readBytesReg(HAT_ARDUINO_I2C_ADDRESS, HAT_REGISTER, len);
@@ -115,7 +115,7 @@ class ArduinoBasedHat {
   /// Writes a byte array to the I2C bus.
   void write_i2c_block(List<int> data) {
     autoWait();
-    I2Cexception error;
+    var error = I2Cexception.empty();
     for (var i = 0; i < RETRY; ++i) {
       try {
         i2c.writeBytesReg(HAT_ARDUINO_I2C_ADDRESS, HAT_REGISTER, data);
@@ -132,7 +132,7 @@ class ArduinoBasedHat {
   /// Sets the pin [mode] for a [pin].
   void pinMode(int pin, PinMode mode) {
     autoWait();
-    I2Cexception error;
+    var error = I2Cexception.empty();
     for (var i = 0; i < RETRY; ++i) {
       try {
         write_i2c_block(HatCmd(PINMODE).getCmdSeqExt(pin, mode.index));
@@ -149,7 +149,7 @@ class ArduinoBasedHat {
   /// Reads a [DigitalValue] from a given [pin].
   DigitalValue digitalRead(int pin) {
     autoWait();
-    I2Cexception error;
+    var error = I2Cexception.empty();
     for (var i = 0; i < RETRY; ++i) {
       try {
         write_i2c_block(HatCmd(DIGITAL_READ).getCmdSeqExt(pin));
@@ -171,7 +171,7 @@ class ArduinoBasedHat {
   /// Writes a digital [value] to a given [pin].
   void digitalWrite(int pin, DigitalValue value) {
     autoWait();
-    I2Cexception error;
+    var error = I2Cexception.empty();
     for (var i = 0; i < RETRY; ++i) {
       try {
         write_i2c_block(HatCmd(DIGITAL_WRITE).getCmdSeqExt(pin, value.index));
@@ -188,7 +188,7 @@ class ArduinoBasedHat {
   /// Reads an analog value from a given [pin].
   int analogRead(int pin) {
     autoWait();
-    I2Cexception error;
+    var error = I2Cexception.empty();
     for (var i = 0; i < RETRY; ++i) {
       try {
         write_i2c_block(HatCmd(ANALOG_READ).getCmdSeqExt(pin));
@@ -211,7 +211,7 @@ class ArduinoBasedHat {
   /// Writes an analog [value] to a [pin].
   void analogWrite(int pin, int value) {
     autoWait();
-    I2Cexception error;
+    var error = I2Cexception.empty();
     for (var i = 0; i < RETRY; ++i) {
       try {
         write_i2c_block(HatCmd(ANALOG_WRITE).getCmdSeqExt(pin, value));
@@ -228,7 +228,7 @@ class ArduinoBasedHat {
   /// Returns the firmware of the hat.
   String getFirmwareVersion() {
     autoWait();
-    I2Cexception error;
+    var error = I2Cexception.empty();
     for (var i = 0; i < RETRY; ++i) {
       try {
         write_i2c_block(HatCmd(FIRMWARE).getCmdSeq());
@@ -247,7 +247,7 @@ class ArduinoBasedHat {
 
   void _sendCmd(int cmd, int pin, [int value1 = 0, int value2 = 0]) {
     autoWait();
-    I2Cexception error;
+    var error = I2Cexception.empty();
     for (var i = 0; i < RETRY; ++i) {
       try {
         write_i2c_block(HatCmd(cmd).getCmdSeqExt(pin, value1, value2));
@@ -312,7 +312,7 @@ class NanoHatHub extends ArduinoBasedHat {
   /// http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_Ultrasonic_Ranger
   int readUltrasonic(int pin) {
     autoWait();
-    I2Cexception error;
+    var error = I2Cexception.empty();
     for (var i = 0; i < RETRY; ++i) {
       try {
         write_i2c_block(HatCmd(ULTRA_SONIC).getCmdSeqExt(pin));
@@ -366,7 +366,7 @@ class BakeBitLedBar {
 /// - Problems using more than 2 I2C devices
 /// - Problems using I2C and SPI bus at the same time
 class GrovePiPlusHat extends ArduinoBasedHat {
-  int i2cBus;
+  int i2cBus = 1;
   GrovePiPlusHat([int i2cBus = 1]) : super(I2C(i2cBus));
 }
 

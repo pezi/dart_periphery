@@ -135,12 +135,12 @@ enum GPIOdrive {
 
 class _ReadEvent extends Struct {
   @Int32()
-  int error_code;
+  external int error_code;
   @Int32()
-  int edge;
+  external int edge;
   @Int32()
-  int timestamp;
-  factory _ReadEvent.allocate() => allocate<_ReadEvent>().ref;
+  external int timestamp;
+  factory _ReadEvent.allocate() => malloc<_ReadEvent>().ref;
 }
 
 /// Result of the [GPIO.readEvent()].
@@ -194,8 +194,8 @@ class PollMultipleEvent {
 //
 class _PoolMultiple extends Struct {
   @Int32()
-  int result;
-  Pointer<Int8> ready;
+  external int result;
+  external Pointer<Int8> ready;
 }
 
 /// Configuration class for [GPIO.advanced] and [GPIO.nameAdvanced].
@@ -216,23 +216,20 @@ class GPIOconfig {
         label = '';
 }
 
-extension GPIOerrorCodeConvert on int {
-  /// Converts the native error code [value] to [GPIOerrorCode].
-  GPIOerrorCode getGPIOerrorCode() {
-    var value = this;
-    // must be negative
-    if (value >= 0) {
-      return GPIOerrorCode.ERROR_CODE_NOT_MAPPABLE;
-    }
-    value = -value;
-
-    // check range
-    if (value > GPIOerrorCode.GPIO_ERROR_CLOSE.index) {
-      return GPIOerrorCode.ERROR_CODE_NOT_MAPPABLE;
-    }
-
-    return GPIOerrorCode.values[value];
+/// Converts the native error code [value] to [GPIOerrorCode].
+GPIOerrorCode getGPIOerrorCode(int value) {
+  // must be negative
+  if (value >= 0) {
+    return GPIOerrorCode.ERROR_CODE_NOT_MAPPABLE;
   }
+  value = -value;
+
+  // check range
+  if (value > GPIOerrorCode.GPIO_ERROR_CLOSE.index) {
+    return GPIOerrorCode.ERROR_CODE_NOT_MAPPABLE;
+  }
+
+  return GPIOerrorCode.values[value];
 }
 
 /// GPIO exception
@@ -241,7 +238,7 @@ class GPIOexception implements Exception {
   final String errorMsg;
   GPIOexception(this.errorCode, this.errorMsg);
   GPIOexception.errorCode(int code, Pointer<Void> handle)
-      : errorCode = code.getGPIOerrorCode(),
+      : errorCode = getGPIOerrorCode(code),
         errorMsg = _getErrmsg(handle);
   @override
   String toString() => errorMsg;
@@ -316,9 +313,8 @@ final _nativeOpenName = _peripheryLib
 
 // gpio_t *dart_gpio_open_sysfs(int line, int direction)
 typedef _dart_gpio_open_sysfs = Pointer<Void> Function(
-    Pointer<Utf8> path, Int32 line, Int32 direction);
-typedef _GPIOopenSysfs = Pointer<Void> Function(
-    Pointer<Utf8> path, int line, int direction);
+    Int32 line, Int32 direction);
+typedef _GPIOopenSysfs = Pointer<Void> Function(int line, int direction);
 final _nativeOpenSysfs = _peripheryLib
     .lookup<NativeFunction<_dart_gpio_open_sysfs>>('dart_gpio_open_sysfs')
     .asFunction<_GPIOopenSysfs>();
@@ -375,15 +371,23 @@ final _nativeMultiplePoll = _peripheryLib
 final _nativeGetTextProperty = utf8VoidIntM('dart_gpio_get_text_property');
 
 String _getErrmsg(Pointer<Void> handle) {
-  return Utf8.fromUtf8(_nativeErrmsg(handle));
+  return _nativeErrmsg(handle).toDartString();
 }
 
 int _checkError(int value) {
   if (value < 0) {
     throw GPIOexception(
-        value.getGPIOerrorCode(), value.getGPIOerrorCode().toString());
+        getGPIOerrorCode(value), getGPIOerrorCode(value).toString());
   }
   return value;
+}
+
+Pointer<Void> _checkHandle(Pointer<Void> handle) {
+  // handle 0 indicates an internal error
+  if (handle.address == 0) {
+    throw GPIOexception(GPIOerrorCode.GPIO_ERROR_OPEN, 'Error opening GPIO');
+  }
+  return handle;
 }
 
 /// GPIO wrapper functions for Linux userspace character device gpio-cdev and sysfs GPIOs.
@@ -408,20 +412,12 @@ class GPIO {
 
   /// GPIO name, is empty if [GPIO.line] is used
   final String name;
-  Pointer<Void> _gpioHandle;
+  final Pointer<Void> _gpioHandle;
   bool _invalid = false;
 
   /// Sets an alternative [chipBasePath], default value is '/dev/gpiochip'
   static void setBaseGPIOpath(String chipBasePath) {
     _gpioBasePath = chipBasePath;
-  }
-
-  Pointer<Void> _checkHandle(Pointer<Void> handle) {
-    // handle 0 indicates an internal error
-    if (handle.address == 0) {
-      throw GPIOexception(GPIOerrorCode.GPIO_ERROR_OPEN, 'Error opening GPIO');
-    }
-    return handle;
   }
 
   void _checkStatus() {
@@ -444,20 +440,22 @@ class GPIO {
   /// Use [GPIO.setBaseGPIOpath] to change the default character device path.
   GPIO(this.line, this.direction, [this.chip = 0])
       : path = _gpioBasePath + chip.toString(),
-        name = '' {
-    _gpioHandle =
-        _checkHandle(_nativeOpen(Utf8.toUtf8(path), line, direction.index));
-  }
+        name = '',
+        _gpioHandle = _checkHandle(_nativeOpen(
+            (_gpioBasePath + chip.toString()).toNativeUtf8(),
+            line,
+            direction.index));
 
   /// Opens the character device GPIO with the specified GPIO [name] and [direction] at the default character
   /// device GPIO with the [chip] number. The default chip number is 0, with the path /dev/gpiochip0. Use [GPIO.setBaseGPIOpath]
   /// to change the default character device path.
   GPIO.name(this.name, this.direction, [this.chip = 0])
       : path = _gpioBasePath + chip.toString(),
-        line = -1 {
-    _gpioHandle = _checkHandle(
-        _nativeOpenName(Utf8.toUtf8(path), Utf8.toUtf8(name), direction.index));
-  }
+        line = -1,
+        _gpioHandle = _checkHandle(_nativeOpenName(
+            (_gpioBasePath + chip.toString()).toNativeUtf8(),
+            name.toNativeUtf8(),
+            direction.index));
 
   /// Opens the character device GPIO with the specified GPIO [line] and configuration [config] at the default character
   /// device GPIO with the [chip] number. The default chip numer is 0, with the path /dev/gpiochip0. Use [GPIO.setBaseGPIOpath]
@@ -465,17 +463,16 @@ class GPIO {
   GPIO.advanced(this.line, GPIOconfig config, [this.chip = 0])
       : path = _gpioBasePath + chip.toString(),
         name = '',
-        direction = config.direction {
-    _gpioHandle = _checkHandle(_nativeOpenAdvanced(
-        Utf8.toUtf8(path),
-        line,
-        config.direction.index,
-        config.edge.index,
-        config.bias.index,
-        config.drive.index,
-        config.inverted ? 1 : 0,
-        Utf8.toUtf8(config.label)));
-  }
+        direction = config.direction,
+        _gpioHandle = _checkHandle(_nativeOpenAdvanced(
+            (_gpioBasePath + chip.toString()).toNativeUtf8(),
+            line,
+            config.direction.index,
+            config.edge.index,
+            config.bias.index,
+            config.drive.index,
+            config.inverted ? 1 : 0,
+            config.label.toNativeUtf8()));
 
   /// Opens the character device GPIO with the specified GPIO [name] and the configuration [config] at the default character
   /// device GPIO with the [chip] number. The default chip numer is 0, with the path <tt>/dev/gpiochip0</tt>. Use [GPIO.setBaseGPIOpath]
@@ -483,26 +480,23 @@ class GPIO {
   GPIO.nameAdvanced(this.name, GPIOconfig config, [this.chip = 0])
       : path = _gpioBasePath + chip.toString(),
         line = -1,
-        direction = config.direction {
-    _gpioHandle = _checkHandle(_nativeOpenNameAdvanced(
-        Utf8.toUtf8(path),
-        Utf8.toUtf8(name),
-        config.direction.index,
-        config.edge.index,
-        config.bias.index,
-        config.drive.index,
-        config.inverted ? 1 : 0,
-        Utf8.toUtf8(config.label)));
-  }
+        direction = config.direction,
+        _gpioHandle = _checkHandle(_nativeOpenNameAdvanced(
+            (_gpioBasePath + chip.toString()).toNativeUtf8(),
+            name.toNativeUtf8(),
+            config.direction.index,
+            config.edge.index,
+            config.bias.index,
+            config.drive.index,
+            config.inverted ? 1 : 0,
+            config.label.toNativeUtf8()));
 
   /// Opens the sysfs GPIO with the specified [line] and [direction].
   GPIO.sysfs(this.line, this.direction)
       : chip = -1,
         path = '',
-        name = '' {
-    _gpioHandle = _checkHandle(
-        _nativeOpenSysfs(Utf8.toUtf8(path), line, direction.index));
-  }
+        name = '',
+        _gpioHandle = _checkHandle(_nativeOpenSysfs(line, direction.index));
 
   /// Polls multiple GPIOs for an edge event configured with [GPIO.setGPIOedge].
   /// For character device GPIOs, the edge event should be consumed with [GPIO.readEvent]. For sysfs GPIOs,
@@ -510,7 +504,7 @@ class GPIO {
   /// [timeoutMillis] can be positive for a timeout in milliseconds, zero for a non-blocking poll, or
   /// negative for a blocking poll. Returns a [PollMultipleEvent()]
   static PollMultipleEvent pollMultiple(List<GPIO> gpios, int timeoutMillis) {
-    final ptr = allocate<Pointer<Void>>(count: gpios.length);
+    final ptr = malloc<Pointer<Void>>(gpios.length);
     var index = 0;
     for (var g in gpios) {
       g._checkStatus();
@@ -525,11 +519,11 @@ class GPIO {
       }
       return PollMultipleEvent(gpios, result.ref.result, list);
     } finally {
-      free(ptr);
+      malloc.free(ptr);
       if (result.ref.ready.address != 0) {
-        free(result.ref.ready);
+        malloc.free(result.ref.ready);
       }
-      free(result);
+      malloc.free(result);
     }
   }
 
@@ -567,7 +561,7 @@ class GPIO {
       var result = GPIOreadEvent(event.ref);
       return result;
     } finally {
-      free(event);
+      malloc.free(event);
     }
   }
 
@@ -681,8 +675,8 @@ class GPIO {
       _checkError(getErrno());
       return '?';
     }
-    var text = Utf8.fromUtf8(ptr);
-    free(ptr);
+    var text = ptr.toDartString();
+    malloc.free(ptr);
     return text;
   }
 

@@ -56,19 +56,18 @@ int I2CmsgFlags2Int(I2CmsgFlags flag) {
     case I2CmsgFlags.I2C_M_RECV_LEN:
       return 0x0400;
   }
-  return 0;
 }
 
 /// Helper class mapped to the C struct i2c_msg
 class NativeI2Cmsg extends Struct {
   @Int16()
-  int addr;
+  external int addr;
   @Int16()
-  int flags;
+  external int flags;
   @Int16()
-  int len;
-  Pointer<Int8> buf;
-  factory NativeI2Cmsg.allocate() => allocate<NativeI2Cmsg>().ref;
+  external int len;
+  external Pointer<Int8> buf;
+  factory NativeI2Cmsg.allocate() => malloc<NativeI2Cmsg>().ref;
 }
 
 /// Helper class which stores an array of native 'struct i2c_msg' messages.
@@ -99,10 +98,10 @@ class NativeI2CmsgHelper {
     for (var i = 0; i < size; ++i) {
       var msg = _messages.elementAt(index++);
       if (msg.ref.buf.address != 0) {
-        free(msg.ref.buf);
+        malloc.free(msg.ref.buf);
       }
     }
-    free(_messages);
+    malloc.free(_messages);
   }
 }
 
@@ -136,7 +135,7 @@ class I2Cmsg {
       : len = predefined.length;
 
   static Pointer<NativeI2Cmsg> _toNative(List<I2Cmsg> list) {
-    final ptr = allocate<NativeI2Cmsg>(count: list.length);
+    final ptr = malloc<NativeI2Cmsg>(list.length);
     var index = 0;
     for (var data in list) {
       var msg = ptr.elementAt(index++);
@@ -149,7 +148,7 @@ class I2Cmsg {
         }
       }
       msg.ref.flags = flags;
-      msg.ref.buf = allocate<Int8>(count: data.len);
+      msg.ref.buf = malloc<Int8>(data.len);
       if (data.predefined.isNotEmpty) {
         var count = 0;
         for (var value in data.predefined) {
@@ -214,6 +213,9 @@ int _checkError(int value) {
 class I2Cexception implements Exception {
   final I2CerrorCode errorCode;
   final String errorMsg;
+  I2Cexception.empty()
+      : errorCode = I2CerrorCode.ERROR_CODE_NOT_MAPPABLE,
+        errorMsg = '';
   I2Cexception(this.errorCode, this.errorMsg);
   I2Cexception.errorCode(int code, Pointer<Void> handle)
       : errorCode = getI2CerrorCode(code),
@@ -260,35 +262,36 @@ final _nativeFD = _peripheryLib
 final _nativeInfo = utf8VoidM('dart_i2c_info');
 
 String _getErrmsg(Pointer<Void> handle) {
-  return Utf8.fromUtf8(_nativeErrmsg(handle));
+  return _nativeErrmsg(handle).toDartString();
+}
+
+Pointer<Void> _checkHandle(Pointer<Void> handle) {
+  // handle 0 indicates an internal error
+  if (handle.address == 0) {
+    throw I2Cexception(I2CerrorCode.I2C_ERROR_OPEN, 'Error opening I2C bus');
+  }
+  return handle;
 }
 
 /// I2C wrapper functions for Linux userspace i2c-dev devices.
 class I2C {
   static const String _i2cBasePath = '/dev/i2c-';
-  Pointer<Void> _i2cHandle;
+  final Pointer<Void> _i2cHandle;
   final String path;
   final int busNum;
   bool _invalid = false;
 
   /// Opens the i2c-dev device at the specified path (e.g. "/dev/i2c-[busNum]").
-  I2C(this.busNum) : path = _i2cBasePath + busNum.toString() {
-    _i2cHandle = _checkHandle(_nativeOpen(Utf8.toUtf8(path)));
-  }
+  I2C(this.busNum)
+      : path = _i2cBasePath + busNum.toString(),
+        _i2cHandle = _checkHandle(
+            _nativeOpen((_i2cBasePath + busNum.toString()).toNativeUtf8()));
 
   void _checkStatus() {
     if (_invalid) {
       throw I2Cexception(I2CerrorCode.I2C_ERROR_CLOSE,
           'I2C interface has the status released.');
     }
-  }
-
-  Pointer<Void> _checkHandle(Pointer<Void> handle) {
-    // handle 0 indicates an internal error
-    if (handle.address == 0) {
-      throw I2Cexception(I2CerrorCode.I2C_ERROR_OPEN, 'Error opening I2C bus');
-    }
-    return handle;
   }
 
   /// Transfers a list of [I2Cmsg].
@@ -519,8 +522,8 @@ class I2C {
       _checkError(getErrno());
       return '?';
     }
-    var text = Utf8.fromUtf8(ptr);
-    free(ptr);
+    var text = ptr.toDartString();
+    malloc.free(ptr);
     return text;
   }
 

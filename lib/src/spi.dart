@@ -161,7 +161,7 @@ final _nativeGetProperty = intVoidIntM('dart_get_property');
 final _nativeSetProperty = intVoidIntIntM('dart_set_property');
 
 String _getErrmsg(Pointer<Void> handle) {
-  return Utf8.fromUtf8(_nativeErrmsg(handle));
+  return _nativeErrmsg(handle).toDartString();
 }
 
 int _checkError(int value) {
@@ -199,7 +199,7 @@ class SPI {
   final int extraFlags;
 
   bool _invalid = false;
-  Pointer<Void> _spiHandle;
+  late Pointer<Void> _spiHandle;
 
   void _checkSPI(int bus, int chip) {
     if (bus < 0) {
@@ -222,7 +222,7 @@ class SPI {
         path = '/dev/spidev$bus.$chip' {
     _checkSPI(bus, chip);
     _spiHandle =
-        _checkHandle(_nativeOpen(Utf8.toUtf8(path), mode.index, maxSpeed));
+        _checkHandle(_nativeOpen(path.toNativeUtf8(), mode.index, maxSpeed));
   }
 
   /// Opens the SPI device at the specified path ("/dev/spidev[bus].[chip]"), with the specified SPI mode,
@@ -235,7 +235,7 @@ class SPI {
       this.bitsPerWord, this.extraFlags)
       : path = '/dev/spidev$bus.$chip' {
     _checkSPI(bus, chip);
-    _spiHandle = _checkHandle(_nativeAdvanced(Utf8.toUtf8(path), mode.index,
+    _spiHandle = _checkHandle(_nativeAdvanced(path.toNativeUtf8(), mode.index,
         maxSpeed, bitOrder.index, bitsPerWord, extraFlags));
   }
 
@@ -249,7 +249,7 @@ class SPI {
   SPI.openAdvanced2(this.bus, this.chip, this.path, this.mode, this.maxSpeed,
       this.bitOrder, this.bitsPerWord, this.extraFlags) {
     _checkSPI(bus, chip);
-    _spiHandle = _checkHandle(_nativeAdvanced2(Utf8.toUtf8(path), mode.index,
+    _spiHandle = _checkHandle(_nativeAdvanced2(path.toNativeUtf8(), mode.index,
         maxSpeed, bitOrder.index, bitsPerWord, extraFlags));
   }
 
@@ -274,10 +274,11 @@ class SPI {
   ///
   /// Returns a 'List<int>' result buffer.
   List<int> transfer(List<int> data, bool reuseBuffer) {
-    Pointer<Int8> inPtr;
     // ignore: avoid_init_to_null
-    Pointer<Int8> outPtr = null;
-    var input = allocate<Int8>(count: data.length);
+    Pointer<Int8>? inPtr = null;
+    // ignore: avoid_init_to_null
+    Pointer<Int8>? outPtr = null;
+    var input = malloc<Int8>(data.length);
     try {
       var index = 0;
       for (var v in data) {
@@ -287,7 +288,7 @@ class SPI {
         inPtr = outPtr = input;
       } else {
         inPtr = input;
-        outPtr = allocate<Int8>(count: data.length);
+        outPtr = malloc<Int8>(data.length);
       }
 
       _checkError(_nativeTransfer(_spiHandle, inPtr, outPtr, data.length));
@@ -304,9 +305,11 @@ class SPI {
       }
       return result;
     } finally {
-      free(inPtr);
+      if (inPtr != null) {
+        malloc.free(inPtr);
+      }
       if (outPtr != null) {
-        free(outPtr);
+        malloc.free(outPtr);
       }
     }
   }
@@ -319,12 +322,12 @@ class SPI {
   Pointer<Int8> transferInt8(Pointer<Int8> data, bool reuseBuffer, int len) {
     Pointer<Int8> inPtr;
     // ignore: avoid_init_to_null
-    Pointer<Int8> outPtr = null;
+    Pointer<Int8>? outPtr = null;
     if (reuseBuffer) {
       inPtr = outPtr = data;
     } else {
       inPtr = data;
-      outPtr = allocate<Int8>(count: len);
+      outPtr = malloc<Int8>(len);
     }
     _checkError(_nativeTransfer(_spiHandle, inPtr, outPtr, len));
     return outPtr;
@@ -352,8 +355,8 @@ class SPI {
       _checkError(getErrno());
       return '?';
     }
-    var text = Utf8.fromUtf8(ptr);
-    free(ptr);
+    var text = ptr.toDartString();
+    malloc.free(ptr);
     return text;
   }
 

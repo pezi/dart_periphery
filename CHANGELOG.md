@@ -1,8 +1,17 @@
+## 0.8.10-beta 2021-03-04
+
+* Switch to Dart 2.12.0 and ffi: ^1.0.0
+* Update source to null safety
+* Fix example.dart problem
+* Fix GPIO.sysfs
+
 ## 0.8.9-beta 2021-02-29
 
 * Fix SPI.openAdvanced2()
-* Fix I2C.readBytes() 
-* Add first version of MPU6050 support 
+* Fix I2C.readBytes()
+* Add first version of MPU6050 support
+* Extend ByteBuffer class
+* Improve BME280 class
 
 ## 0.8.8-beta 2021-02-28
 
