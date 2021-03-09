@@ -96,9 +96,9 @@ class NativeI2CmsgHelper {
     _isFreed = true;
     var index = 0;
     for (var i = 0; i < size; ++i) {
-      var msg = _messages.elementAt(index++);
-      if (msg.ref.buf.address != 0) {
-        malloc.free(msg.ref.buf);
+      var msg = _messages[index++];
+      if (msg.buf.address != 0) {
+        malloc.free(msg.buf);
       }
     }
     malloc.free(_messages);
@@ -138,21 +138,22 @@ class I2Cmsg {
     final ptr = malloc<NativeI2Cmsg>(list.length);
     var index = 0;
     for (var data in list) {
-      var msg = ptr.elementAt(index++);
-      msg.ref.addr = data.addr;
-      msg.ref.len = data.len;
+      // var msg = ptr.elementAt(index++);
+      var msg = ptr[index++];
+      msg.addr = data.addr;
+      msg.len = data.len;
       var flags = 0;
       if (data.flags.isNotEmpty) {
         for (var f in data.flags) {
           flags |= I2CmsgFlags2Int(f);
         }
       }
-      msg.ref.flags = flags;
-      msg.ref.buf = malloc<Int8>(data.len);
+      msg.flags = flags;
+      msg.buf = malloc<Int8>(data.len);
       if (data.predefined.isNotEmpty) {
         var count = 0;
         for (var value in data.predefined) {
-          msg.ref.buf.elementAt(count++).value = value;
+          msg.buf[count++] = value;
         }
       }
     }
@@ -209,7 +210,7 @@ int _checkError(int value) {
   return value;
 }
 
-// I2C exception
+/// I2C exception
 class I2Cexception implements Exception {
   final I2CerrorCode errorCode;
   final String errorMsg;
@@ -394,10 +395,9 @@ class I2C {
     data.add(I2Cmsg(address, [I2CmsgFlags.I2C_M_RD], 2));
     var result = transfer(data);
     try {
-      var ptr = result._messages.elementAt(0).ref.buf;
-      var value = (ptr.elementAt(order == BitOrder.MSB_LAST ? 0 : 1).value &
-              0xff) |
-          (ptr.elementAt(order == BitOrder.MSB_LAST ? 1 : 0).value & 0xff) << 8;
+      var ptr = result._messages[0].buf;
+      var value = (ptr[(order == BitOrder.MSB_LAST ? 0 : 1)] & 0xff) |
+          (ptr[(order == BitOrder.MSB_LAST ? 1 : 0)] & 0xff) << 8;
       return value;
     } finally {
       result.dispose();
@@ -414,10 +414,9 @@ class I2C {
     data.add(I2Cmsg(address, [I2CmsgFlags.I2C_M_RD], 2));
     var result = transfer(data);
     try {
-      var ptr = result._messages.elementAt(0).ref.buf;
-      var value = (ptr.elementAt(order == BitOrder.MSB_LAST ? 0 : 1).value &
-              0xff) |
-          (ptr.elementAt(order == BitOrder.MSB_LAST ? 1 : 0).value & 0xff) << 8;
+      var ptr = result._messages[0].buf;
+      var value = (ptr[(order == BitOrder.MSB_LAST ? 0 : 1)] & 0xff) |
+          (ptr[(order == BitOrder.MSB_LAST ? 1 : 0)] & 0xff) << 8;
       return value;
     } finally {
       result.dispose();
@@ -432,8 +431,8 @@ class I2C {
     data.add(I2Cmsg(address, [I2CmsgFlags.I2C_M_RD], 1));
     var result = transfer(data);
     try {
-      var ptr = result._messages.elementAt(0).ref.buf;
-      var value = ptr.elementAt(0).value;
+      var ptr = result._messages[0].buf;
+      var value = ptr[0];
       return value;
     } finally {
       result.dispose();
@@ -447,8 +446,8 @@ class I2C {
     data.add(I2Cmsg(address, [I2CmsgFlags.I2C_M_RD], 1));
     var result = transfer(data);
     try {
-      var ptr = result._messages.elementAt(1).ref.buf;
-      var value = ptr.elementAt(0).value;
+      var ptr = result._messages[1].buf;
+      var value = ptr[0];
 
       return value;
     } finally {
@@ -465,14 +464,14 @@ class I2C {
     data.add(I2Cmsg(address, [I2CmsgFlags.I2C_M_RD], len));
 
     var result = transfer(data);
-    var msg2 = result._messages.elementAt(1).ref;
+    var msg2 = result._messages[1];
     try {
       var read = msg2.len;
 
       var ptr = msg2.buf;
       var list = <int>[];
       for (var i = 0; i < read; ++i) {
-        list.add(ptr.elementAt(i).value);
+        list.add(ptr[i]);
       }
       return list;
     } finally {
@@ -485,14 +484,14 @@ class I2C {
     var data = <I2Cmsg>[];
     data.add(I2Cmsg(address, [I2CmsgFlags.I2C_M_RD], len));
     var result = transfer(data);
-    var msg2 = result._messages.elementAt(0).ref;
+    var msg2 = result._messages[0];
     try {
       var read = msg2.len;
 
       var ptr = msg2.buf;
       var list = <int>[];
       for (var i = 0; i < read; ++i) {
-        list.add(ptr.elementAt(i).value);
+        list.add(ptr[i]);
       }
       return list;
     } finally {

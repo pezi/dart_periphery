@@ -262,15 +262,12 @@ class ArduinoBasedHat {
   }
 }
 
-/// Extension hat from FriendlyARM.
-///
-/// http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_NanoHat_Hub
+/// Extension hat from [FriendlyARM](http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
 class NanoHatHub extends ArduinoBasedHat {
   int i2cBus;
   NanoHatHub([this.i2cBus = 0]) : super(I2C(i2cBus));
 
-  /// Initializes the LED bar.
-  /// http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_LED_Bar
+  /// Initializes the [LED bar](http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_LED_Bar):
   void ledBarInitExt(int pin, int chipset, int ledNumber) {
     _sendCmd(LEDBAR_INIT, pin, chipset, ledNumber);
   }
@@ -335,31 +332,35 @@ enum LedBarColor { GREEN, RED, YELLOW, BLUE, GHOST_WHITE, ORANGE, CYAN }
 /// LED bar led numeration - see [NanoHatHub.ledBarInitExt] for details.
 enum LedBarLed { LED1, LED2, LED3, LED4, LED5 }
 
-/// Helper class for the BakeBit LED bar - see [NanoHatHub.ledBarInitExt] for details.
+/// Helper class for the [BakeBit LED bar](http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_LED_Bar) -
+/// see [NanoHatHub.ledBarInitExt] for details.
 class BakeBitLedBar {
   int bitMask;
 
   BakeBitLedBar() : bitMask = 0;
 
+  /// Sets [led] ([LedBarLed.LED1]-[LedBarLed.LED5]) to [color].
   void setLed(LedBarLed led, LedBarColor color) {
     bitMask |= (color.index + 1) << (led.index * 3);
   }
 
+  /// Returns the lower internal 8-bit mask.
   int getLowBits() {
     return bitMask & 0xff;
   }
 
+  /// Returns the upper internal 8-bit mask.
   int getHighBits() {
     return (bitMask & 0xff00) >> 8;
   }
 
+  // Returns the internal 16-bit mask.
   int getBitMask() {
     return bitMask;
   }
 }
 
-/// GrovePiPlusHat
-/// https://wiki.seeedstudio.com/GrovePi_Plus/
+/// SeedStudio [GrovePiPlusHat](https://wiki.seeedstudio.com/GrovePi_Plus/)
 ///
 /// Do not use this hardware
 /// - UART is not working correct with some devices e.g. CozIR CO2 sensor
@@ -373,9 +374,7 @@ class GrovePiPlusHat extends ArduinoBasedHat {
 const int RPI_HAT_PID = 0x04;
 const int RPI_ZERO_HAT_PID = 0x05;
 
-/// Grove Base Hat for Raspberry Pi
-///
-/// https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi/
+/// SeedStudio [Grove Base Hat for Raspberry Pi](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi/)
 class GroveBaseHat {
   I2C i2c;
   int i2cBus;

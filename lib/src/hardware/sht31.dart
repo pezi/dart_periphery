@@ -8,13 +8,14 @@ import '../i2c.dart';
 import 'util.dart';
 import 'dart:io';
 
+// https://wiki.seeedstudio.com/Grove-TempAndHumi_Sensor-SHT31/
 // https://github.com/Seeed-Studio/Grove_SHT31_Temp_Humi_Sensor/blob/master/SHT31.h
 // https://github.com/Seeed-Studio/Grove_SHT31_Temp_Humi_Sensor/blob/master/SHT31.cpp
 // https://github.com/ControlEverythingCommunity/SHT31/blob/master/Java/SHT31.java
 // https://github.com/adafruit/Adafruit_CircuitPython_SHT31D/blob/master/adafruit_sht31d.py
 
 const int SHT31_DEFAULT_I2C_ADDRESS = 0x44;
-const int SHT31_ALTERNATIE_I2C_ADDRESS = 0x45;
+const int SHT31_ALTERNATIVE_I2C_ADDRESS = 0x45;
 
 const int SHT31_MEAS_HIGHREP_STRETCH = 0x2C06;
 const int SHT31_MEAS_MEDREP_STRETCH = 0x2C0D;
@@ -29,7 +30,7 @@ const int SHT31_HEATEREN = 0x306D;
 const int SHT31_HEATERDIS = 0x3066;
 const int SHT31_READSERIALNBR = 0x3780;
 
-// SHT31 exception
+/// SHT31 exception
 class SHT31excpetion implements Exception {
   SHT31excpetion(this.errorMsg);
   final String errorMsg;

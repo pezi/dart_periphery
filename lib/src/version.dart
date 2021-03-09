@@ -28,8 +28,8 @@ String getCperipheryVersion() {
   return _nativeVersion().toDartString();
 }
 
-const String DART_PERIPHERY_VERSION = '0.8.10-beta';
-const String DART_PERIPHERY_GLUE_LIBVERSION = 'GLUE_LIB_VERSION_0.8.7';
+const String DART_PERIPHERY_VERSION = '0.8.12-beta';
+const String DART_PERIPHERY_GLUE_LIBVERSION = 'GLUE_LIB_VERSION_0.8.8';
 
 String getDartPeripheryGlueLibVersion() {
   //

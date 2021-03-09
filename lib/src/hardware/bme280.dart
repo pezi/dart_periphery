@@ -53,10 +53,10 @@ const int FILTER_16 = 4;
 
 /// Supported models
 enum BME280model {
-  /// temperature and preassure
+  /// temperature and pressure
   BMP280,
 
-  /// temperature, preassure and humidity
+  /// temperature, pressure and humidity
   BME280
 }
 
@@ -91,8 +91,8 @@ class BME280result {
 
 /// BME280/BMP280 sensor for temperature, pressure and humidity (BME280 only).
 class BME280 {
-  late final I2C i2c;
-  late final SPI spi;
+  late I2C _i2c;
+  late SPI _spi;
   final bool isI2C;
   final int i2cAddress;
   late BME280model _model;
@@ -117,16 +117,18 @@ class BME280 {
   int _digH5 = 0;
   int _digH6 = 0;
 
-  /// Opens a BME280 or BMP280 sensor conntected with the [i2c] at the [i2cAddress = BME280_DEFAULT_I2C_ADDRESS] .
-  BME280(this.i2c, [this.i2cAddress = BME280_DEFAULT_I2C_ADDRESS])
-      : isI2C = true,
+  /// Opens a BME280 or BMP280 sensor conntected with the [i2c] bus at the [i2cAddress = BME280_DEFAULT_I2C_ADDRESS] .
+  BME280(I2C i2c, [this.i2cAddress = BME280_DEFAULT_I2C_ADDRESS])
+      : _i2c = i2c,
+        isI2C = true,
         bitOrder = BitOrder.MSB_LAST {
     _init();
   }
 
   /// Opens a BME280 or BMP280 sensor connected with the [spi] bus.
-  BME280.spi(this.spi)
-      : isI2C = false,
+  BME280.spi(SPI spi)
+      : _spi = spi,
+        isI2C = false,
         bitOrder = spi.bitOrder,
         i2cAddress = -1 {
     _init();
@@ -301,35 +303,35 @@ class BME280 {
     _writeByte(RESET_REG, 0xB6);
   }
 
-  /// Indicates if data is available.
+  /// Indicates, if data is available.
   bool isDataAvailable() {
     return (_readByte(STATUS_REG) & 0x08) == 0;
   }
 
   int _readByte(int register) {
     if (isI2C) {
-      return i2c.readByteReg(i2cAddress, register);
+      return _i2c.readByteReg(i2cAddress, register);
     }
     var tx = <int>[register | 0x80, 0];
-    spi.transfer(tx, true);
+    _spi.transfer(tx, true);
     return tx[1];
   }
 
   List<int> _readByteBlock(int register, int length) {
     if (isI2C) {
-      return i2c.readBytesReg(i2cAddress, register, length);
+      return _i2c.readBytesReg(i2cAddress, register, length);
     }
     var tx = List<int>.filled(length + 1, 0);
     tx[0] = register | 0x80;
-    spi.transfer(tx, true);
+    _spi.transfer(tx, true);
     return tx;
   }
 
   void _writeByte(int register, int value) {
     if (isI2C) {
-      i2c.writeByteReg(i2cAddress, register, value);
+      _i2c.writeByteReg(i2cAddress, register, value);
     } else {
-      spi.transfer(<int>[register & 0x7f, value], true);
+      _spi.transfer(<int>[register & 0x7f, value], true);
     }
   }
 }

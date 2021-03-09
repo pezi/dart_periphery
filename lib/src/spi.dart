@@ -282,7 +282,7 @@ class SPI {
     try {
       var index = 0;
       for (var v in data) {
-        input.elementAt(index++).value = v;
+        input[index++] = v;
       }
       if (reuseBuffer) {
         inPtr = outPtr = input;
@@ -301,7 +301,7 @@ class SPI {
         result = <int>[];
       }
       for (var i = 0; i < data.length; ++i) {
-        result.add(outPtr.elementAt(i).value);
+        result.add(outPtr[i]);
       }
       return result;
     } finally {

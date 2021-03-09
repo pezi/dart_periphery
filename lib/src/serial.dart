@@ -39,9 +39,9 @@ class _ReadEvent extends Struct {
   factory _ReadEvent.allocate() => malloc<_ReadEvent>().ref;
 }
 
-/// Result of a [Serial.read()] operation.
+/// Result of a [Serial.read] operation.
 class SerialReadEvent {
-  /// timeout flag of [Serial.read()] operation
+  /// timeout flag of [Serial.read] operation
   bool isTimeout = false;
   int count = 0;
   List<int> data = [];
@@ -55,7 +55,7 @@ class SerialReadEvent {
       count = event.count;
       data = [];
       for (var i = 0; i < event.count; ++i) {
-        data.add(event.data.elementAt(i).value);
+        data.add(event.data[i]);
       }
     }
   }
@@ -461,7 +461,7 @@ class Serial {
     try {
       var index = 0;
       for (var i in list) {
-        ptr.elementAt(index++).value = i;
+        ptr[index++] = i;
       }
       var result = _nativeWrite(_serialHandle, ptr, list.length);
       return _checkError(result);

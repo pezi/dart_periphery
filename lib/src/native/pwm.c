@@ -46,7 +46,7 @@ int dart_pwm_enable(pwm_t *pwm) {
     return pwm_enable(pwm);
 }
 
-int dart_pwm_disbable(pwm_t *pwm) {
+int dart_pwm_disable(pwm_t *pwm) {
     return pwm_enable(pwm);
 }
 

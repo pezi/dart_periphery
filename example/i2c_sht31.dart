@@ -4,8 +4,9 @@
 
 import 'package:dart_periphery/dart_periphery.dart';
 
-/// Grove - Temp&Humi Sensor(SHT31) is a highly reliable, accurate,
-/// quick response and integrated temperature & humidity sensor.
+// https://wiki.seeedstudio.com/Grove-TempAndHumi_Sensor-SHT31
+// Grove - Temp&Humi Sensor(SHT31) is a highly reliable, accurate,
+// quick response and integrated temperature & humidity sensor.
 void main() {
   // Select the right I2C bus number /dev/i2c-?
   // 1 for Raspbery Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)

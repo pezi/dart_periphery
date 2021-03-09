@@ -1,7 +1,15 @@
+// Copyright (c) 2021, the Dart project authors.  Please see the AUTHORS file
+// for details. All rights reserved. Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
+
 import 'package:dart_periphery/dart_periphery.dart';
 
 import 'package:dart_periphery/src/hardware/util.dart';
 import 'dart:io';
+
+// https://github.com/Raspoid/raspoid/blob/master/src/main/com/raspoid/additionalcomponents/MPU6050.java
+// https://elektro.turanis.de/html/prj075/index.html#h8
+// shttps://github.com/Raspoid/raspoid/blob/master/src/main/com/raspoid/I2CComponent.java
 
 const int MPU6050_ADRESS = 0x68;
 

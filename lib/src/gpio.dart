@@ -508,14 +508,14 @@ class GPIO {
     var index = 0;
     for (var g in gpios) {
       g._checkStatus();
-      ptr.elementAt(index++).value = g._gpioHandle;
+      ptr[index++] = g._gpioHandle;
     }
     var result = _nativeMultiplePoll(ptr, gpios.length, timeoutMillis);
     try {
       _checkError(result.ref.result);
       var list = <bool>[];
       for (var i = 0; i < gpios.length; ++i) {
-        list.add(result.ref.ready.elementAt(index).value == 1 ? true : false);
+        list.add(result.ref.ready[i] == 1 ? true : false);
       }
       return PollMultipleEvent(gpios, result.ref.result, list);
     } finally {
@@ -565,7 +565,7 @@ class GPIO {
     }
   }
 
-  /// Releases all interal native resoures.
+  /// Releases all internal native resoures.
   void dispose() {
     _checkStatus();
     _invalid = true;

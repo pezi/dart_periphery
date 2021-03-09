@@ -3,7 +3,6 @@
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
 
-
 ## Important hint for Dart user
 
 Go to [https://pub.dev/packages/dart_periphery](https://pub.dev/packages/dart_periphery) to import this package.
@@ -276,7 +275,7 @@ void main() {
 
 ### MMIO
 
-**Memory Mapped I/O**: Turn on a led at pin 18 using MMIO. This direct register access example is derived from [elinux.org](https://elinux.org/RPi_GPIO_Code_Samples#Direct_register_access).
+**Memory Mapped I/O**: Turn on a led at pin 18 on a Raspberry Pi using MMIO. This direct register access example is derived from [elinux.org](https://elinux.org/RPi_GPIO_Code_Samples#Direct_register_access).
 
 ``` dart
 import 'package:dart_periphery/dart_periphery.dart';
@@ -360,6 +359,7 @@ sudo chmod -R +rx /opt/dart-sdk
 ### ARMv8
 
 ``` bash
+cd ~
 wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.12.0/sdk/dartsdk-linux-arm64-release.zip
 unzip dartsdk-linux-arm64-release.zip
 sudo mv dart-sdk /opt/
@@ -457,8 +457,8 @@ to use the static or shared glue library with the correct bitness. The appropria
 ``` dart
 setCustomLibrary(String absolutePath)
 ```
-must be called to provide the absolute path of the [native glue library](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/dart_periphery_static_32.1.0.0.so). See last section, native libraries for details.
 
+must be called to provide the absolute path of the [native glue library](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/dart_periphery_static_32.1.0.0.so). See last section, native libraries for details.
 
 ## Tested SoC hardware
 
@@ -470,20 +470,23 @@ must be called to provide the absolute path of the [native glue library](https:/
 
 ## Supported devices (sensors, actuators, expansion hats and displays)
 
+* [Gas Sensor(SGP30)](https://wiki.seeedstudio.com/Grove-VOC_and_eCO2_Gas_Sensor-SGP30/):
+* [Grove Gesture](https://wiki.seeedstudio.com/Grove-Gesture_v1.0/):
 * [BME280](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme280_example.dart): Temperature, humidity and pressure sensor.
 * [SHT31](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht31_example.dart): Temperature and humidity sensor.
 * [CozIR](https://github.com/pezi/dart_periphery/blob/main/example/serial_cozir_example.dart): CO<sub>2</sub>, temperature and humidity sensor.
-* FriendlyARM BakeBit Set
-* Grove Base Hat/GrovePi Plus
-* SGP30 (in progress)
+* FriendlyARM [BakeBit Set](http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
+* [Grove Base Hat](https://wiki.seeedstudio.com/Grove_Base_HAT/)/[GrovePi Plus](https://wiki.seeedstudio.com/GrovePi_Plus)
 * SSD1306 OLED (in progress)
+* MPU6050 (in progress)
+* BME680 (in progress)
 
 ## Next steps
 
 * Add GPIO documentation for different SoCs.
 * Writing API test cases.
 * Improve build process of the native libraries.
-* Port hardware devices from the [mattjlewis / diozero Java Project](https://github.com/mattjlewis/diozero/tree/master/diozero-core/src/main/java/com/diozero/devices) to **dart_periphery**: e.g. BME680, SGP30 etc.
+* Port hardware devices from the [mattjlewis / diozero Java Project](https://github.com/mattjlewis/diozero/tree/master/diozero-core/src/main/java/com/diozero/devices) to **dart_periphery**: e.g. BME680 etc.
 
 ## Help wanted
 

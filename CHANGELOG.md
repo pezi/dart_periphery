@@ -1,7 +1,19 @@
+## 0.8.12-beta 2021-03-09
+
+* [Grove-VOC and eCO2 Gas Sensor(SGP30)](https://wiki.seeedstudio.com/Grove-VOC_and_eCO2_Gas_Sensor-SGP30/) support
+* [Grove Gesture](https://wiki.seeedstudio.com/Grove-Gesture_v1.0/) support
+* Reorganize examples
+
+## 0.8.11-beta 2021-03-05
+
+* Update FFI code - simplify code
+* Fix PWM.disable()
+* Fix GPIO.pollMultiple())
+
 ## 0.8.10-beta 2021-03-04
 
 * Switch to Dart 2.12.0 and ffi: ^1.0.0
-* Update source to null safety
+* Update dart_periphery to null safety
 * Fix example.dart problem
 * Fix GPIO.sysfs
 
@@ -20,12 +32,12 @@
 
 ## 0.8.7-beta 2021-02-24
 
-* Release [MMIO (Memory Mapped I/O) support](https://github.com/pezi/dart_periphery/blob/main/example/mmio_example.dart). 
+* Release [MMIO (Memory Mapped I/O) support](https://github.com/pezi/dart_periphery/blob/main/example/mmio_example.dart).
 
 ## 0.8.6-beta 2021-02-24
 
 * Improve documentation
- 
+
 ## 0.8.5-beta 2021-02-21
 
 * Add [example/spi_loopback.dart](https://github.com/pezi/dart_periphery/blob/main/example/spi_loopback.dart)

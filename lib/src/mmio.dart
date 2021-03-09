@@ -122,7 +122,7 @@ String _getErrmsg(Pointer<Void> handle) {
   return _nativeErrmsg(handle).toDartString();
 }
 
-// MMIO exception
+/// MMIO exception
 class MMIOexception implements Exception {
   final MMIOerrorCode errorCode;
   final String errorMsg;
@@ -207,7 +207,7 @@ class MMIO {
       _checkError(_native_read_buf(_mmioHandle, offset, buf, len));
       var data = <int>[];
       for (var i = 0; i < len; ++i) {
-        data.add(buf.elementAt(i).value);
+        data.add(buf[i]);
       }
       return data;
     } finally {
@@ -239,7 +239,7 @@ class MMIO {
     var buf = malloc<Uint8>(data.length);
     try {
       for (var i = 0; i < data.length; ++i) {
-        buf.elementAt(i).value = data[i];
+        buf[i] = data[i];
       }
       _checkError(_native_write_buf(_mmioHandle, offset, buf, data.length));
     } finally {

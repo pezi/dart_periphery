@@ -5,5 +5,5 @@ void dummy() {
 }    
 
 char *dart_get_version() {
-    return "GLUE_LIB_VERSION_0.8.7";
+    return "GLUE_LIB_VERSION_0.8.8";
 }

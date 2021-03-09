@@ -66,7 +66,7 @@ export 'src/hardware/sht31.dart'
         SHT31,
         SHT31result,
         SHT31excpetion,
-        SHT31_ALTERNATIE_I2C_ADDRESS,
+        SHT31_ALTERNATIVE_I2C_ADDRESS,
         SHT31_DEFAULT_I2C_ADDRESS;
 export 'src/hardware/extension_hat.dart'
     show
@@ -78,3 +78,12 @@ export 'src/hardware/extension_hat.dart'
         BakeBitLedBar,
         GrovePiPlusHat,
         GroveBaseHat;
+export 'src/hardware/gesture_sensor.dart'
+    show GestureSensor, GestureSensorException, Gesture;
+export 'src/hardware/sgp30.dart'
+    show
+        SGP30,
+        SGP30Measurement,
+        RawMeasurement,
+        FeatureSetVersion,
+        SGP30excpetion;
