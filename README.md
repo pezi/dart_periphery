@@ -3,14 +3,10 @@
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
 
-## Important hint for Dart user
-
-Go to [https://pub.dev/packages/dart_periphery](https://pub.dev/packages/dart_periphery) to import this package.
-
 ## Introduction
 
 **dart_periphery** is a Dart port of the native [c-periphery library](https://github.com/vsergeev/c-periphery)
-  for Linux Peripheral I/O (GPIO, LED, PWM, SPI, I2C, MMIO and Serial peripheral I/O). This package is specially intended for SoCs like Raspberry Pi, NanoPi, Banana Pi et al.
+  for Linux Peripheral I/O (GPIO, LED, PWM, SPI, I2C, MMIO and Serial peripheral I/O). This package is specially intended for SoCs like Raspberry Pi, NanoPi, Banana Pi et al.  
 
 ### What is c-periphery?  
 
@@ -275,7 +271,7 @@ void main() {
 
 ### MMIO
 
-**Memory Mapped I/O**: Turn on a led at pin 18 on a Raspberry Pi using MMIO. This direct register access example is derived from [elinux.org](https://elinux.org/RPi_GPIO_Code_Samples#Direct_register_access).
+**Memory Mapped I/O**: Turns on a led at pin 18 on a Raspberry Pi using MMIO. This direct register access example is derived from [elinux.org](https://elinux.org/RPi_GPIO_Code_Samples#Direct_register_access).
 
 ``` dart
 import 'package:dart_periphery/dart_periphery.dart';
@@ -350,7 +346,7 @@ void main() {
 
 ``` bash
 cd ~
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.12.0/sdk/dartsdk-linux-arm-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.12.1/sdk/dartsdk-linux-arm-release.zip
 unzip dartsdk-linux-arm-release.zip
 sudo mv dart-sdk /opt/
 sudo chmod -R +rx /opt/dart-sdk
@@ -360,7 +356,7 @@ sudo chmod -R +rx /opt/dart-sdk
 
 ``` bash
 cd ~
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.12.0/sdk/dartsdk-linux-arm64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.12.1/sdk/dartsdk-linux-arm64-release.zip
 unzip dartsdk-linux-arm64-release.zip
 sudo mv dart-sdk /opt/
 sudo chmod -R +rx /opt/dart-sdk
@@ -389,8 +385,8 @@ to apply the changes.
 Test the installion
 
 ``` bash
-root@bananapi:~# dart --version
-Dart SDK version: 2.12.0 (stable) (Thu Feb 25 19:50:53 2021 +0100) on "linux_arm"
+root@nanopineo2:~# dart --version
+Dart SDK version: 2.12.1 (stable) (Wed Mar 10 10:18:47 2021 +0100) on "linux_arm64"
 ```
 
 ## Native libraries
@@ -470,16 +466,17 @@ must be called to provide the absolute path of the [native glue library](https:/
 
 ## Supported devices (sensors, actuators, expansion hats and displays)
 
-* [Gas Sensor(SGP30)](https://wiki.seeedstudio.com/Grove-VOC_and_eCO2_Gas_Sensor-SGP30/):
-* [Grove Gesture](https://wiki.seeedstudio.com/Grove-Gesture_v1.0/):
-* [BME280](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme280_example.dart): Temperature, humidity and pressure sensor.
-* [SHT31](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht31_example.dart): Temperature and humidity sensor.
-* [CozIR](https://github.com/pezi/dart_periphery/blob/main/example/serial_cozir_example.dart): CO<sub>2</sub>, temperature and humidity sensor.
-* FriendlyARM [BakeBit Set](http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
+* [Gas Sensor(SGP30)](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sgp30.dart): tVOC and eCO2 Gas Sensor
+* [BME280](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme280.dart): Temperature, humidity and pressure sensor.
+* [BME680](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme680.dart): Temperature, humidity and pressure sensor.
+* [SHT31](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht31.dart): Temperature and humidity sensor.
+* [CozIR](https://github.com/pezi/dart_periphery/blob/main/example/serial_cozir.dart): CO<sub>2</sub>, temperature and humidity sensor.
+* [Grove Gesture](https://github.com/pezi/dart_periphery/blob/main/example/i2c_gesture_sensor.dart) can recognize 9 basic gestures.
+* [MPU-6050 Six-Axis](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mpu6050.dart) (Gyro + Accelerometer) sensor.
+* FriendlyARM [BakeBit Set](https://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
 * [Grove Base Hat](https://wiki.seeedstudio.com/Grove_Base_HAT/)/[GrovePi Plus](https://wiki.seeedstudio.com/GrovePi_Plus)
+
 * SSD1306 OLED (in progress)
-* MPU6050 (in progress)
-* BME680 (in progress)
 
 ## Next steps
 

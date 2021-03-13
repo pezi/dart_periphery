@@ -122,9 +122,9 @@ DynamicLibrary getPeripheryLib() {
       .asFunction<_PeripheryVersion>();
   var glueLibVer = _internalVersion().toDartString();
 
-  if (glueLibVer != DART_PERIPHERY_GLUE_LIBVERSION) {
+  if (glueLibVer != DART_PERIPHERY_GLUE_LIB_VERSION) {
     throw LibraryException(LibraryErrorCode.LIBRARY_VERSION_MISMATCH,
-        'Version native lib $glueLibVer != Dart package version $DART_PERIPHERY_GLUE_LIBVERSION');
+        'Version native lib $glueLibVer != Dart package version $DART_PERIPHERY_GLUE_LIB_VERSION');
   }
   isPeripheryLibLoaded = true;
   return _peripheryLib;

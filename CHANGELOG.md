@@ -1,3 +1,12 @@
+## 0.8.15-beta 2021-03-15
+
+* [BME680 support](https://wiki.seeedstudio.com/Grove-Temperature_Humidity_Pressure_Gas_Sensor_BME680/)
+
+## 0.8.14-beta 2021-03-11
+
+* MPU6060 support - Six-Axis (Gyro + Accelerometer) sensor
+* Update README.md
+
 ## 0.8.12-beta 2021-03-09
 
 * [Grove-VOC and eCO2 Gas Sensor(SGP30)](https://wiki.seeedstudio.com/Grove-VOC_and_eCO2_Gas_Sensor-SGP30/) support

@@ -87,3 +87,5 @@ export 'src/hardware/sgp30.dart'
         RawMeasurement,
         FeatureSetVersion,
         SGP30excpetion;
+export 'src/hardware/mpu6050.dart' show MPU6050, MPU6050exception;
+export 'src/hardware/bme680.dart' show BME680, BME680exception, BME680result;

@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:dart_periphery/dart_periphery.dart';
+import 'dart:io';
 
 // https://wiki.seeedstudio.com/Grove-Gesture_v1.0
 // Grove Gesture sensor
@@ -11,13 +12,12 @@ void main() {
   // 1 for Raspbery Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
   var i2c = I2C(1);
   try {
-    var gesture = GestureSensor(i2c);
-    print('Grove Gesture sensor is running...');
+    var mpu = MPU6050(i2c);
     while (true) {
-      var g = gesture.getGesture();
-      if (g != Gesture.NOTHING) {
-        print(g.toString());
-      }
+      print(mpu.getAccelAccelerations());
+      print(mpu.getAccelAngles());
+      print(mpu.getFilteredAngles());
+      sleep(Duration(milliseconds: 1000));
     }
   } finally {
     i2c.dispose();

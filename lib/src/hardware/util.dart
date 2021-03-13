@@ -83,3 +83,11 @@ bool checkCRC(List<int> data) {
   }
   return true;
 }
+
+int bin2int(String s) {
+  var pos = s.indexOf('b');
+  if (pos > 0) {
+    s = s.substring(pos + 1);
+  }
+  return int.parse(s, radix: 2);
+}
