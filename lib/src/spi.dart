@@ -211,7 +211,7 @@ class SPI {
   }
 
   /// Opens the SPI device at the  path ("/dev/spidev[bus].[chip]"), with the specified
-  /// SPI [mode], specified [maxspeed] in hertz, and the defaults of MSB_FIRST bit order,
+  /// SPI [mode], specified [maxSpeed] in hertz, and the defaults of MSB_FIRST bit order,
   /// and 8 bits per word.
   ///
   /// SPI [mode] can be 0, 1, 2, or 3.
@@ -226,10 +226,10 @@ class SPI {
   }
 
   /// Opens the SPI device at the specified path ("/dev/spidev[bus].[chip]"), with the specified SPI mode,
-  /// [maxSpeed] in hertz, [bitOrder], [bitsPerWord], and [extraflags].
+  /// [maxSpeed] in hertz, [bitOrder], [bitsPerWord], and [extraFlags].
   ///
   /// SPI mode can be 0, 1, 2, or 3. [bitOrder] can be [BitOrder.MSB_FIRST] or
-  /// [BitOrder.LSB_FIRST], [bitsPerWord] specifies the transfer word size.
+  /// [BitOrder.MSB_LAST], [bitsPerWord] specifies the transfer word size.
   /// [extraFlags] specified additional flags bitwise-ORed with the SPI mode.
   SPI.openAdvanced(this.bus, this.chip, this.mode, this.maxSpeed, this.bitOrder,
       this.bitsPerWord, this.extraFlags)
@@ -240,11 +240,11 @@ class SPI {
   }
 
   /// Opens the SPI device at the specified [path], with the specified SPI mode,
-  /// [maxSpeed] in hertz, [bitOrder], [bitsPerWord], and [extraflags]. This open function is the same as
+  /// [maxSpeed] in hertz, [bitOrder], [bitsPerWord], and [extraFlags]. This open function is the same as
   /// [SPI.openAdvanced], except that extra_flags can be 32-bits.
   ///
   /// SPI mode can be 0, 1, 2, or 3. [bitOrder] can be [BitOrder.MSB_FIRST] or
-  /// [BitOrder.LSB_FIRST], [bitsPerWord] specifies the transfer word size.
+  /// [BitOrder.MSB_LAST], [bitsPerWord] specifies the transfer word size.
   /// [extraFlags] specified additional flags bitwise-ORed with the SPI mode.
   SPI.openAdvanced2(this.bus, this.chip, this.path, this.mode, this.maxSpeed,
       this.bitOrder, this.bitsPerWord, this.extraFlags) {
@@ -318,7 +318,7 @@ class SPI {
   /// is true, [data] will be used the result buffer, for false a new buffer
   /// will be created.
   ///
-  /// Returns a ' Pointer<Int8>' result buffer. Be aware to [free()] the low level system memory buffers!
+  /// Returns a ' Pointer<Int8>' result buffer. Be aware to malloc.free the low level system memory buffers!
   Pointer<Int8> transferInt8(Pointer<Int8> data, bool reuseBuffer, int len) {
     Pointer<Int8> inPtr;
     // ignore: avoid_init_to_null

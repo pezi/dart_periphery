@@ -66,10 +66,9 @@ typedef enum PWMpropertyEnum {
     PERIOD_NS,DUTY_CYCLE_NS,PERIOD,DUTY_CYCLE,FREQUENCY,POLARITY,CHIP,CHANNEL
 } PWMpropertyEnum_t;
 
-typedef union PWMproperty {
+typedef struct PWMproperty {
     double doubleValue;
     int64_t longValue;
-    int intValue;
 } PWMproperty_t;
 
 int dart_pwm_set_property(pwm_t *pwm,PWMpropertyEnum_t prop, PWMproperty_t *data) {
@@ -91,7 +90,7 @@ int dart_pwm_set_property(pwm_t *pwm,PWMpropertyEnum_t prop, PWMproperty_t *data
             value = pwm_set_frequency(pwm,data->doubleValue);
             break;
         case POLARITY:
-            value = pwm_set_polarity(pwm,data->intValue);
+            value = pwm_set_polarity(pwm,data->longValue);
             break;
         case CHIP:
         case CHANNEL:
@@ -101,8 +100,8 @@ int dart_pwm_set_property(pwm_t *pwm,PWMpropertyEnum_t prop, PWMproperty_t *data
 }
 
 
-PWMproperty_t *dart_pwm_get_property(pwm_t *pwm,PWMpropertyEnum_t prop) {
-    PWMproperty_t *value = (PWMproperty_t *)malloc(sizeof(PWMproperty_t));
+int dart_pwm_get_property(pwm_t *pwm,PWMpropertyEnum_t prop,PWMproperty_t *data) {
+   
     int error = 0;
     uint64_t ns;
     int ivalue;
@@ -111,58 +110,58 @@ PWMproperty_t *dart_pwm_get_property(pwm_t *pwm,PWMpropertyEnum_t prop) {
         case PERIOD_NS:
             error =  pwm_get_period_ns(pwm, &ns);
             if(error < 0) {
-                value->longValue = error;
+                return error;
             } else {
-                value->longValue = (int64_t)ns;    
+                data->longValue = (int64_t)ns;    
             }
             break;
         case DUTY_CYCLE_NS:
             error =  pwm_get_duty_cycle_ns(pwm, &ns);
             if(error < 0) {
-                value->longValue = error;
+                return error;
             } else {
-                value->longValue = (int64_t)ns;    
+                data->longValue = (int64_t)ns;    
             }
             break;
          case PERIOD:
             error =  pwm_get_period(pwm, &seconds);
             if(error < 0) {
-                value->doubleValue = error;
+                 return error;
             } else {
-                value->doubleValue = seconds;    
+                data->doubleValue = seconds;    
             }
             break;
         case DUTY_CYCLE:
             error =  pwm_get_duty_cycle(pwm,  &seconds);
             if(error < 0) {
-                value->doubleValue = error;
+                return error;
             } else {
-                value->doubleValue = seconds;    
+                data->doubleValue = seconds;    
             }
             break;
         case FREQUENCY:
              error =  pwm_get_frequency(pwm,  &seconds);
             if(error < 0) {
-                value->doubleValue = error;
+                return error;
             } else {
-                value->doubleValue = seconds;    
+                data->doubleValue = seconds;    
             }
             break;
          case POLARITY:
             error =  pwm_get_polarity(pwm, (pwm_polarity_t *)&ivalue);
             if(error < 0) {
-                value->intValue = error;
+                return error;
             } else {
-                value->intValue = ivalue;    
+                data->longValue = ivalue;    
             }
             break;    
          case CHIP:
-            value->intValue =  pwm_chip(pwm);
+            data->longValue = pwm_chip(pwm);
             break;      
         case CHANNEL:
-            value->intValue =  pwm_channel(pwm);
+            data->longValue = pwm_channel(pwm);
             break;
 
     } 
-    return value;
+    return 0;
 }

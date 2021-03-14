@@ -61,3 +61,7 @@ void test(int chip, int channel) {
     passert(fabs(frequency - 2000) < 100);
     */
 }
+
+void main() {
+  test(0, 0);
+}

@@ -88,4 +88,12 @@ export 'src/hardware/sgp30.dart'
         FeatureSetVersion,
         SGP30excpetion;
 export 'src/hardware/mpu6050.dart' show MPU6050, MPU6050exception;
-export 'src/hardware/bme680.dart' show BME680, BME680exception, BME680result;
+export 'src/hardware/bme680.dart'
+    show
+        BME680,
+        BME680exception,
+        BME680result,
+        BME680_DEFAULT_I2C_ADDRESS,
+        BME680_ALTERNATIVE_I2C_ADDRESS,
+        OversamplingMultiplier,
+        PowerMode;

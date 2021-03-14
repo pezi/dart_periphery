@@ -1,6 +1,10 @@
-## 0.8.15-beta 2021-03-15
+## 0.8.16-beta 2021-03-16
 
-* [BME680 support](https://wiki.seeedstudio.com/Grove-Temperature_Humidity_Pressure_Gas_Sensor_BME680/)
+* Fix PWM setter/getter for PWM properties
+
+## 0.8.15-beta 2021-03-13
+
+* [BME680 support](https://wiki.seeedstudio.com/Grove-Temperature_Humidity_Pressure_Gas_Sensor_BME680/) - see [example](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme680.dart).
 
 ## 0.8.14-beta 2021-03-11
 
@@ -17,7 +21,7 @@
 
 * Update FFI code - simplify code
 * Fix PWM.disable()
-* Fix GPIO.pollMultiple())
+* Fix GPIO.pollMultiple()
 
 ## 0.8.10-beta 2021-03-04
 

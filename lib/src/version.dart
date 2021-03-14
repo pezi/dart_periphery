@@ -29,7 +29,7 @@ String getCperipheryVersion() {
 }
 
 const String DART_PERIPHERY_VERSION = '0.8.15-beta';
-const String DART_PERIPHERY_GLUE_LIB_VERSION = 'GLUE_LIB_VERSION_0.8.8';
+const String DART_PERIPHERY_GLUE_LIB_VERSION = 'GLUE_LIB_VERSION_0.8.9';
 
 String getDartPeripheryGlueLibVersion() {
   //

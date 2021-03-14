@@ -378,7 +378,7 @@ class Serial {
             _nativeOpen(path.toNativeUtf8(), baudrate2Int(baudrate)));
 
   /// Opens the <tt>tty</tt> device at the specified [path] (e.g. "/dev/ttyUSB0"), with the specified [baudrate], [databits],
-  /// [parity], [stopbits], software flow control ([xonxoff]), and hardware flow control ([rtscts]) settings.
+  /// [parity], [stopbits], software flow control ([xonxoff]), and hardware flow control ([rtsct]) settings.
   ///
   /// serial should be a valid pointer to an allocated Serial handle structure. databits can be 5, 6, 7, or 8.
   /// parity can be PARITY_NONE, PARITY_ODD, or PARITY_EVEN . StopBits can be 1 or 2.

@@ -350,7 +350,7 @@ class I2C {
     result.dispose();
   }
 
-  /// Writes a [wordValue] to the I2C device with the [address]. Default [BitOrder order = BitOrder.MSB_LAST].
+  /// Writes a [wordValue] to the I2C device with the [address] and the bit [order].
   ///
   /// Some I2C devices can directly be written without an explizit register.
   void writeWord(int address, int wordValue,
@@ -367,7 +367,7 @@ class I2C {
     result.dispose();
   }
 
-  /// Writes a [wordValue] to the [register] of the I2C device with the [address]. Default [BitOrder order = BitOrder.MSB_LAST].
+  /// Writes a [wordValue] to the [register] of the I2C device with the [address] and the bit [order].
   ///
   /// The bit order depends on the I2C device.
   void writeWordReg(int address, int register, int wordValue,
@@ -387,7 +387,7 @@ class I2C {
     result.dispose();
   }
 
-  /// Reads a word from the I2C device with the [address]. Default [BitOrder order = BitOrder.MSB_LAST].
+  /// Reads a word from the I2C device with the [address] and the bit [order]].
   ///
   /// Some I2C devices can directly be written without an explizit register. The bit order depends on the I2C device.
   int readWord(int address, [BitOrder order = BitOrder.MSB_LAST]) {
@@ -404,7 +404,7 @@ class I2C {
     }
   }
 
-  /// Reads a word from [register] of the I2C device with the [address]. Default [BitOrder order = BitOrder.MSB_LAST].
+  /// Reads a word from [register] of the I2C device with the [address] with the bit [order].
   ///
   /// The bit order depends on the I2C device.
   int readWordReg(int address, int register,
@@ -479,7 +479,7 @@ class I2C {
     }
   }
 
-  /// Reads [len] bytes from [register] of the I2C device with the [address].
+  /// Reads [len] bytes from the I2C device with the [address].
   List<int> readBytes(int address, int len) {
     var data = <I2Cmsg>[];
     data.add(I2Cmsg(address, [I2CmsgFlags.I2C_M_RD], len));

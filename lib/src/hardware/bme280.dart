@@ -117,7 +117,7 @@ class BME280 {
   int _digH5 = 0;
   int _digH6 = 0;
 
-  /// Opens a BME280 or BMP280 sensor conntected with the [i2c] bus at the [i2cAddress = BME280_DEFAULT_I2C_ADDRESS] .
+  /// Opens a BME280 or BMP280 sensor conntected with the [i2c] bus at the [i2cAddress] .
   BME280(I2C i2c, [this.i2cAddress = BME280_DEFAULT_I2C_ADDRESS])
       : _i2c = i2c,
         isI2C = true,

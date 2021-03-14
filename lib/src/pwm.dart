@@ -62,20 +62,27 @@ enum _PWMpropertyEnum {
   CHANNEL
 }
 
+class PWMproperty extends Struct {
+  @Double()
+  external double doubleValue;
+  @Int64()
+  external int longValue;
+}
+
 // PWMproperty_t *dart_pwm_get_property(pwm_t *pwm,int prop)
-typedef _dart_pwm_get_property = Pointer<Void> Function(
-    Pointer<Void> handle, Int32 prop);
-typedef _PWMgetProperty = Pointer<Void> Function(
-    Pointer<Void> handle, int prop);
+typedef _dart_pwm_get_property = Int32 Function(
+    Pointer<Void> handle, Int32 prop, Pointer<PWMproperty> result);
+typedef _PWMgetProperty = int Function(
+    Pointer<Void> handle, int prop, Pointer<PWMproperty> result);
 final _nativeGetProperty = _peripheryLib
     .lookup<NativeFunction<_dart_pwm_get_property>>('dart_pwm_get_property')
     .asFunction<_PWMgetProperty>();
 
 // int dart_pwm_set_property(pwm_t *pwm,PWMpropertyEnum_t prop,PWMproperty_t *data)
 typedef _dart_pwm_set_property = Int32 Function(
-    Pointer<Void> handle, Int32 prop, Pointer<Void> value);
+    Pointer<Void> handle, Int32 prop, Pointer<PWMproperty> result);
 typedef _PWMsetProperty = int Function(
-    Pointer<Void> handle, int prop, Pointer<Void> value);
+    Pointer<Void> handle, int prop, Pointer<PWMproperty> result);
 final _nativeSetProperty = _peripheryLib
     .lookup<NativeFunction<_dart_pwm_set_property>>('dart_pwm_set_property')
     .asFunction<_PWMsetProperty>();
@@ -220,167 +227,125 @@ class PWM {
     return text;
   }
 
+  int _getIntProp(_PWMpropertyEnum propEnum) {
+    _checkStatus();
+    var prop = malloc<PWMproperty>(1);
+    _checkError(_nativeGetProperty(_pwmHandle, propEnum.index, prop));
+    try {
+      return prop.ref.longValue;
+    } finally {
+      malloc.free(prop);
+    }
+  }
+
+  void _setIntProp(_PWMpropertyEnum propEnum, int value) {
+    _checkStatus();
+    var prop = malloc<PWMproperty>(1);
+    try {
+      prop.ref.longValue = value;
+      _checkError(_nativeSetProperty(_pwmHandle, propEnum.index, prop));
+    } finally {
+      malloc.free(prop);
+    }
+  }
+
+  void _setDoubleProp(_PWMpropertyEnum propEnum, double value) {
+    _checkStatus();
+    var prop = malloc<PWMproperty>(1);
+    try {
+      prop.ref.doubleValue = value;
+      _checkError(_nativeSetProperty(_pwmHandle, propEnum.index, prop));
+    } finally {
+      malloc.free(prop);
+    }
+  }
+
+  double _getDoubleProp(_PWMpropertyEnum propEnum) {
+    _checkStatus();
+    var prop = malloc<PWMproperty>(1);
+    _checkError(_nativeGetProperty(_pwmHandle, propEnum.index, prop));
+    try {
+      return prop.ref.doubleValue;
+    } finally {
+      malloc.free(prop);
+    }
+  }
+
   /// Gets the period in nanoseconds of the PWM.
   int getPeriodNs() {
-    _checkStatus();
-    final ptr = _nativeGetProperty(_pwmHandle, _PWMpropertyEnum.PERIOD_NS.index)
-        .cast<Int64>();
-    try {
-      return _checkError(ptr.value);
-    } finally {
-      malloc.free(ptr);
-    }
+    return _getIntProp(_PWMpropertyEnum.PERIOD_NS);
   }
 
   /// Sets the period in [nanoseconds] of the PWM.
   void setPeriodNs(int nanoseconds) {
-    _checkStatus();
-    final ptr = malloc<Int64>(1);
-    ptr.value = nanoseconds;
-    _checkError(_nativeSetProperty(
-        _pwmHandle, _PWMpropertyEnum.PERIOD_NS.index, ptr.cast<Void>()));
+    _setIntProp(_PWMpropertyEnum.PERIOD_NS, nanoseconds);
   }
 
+//
   /// Gets the duty cycle in nanoseconds of the PWM.
   int getDutyCycleNs() {
-    _checkStatus();
-    final ptr =
-        _nativeGetProperty(_pwmHandle, _PWMpropertyEnum.DUTY_CYCLE_NS.index)
-            .cast<Int64>();
-    try {
-      return _checkError(ptr.value);
-    } finally {
-      malloc.free(ptr);
-    }
+    return _getIntProp(_PWMpropertyEnum.DUTY_CYCLE_NS);
   }
 
   /// Sets the duty cycle in [nanoseconds] of the PWM.
   void setDutyCycleNs(int nanoseconds) {
-    _checkStatus();
-    final ptr = malloc<Int64>(1);
-    ptr.value = nanoseconds;
-    _checkError(_nativeSetProperty(
-        _pwmHandle, _PWMpropertyEnum.DUTY_CYCLE_NS.index, ptr.cast<Void>()));
+    _setIntProp(_PWMpropertyEnum.DUTY_CYCLE_NS, nanoseconds);
   }
 
   /// Gets the period in seconds of the PWM.
   double getPeriod() {
-    _checkStatus();
-    final ptr = _nativeGetProperty(_pwmHandle, _PWMpropertyEnum.PERIOD.index)
-        .cast<Double>();
-    try {
-      _checkError(ptr.value.toInt());
-      return ptr.value;
-    } finally {
-      malloc.free(ptr);
-    }
+    return _getDoubleProp(_PWMpropertyEnum.PERIOD);
   }
 
   /// Sets the period in [seconds] of the PWM.
   void setPeriod(double seconds) {
-    _checkStatus();
-    var ptr = malloc<Double>(1);
-    ptr.value = seconds;
-    _checkError(_nativeSetProperty(
-        _pwmHandle, _PWMpropertyEnum.PERIOD.index, ptr.cast<Void>()));
+    _setDoubleProp(_PWMpropertyEnum.PERIOD, seconds);
   }
 
   /// Gets the duty cycle as a ratio between 0.0 to 1.0 in second of the PWM.
   double getDutyCycle() {
-    _checkStatus();
-    final ptr =
-        _nativeGetProperty(_pwmHandle, _PWMpropertyEnum.DUTY_CYCLE.index)
-            .cast<Double>();
-    try {
-      _checkError(ptr.value.toInt());
-      return ptr.value;
-    } finally {
-      malloc.free(ptr);
-    }
+    return _getDoubleProp(_PWMpropertyEnum.DUTY_CYCLE);
   }
 
   /// Sets the [dutyCycle] as a ratio between 0.0 to 1.0 in second of the PWM.
   void setDutyCycle(double dutyCycle) {
-    _checkStatus();
-    final ptr = malloc<Double>(1);
-    ptr.value = dutyCycle;
-    _checkError(_nativeSetProperty(
-        _pwmHandle, _PWMpropertyEnum.DUTY_CYCLE.index, ptr.cast<Void>()));
+    _setDoubleProp(_PWMpropertyEnum.DUTY_CYCLE, dutyCycle);
   }
 
   /// Gets the frequency in Hz of the PWM.
   double getFrequency() {
-    _checkStatus();
-    final ptr = _nativeGetProperty(_pwmHandle, _PWMpropertyEnum.FREQUENCY.index)
-        .cast<Double>();
-
-    try {
-      _checkError(ptr.value.toInt());
-      return ptr.value;
-    } finally {
-      malloc.free(ptr);
-    }
+    return _getDoubleProp(_PWMpropertyEnum.FREQUENCY);
   }
 
   /// Sets the [frequency] in Hz of the PWM.
   void setFrequency(double frequency) {
-    _checkStatus();
-    final ptr = malloc<Double>(1);
-    ptr.value = frequency;
-    _checkError(_nativeSetProperty(
-        _pwmHandle, _PWMpropertyEnum.FREQUENCY.index, ptr.cast<Void>()));
+    _setDoubleProp(_PWMpropertyEnum.FREQUENCY, frequency);
   }
 
   /// Returns the polarity of the PWM.
   Polarity getPolarity() {
-    _checkStatus();
-    final ptr = _nativeGetProperty(_pwmHandle, _PWMpropertyEnum.POLARITY.index)
-        as Pointer<Int32>;
-    try {
-      _checkError(ptr.value);
-      switch (ptr.value) {
-        case 0:
-          return Polarity.PWM_POLARITY_NORMAL;
-        case 1:
-          return Polarity.PWM_POLARITY_INVERSED;
-        default:
-          throw PWMexception(PWMerrorCode.PWM_ERROR_QUERY, 'Unkown polarity');
-      }
-    } finally {
-      malloc.free(ptr);
+    switch (_getIntProp(_PWMpropertyEnum.POLARITY)) {
+      case 0:
+        return Polarity.PWM_POLARITY_NORMAL;
+      case 1:
+        return Polarity.PWM_POLARITY_INVERSED;
+      default:
+        throw PWMexception(PWMerrorCode.PWM_ERROR_QUERY, 'Unkown polarity');
     }
   }
 
   /// Sets the output [polarity] of the PWM.
   void setPolarity(Polarity polarity) {
-    _checkStatus();
-    final ptr = malloc<Int32>(1);
-    ptr.value = polarity.index;
-    _checkError(_nativeSetProperty(
-        _pwmHandle, _PWMpropertyEnum.POLARITY.index, ptr.cast<Void>()));
+    _setIntProp(_PWMpropertyEnum.POLARITY, polarity.index);
   }
 
   /// Return the chip number of the PWM handle.
   int getChip() {
-    _checkStatus();
-    final ptr = _nativeGetProperty(_pwmHandle, _PWMpropertyEnum.CHIP.index)
-        as Pointer<Int32>;
-    try {
-      return _checkError(ptr.value);
-    } finally {
-      malloc.free(ptr);
-    }
+    return _getIntProp(_PWMpropertyEnum.CHIP);
   }
 
   /// Returns the channel number of the PWM handle.
   int getChannel() {
-    _checkStatus();
-    final ptr = _nativeGetProperty(_pwmHandle, _PWMpropertyEnum.CHANNEL.index)
-        as Pointer<Int32>;
-    try {
-      return _checkError(ptr.value);
-    } finally {
-      malloc.free(ptr);
-    }
+    return _getIntProp(_PWMpropertyEnum.CHANNEL);
   }
 }

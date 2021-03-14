@@ -331,7 +331,7 @@ class BME680result {
   double airQualityScore = 0;
 }
 
-/// BME680 sensot for temperature, humidity, pressure and gas sensor
+/// BME680 sensor for temperature, humidity, pressure and gas sensor.
 class BME680 {
   final I2C i2c;
   final int i2cAddress;
@@ -351,7 +351,7 @@ class BME680 {
   final ListQueue<int> _gasResistanceData = ListQueue(DATA_GAS_BURN_IN);
   int _offsetTemperature = 0;
 
-  /// Opens a BME680 sensor conntected with the [i2c] bus at the [i2cAddress = BME680_DEFAULT_I2C_ADDRESS] .
+  /// Opens a BME680 sensor conntected with the [i2c] bus at the [i2cAddress] .
   BME680(I2C i2c, [this.i2cAddress = BME680_DEFAULT_I2C_ADDRESS]) : i2c = i2c {
     _initialise();
   }
@@ -637,6 +637,7 @@ class BME680 {
     return sum;
   }
 
+  /// BME680result
   BME680result getSensorData() {
     setPowerMode(PowerMode.FORCED);
 
@@ -909,7 +910,7 @@ class BME680 {
         : true;
   }
 
-  /// The flag [heaterEnabled] enables/disables the heater on the sensor.
+  /// [heaterEnabled] enables/disables the heater on the sensor.
   void setHeaterEnabled(bool heaterEnabled) {
     // Turn off current injected to heater by setting bit to one
     _setRegByte(CONFIG_HEATER_CONTROL_ADDRESS, HEATER_CONTROL_MASK,

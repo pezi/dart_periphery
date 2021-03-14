@@ -301,8 +301,8 @@ class NanoHatHub extends ArduinoBasedHat {
 
   /// Steers the position of the servo at [pin] to [position].
   /// For detials see  http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_Servo
-  void servoWrite(int pin, int postion) {
-    _sendCmd(SERVO_WRITE, pin, postion);
+  void servoWrite(int pin, int position) {
+    _sendCmd(SERVO_WRITE, pin, position);
   }
 
   /// Reads a value from the 'Ultrasonic Ranger' in the range form range 5-300cm.

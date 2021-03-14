@@ -94,7 +94,7 @@ final _nativeErrno = intVoidM('dart_mmio_errno');
 // const char *dart_mmio_errmsg(mmio_t *mmio)
 final _nativeErrmsg = utf8VoidM('dart_mmio_errmsg');
 
-/// Converts the native error code [value] to [MMIOerrorCodee].
+/// Converts the native error code [value] to [MMIOerrorCode].
 MMIOerrorCode getMMIOerrorCode(int value) {
   // must be negative
   if (value >= 0) {
