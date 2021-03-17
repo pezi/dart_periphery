@@ -6,8 +6,13 @@ import 'dart:io';
 import '../i2c.dart';
 import '../spi.dart';
 import 'util.dart';
+import 'bosch.dart';
 
-// This code is derived from
+// Bosch BMx280 pressure and temperature sensor. The BME280 includes an additional humidity sensor.
+// Different constructors suppor access via I2C or SPI
+// Datasheet: https://cdn-shop.adafruit.com/datasheets/BST-BME280_DS001-10.pdf
+//
+// This code bases on the diozero project - Thanks to Matthew Lewis!
 // https://github.com/mattjlewis/diozero/blob/master/diozero-core/src/main/java/com/diozero/devices/BME280.java
 
 const int BME280_DEFAULT_I2C_ADDRESS = 0x76;
@@ -35,6 +40,9 @@ const int MODE_SLEEP = 0;
 const int MODE_FORCED = 1;
 const int MODE_NORMAL = 3;
 
+/// BME280 operation mode
+enum OperatingMode { MODE_SLEEP, MODE_FORCED, MODE_NORMAL }
+
 const int STANDBY_500_US = 0;
 const int STANDBY_62_5_MS = 1;
 const int STANDBY_125_MS = 2;
@@ -43,6 +51,21 @@ const int STANDBY_500_MS = 4;
 const int STANDBY_1_S = 5;
 const int STANDBY_10_MS = 6;
 const int STANDBY_20_MS = 7;
+
+/// BME280 inactive duration in standby mode
+enum StandbyDuration {
+  STANDBY_500_US,
+  STANDBY_62_5_MS,
+  STANDBY_125_MS,
+  STANDBY_250_MS,
+  STANDBY_500_MS,
+  STANDBY_1_S,
+  STANDBY_10_MS,
+  STANDBY_20_MS
+}
+
+/// BME280 IIR Filter coefficient
+enum FilterCoefficient { FILTER_OFF, FILTER_2, FILTER_4, FILTER_8, FILTER_16 }
 
 // filter
 const int FILTER_OFF = 0;
@@ -75,7 +98,7 @@ class BME280exception implements Exception {
   BME280exception(this.errorMsg);
 }
 
-/// Data container for temperature, pressure and humidity (BME280 only).
+/// [BME280] data container for temperature, pressure and humidity (BME280 only).
 class BME280result {
   /// temperature
   final double temperature;
@@ -89,13 +112,25 @@ class BME280result {
   BME280result(this.temperature, this.pressure, this.humidity);
 }
 
-/// BME280/BMP280 sensor for temperature, pressure and humidity (BME280 only).
+/// Bosch BME280/BMP280 sensor for temperature, pressure and humidity (BME280 only).
+///
+/// See for more
+/// * [BM280 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme280.dart)
+/// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/bme280.dart)
+/// * [Datasheet](https://cdn-shop.adafruit.com/datasheets/BST-BME280_DS001-10.pdf)
+/// * This implementation is derived from project [DIOZero](https://github.com/mattjlewis/diozero/blob/master/diozero-core/src/main/java/com/diozero/devices/BME280.java)
 class BME280 {
   late I2C _i2c;
   late SPI _spi;
+
+  /// Sensor uses I2C or SPI bus.
   final bool isI2C;
+
+  /// I2C sensor address
   final int i2cAddress;
   late BME280model _model;
+
+  /// Data bit order, depends on the type of the bus - I2C or SPI.
   final BitOrder bitOrder;
 
   int _digT1 = 0;
@@ -117,24 +152,27 @@ class BME280 {
   int _digH5 = 0;
   int _digH6 = 0;
 
-  /// Opens a BME280 or BMP280 sensor conntected with the [i2c] bus at the [i2cAddress] .
+  /// Creates a BME280/BMP280 sensor instance that uses the [i2c] bus with
+  /// the optional [i2cAddress].
+  ///
+  /// Default [BME280_DEFAULT_I2C_ADDRESS] = 0x76, [BME280_ALTERNATIVE_I2C_ADDRESS] = 0x77
   BME280(I2C i2c, [this.i2cAddress = BME280_DEFAULT_I2C_ADDRESS])
       : _i2c = i2c,
         isI2C = true,
         bitOrder = BitOrder.MSB_LAST {
-    _init();
+    _initialize();
   }
 
-  /// Opens a BME280 or BMP280 sensor connected with the [spi] bus.
+  /// Creates a BME280/BMP280 sensor instance that uses the [spi] bus.
   BME280.spi(SPI spi)
       : _spi = spi,
         isI2C = false,
         bitOrder = spi.bitOrder,
         i2cAddress = -1 {
-    _init();
+    _initialize();
   }
 
-  void _init() {
+  void _initialize() {
     // get model
     switch (_readByte(ID_REG)) {
       case BMP280_ID:
@@ -147,11 +185,13 @@ class BME280 {
         throw BME280exception('Unknown model');
     }
     _readCoefficients();
-    _setOperatingModes(OVERSAMPLING_1_MASK, OVERSAMPLING_1_MASK,
-        OVERSAMPLING_1_MASK, MODE_NORMAL);
-    _setStandbyAndFilterModes(STANDBY_1_S, FILTER_OFF);
+    setOperatingModes(OversamplingMultiplier.X1, OversamplingMultiplier.X1,
+        OversamplingMultiplier.X1, OperatingMode.MODE_NORMAL);
+    setStandbyAndFilterModes(
+        StandbyDuration.STANDBY_1_S, FilterCoefficient.FILTER_OFF);
   }
 
+  /// Returns the sensor model.
   BME280model getModel() => _model;
 
   void _readCoefficients() {
@@ -200,23 +240,35 @@ class BME280 {
     }
   }
 
-  void _setOperatingModes(int tempOversampling, int pressOversampling,
-      int humOversampling, int operatingMode) {
+  /// Sets the oversampling multipliers [tempOversampling],[pressOversampling],[humOversampling] and [operatingMode].
+  void setOperatingModes(
+      OversamplingMultiplier tempOversampling,
+      OversamplingMultiplier pressOversampling,
+      OversamplingMultiplier humOversampling,
+      OperatingMode operatingMode) {
     if (_model == BME280model.BME280) {
       // Humidity over sampling rate = 1
-      _writeByte(CTRL_HUM_REG, humOversampling);
+      _writeByte(CTRL_HUM_REG, humOversampling.index + 1);
     }
     // Normal mode, temp and pressure oversampling rate = 1
-    _writeByte(CTRL_MEAS_REG,
-        (tempOversampling << 5) | (pressOversampling << 2) | operatingMode);
+    _writeByte(
+        CTRL_MEAS_REG,
+        ((tempOversampling.index) << 5) |
+            ((pressOversampling.index) << 2) |
+            (operatingMode == OperatingMode.MODE_NORMAL
+                ? MODE_NORMAL
+                : operatingMode.index));
   }
 
-  void _setStandbyAndFilterModes(int standbyDuration, int filterCoefficient) {
+  /// Sets the [standbyDuration] for normal mode and the IIR [filterCoefficient].
+  void setStandbyAndFilterModes(
+      StandbyDuration standbyDuration, FilterCoefficient filterCoefficient) {
     // Stand_by time = 1000 ms, filter off
-    _writeByte(CONFIG_REG, (standbyDuration << 5) | (filterCoefficient << 2));
+    _writeByte(CONFIG_REG,
+        (standbyDuration.index << 5) | (filterCoefficient.index << 2));
   }
 
-  // Returns'BME280result' with temperature, pressure and humidity (only BME280).
+  /// Returns [BME280result] with temperature, pressure and humidity (only BME280).
   BME280result getValues() {
     // Read the pressure, temperature, and humidity registers
     var buffer = ByteBuffer(
@@ -298,12 +350,12 @@ class BME280 {
     return false;
   }
 
-  /// Resets the device.
+  /// Resets the sensor.
   void reset() {
     _writeByte(RESET_REG, 0xB6);
   }
 
-  /// Indicates, if data is available.
+  /// Indicates, if data are available.
   bool isDataAvailable() {
     return (_readByte(STATUS_REG) & 0x08) == 0;
   }

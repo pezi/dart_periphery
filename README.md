@@ -3,9 +3,7 @@
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
 
-## Important hint for Dart user
-
-Go to [https://pub.dev/packages/dart_periphery](https://pub.dev/packages/dart_periphery) to import this package.
+[![pub package](https://img.shields.io/badge/pub-v0.8.17--beta-orange)](https://pub.dartlang.org/packages/dart_periphery)
 
 ## Introduction
 

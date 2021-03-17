@@ -51,6 +51,7 @@ export 'src/spi.dart' show SPI, SPImode, SPIexception, getSPIerrorCode;
 export 'src/mmio.dart'
     show MMIO, MMIOexception, MMIOerrorCode, getMMIOerrorCode;
 export 'src/hardware/util.dart' show BitOrder;
+export 'src/hardware/bosch.dart' show OversamplingMultiplier;
 export 'src/hardware/bme280.dart'
     show
         BME280result,
@@ -60,7 +61,10 @@ export 'src/hardware/bme280.dart'
         BMP280_ID,
         BME280_ID,
         BME280_DEFAULT_I2C_ADDRESS,
-        BME280_ALTERNATIVE_I2C_ADDRESS;
+        BME280_ALTERNATIVE_I2C_ADDRESS,
+        FilterCoefficient,
+        OperatingMode,
+        StandbyDuration;
 export 'src/hardware/sht31.dart'
     show
         SHT31,
@@ -95,5 +99,7 @@ export 'src/hardware/bme680.dart'
         BME680result,
         BME680_DEFAULT_I2C_ADDRESS,
         BME680_ALTERNATIVE_I2C_ADDRESS,
-        OversamplingMultiplier,
-        PowerMode;
+        PowerMode,
+        FilterSize,
+        HeaterProfile,
+        SENSOR_READ_RETRY_COUNTER;

@@ -1,3 +1,8 @@
+## 0.8.17-beta 2021-03-17
+
+* Improve BME280 class, make some methods public.
+* Rework BME680, SGP30
+
 ## 0.8.16-beta 2021-03-16
 
 * Fix PWM setter/getter for PWM properties

@@ -75,7 +75,7 @@ class SGP30excpetion implements Exception {
   String toString() => errorMsg;
 }
 
-/// Set of internal features
+/// Set of internal [SGP30] features
 class FeatureSetVersion {
   final int productType;
   final int productVersion;
@@ -87,7 +87,7 @@ class FeatureSetVersion {
       'FeatureSetVersion [productType=0x${productType.toRadixString(16)}, productVersion=0x${productVersion.toRadixString(16)}]';
 }
 
-/// Raw data container H<sub>2</sub> and Ethanol
+/// Raw data container H<sub>2</sub> and Ethanol ([SGP30])
 class RawMeasurement {
   final int h2;
   final int ethanol;
@@ -98,26 +98,30 @@ class RawMeasurement {
   String toString() => 'RawMeasurement [h2=$h2, ethanol=$ethanol]';
 }
 
-/// Data container for co2Equivalent and totalVOC
+/// [SGP30] data container for co2Equivalent and totalVOC
 class SGP30Measurement {
   int co2Equivalent;
   // Total Volatile Organic Compounds
   int totalVOC;
 
-  SGP30Measurement(List<int> raw)
-      : co2Equivalent = raw[0],
-        totalVOC = raw[1];
+  SGP30Measurement(this.co2Equivalent, this.totalVOC);
   @override
   String toString() =>
       'SGP30Measurement [CO2 Equivalent=$co2Equivalent , Total VOC=$totalVOC]';
 }
 
-/// eCO2 Gas Sensor(SGP30), an air quality detection sensor.
+/// Sensirion eCO2 gas sensor, an air quality detection sensor..
+///
+/// See for more
+/// * [SGP30 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sgp30.dart)
+/// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/sgp30.dart)
+/// * [Datasheet](https://www.mouser.in/datasheet/2/682/Sensirion_Gas_Sensors_SGP30_Datasheet-1511334.pdf)
+/// * This implementation is derived from project [DIOZero](https://github.com/mattjlewis/diozero/blob/master/diozero-core/src/main/java/com/diozero/devices/SGP30.java)
 class SGP30 {
   final I2C i2c;
   bool _isInitialized = false;
 
-  /// Opens the SFP30 sensor conntected with the [i2c] bus.
+  /// Creates a SGP30 sensor instance that uses the [i2c] bus.
   SGP30(this.i2c, [bool init = true]) {
     if (init) {
       iaqInit();
@@ -126,7 +130,7 @@ class SGP30 {
     }
   }
 
-  // Checks if the sensor is initialized for measurement.
+  /// Checks if the sensor is initialized for measurement.
   bool isInitialized() {
     return _isInitialized;
   }
@@ -205,8 +209,9 @@ class SGP30 {
 
   /// Returns the baseline.
   SGP30Measurement getIaqBaseline() {
-    return SGP30Measurement(_command(CMD_GET_IAQ_BASELINE,
-        CMD_GET_IAQ_BASELINE_WORDS, CMD_GET_IAQ_BASELINE_DELAY_MS));
+    var result = _command(CMD_GET_IAQ_BASELINE, CMD_GET_IAQ_BASELINE_WORDS,
+        CMD_GET_IAQ_BASELINE_DELAY_MS);
+    return SGP30Measurement(result[0], result[1]);
   }
 
   /// Sets the baseline of the sensor.
@@ -224,20 +229,21 @@ class SGP30 {
 
   /// Returns the co2Equivalent and totalVOC measurement.
   SGP30Measurement measureIaq() {
-    return SGP30Measurement(_command(
-        CMD_IAQ_MEASURE, CMD_IAQ_MEASURE_WORDS, CMD_IAQ_MEASURE_DELAY_MS));
+    var result = _command(
+        CMD_IAQ_MEASURE, CMD_IAQ_MEASURE_WORDS, CMD_IAQ_MEASURE_DELAY_MS);
+    return SGP30Measurement(result[0], result[1]);
   }
 
-  /// Returns the H2<sub>2</sub> and Ethanol measurement.
+  /// Returns the H<sub>2</sub> and Ethanol measurement.
   RawMeasurement measureRaw() {
     return RawMeasurement(_command(
         CMD_RAW_MEASURE, CMD_RAW_MEASURE_WORDS, CMD_RAW_MEASURE_DELAY_MS));
   }
 
-  /// Performs an internal test. DO NOT call the method after
+  /// Performs an internal test. DO NOT call this method after
   /// [SGP30.iaqInit] because this test resets the sensor initialization!
   ///
-  /// To use this method create SGP30 with the optional paramter
+  /// To use this method create [SGP30] with the optional paramter
   /// init = false
   void measureTest() {
     var data = _command(

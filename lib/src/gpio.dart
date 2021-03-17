@@ -140,7 +140,6 @@ class _ReadEvent extends Struct {
   external int edge;
   @Int32()
   external int timestamp;
-  factory _ReadEvent.allocate() => malloc<_ReadEvent>().ref;
 }
 
 /// Result of the [GPIO.readEvent()].

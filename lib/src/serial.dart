@@ -36,7 +36,6 @@ class _ReadEvent extends Struct {
   @Int32()
   external int count;
   external Pointer<Int8> data;
-  factory _ReadEvent.allocate() => malloc<_ReadEvent>().ref;
 }
 
 /// Result of a [Serial.read] operation.

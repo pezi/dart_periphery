@@ -67,7 +67,6 @@ class NativeI2Cmsg extends Struct {
   @Int16()
   external int len;
   external Pointer<Int8> buf;
-  factory NativeI2Cmsg.allocate() => malloc<NativeI2Cmsg>().ref;
 }
 
 /// Helper class which stores an array of native 'struct i2c_msg' messages.
@@ -303,7 +302,7 @@ class I2C {
   ///  as additional options selected by the bitwise OR of their bitmasks.
   ///
   /// Returns a [NativeI2CmsgHelper] which contains  the [NativeI2Cmsg] list. To free the allocated memory
-  /// resources [NativeI2Cmsg.allocate()] must be called by the user.
+  /// resources [NativeI2CmsgHelper.dispose] must be called by the user.
   NativeI2CmsgHelper transfer(List<I2Cmsg> data) {
     _checkStatus();
     var nativeMsg = I2Cmsg._toNative(data);

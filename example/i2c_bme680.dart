@@ -14,7 +14,7 @@ void main() {
   var bme680 = BME680(i2c);
 
   while (true) {
-    var result = bme680.getSensorData();
+    var result = bme680.getValues();
     bme680.getHumidityOversample();
     print('Temperature: ${result.temperature}');
     print('Humidity: ${result.humidity}');

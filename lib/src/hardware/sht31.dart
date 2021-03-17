@@ -116,7 +116,7 @@ class SHT31 {
       throw SHT31excpetion('CRC8 error');
     }
 
-    //convert the data
+    // convert the data
     var temp =
         ((((data[0] & 0xFF) * 256) + (data[1] & 0xFF)) * 175.0) / 65535.0 -
             45.0;
