@@ -1,7 +1,7 @@
 name: dart_periphery
-version: 0.8.17-beta
+version: 0.8.18-beta
 description:  >- 
-  dart_periphery is a Dart port of the native c-periphery library for Linux Peripheral I/O (GPIO, LED, PWM, SPI, I2C, MMIO and Serial peripheral I/O).
+  dart_periphery is a Dart port of the native c-periphery library for Linux Peripheral I/O (GPIO, LED, PWM, SPI, I2C, MMIO and Serial peripheral I/O). This package is specially intended for SoCs like Raspberry Pi, NanoPi, Banana Pi et al.
 
 homepage: https://github.com/pezi/dart_periphery
 repository: https://github.com/pezi/dart_periphery

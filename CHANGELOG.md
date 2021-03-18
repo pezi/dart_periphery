@@ -1,3 +1,7 @@
+## 0.8.18-beta 2021-03-18
+
+* Rework documentation
+
 ## 0.8.17-beta 2021-03-17
 
 * Improve BME280 class, make some methods public.

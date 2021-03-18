@@ -23,7 +23,7 @@ enum _SPIproperty {
   FILE_DESCRIPTOR
 }
 
-/// Mapped native GPIO error codes with the same index, but different leading sign.
+/// Mapped native [SPI] error codes with the same index, but different leading sign.
 enum SPIerrorCode {
   /// Error code for not able to map the native C enum
   ERROR_CODE_NOT_MAPPABLE,
@@ -50,35 +50,19 @@ enum SPIerrorCode {
   SPI_ERROR_UNSUPPORTED
 }
 
-/// SPI modes
+/// [SPI] modes
 enum SPImode { MODE0, MODE1, MODE2, MODE3 }
 
-/// SPI exception
+/// [SPI] exception
 class SPIexception implements Exception {
   final SPIerrorCode errorCode;
   final String errorMsg;
   SPIexception(this.errorCode, this.errorMsg);
   SPIexception.errorCode(int code, Pointer<Void> handle)
-      : errorCode = getSPIerrorCode(code),
+      : errorCode = SPI.getSPIerrorCode(code),
         errorMsg = _getErrmsg(handle);
   @override
   String toString() => errorMsg;
-}
-
-/// Converts the native error code [value] to [GPIOerrorCode].
-SPIerrorCode getSPIerrorCode(int value) {
-  // must be negative
-  if (value >= 0) {
-    return SPIerrorCode.ERROR_CODE_NOT_MAPPABLE;
-  }
-  value = -value;
-
-  // check range
-  if (value > SPIerrorCode.SPI_ERROR_UNSUPPORTED.index) {
-    return SPIerrorCode.ERROR_CODE_NOT_MAPPABLE;
-  }
-
-  return SPIerrorCode.values[value];
 }
 
 final DynamicLibrary _peripheryLib = getPeripheryLib();
@@ -166,7 +150,7 @@ String _getErrmsg(Pointer<Void> handle) {
 
 int _checkError(int value) {
   if (value < 0) {
-    var errorCode = getSPIerrorCode(value);
+    var errorCode = SPI.getSPIerrorCode(value);
     throw SPIexception(errorCode, errorCode.toString());
   }
   return value;
@@ -251,6 +235,22 @@ class SPI {
     _checkSPI(bus, chip);
     _spiHandle = _checkHandle(_nativeAdvanced2(path.toNativeUtf8(), mode.index,
         maxSpeed, bitOrder.index, bitsPerWord, extraFlags));
+  }
+
+  /// Converts the native error code [value] to [GPIOerrorCode].
+  static SPIerrorCode getSPIerrorCode(int value) {
+    // must be negative
+    if (value >= 0) {
+      return SPIerrorCode.ERROR_CODE_NOT_MAPPABLE;
+    }
+    value = -value;
+
+    // check range
+    if (value > SPIerrorCode.SPI_ERROR_UNSUPPORTED.index) {
+      return SPIerrorCode.ERROR_CODE_NOT_MAPPABLE;
+    }
+
+    return SPIerrorCode.values[value];
   }
 
   void _checkStatus() {

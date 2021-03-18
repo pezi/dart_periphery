@@ -30,7 +30,7 @@ const int SHT31_HEATEREN = 0x306D;
 const int SHT31_HEATERDIS = 0x3066;
 const int SHT31_READSERIALNBR = 0x3780;
 
-/// SHT31 exception
+/// [SHT31] exception
 class SHT31excpetion implements Exception {
   SHT31excpetion(this.errorMsg);
   final String errorMsg;
@@ -38,7 +38,7 @@ class SHT31excpetion implements Exception {
   String toString() => errorMsg;
 }
 
-/// Data container for temperature and humidity.
+/// [SHT31] data container for temperature and humidity.
 class SHT31result {
   /// temperature
   final double temperature;
@@ -49,17 +49,23 @@ class SHT31result {
   SHT31result(this.temperature, this.humidity);
 }
 
-/// SHT31 temperatur and humidity sensor with a high accuracy.
+/// Sensirion SHT31 temperatur and humidity sensor with a high accuracy.
+///
+/// See for more
+/// * [SGP30 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht31.dart)
+/// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/sht31.dart)
+/// * [Datasheet](https://docs.rs-online.com/6b89/0900766b816bf6a6.pdf)
 class SHT31 {
-  I2C i2c;
-  int i2cAddress;
+  final I2C i2c;
+  final int i2cAddress;
 
-  // Opens the SHT31 sensor on the [i2c] bus with the [this.i2cAddress = SHT31_DEFAULT_I2C_ADDRESS].
+  /// Creates a SHT31 sensor instance that uses the [i2c] bus with
+  /// the optional [i2cAddress].
   SHT31(this.i2c, [this.i2cAddress = SHT31_DEFAULT_I2C_ADDRESS]) {
     reset();
   }
 
-  /// Returns true if the heater is on.
+  /// Checks if the heater is on.
   bool isHeaterOn() {
     return (getStatus() & 0x2000) != 0;
   }

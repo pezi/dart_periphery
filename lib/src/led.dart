@@ -12,7 +12,7 @@ import 'library.dart';
 import 'package:ffi/ffi.dart';
 import 'signature.dart';
 
-/// Led error code
+/// [Led] error code
 enum LedErrorCode {
   /// Error code for not able to map the native C enum
   ERROR_CODE_NOT_MAPPABLE,
@@ -31,22 +31,6 @@ enum LedErrorCode {
 
   /// Closing LED
   LED_ERROR_CLOSE,
-}
-
-/// Converts the native error code [value] to [LedErrorCode].
-LedErrorCode getLedErrorCode(int value) {
-  // must be negative
-  if (value >= 0) {
-    return LedErrorCode.ERROR_CODE_NOT_MAPPABLE;
-  }
-  value = -value;
-
-  // check range
-  if (value > LedErrorCode.LED_ERROR_CLOSE.index) {
-    return LedErrorCode.ERROR_CODE_NOT_MAPPABLE;
-  }
-
-  return LedErrorCode.values[value];
 }
 
 // led_t* dart_led_open(const char *path)
@@ -88,7 +72,7 @@ final _nativeName = utf8VoidM('dart_led_name');
 
 int _checkError(int value) {
   if (value < 0) {
-    var errorCode = getLedErrorCode(value);
+    var errorCode = Led.getLedErrorCode(value);
     throw LedException(errorCode, errorCode.toString());
   }
   return value;
@@ -98,13 +82,13 @@ String _getErrmsg(Pointer<Void> handle) {
   return _nativeErrmsg(handle).toDartString();
 }
 
-/// Led exception
+/// [Led] exception
 class LedException implements Exception {
   final LedErrorCode errorCode;
   final String errorMsg;
   LedException(this.errorCode, this.errorMsg);
   LedException.errorCode(int code, Pointer<Void> handle)
-      : errorCode = getLedErrorCode(code),
+      : errorCode = Led.getLedErrorCode(code),
         errorMsg = _getErrmsg(handle);
   @override
   String toString() => errorMsg;
@@ -136,6 +120,22 @@ class Led {
       throw LedException(LedErrorCode.LED_ERROR_CLOSE,
           'Led interface has the status released.');
     }
+  }
+
+  /// Converts the native error code [value] to [LedErrorCode].
+  static LedErrorCode getLedErrorCode(int value) {
+    // must be negative
+    if (value >= 0) {
+      return LedErrorCode.ERROR_CODE_NOT_MAPPABLE;
+    }
+    value = -value;
+
+    // check range
+    if (value > LedErrorCode.LED_ERROR_CLOSE.index) {
+      return LedErrorCode.ERROR_CODE_NOT_MAPPABLE;
+    }
+
+    return LedErrorCode.values[value];
   }
 
   /// Sets the state of the led to [value].

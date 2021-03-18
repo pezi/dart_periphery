@@ -3,7 +3,7 @@
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
 
-[![pub package](https://img.shields.io/badge/pub-v0.8.17--beta-orange)](https://pub.dartlang.org/packages/dart_periphery)
+[![pub package](https://img.shields.io/badge/pub-v0.8.18--beta-orange)](https://pub.dartlang.org/packages/dart_periphery)
 
 ## Introduction
 
@@ -348,7 +348,7 @@ void main() {
 
 ``` bash
 cd ~
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.12.1/sdk/dartsdk-linux-arm-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.12.2/sdk/dartsdk-linux-arm-release.zip
 unzip dartsdk-linux-arm-release.zip
 sudo mv dart-sdk /opt/
 sudo chmod -R +rx /opt/dart-sdk
@@ -358,7 +358,7 @@ sudo chmod -R +rx /opt/dart-sdk
 
 ``` bash
 cd ~
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.12.1/sdk/dartsdk-linux-arm64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.12.2/sdk/dartsdk-linux-arm64-release.zip
 unzip dartsdk-linux-arm64-release.zip
 sudo mv dart-sdk /opt/
 sudo chmod -R +rx /opt/dart-sdk
@@ -388,7 +388,7 @@ Test the installion
 
 ``` bash
 root@nanopineo2:~# dart --version
-Dart SDK version: 2.12.1 (stable) (Wed Mar 10 10:18:47 2021 +0100) on "linux_arm64"
+Dart SDK version: 2.12.2 (stable) (Wed Mar 17 10:30:20 2021 +0100) on "linux_arm64"
 ```
 
 ## Native libraries

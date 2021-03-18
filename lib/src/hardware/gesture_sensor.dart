@@ -78,7 +78,7 @@ const int GES_CLOCKWISE_FLAG = 1 << 6;
 const int GES_COUNT_CLOCKWISE_FLAG = 1 << 7;
 const int GES_WAVE_FLAG = 1 << 0;
 
-/// GroveGestureSensorException exception
+/// [GestureSensorException] exception
 class GestureSensorException implements Exception {
   final String errorMsg;
   @override
@@ -87,7 +87,7 @@ class GestureSensorException implements Exception {
   GestureSensorException(this.errorMsg);
 }
 
-/// Gesture directions
+/// [Gesture] directions
 enum Gesture {
   NOTHING,
   FORWARD,
@@ -330,14 +330,19 @@ var initRegisterArray = <int>[
   0x7E01
 ];
 
-/// The [Grove Gesture](https://wiki.seeedstudio.com/Grove-Gesture_v1.0/) sensor integrates gesture recognition function with general I2C interface into a single PAJ7620U2 chip.
-/// This sensor can recognize 9 basic gestures.
+/// PixArt PAJ7620U2 chip, can recognize 9 basic gestures.
+///
+/// See for more
+/// * [PAJ7620U2 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_gesture_sensor.dart)
+/// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/gesture_sensor.dart)
+/// * [Datasheet](file:///C:/Users/pezi/AppData/Local/Temp/PAJ7620U2_GDS-R1.0_29032016_41002AEN-1.pdf)
+/// * This code bases on [grove_gesture_sensor.py](https://github.com/Seeed-Studio/grove.py/blob/master/grove/grove_gesture_sensor.py)
 class GestureSensor {
   final I2C i2c;
   int gestureReactionTime;
   int gestureQuitTime;
 
-  /// Opens a PAJ7620U2 sensor conntected with the [i2c] bus
+  /// Creates a PAJ7620U2 sensor instance that uses [i2c] bus
   /// with the optional parameter [gestureReactionTime] and [gestureQuitTime].
   GestureSensor(this.i2c,
       [this.gestureReactionTime = GESTURE_REACTION_TIME,

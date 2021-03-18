@@ -367,8 +367,8 @@ class BakeBitLedBar {
 /// - Problems using more than 2 I2C devices
 /// - Problems using I2C and SPI bus at the same time
 class GrovePiPlusHat extends ArduinoBasedHat {
-  int i2cBus = 1;
-  GrovePiPlusHat([int i2cBus = 1]) : super(I2C(i2cBus));
+  final int i2cBus;
+  GrovePiPlusHat([this.i2cBus = 1]) : super(I2C(i2cBus));
 }
 
 const int RPI_HAT_PID = 0x04;
@@ -376,19 +376,19 @@ const int RPI_ZERO_HAT_PID = 0x05;
 
 /// SeedStudio [Grove Base Hat for Raspberry Pi](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi/)
 class GroveBaseHat {
-  I2C i2c;
-  int i2cBus;
-  int id = 0;
+  final I2C i2c;
+  final int i2cBus;
+  int _id = 0;
   GroveBaseHat([this.i2cBus = 1]) : i2c = I2C(i2cBus);
 
   /// Returns the internal hardware id of the hat.
   /// RPI_HAT_PID (0x4) for a 'Grove Base Hat RPi', and
   /// RPI_ZERO_HAT_PID (0x05) for a 'Grove Base Hat RPi Zero'.
   int getId() {
-    if (id == 0) {
-      id = _read16BitRegister(0x00);
+    if (_id == 0) {
+      _id = _read16BitRegister(0x00);
     }
-    return id;
+    return _id;
   }
 
   /// Returns the name of the hat model.

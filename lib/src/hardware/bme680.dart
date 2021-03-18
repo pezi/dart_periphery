@@ -264,7 +264,7 @@ const List<int> GAS_RANGE_LOOKUP_TABLE_2 = [
 
 const int DATA_GAS_BURN_IN = 50;
 
-/// BME680 exception
+/// [BME680] exception
 class BME680exception implements Exception {
   final String errorMsg;
   @override
@@ -352,9 +352,13 @@ class BME680result {
       this.isGasMeasurementValid,
       this.gasMeasurementIndex,
       this.measureIndex);
+
+  @override
+  String toString() =>
+      'BME680result [temperature=$temperature, pressure=$pressure, humidity=$humidity,gasResistance=$gasResistance,airQualityScore=$airQualityScore]';
 }
 
-/// BME680 sensor for temperature, humidity, pressure and gas sensor (IAQ Indoor air quality).
+/// Bosch BME680 sensor for temperature, humidity, pressure and gas sensor (IAQ Indoor air quality).
 ///
 /// IAQ is in an index that can have values between 0 and 500 with
 /// resolution of 1 to indicate or quantify the quality of the air available in the surrounding.

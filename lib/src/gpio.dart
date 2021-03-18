@@ -34,7 +34,7 @@ enum _GPIOtextProperty {
 /// Result codes of the [GPIO.poll].
 enum GPIOpolling { SUCCESS, TIMEOUT }
 
-/// Mapped native GPIO error codes with the same index, but different leading sign.
+/// Mapped native [GPIO] error codes with the same index, but different leading sign.
 enum GPIOerrorCode {
   /// Error code for not able to map the native C enum
   ERROR_CODE_NOT_MAPPABLE,
@@ -67,7 +67,7 @@ enum GPIOerrorCode {
   GPIO_ERROR_CLOSE,
 }
 
-/// GPIO input/output direction
+/// [GPIO] input/output direction
 enum GPIOdirection {
   ///  Input
   GPIO_DIR_IN,
@@ -82,7 +82,7 @@ enum GPIOdirection {
   GPIO_DIR_OUT_HIGH
 }
 
-/// GPIO edge
+/// [GPIO] edge
 enum GPIOedge {
   /// No interrupt edge
   GPIO_EDGE_NONE,
@@ -97,7 +97,7 @@ enum GPIOedge {
   GPIO_EDGE_BOTH
 }
 
-/// GPIO bias
+/// [GPIO] bias
 enum GPIObias {
   /// Default line bias
   GPIO_BIAS_DEFAULT,
@@ -112,7 +112,7 @@ enum GPIObias {
   GPIO_BIAS_DISABLE,
 }
 
-/// GPIO drive
+/// [GPIO] drive
 enum GPIOdrive {
   /// Default line drive (push-pull)
   GPIO_DRIVE_DEFAULT,
@@ -215,29 +215,13 @@ class GPIOconfig {
         label = '';
 }
 
-/// Converts the native error code [value] to [GPIOerrorCode].
-GPIOerrorCode getGPIOerrorCode(int value) {
-  // must be negative
-  if (value >= 0) {
-    return GPIOerrorCode.ERROR_CODE_NOT_MAPPABLE;
-  }
-  value = -value;
-
-  // check range
-  if (value > GPIOerrorCode.GPIO_ERROR_CLOSE.index) {
-    return GPIOerrorCode.ERROR_CODE_NOT_MAPPABLE;
-  }
-
-  return GPIOerrorCode.values[value];
-}
-
-/// GPIO exception
+/// [GPIO] exception
 class GPIOexception implements Exception {
   final GPIOerrorCode errorCode;
   final String errorMsg;
   GPIOexception(this.errorCode, this.errorMsg);
   GPIOexception.errorCode(int code, Pointer<Void> handle)
-      : errorCode = getGPIOerrorCode(code),
+      : errorCode = GPIO.getGPIOerrorCode(code),
         errorMsg = _getErrmsg(handle);
   @override
   String toString() => errorMsg;
@@ -376,7 +360,7 @@ String _getErrmsg(Pointer<Void> handle) {
 int _checkError(int value) {
   if (value < 0) {
     throw GPIOexception(
-        getGPIOerrorCode(value), getGPIOerrorCode(value).toString());
+        GPIO.getGPIOerrorCode(value), GPIO.getGPIOerrorCode(value).toString());
   }
   return value;
 }
@@ -417,6 +401,22 @@ class GPIO {
   /// Sets an alternative [chipBasePath], default value is '/dev/gpiochip'
   static void setBaseGPIOpath(String chipBasePath) {
     _gpioBasePath = chipBasePath;
+  }
+
+  /// Converts the native error code [value] to [GPIOerrorCode].
+  static GPIOerrorCode getGPIOerrorCode(int value) {
+    // must be negative
+    if (value >= 0) {
+      return GPIOerrorCode.ERROR_CODE_NOT_MAPPABLE;
+    }
+    value = -value;
+
+    // check range
+    if (value > GPIOerrorCode.GPIO_ERROR_CLOSE.index) {
+      return GPIOerrorCode.ERROR_CODE_NOT_MAPPABLE;
+    }
+
+    return GPIOerrorCode.values[value];
   }
 
   void _checkStatus() {

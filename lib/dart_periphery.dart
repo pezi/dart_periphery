@@ -5,9 +5,8 @@
 export 'src/version.dart' show getCperipheryVersion, DART_PERIPHERY_VERSION;
 export 'src/library.dart'
     show useSharedLibray, setCustomLibrary, useLocalLibrary;
-export 'src/led.dart' show Led, LedException, getLedErrorCode;
-export 'src/pwm.dart'
-    show PWM, PWMexception, getPWMerrorCode, Polarity, PWMerrorCode;
+export 'src/led.dart' show Led, LedException;
+export 'src/pwm.dart' show PWM, PWMexception, Polarity, PWMerrorCode;
 export 'src/gpio.dart'
     show
         GPIOpolling,
@@ -20,8 +19,7 @@ export 'src/gpio.dart'
         GPIOreadEvent,
         PollMultipleEvent,
         GPIOconfig,
-        GPIOexception,
-        getGPIOerrorCode;
+        GPIOexception;
 export 'src/serial.dart'
     show
         SerialReadEvent,
@@ -31,25 +29,18 @@ export 'src/serial.dart'
         StopBits,
         SerialErrorCode,
         Parity,
-        getSerialErrorCode,
-        baudrate2Int,
-        databits2Int,
-        stopbits2Int,
         Serial;
 export 'src/i2c.dart'
     show
         I2CmsgFlags,
-        I2CmsgFlags2Int,
         NativeI2Cmsg,
         NativeI2CmsgHelper,
         I2Cmsg,
         I2CerrorCode,
-        getI2CerrorCode,
         I2Cexception,
         I2C;
-export 'src/spi.dart' show SPI, SPImode, SPIexception, getSPIerrorCode;
-export 'src/mmio.dart'
-    show MMIO, MMIOexception, MMIOerrorCode, getMMIOerrorCode;
+export 'src/spi.dart' show SPI, SPImode, SPIexception;
+export 'src/mmio.dart' show MMIO, MMIOexception, MMIOerrorCode;
 export 'src/hardware/util.dart' show BitOrder;
 export 'src/hardware/bosch.dart' show OversamplingMultiplier;
 export 'src/hardware/bme280.dart'
@@ -75,7 +66,7 @@ export 'src/hardware/sht31.dart'
 export 'src/hardware/extension_hat.dart'
     show
         DigitalValue,
-        PINMODE,
+        PinMode,
         NanoHatHub,
         LedBarColor,
         LedBarLed,
@@ -85,12 +76,7 @@ export 'src/hardware/extension_hat.dart'
 export 'src/hardware/gesture_sensor.dart'
     show GestureSensor, GestureSensorException, Gesture;
 export 'src/hardware/sgp30.dart'
-    show
-        SGP30,
-        SGP30Measurement,
-        RawMeasurement,
-        FeatureSetVersion,
-        SGP30excpetion;
+    show SGP30, SGP30result, RawMeasurement, FeatureSetVersion, SGP30excpetion;
 export 'src/hardware/mpu6050.dart' show MPU6050, MPU6050exception;
 export 'src/hardware/bme680.dart'
     show

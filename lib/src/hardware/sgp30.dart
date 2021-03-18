@@ -67,7 +67,7 @@ const int CMD_GET_TVOC_INCEPTIVE_BASELINE_DELAY_MS = 10;
 const int CMD_SET_TVOC_BASELINE = 0x2077;
 const int CMD_SET_TVOC_BASELINE_DELAY_MS = 10;
 
-/// SGP30 exception
+/// [SGP30] exception
 class SGP30excpetion implements Exception {
   SGP30excpetion(this.errorMsg);
   final String errorMsg;
@@ -79,35 +79,33 @@ class SGP30excpetion implements Exception {
 class FeatureSetVersion {
   final int productType;
   final int productVersion;
-  FeatureSetVersion(List<int> raw)
-      : productType = (raw[0] >> 12) & 0xF,
-        productVersion = raw[0] & 0xFF;
+  FeatureSetVersion(int prodType, int prodVersion)
+      : productType = (prodType >> 12) & 0xF,
+        productVersion = prodVersion & 0xFF;
   @override
   String toString() =>
       'FeatureSetVersion [productType=0x${productType.toRadixString(16)}, productVersion=0x${productVersion.toRadixString(16)}]';
 }
 
-/// Raw data container H<sub>2</sub> and Ethanol ([SGP30])
+/// [SGP30] raw data container for H<sub>2</sub> and Ethanol
 class RawMeasurement {
   final int h2;
   final int ethanol;
-  RawMeasurement(List<int> raw)
-      : h2 = raw[0],
-        ethanol = raw[1];
+  RawMeasurement(this.h2, this.ethanol);
   @override
   String toString() => 'RawMeasurement [h2=$h2, ethanol=$ethanol]';
 }
 
 /// [SGP30] data container for co2Equivalent and totalVOC
-class SGP30Measurement {
+class SGP30result {
   int co2Equivalent;
   // Total Volatile Organic Compounds
   int totalVOC;
 
-  SGP30Measurement(this.co2Equivalent, this.totalVOC);
+  SGP30result(this.co2Equivalent, this.totalVOC);
   @override
   String toString() =>
-      'SGP30Measurement [CO2 Equivalent=$co2Equivalent , Total VOC=$totalVOC]';
+      'SGP30result [CO2 Equivalent=$co2Equivalent, Total VOC=$totalVOC]';
 }
 
 /// Sensirion eCO2 gas sensor, an air quality detection sensor..
@@ -186,8 +184,9 @@ class SGP30 {
 
   /// Returns the internal features.
   FeatureSetVersion getFeatureSetVersion() {
-    return FeatureSetVersion(_command(CMD_GET_FEATURESET,
-        CMD_GET_FEATURESET_WORDS, CMD_GET_FEATURESET_DELAY_MS));
+    var result = _command(CMD_GET_FEATURESET, CMD_GET_FEATURESET_WORDS,
+        CMD_GET_FEATURESET_DELAY_MS);
+    return FeatureSetVersion(result[0], result[1]);
   }
 
   /// Initializes the sensor for measurement.
@@ -208,14 +207,14 @@ class SGP30 {
   }
 
   /// Returns the baseline.
-  SGP30Measurement getIaqBaseline() {
+  SGP30result getIaqBaseline() {
     var result = _command(CMD_GET_IAQ_BASELINE, CMD_GET_IAQ_BASELINE_WORDS,
         CMD_GET_IAQ_BASELINE_DELAY_MS);
-    return SGP30Measurement(result[0], result[1]);
+    return SGP30result(result[0], result[1]);
   }
 
   /// Sets the baseline of the sensor.
-  void setIaqBaseline(SGP30Measurement baseline) {
+  void setIaqBaseline(SGP30result baseline) {
     _commandData(CMD_SET_IAQ_BASELINE, 0, CMD_SET_IAQ_BASELINE_DELAY_MS,
         [baseline.totalVOC, baseline.co2Equivalent]);
   }
@@ -228,16 +227,17 @@ class SGP30 {
   }
 
   /// Returns the co2Equivalent and totalVOC measurement.
-  SGP30Measurement measureIaq() {
+  SGP30result measureIaq() {
     var result = _command(
         CMD_IAQ_MEASURE, CMD_IAQ_MEASURE_WORDS, CMD_IAQ_MEASURE_DELAY_MS);
-    return SGP30Measurement(result[0], result[1]);
+    return SGP30result(result[0], result[1]);
   }
 
   /// Returns the H<sub>2</sub> and Ethanol measurement.
   RawMeasurement measureRaw() {
-    return RawMeasurement(_command(
-        CMD_RAW_MEASURE, CMD_RAW_MEASURE_WORDS, CMD_RAW_MEASURE_DELAY_MS));
+    var result = _command(
+        CMD_RAW_MEASURE, CMD_RAW_MEASURE_WORDS, CMD_RAW_MEASURE_DELAY_MS);
+    return RawMeasurement(result[0], result[1]);
   }
 
   /// Performs an internal test. DO NOT call this method after

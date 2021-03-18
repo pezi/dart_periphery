@@ -81,19 +81,19 @@ class SerialReadEvent {
   }
 }
 
-/// Serial exception
+/// [Serial] exception
 class SerialException implements Exception {
   final SerialErrorCode errorCode;
   final String errorMsg;
   SerialException(this.errorCode, this.errorMsg);
   SerialException.errorCode(int code, Pointer<Void> handle)
-      : errorCode = getSerialErrorCode(code),
+      : errorCode = Serial.getSerialErrorCode(code),
         errorMsg = _getErrmsg(handle);
   @override
   String toString() => errorMsg;
 }
 
-/// Serial baudrate
+/// [Serial] baudrate
 enum Baudrate {
   B50,
   B75,
@@ -126,13 +126,13 @@ enum Baudrate {
   B4000000,
 }
 
-/// Number of data bits
+/// [Serial] number of data bits
 enum DataBits { DB5, DB6, DB7, DB8 }
 
-/// Number of stop bits
+/// [Serial] number of stop bits
 enum StopBits { SB1, SB2 }
 
-/// Serial error codes
+/// [Serial] error codes
 enum SerialErrorCode {
   /// Error code for not able to map the native C enum
   ERROR_CODE_NOT_MAPPABLE,
@@ -156,27 +156,11 @@ enum SerialErrorCode {
   SERIAL_ERROR_CLOSE
 }
 
-// Serial parity
+/// [Serial] parity
 enum Parity {
   PARITY_NONE,
   PARITY_ODD,
   PARITY_EVEN,
-}
-
-/// Converts the native error code [value] to [SerialErrorCode].
-SerialErrorCode getSerialErrorCode(int value) {
-  // must be negative
-  if (value >= 0) {
-    return SerialErrorCode.ERROR_CODE_NOT_MAPPABLE;
-  }
-  value = -value;
-
-  // check range
-  if (value > SerialErrorCode.SERIAL_ERROR_CLOSE.index) {
-    return SerialErrorCode.ERROR_CODE_NOT_MAPPABLE;
-  }
-
-  return SerialErrorCode.values[value];
 }
 
 final DynamicLibrary _peripheryLib = getPeripheryLib();
@@ -307,31 +291,13 @@ final _nativeErrno = _peripheryLib
     .lookup<NativeFunction<intVoidS>>('dart_serial_errno')
     .asFunction<intVoidF>();
 
-/// Converts a [baudrate] enum to an int value;
-int baudrate2Int(Baudrate baudrate) {
-  const tmp = 'Baudrate.B';
-  return int.parse(baudrate.toString().substring(tmp.length));
-}
-
-/// Converts a [databits] enum to an int value;
-int databits2Int(DataBits databits) {
-  const tmp = 'DataBits.DB';
-  return int.parse(databits.toString().substring(tmp.length));
-}
-
-/// Converts a [stopbits] enum to an int value;
-int stopbits2Int(StopBits stopbits) {
-  const tmp = 'StopBits.SB';
-  return int.parse(stopbits.toString().substring(tmp.length));
-}
-
 String _getErrmsg(Pointer<Void> handle) {
   return _nativeErrmsg(handle).toDartString();
 }
 
 int _checkError(int value) {
   if (value < 0) {
-    var errorCode = getSerialErrorCode(value);
+    var errorCode = Serial.getSerialErrorCode(value);
     throw SerialException(errorCode, errorCode.toString());
   }
   return value;
@@ -363,6 +329,40 @@ class Serial {
       throw SerialException(SerialErrorCode.SERIAL_ERROR_CLOSE,
           'Serial interface has the status released.');
     }
+  }
+
+  /// Converts the native error code [value] to [SerialErrorCode].
+  static SerialErrorCode getSerialErrorCode(int value) {
+    // must be negative
+    if (value >= 0) {
+      return SerialErrorCode.ERROR_CODE_NOT_MAPPABLE;
+    }
+    value = -value;
+
+    // check range
+    if (value > SerialErrorCode.SERIAL_ERROR_CLOSE.index) {
+      return SerialErrorCode.ERROR_CODE_NOT_MAPPABLE;
+    }
+
+    return SerialErrorCode.values[value];
+  }
+
+  /// Converts a [baudrate] enum to an int value;
+  static int baudrate2Int(Baudrate baudrate) {
+    const tmp = 'Baudrate.B';
+    return int.parse(baudrate.toString().substring(tmp.length));
+  }
+
+  /// Converts a [databits] enum to an int value;
+  static int databits2Int(DataBits databits) {
+    const tmp = 'DataBits.DB';
+    return int.parse(databits.toString().substring(tmp.length));
+  }
+
+  /// Converts a [stopbits] enum to an int value;
+  static int stopbits2Int(StopBits stopbits) {
+    const tmp = 'StopBits.SB';
+    return int.parse(stopbits.toString().substring(tmp.length));
   }
 
   /// Opens the <tt>tty</tt> device at the specified [path] (e.g. "/dev/ttyUSB0"), with the specified [baudrate], and the

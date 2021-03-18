@@ -2,6 +2,8 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+/// Bit order of multiple byte data of [I2C] or [SPI] devices. This order
+/// is defined by manufacturer of the device.
 enum BitOrder { MSB_FIRST, MSB_LAST }
 enum ByteBufferSrc { I2C, SPI, UNDEFINED }
 

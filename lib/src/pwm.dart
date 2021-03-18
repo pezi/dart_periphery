@@ -11,7 +11,7 @@ import 'dart:ffi';
 import 'library.dart';
 import 'package:ffi/ffi.dart';
 
-/// PWM error code
+/// [PWM] error code
 enum PWMerrorCode {
   /// Error code for not able to map the native C enum
   ERROR_CODE_NOT_MAPPABLE,
@@ -32,23 +32,7 @@ enum PWMerrorCode {
   PWM_ERROR_CLOSE
 }
 
-/// Converts the native error code [value] to [PWMerrorCode].
-PWMerrorCode getPWMerrorCode(int value) {
-  // must be negative
-  if (value >= 0) {
-    return PWMerrorCode.ERROR_CODE_NOT_MAPPABLE;
-  }
-  value = -value;
-
-  // check range
-  if (value > PWMerrorCode.PWM_ERROR_CLOSE.index) {
-    return PWMerrorCode.ERROR_CODE_NOT_MAPPABLE;
-  }
-
-  return PWMerrorCode.values[value];
-}
-
-/// Polarity of the PWM output.
+/// [PWM] polarity of the  output
 enum Polarity { PWM_POLARITY_NORMAL, PWM_POLARITY_INVERSED }
 
 enum _PWMpropertyEnum {
@@ -138,7 +122,7 @@ final _nativeInfo = _peripheryLib
 
 int _checkError(int value) {
   if (value < 0) {
-    var errorCode = getPWMerrorCode(value);
+    var errorCode = PWM.getPWMerrorCode(value);
     throw PWMexception(errorCode, errorCode.toString());
   }
   return value;
@@ -148,13 +132,13 @@ String _getErrmsg(Pointer<Void> handle) {
   return _nativeErrmsg(handle).toDartString();
 }
 
-/// PWM exception
+/// [PWM] exception
 class PWMexception implements Exception {
   final PWMerrorCode errorCode;
   final String errorMsg;
   PWMexception(this.errorCode, this.errorMsg);
   PWMexception.errorCode(int code, Pointer<Void> handle)
-      : errorCode = getPWMerrorCode(code),
+      : errorCode = PWM.getPWMerrorCode(code),
         errorMsg = _getErrmsg(handle);
   @override
   String toString() => errorMsg;
@@ -186,6 +170,22 @@ class PWM {
       throw PWMexception(PWMerrorCode.PWM_ERROR_CLOSE,
           'PWM interface has the status released.');
     }
+  }
+
+  /// Converts the native error code [value] to [PWMerrorCode].
+  static PWMerrorCode getPWMerrorCode(int value) {
+    // must be negative
+    if (value >= 0) {
+      return PWMerrorCode.ERROR_CODE_NOT_MAPPABLE;
+    }
+    value = -value;
+
+    // check range
+    if (value > PWMerrorCode.PWM_ERROR_CLOSE.index) {
+      return PWMerrorCode.ERROR_CODE_NOT_MAPPABLE;
+    }
+
+    return PWMerrorCode.values[value];
   }
 
   /// Releases all interal native resoures.

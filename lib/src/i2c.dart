@@ -24,7 +24,7 @@ import 'hardware/util.dart';
     #define I2C_M_RECV_LEN		0x0400
 */
 
-/// Native i2c_msg flags from <linux/i2c.h>
+/// [I2C] native i2c_msg flags from <linux/i2c.h>
 enum I2CmsgFlags {
   I2C_M_TEN,
   I2C_M_RD,
@@ -34,28 +34,6 @@ enum I2CmsgFlags {
   I2C_M_IGNORE_NAK,
   I2C_M_NO_RD_ACK,
   I2C_M_RECV_LEN
-}
-
-/// Converts [I2CmsgFlags} to the native bit mask value.
-int I2CmsgFlags2Int(I2CmsgFlags flag) {
-  switch (flag) {
-    case I2CmsgFlags.I2C_M_TEN:
-      return 0x0010;
-    case I2CmsgFlags.I2C_M_RD:
-      return 0x0001;
-    case I2CmsgFlags.I2C_M_STOP:
-      return 0x8000;
-    case I2CmsgFlags.I2C_M_NOSTART:
-      return 0x4000;
-    case I2CmsgFlags.I2C_M_REV_DIR_ADDR:
-      return 0x2000;
-    case I2CmsgFlags.I2C_M_IGNORE_NAK:
-      return 0x1000;
-    case I2CmsgFlags.I2C_M_NO_RD_ACK:
-      return 0x0800;
-    case I2CmsgFlags.I2C_M_RECV_LEN:
-      return 0x0400;
-  }
 }
 
 /// Helper class mapped to the C struct i2c_msg
@@ -144,7 +122,7 @@ class I2Cmsg {
       var flags = 0;
       if (data.flags.isNotEmpty) {
         for (var f in data.flags) {
-          flags |= I2CmsgFlags2Int(f);
+          flags |= I2C.I2CmsgFlags2Int(f);
         }
       }
       msg.flags = flags;
@@ -160,7 +138,7 @@ class I2Cmsg {
   }
 }
 
-/// I2C error codes
+/// [I2C] error codes
 enum I2CerrorCode {
   /// Error code for not able to map the native C enum
   ERROR_CODE_NOT_MAPPABLE,
@@ -185,31 +163,15 @@ enum I2CerrorCode {
   I2C_ERROR_CLOSE
 }
 
-/// Converts the native error code [value] to [I2CerrorCode].
-I2CerrorCode getI2CerrorCode(int value) {
-  // must be negative
-  if (value >= 0) {
-    return I2CerrorCode.ERROR_CODE_NOT_MAPPABLE;
-  }
-  value = -value;
-
-  // check range
-  if (value > I2CerrorCode.I2C_ERROR_CLOSE.index) {
-    return I2CerrorCode.ERROR_CODE_NOT_MAPPABLE;
-  }
-
-  return I2CerrorCode.values[value];
-}
-
 int _checkError(int value) {
   if (value < 0) {
-    var errorCode = getI2CerrorCode(value);
+    var errorCode = I2C.getI2CerrorCode(value);
     throw I2Cexception(errorCode, errorCode.toString());
   }
   return value;
 }
 
-/// I2C exception
+/// [I2C] exception
 class I2Cexception implements Exception {
   final I2CerrorCode errorCode;
   final String errorMsg;
@@ -218,7 +180,7 @@ class I2Cexception implements Exception {
         errorMsg = '';
   I2Cexception(this.errorCode, this.errorMsg);
   I2Cexception.errorCode(int code, Pointer<Void> handle)
-      : errorCode = getI2CerrorCode(code),
+      : errorCode = I2C.getI2CerrorCode(code),
         errorMsg = _getErrmsg(handle);
   @override
   String toString() => errorMsg;
@@ -291,6 +253,44 @@ class I2C {
     if (_invalid) {
       throw I2Cexception(I2CerrorCode.I2C_ERROR_CLOSE,
           'I2C interface has the status released.');
+    }
+  }
+
+  /// Converts the native error code [value] to [I2CerrorCode].
+  static I2CerrorCode getI2CerrorCode(int value) {
+    // must be negative
+    if (value >= 0) {
+      return I2CerrorCode.ERROR_CODE_NOT_MAPPABLE;
+    }
+    value = -value;
+
+    // check range
+    if (value > I2CerrorCode.I2C_ERROR_CLOSE.index) {
+      return I2CerrorCode.ERROR_CODE_NOT_MAPPABLE;
+    }
+
+    return I2CerrorCode.values[value];
+  }
+
+  /// Converts [I2CmsgFlags] to the native bit mask value.
+  static int I2CmsgFlags2Int(I2CmsgFlags flag) {
+    switch (flag) {
+      case I2CmsgFlags.I2C_M_TEN:
+        return 0x0010;
+      case I2CmsgFlags.I2C_M_RD:
+        return 0x0001;
+      case I2CmsgFlags.I2C_M_STOP:
+        return 0x8000;
+      case I2CmsgFlags.I2C_M_NOSTART:
+        return 0x4000;
+      case I2CmsgFlags.I2C_M_REV_DIR_ADDR:
+        return 0x2000;
+      case I2CmsgFlags.I2C_M_IGNORE_NAK:
+        return 0x1000;
+      case I2CmsgFlags.I2C_M_NO_RD_ACK:
+        return 0x0800;
+      case I2CmsgFlags.I2C_M_RECV_LEN:
+        return 0x0400;
     }
   }
 

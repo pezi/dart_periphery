@@ -40,7 +40,7 @@ const int MODE_SLEEP = 0;
 const int MODE_FORCED = 1;
 const int MODE_NORMAL = 3;
 
-/// BME280 operation mode
+/// [BME280] operation mode
 enum OperatingMode { MODE_SLEEP, MODE_FORCED, MODE_NORMAL }
 
 const int STANDBY_500_US = 0;
@@ -52,7 +52,7 @@ const int STANDBY_1_S = 5;
 const int STANDBY_10_MS = 6;
 const int STANDBY_20_MS = 7;
 
-/// BME280 inactive duration in standby mode
+/// [BME280] inactive duration in standby mode
 enum StandbyDuration {
   STANDBY_500_US,
   STANDBY_62_5_MS,
@@ -64,7 +64,7 @@ enum StandbyDuration {
   STANDBY_20_MS
 }
 
-/// BME280 IIR Filter coefficient
+/// [BME280] IIR Filter coefficient
 enum FilterCoefficient { FILTER_OFF, FILTER_2, FILTER_4, FILTER_8, FILTER_16 }
 
 // filter
@@ -74,7 +74,7 @@ const int FILTER_4 = 2;
 const int FILTER_8 = 3;
 const int FILTER_16 = 4;
 
-/// Supported models
+/// Supported [BME280] models
 enum BME280model {
   /// temperature and pressure
   BMP280,
@@ -89,7 +89,7 @@ const int BMP280_ID = 0x58;
 /// BME280 hardware ID
 const int BME280_ID = 0x60;
 
-/// BME280 exception
+/// [BME280] exception
 class BME280exception implements Exception {
   final String errorMsg;
   @override
@@ -110,6 +110,10 @@ class BME280result {
   final double humidity;
 
   BME280result(this.temperature, this.pressure, this.humidity);
+
+  @override
+  String toString() =>
+      'BME280result [temperature=$temperature, pressure=$pressure, humidity=$humidity]';
 }
 
 /// Bosch BME280/BMP280 sensor for temperature, pressure and humidity (BME280 only).
@@ -248,7 +252,7 @@ class BME280 {
       OperatingMode operatingMode) {
     if (_model == BME280model.BME280) {
       // Humidity over sampling rate = 1
-      _writeByte(CTRL_HUM_REG, humOversampling.index + 1);
+      _writeByte(CTRL_HUM_REG, humOversampling.index);
     }
     // Normal mode, temp and pressure oversampling rate = 1
     _writeByte(

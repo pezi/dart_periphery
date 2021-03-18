@@ -23,12 +23,12 @@ final _internalVersion = _peripheryLib
     .lookup<NativeFunction<_dart_periphery_version_info>>('dart_get_version')
     .asFunction<_PeripheryVersion>();
 
-/// Returns the c-periphery version.
+/// Returns the version of the native [c-periphery](https://github.com/vsergeev/c-periphery/blob/master/src/version.c) library.
 String getCperipheryVersion() {
   return _nativeVersion().toDartString();
 }
 
-const String DART_PERIPHERY_VERSION = '0.8.17-beta';
+const String DART_PERIPHERY_VERSION = '0.8.18-beta';
 const String DART_PERIPHERY_GLUE_LIB_VERSION = 'GLUE_LIB_VERSION_0.8.9';
 
 String getDartPeripheryGlueLibVersion() {

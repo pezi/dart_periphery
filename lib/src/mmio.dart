@@ -12,7 +12,7 @@ import 'library.dart';
 import 'package:ffi/ffi.dart';
 import 'signature.dart';
 
-/// MMIO error code
+/// [MMIO] error code
 enum MMIOerrorCode {
   /// Error code for not able to map the native C enum
   ERROR_CODE_NOT_MAPPABLE,
@@ -94,25 +94,9 @@ final _nativeErrno = intVoidM('dart_mmio_errno');
 // const char *dart_mmio_errmsg(mmio_t *mmio)
 final _nativeErrmsg = utf8VoidM('dart_mmio_errmsg');
 
-/// Converts the native error code [value] to [MMIOerrorCode].
-MMIOerrorCode getMMIOerrorCode(int value) {
-  // must be negative
-  if (value >= 0) {
-    return MMIOerrorCode.ERROR_CODE_NOT_MAPPABLE;
-  }
-  value = -value;
-
-  // check range
-  if (value > MMIOerrorCode.MMIO_ERROR_CLOSE.index) {
-    return MMIOerrorCode.ERROR_CODE_NOT_MAPPABLE;
-  }
-
-  return MMIOerrorCode.values[value];
-}
-
 int _checkError(int value) {
   if (value < 0) {
-    var errorCode = getMMIOerrorCode(value);
+    var errorCode = MMIO.getMMIOerrorCode(value);
     throw MMIOexception(errorCode, errorCode.toString());
   }
   return value;
@@ -122,13 +106,13 @@ String _getErrmsg(Pointer<Void> handle) {
   return _nativeErrmsg(handle).toDartString();
 }
 
-/// MMIO exception
+/// [MMIO] exception
 class MMIOexception implements Exception {
   final MMIOerrorCode errorCode;
   final String errorMsg;
   MMIOexception(this.errorCode, this.errorMsg);
   MMIOexception.errorCode(int code, Pointer<Void> handle)
-      : errorCode = getMMIOerrorCode(code),
+      : errorCode = MMIO.getMMIOerrorCode(code),
         errorMsg = _getErrmsg(handle);
   @override
   String toString() => errorMsg;
@@ -168,6 +152,22 @@ class MMIO {
   MMIO.advanced(this.base, this.size, this.path)
       : _mmioHandle =
             _checkHandle(_nativeOpenAdvanced(base, size, path.toNativeUtf8()));
+
+  /// Converts the native error code [value] to [MMIOerrorCode].
+  static MMIOerrorCode getMMIOerrorCode(int value) {
+    // must be negative
+    if (value >= 0) {
+      return MMIOerrorCode.ERROR_CODE_NOT_MAPPABLE;
+    }
+    value = -value;
+
+    // check range
+    if (value > MMIOerrorCode.MMIO_ERROR_CLOSE.index) {
+      return MMIOerrorCode.ERROR_CODE_NOT_MAPPABLE;
+    }
+
+    return MMIOerrorCode.values[value];
+  }
 
   /// Reads 32-bits from mapped physical memory, starting at the specified byte offset, relative to the
   /// base address the MMIO handle was opened with.
