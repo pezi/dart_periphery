@@ -15,7 +15,7 @@ dependencies:
   path: ^1.8.0
   # If you use `package:pedantic/pedantic.dart`, add a normal dependency.
   pedantic: ^1.11.0
-  process: ^4.1.0
+  process: ^4.2.1
 
  
 dev_dependencies:

@@ -1,4 +1,4 @@
-## 0.8.20-beta 2021-03-27
+## 0.8.20-beta 2021-03-25
 
 * Fix [MPU6050 sensor](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mpu6050.dart) - rework implementation
 
