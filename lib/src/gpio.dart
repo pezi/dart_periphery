@@ -378,6 +378,8 @@ Pointer<Void> _checkHandle(Pointer<Void> handle) {
 /// Character device GPIOs were introduced in Linux kernel version 4.8. If the toolchain used to compiled
 /// c-periphery contains Linux kernel headers older than 4.8 (i.e. linux/gpio.h is missing), then only legacy
 /// sysfs GPIOs will be supported.
+///
+/// c-periphery [GPIO](https://github.com/vsergeev/c-periphery/blob/master/docs/gpio.md) documentation.
 class GPIO {
   static String _gpioBasePath = '/dev/gpiochip';
 

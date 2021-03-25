@@ -4,8 +4,9 @@
 
 import 'dart:io';
 import 'dart:math';
+import 'package:dart_periphery/dart_periphery.dart';
+
 import '../i2c.dart';
-import 'dart:async';
 
 // https://github.com/Raspoid/raspoid/blob/master/src/main/com/raspoid/I2CComponent.java
 // https://github.com/Raspoid/raspoid/blob/master/src/main/com/raspoid/additionalcomponents/MPU6050.java
@@ -32,7 +33,7 @@ const DLPF DEFAULT_DLPF_CFG = DLPF.FILTER6;
 const int DEFAULT_SMPLRT_DIV = 0x00;
 
 // Coefficient to convert an angle value from radians to degrees.
-const double RADIAN_TO_DEGREE = 1800 / pi;
+const double RADIAN_TO_DEGREE = 180 / pi;
 
 // It is impossible to calculate an angle for the z axis from the accelerometer.
 const double ACCEL_Z_ANGLE = 0;
@@ -126,14 +127,18 @@ class MPU6050 {
   // Value used for the sample rate divider.
   final int _smplrtDiv;
 
+  final bool isRunningIsolate;
+
+  final int i2cBus;
+
   // Sensisitivty of the measures from the accelerometer. Used to convert accelerometer values.
   double _accelLSBSensitivity = 0;
 
   /// Sensitivity of the measures from the gyroscope. Used to convert gyroscope values to degrees/sec.
   double _gyroLSBSensitivity = 0;
 
-  late Timer _updatingTimer;
-  bool _updatingTimerRunning = false;
+  // late Timer _updatingTimer;
+  // bool _updatingTimerRunning = false;
   int _lastUpdateTime = 0;
 
   // ACCELEROMETER
@@ -211,12 +216,13 @@ class MPU6050 {
   double _filteredAngleZ = 0;
 
   /// Opens a MPU6050 on the [i2c] with the optional default values
-  ///
-  MPU6050(this.i2c,
-      [this.i2cAddress = DEFAULT_MPU6050_ADDRESS,
-      this._dlpfCfg = DEFAULT_DLPF_CFG,
-      this._smplrtDiv = DEFAULT_SMPLRT_DIV,
-      bool startUpdateTime = true]) {
+  MPU6050(
+    this.i2c, [
+    this.i2cAddress = DEFAULT_MPU6050_ADDRESS,
+    this._dlpfCfg = DEFAULT_DLPF_CFG,
+    this._smplrtDiv = DEFAULT_SMPLRT_DIV,
+  ])  : isRunningIsolate = false,
+        i2cBus = i2c.busNum {
     // 1. waking up the MPU6050 (0x00 = 0000 0000) as it starts in sleep mode.
     i2c.writeByteReg(i2cAddress, MPU6050_REG_ADDR_PWR_MGMT_1, 0x00);
 
@@ -253,10 +259,6 @@ class MPU6050 {
     i2c.writeByteReg(i2cAddress, MPU6050_REG_ADDR_PWR_MGMT_2, 0x00);
 
     _calibrateSensors();
-
-    if (startUpdateTime) {
-      startUpdatingTimer();
-    }
   }
 
   /// Returns the Sample Rate of the MPU6050 in Hz.
@@ -315,13 +317,19 @@ class MPU6050 {
   // according to the selected FS_SEL mode.
   List<double> readScaledGyroscopeValues() {
     var array = <double>[];
-    array.add(i2c.readWordReg(i2cAddress, MPU6050_REG_ADDR_GYRO_XOUT_H) /
-        _gyroLSBSensitivity);
-    array.add(i2c.readWordReg(i2cAddress, MPU6050_REG_ADDR_GYRO_YOUT_H) /
-        _gyroLSBSensitivity);
-    array.add(i2c.readWordReg(i2cAddress, MPU6050_REG_ADDR_GYRO_ZOUT_H) /
-        _gyroLSBSensitivity);
+    array.add(readWord2C(MPU6050_REG_ADDR_GYRO_XOUT_H) / _gyroLSBSensitivity);
+    array.add(readWord2C(MPU6050_REG_ADDR_GYRO_YOUT_H) / _gyroLSBSensitivity);
+    array.add(readWord2C(MPU6050_REG_ADDR_GYRO_ZOUT_H) / _gyroLSBSensitivity);
     return array;
+  }
+
+  int readWord2C(int registerAddress) {
+    var value = i2c.readByteReg(i2cAddress, registerAddress) & 0xff;
+    value = value << 8;
+    value += i2c.readByteReg(i2cAddress, (registerAddress + 1)) & 0xff;
+
+    if (value >= 0x8000) value = -(65536 - value);
+    return value;
   }
 
   // Gets the distance between two points.
@@ -354,7 +362,7 @@ class MPU6050 {
   double _getAccelYAngle(double x, double y, double z) {
     // v2
     var tan = -1 * x / _distance(y, z);
-    var delta = 0.0;
+    var delta = 0;
     if (x <= 0) {
       if (z >= 0) {
         // q1
@@ -386,12 +394,10 @@ class MPU6050 {
   // selected AFS_SEL mode.
   List<double> readScaledAccelerometerValues() {
     var array = <double>[];
-    array.add(i2c.readWordReg(i2cAddress, MPU6050_REG_ADDR_ACCEL_XOUT_H) /
-        _accelLSBSensitivity);
-    array.add(i2c.readWordReg(i2cAddress, MPU6050_REG_ADDR_ACCEL_YOUT_H) /
-        _accelLSBSensitivity);
-    array.add(i2c.readWordReg(i2cAddress, MPU6050_REG_ADDR_ACCEL_ZOUT_H) /
-        -_accelLSBSensitivity);
+    array.add(readWord2C(MPU6050_REG_ADDR_ACCEL_XOUT_H) / _accelLSBSensitivity);
+    array.add(readWord2C(MPU6050_REG_ADDR_ACCEL_YOUT_H) / _accelLSBSensitivity);
+    array
+        .add(readWord2C(MPU6050_REG_ADDR_ACCEL_ZOUT_H) / -_accelLSBSensitivity);
     return array;
   }
 
@@ -435,55 +441,29 @@ class MPU6050 {
     _filteredAngleZ = _filteredAngleZ + deltaGyroAngleZ;
   }
 
-  void startUpdatingTimer() {
-    if (_updatingTimerRunning == true) {
-      return;
-    }
-    _lastUpdateTime = DateTime.now().millisecondsSinceEpoch;
-    const oneSec = Duration(seconds: 1);
-    _updatingTimer = Timer.periodic(oneSec, (Timer t) => updateValues());
-    _updatingTimerRunning = true;
-  }
-
-  void stopUpdatingTimer() {
-    if (_updatingTimerRunning == false) {
-      return;
-    }
-    _updatingTimer.cancel();
-  }
-
-  void _isTimerRunning() {
-    if (_updatingTimerRunning == false) {
-      throw MPU6050exception(
-          'The method requires an running update timer! See MPU6050. startUpdatingTimer()');
-    }
-  }
-
   /// Gets the last acceleration values, in g, retrieved from the accelerometer,
   /// for the x, y and z axis.
   List<double> getAccelAccelerations() {
-    _isTimerRunning();
     return [_accelAccelerationX, _accelAccelerationY, _accelAccelerationZ];
   }
 
   /// Gets the last angle values, in °, retrieved from the accelerometer,
   /// for the x, y and z axis.
   List<double> getAccelAngles() {
-    _isTimerRunning();
     return [_accelAngleX, _accelAngleY, _accelAngleZ];
   }
 
   /// Gets the last angular speed values, in °/sec, retrieved from the gyroscope,
   /// for the x, y and z axis.
   List<double> getGyroAngularSpeeds() {
-    _isTimerRunning();
+    // _isTimerRunning();
     return [_gyroAngularSpeedX, _gyroAngularSpeedY, _gyroAngularSpeedZ];
   }
 
   /// Gets the last angles values, in °, retrieved from the gyroscope,
   /// for the x, y and z axis.
   List<double> getGyroAngles() {
-    _isTimerRunning();
+    // _isTimerRunning();
     return [_gyroAngleX, _gyroAngleY, _gyroAngleZ];
   }
 
@@ -500,7 +480,6 @@ class MPU6050 {
   /// Last angle value, in °, calculated from the accelerometer and the gyroscope,
   /// for the x, y and z axis.
   List<double> getFilteredAngles() {
-    _isTimerRunning();
     return [_filteredAngleX, _filteredAngleY, _filteredAngleZ];
   }
 }

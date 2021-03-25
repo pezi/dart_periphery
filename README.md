@@ -3,7 +3,7 @@
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
 
-[![pub package](https://img.shields.io/badge/pub-v0.8.18--beta-orange)](https://pub.dartlang.org/packages/dart_periphery)
+[![pub package](https://img.shields.io/badge/pub-v0.8.20--beta-orange)](https://pub.dartlang.org/packages/dart_periphery)
 
 ## Introduction
 
@@ -37,13 +37,13 @@ The number of GPIO libraries/interfaces is becoming increasingly smaller.
 
 **dart_periphery** currently has beta status. All interfaces are ported:
 
-* [GPIO](#GPIO)
-* [I2C](#I2C)
-* [SPI](#SPI)
-* [Serial](#Serial)
-* [PWM](#PWM)
-* [Led](#LED) (onboard leds)
-* [MMIO](#MMIO) (Memory Mapped I/O)
+* [GPIO](#gpio) example / [API](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/GPIO-class.html)
+* [I2C](#i2c) example / [API](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/I2C-class.html)
+* [SPI](#spi) example / [API](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/SPI-class.html)
+* [Serial](#serial) example / [API](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/Serial-class.html)
+* [PWM](#pwm) example / [API](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/PWM-class.html)
+* [Led](#led) (onboard leds) example / [API](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/Led-class.html)
+* [MMIO](#mmio) (Memory Mapped I/O) example / [API](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/MMIO-class.html)
 
 ## Examples
 
@@ -409,7 +409,7 @@ But be aware, any of these methods must be called before any **dart_periphery** 
 useSharedLibray();
 ```
 
-If this method is called, **dart_periphery** loads the shared library. For this case c-periphery must be installed as a shared library. See for [details](https://github.com/vsergeev/c-periphery) - section Shared Library.
+If this method is called, **dart_periphery** loads the shared library. For this case c-periphery must be installed as a shared library. See for [details](https://github.com/vsergeev/c-periphery#shared-library) - section Shared Library.
 
 The glue library, flavour shared, can be rebuild with following command:
 
@@ -421,7 +421,7 @@ pub global activate dart_periphery
 pub global run dart_periphery:build_lib
 ```
 
-To load a custom library. call
+To load a custom library call
 
 ``` dart
 setCustomLibrary(String absolutePath)
@@ -431,8 +431,8 @@ This method can be helpful in any case of a problem and for a currently not supp
 
 For building a custom library please review following information
 
-* [make file](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/build_all.sh)
-* [c-periphery](https://github.com/vsergeev/c-periphery) - section Static or Shared Library.
+* dart_periphery [make file](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/build_all.sh)
+* build [c-periphery](https://github.com/vsergeev/c-periphery#building-c-periphery-with-cmake) - section Static or Shared Library.
 
 For a dart native binary, which can be deployed
 
@@ -450,13 +450,20 @@ to use the static or shared glue library with the correct bitness. The appropria
 
 ## flutter-pi
 
-**dart_periphery** works with flutter-pi, a light-weight [Flutter Engine Embedder](https://github.com/ardera/flutter-pi) for Raspberry Pi. In this environment the function
+**dart_periphery** works with flutter-pi, a light-weight [Flutter Engine Embedder](https://github.com/ardera/flutter-pi) for Raspberry Pi. For this environment the function
 
 ``` dart
 setCustomLibrary(String absolutePath)
 ```
 
-must be called to provide the absolute path of the [native glue library](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/dart_periphery_static_32.1.0.0.so). See last section, native libraries for details.
+must be called to provide the absolute path of the the appropriate library:
+
+* In most cases the ARMv7 static library [dart_periphery_static_32.1.0.0.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/dart_periphery_static_32.1.0.0.so)
+* ARMv7 shared library [dart_periphery_32.1.0.0.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/dart_periphery_32.1.0.0.so)
+* ARMv8 static library [dart_periphery_static_64.1.0.0.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/dart_periphery_static_64.1.0.0.so)
+* ARMv8 shared library [dart_periphery_64.1.0.0.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/dart_periphery_64.1.0.0.so)
+
+See last section, [native libraries](#native-libraries) for details.
 
 ## Tested SoC hardware
 
@@ -484,7 +491,7 @@ must be called to provide the absolute path of the [native glue library](https:/
 * Add GPIO documentation for different SoCs.
 * Writing API test cases.
 * Improve build process of the native libraries.
-* Port hardware devices from the [mattjlewis / diozero Java Project](https://github.com/mattjlewis/diozero/tree/master/diozero-core/src/main/java/com/diozero/devices) to **dart_periphery**: e.g. BME680 etc.
+* Port hardware devices from the [mattjlewis / diozero Java Project](https://github.com/mattjlewis/diozero/tree/master/diozero-core/src/main/java/com/diozero/devices) to **dart_periphery**
 
 ## Help wanted
 

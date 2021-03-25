@@ -157,6 +157,8 @@ int _checkError(int value) {
 }
 
 /// SPI wrapper functions for Linux userspace <tt>spidev</tt> devices.
+///
+/// c-periphery [SPI](https://github.com/vsergeev/c-periphery/blob/master/docs/spi.md) documentation.
 class SPI {
   /// SPI bus number:  /dev/spidev[bus].[chip]
   final int bus;

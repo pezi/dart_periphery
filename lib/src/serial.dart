@@ -129,7 +129,7 @@ enum Baudrate {
 /// [Serial] number of data bits
 enum DataBits { DB5, DB6, DB7, DB8 }
 
-/// [Serial] number of stop bits
+/// Number of [Serial] stop bits
 enum StopBits { SB1, SB2 }
 
 /// [Serial] error codes
@@ -313,6 +313,8 @@ Pointer<Void> _checkHandle(Pointer<Void> handle) {
 }
 
 /// Serial wrapper functions for Linux userspace termios tty devices.
+///
+/// c-periphery [Serial](https://github.com/vsergeev/c-periphery/blob/master/docs/serial.md) documentation.
 class Serial {
   final String path;
   final Baudrate baudrate;

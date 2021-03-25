@@ -69,16 +69,19 @@ class PlatformException implements Exception {
 }
 
 /// dart_periphery loads the shared library.
+/// See [native-libraries](https://pub.dev/packages/dart_periphery#native-libraries) for details.
 void useSharedLibray() {
   library = sharedLib;
 }
 
 /// dart_periphery loads a custom library.
+/// See [native-libraries](https://pub.dev/packages/dart_periphery#native-libraries) for details.
 void setCustomLibrary(String absolutePath) {
   _peripheryLibPath = absolutePath;
 }
 
 /// dart_periphery loads the static or the shared library in the actual directory.
+/// See [native-libraries](https://pub.dev/packages/dart_periphery#native-libraries) for details.
 void useLocalLibrary([bool staticLibFlag = true]) {
   _peripheryLibPath = './' + (!staticLibFlag ? sharedLib : staticLib);
 }

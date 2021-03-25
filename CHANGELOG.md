@@ -1,11 +1,20 @@
+## 0.8.20-beta 2021-03-27
+
+* Fix [MPU6050 sensor](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mpu6050.dart) - rework implementation
+
+## 0.8.19-beta 2021-03-19
+
+* Rework Dart doucmentation/API-documentation
+* Switch to Dart 2.12.2
+
 ## 0.8.18-beta 2021-03-18
 
-* Rework documentation
+* Rework Dart doucmentation/API-documentation
 
 ## 0.8.17-beta 2021-03-17
 
-* Improve BME280 class, make some methods public.
-* Rework BME680, SGP30
+* Improve BME280 sensor class, make some methods public.
+* Rework BME680, SGP30 sensor
 
 ## 0.8.16-beta 2021-03-16
 
@@ -17,13 +26,13 @@
 
 ## 0.8.14-beta 2021-03-11
 
-* MPU6060 support - Six-Axis (Gyro + Accelerometer) sensor
+* MPU6050 support - Six-Axis (Gyro + Accelerometer) sensor
 * Update README.md
 
 ## 0.8.12-beta 2021-03-09
 
-* [Grove-VOC and eCO2 Gas Sensor(SGP30)](https://wiki.seeedstudio.com/Grove-VOC_and_eCO2_Gas_Sensor-SGP30/) support
-* [Grove Gesture](https://wiki.seeedstudio.com/Grove-Gesture_v1.0/) support
+* [Grove-VOC and eCO2 Gas Sensor(SGP30)](https://wiki.seeedstudio.com/Grove-VOC_and_eCO2_Gas_Sensor-SGP30/) support - see [example](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sgp30.dart).
+* [Grove Gesture](https://wiki.seeedstudio.com/Grove-Gesture_v1.0/) support - see [example](https://github.com/pezi/dart_periphery/blob/main/example/i2c_gesture_sensor.dart).
 * Reorganize examples
 
 ## 0.8.11-beta 2021-03-05

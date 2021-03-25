@@ -82,7 +82,7 @@ class NativeI2CmsgHelper {
   }
 }
 
-/// High level I2Cmsg class.
+/// I2Cmsg - container for the native [NativeI2Cmsg] struct.
 class I2Cmsg {
   /// I2C device address
   final int addr;
@@ -99,6 +99,7 @@ class I2Cmsg {
   /// Constructs an I2C message with the I2C device address [addr],
   /// [flags] list and a transfer buffer with size [len]. An empty
   /// [flags] list results [NativeI2Cmsg.flags] = 0.
+  ///
   /// The message flags specify whether the message is a read (I2C_M_RD) or write (0) transaction, as well
   /// as additional options selected by the bitwise OR of their bitmasks.
   I2Cmsg(this.addr, this.flags, this.len) : predefined = const [];
@@ -106,6 +107,7 @@ class I2Cmsg {
   /// Constructs an I2C message with the I2C device address [addr],
   /// [flags] list and a [predefined] transfer buffer. An empty
   /// [flags] list results [NativeI2Cmsg.flags] = 0.
+  ///
   /// The message flags specify whether the message is a read (I2C_M_RD) or write (0) transaction, as well
   /// as additional options selected by the bitwise OR of their bitmasks.
   I2Cmsg.buffer(this.addr, this.flags, this.predefined)
@@ -236,6 +238,8 @@ Pointer<Void> _checkHandle(Pointer<Void> handle) {
 }
 
 /// I2C wrapper functions for Linux userspace i2c-dev devices.
+///
+/// c-periphery [I2C](https://github.com/vsergeev/c-periphery/blob/master/docs/i2c.md) documentation.
 class I2C {
   static const String _i2cBasePath = '/dev/i2c-';
   final Pointer<Void> _i2cHandle;
@@ -447,7 +451,6 @@ class I2C {
     try {
       var ptr = result._messages[1].buf;
       var value = ptr[0];
-
       return value;
     } finally {
       result.dispose();

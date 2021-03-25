@@ -358,7 +358,7 @@ class BME680result {
       'BME680result [temperature=$temperature, pressure=$pressure, humidity=$humidity,gasResistance=$gasResistance,airQualityScore=$airQualityScore]';
 }
 
-/// Bosch BME680 sensor for temperature, humidity, pressure and gas sensor (IAQ Indoor air quality).
+/// Bosch BME680 sensor for temperature, humidity, pressure and gas sensor ([IAQ](https://en.wikipedia.org/wiki/Indoor_air_quality) Indoor air quality).
 ///
 /// IAQ is in an index that can have values between 0 and 500 with
 /// resolution of 1 to indicate or quantify the quality of the air available in the surrounding.

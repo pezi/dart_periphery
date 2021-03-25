@@ -156,6 +156,8 @@ Pointer<Void> _checkHandle(Pointer<Void> handle) {
 }
 
 /// PWM wrapper functions for Linux userspace sysfs PWMs.
+///
+/// c-periphery [PCM](https://github.com/vsergeev/c-periphery/blob/master/docs/pwm.md) documentation.
 class PWM {
   final int chip;
   final int channel;

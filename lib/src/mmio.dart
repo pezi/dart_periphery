@@ -129,12 +129,14 @@ Pointer<Void> _checkHandle(Pointer<Void> handle) {
 }
 
 /// MMIO wrapper functions for the Linux userspace <tt>/dev/mem</tt> device.
+///
+/// c-periphery [MMIO](https://github.com/vsergeev/c-periphery/blob/master/docs/mmio.md) documentation.
 class MMIO {
   final Pointer<Void> _mmioHandle;
   bool _invalid = false;
-  int base;
-  int size;
-  String path;
+  final int base;
+  final int size;
+  final String path;
 
   /// Maps the region of physical memory specified by the [base] physical address and [size] in bytes, using
   /// the default <tt>/dev/mem</tt> memory character device.

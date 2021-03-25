@@ -44,12 +44,13 @@ class HatCmd {
   }
 }
 
-/// Digital values
+/// Digital value a [GrovePiPlusHat] or [NanoHatHub] pin.
 enum DigitalValue { LOW, HIGH }
 
-/// Pin modes
+/// Pin mode of a  [GrovePiPlusHat] or [NanoHatHub] pin.
 enum PinMode { INPUT, OUTPUT }
 
+// default i2c address
 const int HAT_ARDUINO_I2C_ADDRESS = 0x04;
 const int HAT_REGISTER = 1;
 
@@ -263,6 +264,8 @@ class ArduinoBasedHat {
 }
 
 /// Extension hat from [FriendlyARM](http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
+///
+/// See
 class NanoHatHub extends ArduinoBasedHat {
   int i2cBus;
   NanoHatHub([this.i2cBus = 0]) : super(I2C(i2cBus));
