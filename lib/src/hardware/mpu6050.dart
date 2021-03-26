@@ -401,7 +401,11 @@ class MPU6050 {
     return array;
   }
 
+  /// This method should be called repeatedly with a high frequency to get accurate values.
   void updateValues() {
+    if (_lastUpdateTime == 0) {
+      _lastUpdateTime = DateTime.now().millisecondsSinceEpoch;
+    }
     // Accelerometer
     var accelerations = readScaledAccelerometerValues();
     _accelAccelerationX = accelerations[0];
@@ -442,33 +446,37 @@ class MPU6050 {
   }
 
   /// Gets the last acceleration values, in g, retrieved from the accelerometer,
-  /// for the x, y and z axis.
+  /// for the x, y and z axis. Call [updateValues] repeatedly with a high frequency
+  /// to get accurate values.
   List<double> getAccelAccelerations() {
     return [_accelAccelerationX, _accelAccelerationY, _accelAccelerationZ];
   }
 
   /// Gets the last angle values, in °, retrieved from the accelerometer,
-  /// for the x, y and z axis.
+  /// for the x, y and z axis. Call [updateValues] repeatedly with a high frequency
+  /// to get accurate values.
   List<double> getAccelAngles() {
     return [_accelAngleX, _accelAngleY, _accelAngleZ];
   }
 
   /// Gets the last angular speed values, in °/sec, retrieved from the gyroscope,
-  /// for the x, y and z axis.
+  /// for the x, y and z axis. Call [updateValues] repeatedly with a high frequency
+  /// to get accurate values.
   List<double> getGyroAngularSpeeds() {
-    // _isTimerRunning();
     return [_gyroAngularSpeedX, _gyroAngularSpeedY, _gyroAngularSpeedZ];
   }
 
   /// Gets the last angles values, in °, retrieved from the gyroscope,
-  /// for the x, y and z axis.
+  /// for the x, y and z axis. Call [updateValues] repeatedly with a high frequency
+  /// to get accurate values.
   List<double> getGyroAngles() {
     // _isTimerRunning();
     return [_gyroAngleX, _gyroAngleY, _gyroAngleZ];
   }
 
   // Returns the calculated offsets for the angular speeds from the gyroscope,
-  // for the x, y and z axis.
+  // for the x, y and z axis. Call [updateValues] repeatedly with a high frequency
+  /// to get accurate values.
   List<double> getGyroAngularSpeedsOffsets() {
     return [
       _gyroAngularSpeedOffsetX,
@@ -478,7 +486,8 @@ class MPU6050 {
   }
 
   /// Last angle value, in °, calculated from the accelerometer and the gyroscope,
-  /// for the x, y and z axis.
+  /// for the x, y and z axis.  Call [updateValues] repeatedly with a high frequency
+  /// to get accurate values.
   List<double> getFilteredAngles() {
     return [_filteredAngleX, _filteredAngleY, _filteredAngleZ];
   }

@@ -10,28 +10,24 @@ import 'dart:io';
 void main() {
   // Select the right I2C bus number /dev/i2c-?
   // 1 for Raspbery Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
-  var i2c = I2C(2);
+  var i2c = I2C(1);
   try {
     var mpu = MPU6050(i2c);
-    print(
-        'First GyroAngularSpeedsOffsets: ${mpu.getGyroAngularSpeedsOffsets()}');
-
-    for (var i = 0; i < 3; ++i) {
-      mpu.updateValues();
-
-      print('AccelAccelerations: ${mpu.getAccelAccelerations()}');
-      print('AccelAngles: ${mpu.getAccelAngles()}');
-      print('GyroAngularSpeedsOffsets: ${mpu.getGyroAngularSpeedsOffsets()}');
-      print('GyroAngularSpeeds: ${mpu.getGyroAngularSpeeds()}');
-      print('\n');
-
-      /*
-      print('FilteredAngles: ${mpu.getFilteredAngles()}');
-      print('GyroAngles: ${mpu.getGyroAngles()}');
-      print('GyroAngularSpeeds: ${mpu.getGyroAngularSpeeds()}');
-      print('GyroAngularSpeedsOffsets: ${mpu.getGyroAngularSpeedsOffsets()}');
-      */
-      sleep(Duration(milliseconds: 1000));
+    var index = 0;
+    var wait = 50; // wait 50 ms
+    while (true) {
+      mpu.updateValues(); // call update with a high frequency to get accurate values
+      sleep(Duration(milliseconds: wait));
+      index += 50;
+      if (index % 1000 == 0) {
+        print('AccelAccelerations: ${mpu.getAccelAccelerations()}');
+        print('AccelAngles: ${mpu.getAccelAngles()}');
+        print('FilteredAngles: ${mpu.getFilteredAngles()}');
+        print('GyroAngularSpeedsOffsets: ${mpu.getGyroAngularSpeedsOffsets()}');
+        print('GyroAngularSpeeds: ${mpu.getGyroAngularSpeeds()}');
+        print('GyroAngles: ${mpu.getGyroAngles()}');
+        print('\n');
+      }
     }
   } finally {
     i2c.dispose();
