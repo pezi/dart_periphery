@@ -112,7 +112,6 @@ int dart_mmio_errno(mmio_t *mmio)
     return mmio_errno(mmio);
 }    
 
-
 #define BUFFER_LEN (512)
 char *dart_mmio_info(mmio_t *mmio) {
     char *info = malloc(BUFFER_LEN);

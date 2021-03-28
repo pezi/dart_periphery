@@ -203,12 +203,10 @@ class MPU6050 {
 
   /// Last angle value, in °, calculated from the accelerometer and the gyroscope,
   /// for the x axis.
-  /// (using the updating thread)
   double _filteredAngleX = 0;
 
   /// Last angle value, in °, calculated from the accelerometer and the gyroscope,
   /// for the y axis.
-  /// (using the updating thread)
   double _filteredAngleY = 0;
 
   /// Last angle value, in °, calculated from the accelerometer and the gyroscope,

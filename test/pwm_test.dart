@@ -50,6 +50,17 @@ void test(int chip, int channel) {
   assert(fabs(pwm.getPeriod() - 1e-3) < 1e-4);
   assert(fabs(pwm.getPeriodNs() - 1000000.0) < 1e-5);
   assert(fabs(pwm.getFrequency() - 1000) < 100);
+  pwm.setPeriod(5e4);
+  assert(fabs(pwm.getPeriod() - 1e-4) < 1e-5);
+  assert(fabs(pwm.getPeriodNs() - 500000.0) < 1e-4);
+  assert(fabs(pwm.getFrequency() - 2000) < 100);
+
+  // Set frequency, check frequency, check period, check period_ns
+  pwm.setFrequency(1000);
+  assert(fabs(pwm.getPeriodNs() - 500000.0) < 1e-4);
+  assert(fabs(pwm.getFrequency() - 1000) < 100);
+  assert(fabs(pwm.getPeriod() - 1e-3) < 1e-4);
+  assert(fabs(pwm.getPeriodNs() - 1000000.0) < 1e-5);
 
   /*
     passert(pwm_set_period(pwm, 5e-4) == 0);

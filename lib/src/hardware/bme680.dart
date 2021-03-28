@@ -315,7 +315,7 @@ class SensorSettings {
   FilterSize filter = FilterSize.NONE;
 }
 
-/// [BME680] data container for temperature, pressure, humidity and IAQ.
+/// Ddata container for the [BME680] temperature, pressure, humidity and IAQ sensor.
 class BME680result {
   /// Temperature in degree celsius
   final double temperature;
@@ -342,6 +342,8 @@ class BME680result {
 
   /// measurement index, to track order
   int measureIndex;
+
+  /// Constructor
   BME680result(
       this.temperature,
       this.pressure,
@@ -356,6 +358,22 @@ class BME680result {
   @override
   String toString() =>
       'BME680result [temperature=$temperature, pressure=$pressure, humidity=$humidity,gasResistance=$gasResistance,airQualityScore=$airQualityScore]';
+
+  String _toJSONbase([int fractionDigits = 2]) {
+    return '{"temperature":"${temperature.toStringAsFixed(fractionDigits)}","pressure":"${pressure.toStringAsFixed(fractionDigits)}","humidity":"${humidity.toStringAsFixed(fractionDigits)},"airQualityScore":${airQualityScore.toStringAsFixed(fractionDigits)}"';
+  }
+
+  /// Returns a [BME680result] object as a JSON string with only temperature, pressure, humidity and airQualityScore, if the optional parameter
+  /// [allVars] is false, true returns all variables. [fractionDigits] controls the number of fraction digits.
+  String toJSON([int fractionDigits = 2, bool allVars = false]) {
+    if (allVars == false) {
+      return _toJSONbase(fractionDigits) + '}';
+    } else {
+      return _toJSONbase(fractionDigits) +
+          ',"gasResistance":"${gasResistance.toStringAsFixed(fractionDigits)}","isHeaterTempStable":"$isHeaterTempStable",' +
+          '"gasResistance":"$gasResistance","isGasMeasurementValid":"$isGasMeasurementValid","gasMeasurementIndex":"$gasMeasurementIndex","measureIndex":"$measureIndex"}';
+    }
+  }
 }
 
 /// Bosch BME680 sensor for temperature, humidity, pressure and gas sensor ([IAQ](https://en.wikipedia.org/wiki/Indoor_air_quality) Indoor air quality).

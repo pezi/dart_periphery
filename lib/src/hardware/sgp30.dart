@@ -96,7 +96,7 @@ class RawMeasurement {
   String toString() => 'RawMeasurement [h2=$h2, ethanol=$ethanol]';
 }
 
-/// [SGP30] data container for co2Equivalent and totalVOC
+/// Data container for the [SGP30] co2Equivalent and totalVOC sensor.
 class SGP30result {
   int co2Equivalent;
   // Total Volatile Organic Compounds
@@ -106,6 +106,11 @@ class SGP30result {
   @override
   String toString() =>
       'SGP30result [CO2 Equivalent=$co2Equivalent, Total VOC=$totalVOC]';
+
+  /// Returns a [SGP30result] object as a JSON string. [fractionDigits] controls the number of fraction digits.
+  String toJSON([int fractionDigits = 2]) {
+    return '{"co2Equivalent":"${co2Equivalent.toStringAsFixed(fractionDigits)}","totalVOC":"${totalVOC.toStringAsFixed(fractionDigits)}"';
+  }
 }
 
 /// Sensirion eCO2 gas sensor, an air quality detection sensor..

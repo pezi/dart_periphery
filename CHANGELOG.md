@@ -1,3 +1,8 @@
+## 0.8.21-beta 2021-03-28
+
+* Fix [MPU6050 sensor] - second fix
+* Add JSON support for BME680, BME280, SGP30 and SHT31
+
 ## 0.8.20-beta 2021-03-25
 
 * Fix [MPU6050 sensor](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mpu6050.dart) - rework implementation

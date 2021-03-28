@@ -114,6 +114,11 @@ class BME280result {
   @override
   String toString() =>
       'BME280result [temperature=$temperature, pressure=$pressure, humidity=$humidity]';
+
+  /// Returns [BME280] as a JSON string. [fractionDigits] controls the number fraction digits.
+  String toJSON([int fractionDigits = 2]) {
+    return '{"temperature":"${temperature.toStringAsFixed(fractionDigits)}","pressure":"${pressure.toStringAsFixed(fractionDigits)}","humidity":"${humidity.toStringAsFixed(fractionDigits)}"';
+  }
 }
 
 /// Bosch BME280/BMP280 sensor for temperature, pressure and humidity (BME280 only).

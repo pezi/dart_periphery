@@ -38,7 +38,7 @@ class SHT31excpetion implements Exception {
   String toString() => errorMsg;
 }
 
-/// [SHT31] data container for temperature and humidity.
+/// Data container for a [SHT31] temperature and humidity sensor.
 class SHT31result {
   /// temperature
   final double temperature;
@@ -46,7 +46,13 @@ class SHT31result {
   /// relative humidity %
   final double humidity;
 
+  /// Constructor
   SHT31result(this.temperature, this.humidity);
+
+  /// Returns a [SHT31result] object as a JSON string. [fractionDigits] controls the number of fraction digits.
+  String toJSON([int fractionDigits = 2]) {
+    return '{"temperature":"${temperature.toStringAsFixed(fractionDigits)}","humidity":"${humidity.toStringAsFixed(fractionDigits)}"';
+  }
 }
 
 /// Sensirion SHT31 temperatur and humidity sensor with a high accuracy.

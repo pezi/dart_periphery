@@ -3,7 +3,7 @@
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
 
-[![pub package](https://img.shields.io/badge/pub-v0.8.20--beta-orange)](https://pub.dartlang.org/packages/dart_periphery)
+[![pub package](https://img.shields.io/badge/pub-v0.8.21--beta-orange)](https://pub.dartlang.org/packages/dart_periphery)
 
 ## Introduction
 
@@ -463,7 +463,7 @@ must be called to provide the absolute path of the the appropriate library:
 * ARMv8 static library [dart_periphery_static_64.1.0.0.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/dart_periphery_static_64.1.0.0.so)
 * ARMv8 shared library [dart_periphery_64.1.0.0.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/dart_periphery_64.1.0.0.so)
 
-See last section, [native libraries](#native-libraries) for details.
+See last section, [native libraries](https://pub.dev/packages/dart_periphery#native-libraries) for details.
 
 ## Tested SoC hardware
 
@@ -489,8 +489,8 @@ See last section, [native libraries](#native-libraries) for details.
 ## Next steps
 
 * Add GPIO documentation for different SoCs.
-* Writing API test cases.
-* Improve build process of the native libraries.
+* Migrate the original c-periphery [test suite](https://github.com/vsergeev/c-periphery/tree/master/tests).
+* Improve the build process of the native libraries.
 * Port hardware devices from the [mattjlewis / diozero Java Project](https://github.com/mattjlewis/diozero/tree/master/diozero-core/src/main/java/com/diozero/devices) to **dart_periphery**
 
 ## Help wanted
