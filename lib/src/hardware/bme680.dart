@@ -315,7 +315,7 @@ class SensorSettings {
   FilterSize filter = FilterSize.NONE;
 }
 
-/// Ddata container for the [BME680] temperature, pressure, humidity and IAQ sensor.
+/// [BME680] measured data: temperature, pressure, humidity and IAQ sensor.
 class BME680result {
   /// Temperature in degree celsius
   final double temperature;
@@ -343,7 +343,6 @@ class BME680result {
   /// measurement index, to track order
   int measureIndex;
 
-  /// Constructor
   BME680result(
       this.temperature,
       this.pressure,
@@ -363,7 +362,7 @@ class BME680result {
     return '{"temperature":"${temperature.toStringAsFixed(fractionDigits)}","pressure":"${pressure.toStringAsFixed(fractionDigits)}","humidity":"${humidity.toStringAsFixed(fractionDigits)},"airQualityScore":${airQualityScore.toStringAsFixed(fractionDigits)}"';
   }
 
-  /// Returns a [BME680result] object as a JSON string with only temperature, pressure, humidity and airQualityScore, if the optional parameter
+  /// Returns a [BME680result] as a JSON string with only temperature, pressure, humidity and airQualityScore, if the optional parameter
   /// [allVars] is false, true returns all variables. [fractionDigits] controls the number of fraction digits.
   String toJSON([int fractionDigits = 2, bool allVars = false]) {
     if (allVars == false) {

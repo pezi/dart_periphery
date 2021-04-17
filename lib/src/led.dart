@@ -8,7 +8,6 @@
 // https://github.com/dart-lang/samples/tree/master/ffi
 
 import 'dart:ffi';
-import 'library.dart';
 import 'package:ffi/ffi.dart';
 import 'signature.dart';
 
@@ -33,42 +32,46 @@ enum LedErrorCode {
   LED_ERROR_CLOSE,
 }
 
-// led_t* dart_led_open(const char *path)
-typedef _dart_led_open = Pointer<Void> Function(Pointer<Utf8> path);
-typedef _LedOpen = Pointer<Void> Function(Pointer<Utf8> path);
-final _nativeOpen = _peripheryLib
-    .lookup<NativeFunction<_dart_led_open>>('dart_led_open')
-    .asFunction<_LedOpen>();
+// led_t *led_new(void);
+final _nativeLedNew = voidPtrVOIDM('led_new');
 
-// int dart_led_dispose(led_t *led)
-final _nativeDispose = intVoidM('dart_led_dispose');
+//int led_open(led_t *led, const char *name);
+final _nativeLedOpen = voidVoidUtf8M('led_open');
 
-// int dart_led_errno(led_t *led)
-final _nativeErrno = intVoidM('dart_led_errno');
+// int led_close(led_t *led);
+final _nativeLedClose = intVoidM('led_close');
 
-// const char *dart_led_errmsg(led_t *led)
-final _nativeErrmsg = utf8VoidM('dart_led_errmsg');
+//  void led_free(led_t *led);
+final _nativeLedFree = voidVoidM('led_free');
 
-// int dart_led_write(led_t *gled, bool value)
-final _nativeWrite = intVoidIntM('dart_led_write');
+// int led_errno(led_t *led);
+final _nativeLedErrno = intVoidM('led_errno');
 
-// int dart_led_read(led_t *led)
-final _nativeRead = intVoidM('dart_led_read');
+// const char *led_errmsg(led_t *led);
+final _nativeLedErrnMsg = utf8VoidM('led_errmsg');
 
-// int dart_led_get_brightness(led_t *led)
-final _nativeBrightness = intVoidM('dart_led_get_brightness');
+// int led_write(led_t *led, bool value);
+final _nativeLedWrite = intVoidBoolM('led_write');
 
-// int dart_led_set_brightness(led_t *led,int value)
-final _nativeSetBrightness = intVoidIntM('dart_led_set_brightness');
+// int led_read(led_t *led, bool *value);
+final _nativeLedRead = intVoidInt8PtrM('led_read');
 
-// int dart_led_get_max_brightness(led_t *led)
-final _nativeMaxBrightness = intVoidM('dart_led_get_max_brightness');
+// int led_tostring(led_t *led, char *str, size_t len);
+final _nativeLedInfo = intVoidUtf8sizeTM('led_tostring');
 
-// char *dart_led_info(led_t *led)
-final _nativeInfo = utf8VoidM('dart_led_info');
+// int led_name(led_t *led, char *str, size_t len);
+final _nativeLedName = intVoidUtf8sizeTM('led_name');
 
-// char *dart_led_name(led_t *led)
-final _nativeName = utf8VoidM('dart_led_name');
+// led_get_brightness(led_t *led, unsigned int *brightness);
+final _nativeLedGetBrightness = intVoidInt32PtrM('led_get_brightness');
+
+// led_get_max_brightness(led_t *led, unsigned int *brightness);
+final _nativeLedGetMaxBrightness = intVoidInt32PtrM('led_get_max_brightness');
+
+// int led_set_brightness(led_t *led, unsigned int brightness);
+final _nativeLedSetBrightness = intVoidIntM('led_set_brightness');
+
+const BUFFER_LEN = 256;
 
 int _checkError(int value) {
   if (value < 0) {
@@ -79,7 +82,7 @@ int _checkError(int value) {
 }
 
 String _getErrmsg(Pointer<Void> handle) {
-  return _nativeErrmsg(handle).toDartString();
+  return _nativeLedErrnMsg(handle).toDartString();
 }
 
 /// [Led] exception
@@ -94,16 +97,6 @@ class LedException implements Exception {
   String toString() => errorMsg;
 }
 
-final DynamicLibrary _peripheryLib = getPeripheryLib();
-
-Pointer<Void> _checkHandle(Pointer<Void> handle) {
-  // handle 0 indicates an internal error
-  if (handle.address == 0) {
-    throw LedException(LedErrorCode.LED_ERROR_OPEN, 'Error opening led');
-  }
-  return handle;
-}
-
 /// LED wrapper functions for Linux userspace sysfs LEDs.
 class Led {
   final String name;
@@ -114,7 +107,7 @@ class Led {
   ///
   /// 'ls /sys/class/leds/' to list all available leds.
   /// c-periphery [Led](https://github.com/vsergeev/c-periphery/blob/master/docs/led.md) documentation.
-  Led(this.name) : _ledHandle = _checkHandle(_nativeOpen(name.toNativeUtf8()));
+  Led(this.name) : _ledHandle = _openLed(name);
 
   void _checkStatus() {
     if (_invalid) {
@@ -123,12 +116,23 @@ class Led {
     }
   }
 
+  static Pointer<Void> _openLed(String name) {
+    var _ledHandle = _nativeLedNew();
+    if (_ledHandle == nullptr) {
+      return throw LedException(
+          LedErrorCode.LED_ERROR_OPEN, 'led_new() failed');
+    }
+    _checkError(_nativeLedOpen(_ledHandle, name.toNativeUtf8()));
+    return _ledHandle;
+  }
+
   /// Converts the native error code [value] to [LedErrorCode].
   static LedErrorCode getLedErrorCode(int value) {
     // must be negative
     if (value >= 0) {
       return LedErrorCode.ERROR_CODE_NOT_MAPPABLE;
     }
+
     value = -value;
 
     // check range
@@ -142,73 +146,86 @@ class Led {
   /// Sets the state of the led to [value].
   void write(bool value) {
     _checkStatus();
-    _checkError(_nativeWrite(_ledHandle, value ? 1 : 0));
+    _checkError(_nativeLedWrite(_ledHandle, value ? 1 : 0));
   }
 
   /// Reads the state of the led.
   bool read() {
     _checkStatus();
-    var error = _nativeRead(_ledHandle);
-    _checkError(error);
-    return error == 0 ? false : true;
+    var data = malloc<Int8>(1);
+    try {
+      _checkError(_nativeLedRead(_ledHandle, data));
+      return data[0] == 0 ? false : true;
+    } finally {
+      malloc.free(data);
+    }
   }
 
   /// Releases all interal native resoures.
   void dispose() {
     _checkStatus();
     _invalid = true;
-    _checkError(_nativeDispose(_ledHandle));
+    _checkError(_nativeLedClose(_ledHandle));
+    _nativeLedFree(_ledHandle);
   }
 
   /// Returns the libc errno of the last failure that occurred.
   int getErrno() {
     _checkStatus();
-    return _nativeErrno(_ledHandle);
+    return _nativeLedErrno(_ledHandle);
   }
 
   /// Returns the brightness of the led.
   int getBrightness() {
     _checkStatus();
-    return _checkError(_nativeBrightness(_ledHandle));
+    var data = malloc<Int32>(1);
+    try {
+      _checkError(_nativeLedGetBrightness(_ledHandle, data));
+      return data[0];
+    } finally {
+      malloc.free(data);
+    }
   }
 
   /// Returns the maximum possible brightness of the led.
   int getMaxBrightness() {
     _checkStatus();
-    return _checkError(_nativeMaxBrightness(_ledHandle));
+    var data = malloc<Int32>(1);
+    try {
+      _checkError(_nativeLedGetMaxBrightness(_ledHandle, data));
+      return data[0];
+    } finally {
+      malloc.free(data);
+    }
   }
 
   /// Sets the brightness of the led to [value].
   void setBrightness(int value) {
     _checkStatus();
-    _checkError(_nativeSetBrightness(_ledHandle, value));
+    _checkError(_nativeLedSetBrightness(_ledHandle, value));
   }
 
   /// Returns a string representation of the led handle.
   String getLedInfo() {
     _checkStatus();
-    final ptr = _nativeInfo(_ledHandle);
-    if (ptr.address == 0) {
-      // throw an exception
-      _checkError(getErrno());
-      return '?';
+    var data = malloc<Int8>(BUFFER_LEN).cast<Utf8>();
+    try {
+      _checkError(_nativeLedInfo(_ledHandle, data, BUFFER_LEN));
+      return data.toDartString();
+    } finally {
+      malloc.free(data);
     }
-    var text = ptr.toDartString();
-    malloc.free(ptr);
-    return text;
   }
 
   /// Returns the name of the led.
   String getLedName() {
     _checkStatus();
-    final ptr = _nativeName(_ledHandle);
-    if (ptr.address == 0) {
-      // throw an exception
-      _checkError(getErrno());
-      return '?';
+    var data = malloc<Int8>(BUFFER_LEN).cast<Utf8>();
+    try {
+      _checkError(_nativeLedName(_ledHandle, data, BUFFER_LEN));
+      return data.toDartString();
+    } finally {
+      malloc.free(data);
     }
-    var name = ptr.toDartString();
-    malloc.free(ptr);
-    return name;
   }
 }

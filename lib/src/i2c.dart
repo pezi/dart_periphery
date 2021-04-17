@@ -74,7 +74,7 @@ class NativeI2CmsgHelper {
     var index = 0;
     for (var i = 0; i < size; ++i) {
       var msg = _messages[index++];
-      if (msg.buf.address != 0) {
+      if (msg.buf != nullptr) {
         malloc.free(msg.buf);
       }
     }
@@ -117,7 +117,6 @@ class I2Cmsg {
     final ptr = malloc<NativeI2Cmsg>(list.length);
     var index = 0;
     for (var data in list) {
-      // var msg = ptr.elementAt(index++);
       var msg = ptr[index++];
       msg.addr = data.addr;
       msg.len = data.len;
@@ -165,6 +164,8 @@ enum I2CerrorCode {
   I2C_ERROR_CLOSE
 }
 
+const BUFFER_LEN = 256;
+
 int _checkError(int value) {
   if (value < 0) {
     var errorCode = I2C.getI2CerrorCode(value);
@@ -190,51 +191,41 @@ class I2Cexception implements Exception {
 
 final DynamicLibrary _peripheryLib = getPeripheryLib();
 
-// i2c_t* dart_i2c_open(const char *path)
-final _nativeOpen = voidUtf8M('dart_i2c_open');
+// i2c_t *i2c_new(void);
+final _nativeI2Cnew = voidPtrVOIDM('i2c_new');
 
-// int dart_i2c_dispose(i2c_t *i2c)
-final _nativeDispose = intVoidM('dart_i2c_dispose');
+//int i2c_open(i2c_t *i2c, const char *path);
+final _nativeI2Copen = voidVoidUtf8M('i2c_open');
 
-// int dart_i2c_errno(i2c_t *i2c)
-final _nativeErrno = _peripheryLib
-    .lookup<NativeFunction<intVoidS>>('dart_i2c_errno')
-    .asFunction<intVoidF>();
+// int i2c_close(led_t *led);
+final _nativeI2Cclose = intVoidM('i2c_close');
 
-// const char *dart_i2c_errmsg(i2c_t *i2c)
-final _nativeErrmsg = _peripheryLib
-    .lookup<NativeFunction<utf8VoidS>>('dart_i2c_errmsg')
-    .asFunction<utf8VoidF>();
+//  void i2c_free(i2c_t *i2c);
+final _nativeI2Cfree = voidVoidM('i2c_free');
 
-//  int dart_i2c_transfer(i2c_t *i2c, struct i2c_msg *msgs, size_t count)
-typedef _dart_i2c_transfer = Int32 Function(
-    Pointer<Void> handle, Pointer<NativeI2Cmsg>, Int32 length);
+// int i2c_errno(i2c_t *i2c);
+final _nativeI2Cerrno = intVoidM('i2c_errno');
+
+// const char *i2c_errmsg(i2c_t *i2c);
+final _nativeI2CerrnMsg = utf8VoidM('i2c_errmsg');
+
+// int i2c_tostring(i2c_t *led, char *str, size_t len);
+final _nativeI2Cinfo = intVoidUtf8sizeTM('i2c_tostring');
+
+// int i2c_fd(i2c_t *i2c);
+final _nativeI2Cfd = intVoidM('i2c_fd');
+
+//  int i2c_transfer(i2c_t *i2c, struct i2c_msg *msgs, size_t count);
+typedef _i2c_transfer = Int32 Function(
+    Pointer<Void> handle, Pointer<NativeI2Cmsg> mgs, IntPtr count);
 typedef _I2Ctransfer = int Function(
-    Pointer<Void> handle, Pointer<NativeI2Cmsg>, int length);
-final _nativeTransfer = _peripheryLib
-    .lookup<NativeFunction<_dart_i2c_transfer>>('dart_i2c_transfer')
+    Pointer<Void> handle, Pointer<NativeI2Cmsg> mgs, int count);
+final _nativeI2ctransfer = _peripheryLib
+    .lookup<NativeFunction<_i2c_transfer>>('i2c_transfer')
     .asFunction<_I2Ctransfer>();
 
-// int dart_i2c_fd(i2c_t *i2c)
-typedef _dart_i2c_fd = Int32 Function(Pointer<Void> handle);
-typedef _I2Cfd = int Function(Pointer<Void> handle);
-final _nativeFD = _peripheryLib
-    .lookup<NativeFunction<_dart_i2c_fd>>('dart_i2c_fd')
-    .asFunction<_I2Cfd>();
-
-// char *dart_i2c_info(i2c_t *i2c)
-final _nativeInfo = utf8VoidM('dart_i2c_info');
-
 String _getErrmsg(Pointer<Void> handle) {
-  return _nativeErrmsg(handle).toDartString();
-}
-
-Pointer<Void> _checkHandle(Pointer<Void> handle) {
-  // handle 0 indicates an internal error
-  if (handle.address == 0) {
-    throw I2Cexception(I2CerrorCode.I2C_ERROR_OPEN, 'Error opening I2C bus');
-  }
-  return handle;
+  return _nativeI2CerrnMsg(handle).toDartString();
 }
 
 /// I2C wrapper functions for Linux userspace i2c-dev devices.
@@ -250,14 +241,23 @@ class I2C {
   /// Opens the i2c-dev device at the specified path (e.g. "/dev/i2c-[busNum]").
   I2C(this.busNum)
       : path = _i2cBasePath + busNum.toString(),
-        _i2cHandle = _checkHandle(
-            _nativeOpen((_i2cBasePath + busNum.toString()).toNativeUtf8()));
+        _i2cHandle = _openI2C(_i2cBasePath + busNum.toString());
 
   void _checkStatus() {
     if (_invalid) {
       throw I2Cexception(I2CerrorCode.I2C_ERROR_CLOSE,
           'I2C interface has the status released.');
     }
+  }
+
+  static Pointer<Void> _openI2C(String path) {
+    var _i2cHandle = _nativeI2Cnew();
+    if (_i2cHandle == nullptr) {
+      return throw I2Cexception(
+          I2CerrorCode.I2C_ERROR_OPEN, 'Error opening I2C bus');
+    }
+    _checkError(_nativeI2Copen(_i2cHandle, path.toNativeUtf8()));
+    return _i2cHandle;
   }
 
   /// Converts the native error code [value] to [I2CerrorCode].
@@ -310,7 +310,7 @@ class I2C {
   NativeI2CmsgHelper transfer(List<I2Cmsg> data) {
     _checkStatus();
     var nativeMsg = I2Cmsg._toNative(data);
-    _checkError(_nativeTransfer(_i2cHandle, nativeMsg, data.length));
+    _checkError(_nativeI2ctransfer(_i2cHandle, nativeMsg, data.length));
     return NativeI2CmsgHelper(nativeMsg, data.length);
   }
 
@@ -505,32 +505,31 @@ class I2C {
   void dispose() {
     _checkStatus();
     _invalid = true;
-    _checkError(_nativeDispose(_i2cHandle));
+    _checkError(_nativeI2Cclose(_i2cHandle));
+    _nativeI2Cfree(_i2cHandle);
   }
 
   /// Returns the file descriptor (for the underlying i2c-dev device) of the I2C handle.
   int getI2Cfd() {
     _checkStatus();
-    return _checkError(_nativeFD(_i2cHandle));
+    return _nativeI2Cfd(_i2cHandle);
   }
 
   /// Returns a string representation of the I2C handle.
   String getI2Cinfo() {
     _checkStatus();
-    final ptr = _nativeInfo(_i2cHandle);
-    if (ptr.address == 0) {
-      // throw an exception
-      _checkError(getErrno());
-      return '?';
+    var data = malloc<Int8>(BUFFER_LEN).cast<Utf8>();
+    try {
+      _checkError(_nativeI2Cinfo(_i2cHandle, data, BUFFER_LEN));
+      return data.toDartString();
+    } finally {
+      malloc.free(data);
     }
-    var text = ptr.toDartString();
-    malloc.free(ptr);
-    return text;
   }
 
   /// Returns the libc errno of the last failure that occurred.
   int getErrno() {
     _checkStatus();
-    return _nativeErrno(_i2cHandle);
+    return _nativeI2Cerrno(_i2cHandle);
   }
 }

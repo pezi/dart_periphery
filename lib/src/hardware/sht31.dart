@@ -38,18 +38,17 @@ class SHT31excpetion implements Exception {
   String toString() => errorMsg;
 }
 
-/// Data container for a [SHT31] temperature and humidity sensor.
+/// [SHT31] measured data: temperature and humidity sensor.
 class SHT31result {
-  /// temperature
+  /// temperature °CS
   final double temperature;
 
   /// relative humidity %
   final double humidity;
 
-  /// Constructor
   SHT31result(this.temperature, this.humidity);
 
-  /// Returns a [SHT31result] object as a JSON string. [fractionDigits] controls the number of fraction digits.
+  /// Returns a [SHT31result] as a JSON string. [fractionDigits] controls the number of fraction digits.
   String toJSON([int fractionDigits = 2]) {
     return '{"temperature":"${temperature.toStringAsFixed(fractionDigits)}","humidity":"${humidity.toStringAsFixed(fractionDigits)}"';
   }
@@ -58,7 +57,7 @@ class SHT31result {
 /// Sensirion SHT31 temperatur and humidity sensor with a high accuracy.
 ///
 /// See for more
-/// * [SGP30 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht31.dart)
+/// * [SHT31 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht31.dart)
 /// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/sht31.dart)
 /// * [Datasheet](https://docs.rs-online.com/6b89/0900766b816bf6a6.pdf)
 class SHT31 {
@@ -76,7 +75,7 @@ class SHT31 {
     return (getStatus() & 0x2000) != 0;
   }
 
-  /// Enables or disables the [heater] on the sensor to to heat/evaporate any condensation.
+  /// Enables or disables the [heater] on the sensor to heat/evaporate any condensation.
   /// This command can destroy the sensor, if the heater runs too long.
   void heater(bool heater) {
     if (heater) {

@@ -117,6 +117,12 @@ class MPU6050exception implements Exception {
 }
 
 /// MPU-6050 Six-Axis (Gyro + Accelerometer) sensor
+///
+/// * [MPU-6050 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mpu6050.dart)
+/// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/mpu6050.dart)
+/// * [Datasheet](https://invensense.tdk.com/wp-content/uploads/2015/02/MPU-6000-Datasheet1.pdf)
+/// * This implementation is derived from project [Raspoid](https://github.com/Raspoid/raspoid/blob/master/src/main/com/raspoid/additionalcomponents/MPU6050.java)
+
 class MPU6050 {
   final I2C i2c;
 
@@ -126,8 +132,6 @@ class MPU6050 {
 
   // Value used for the sample rate divider.
   final int _smplrtDiv;
-
-  final bool isRunningIsolate;
 
   final int i2cBus;
 
@@ -219,8 +223,7 @@ class MPU6050 {
     this.i2cAddress = DEFAULT_MPU6050_ADDRESS,
     this._dlpfCfg = DEFAULT_DLPF_CFG,
     this._smplrtDiv = DEFAULT_SMPLRT_DIV,
-  ])  : isRunningIsolate = false,
-        i2cBus = i2c.busNum {
+  ]) : i2cBus = i2c.busNum {
     // 1. waking up the MPU6050 (0x00 = 0000 0000) as it starts in sleep mode.
     i2c.writeByteReg(i2cAddress, MPU6050_REG_ADDR_PWR_MGMT_1, 0x00);
 

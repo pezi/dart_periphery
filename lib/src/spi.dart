@@ -13,16 +13,6 @@ import 'package:ffi/ffi.dart';
 import 'signature.dart';
 import 'hardware/util.dart';
 
-enum _SPIproperty {
-  MODE,
-  MAX_SPEED,
-  BIT_ORDER,
-  BITS_PER_WORD,
-  EXTRA_FLAGS,
-  EXTRA_FLAGS32,
-  FILE_DESCRIPTOR
-}
-
 /// Mapped native [SPI] error codes with the same index, but different leading sign.
 enum SPIerrorCode {
   /// Error code for not able to map the native C enum
@@ -67,86 +57,130 @@ class SPIexception implements Exception {
 
 final DynamicLibrary _peripheryLib = getPeripheryLib();
 
-// int dart_spi_errno(spi_t *spi)
-typedef _dart_spi_errno = Int32 Function(Pointer<Void> handle);
-typedef _SPIerrno = int Function(Pointer<Void> handle);
-final _nativeErrno = _peripheryLib
-    .lookup<NativeFunction<_dart_spi_errno>>('dart_spi_errno')
-    .asFunction<_SPIerrno>();
+// spi_t *spi_new(void);
+final _nativeSPInew = voidPtrVOIDM('spi_new');
 
-// const char *dart_spi_errmsg(spi_t *spi)
-typedef _dart_spi_errmsg = Pointer<Utf8> Function(Pointer<Void> handle);
-typedef _SPIerrmsg = Pointer<Utf8> Function(Pointer<Void> hanlde);
-final _nativeErrmsg = _peripheryLib
-    .lookup<NativeFunction<_dart_spi_errmsg>>('dart_spi_errmsg')
-    .asFunction<_SPIerrmsg>();
+// int spi_close(led_t *led);
+final _nativeSPIclose = intVoidM('spi_close');
 
-// int dart_spi_dispose(gpio_t *spi)
-typedef _dart_spi_dispose = Int32 Function(Pointer<Void> handle);
-typedef _SPIdispose = int Function(Pointer<Void> handle);
-final _nativeDispose = _peripheryLib
-    .lookup<NativeFunction<_dart_spi_dispose>>('dart_spi_dispose')
-    .asFunction<_SPIdispose>();
+//  void spi_free(spi_t *spi);
+final _nativeSPIfree = voidVoidM('spi_free');
 
-// spi_t *dart_spi_open(const char *path,int mode,int maxSpeed)
-typedef _dart_spi_open = Pointer<Void> Function(
-    Pointer<Utf8> path, Int32 mode, Int32 maxSpeed);
-typedef _SPIopen = Pointer<Void> Function(
-    Pointer<Utf8> path, int mode, int maxSpeed);
-final _nativeOpen = _peripheryLib
-    .lookup<NativeFunction<_dart_spi_open>>('dart_spi_open')
+// int spi_errno(spi_t *spi);
+final _nativeSPIerrno = intVoidM('spi_errno');
+
+// const char *spi_errmsg(spi_t *spi);
+final _nativeSPIerrnMsg = utf8VoidM('spi_errmsg');
+
+// int spi_tostring(spi_t *led, char *str, size_t len);
+final _nativeSPIinfo = intVoidUtf8sizeTM('spi_tostring');
+
+// int spi_fd(spi_t *spi);
+final _nativeSPIfd = intVoidM('spi_fd');
+
+// int spi_transfer(spi_t *spi, const uint8_t *txbuf, uint8_t *rxbuf, size_t len);
+typedef _spi_transfer = Int32 Function(Pointer<Void> handle,
+    Pointer<Uint8> txbuf, Pointer<Uint8> rxbuf, IntPtr len);
+typedef _spiTransfer = int Function(
+    Pointer<Void> handle, Pointer<Uint8> txbuf, Pointer<Uint8> rxbuf, int len);
+final _nativeTransfer = _peripheryLib
+    .lookup<NativeFunction<_spi_transfer>>('spi_transfer')
+    .asFunction<_spiTransfer>();
+
+// int spi_open(spi_t *spi, const char *path, unsigned int mode, uint32_t max_speed);
+typedef _spi_open = Int32 Function(
+    Pointer<Void> spi, Pointer<Utf8> path, Uint32 mode, Uint32 maxSpeed);
+typedef _SPIopen = int Function(
+    Pointer<Void> spi, Pointer<Utf8> path, int mode, int maxSpeed);
+final _nativeSPIopen = _peripheryLib
+    .lookup<NativeFunction<_spi_open>>('spi_open')
     .asFunction<_SPIopen>();
 
-// spi_t *dart_spi_open_advancded(const char *path,int mode,int maxSpeed, int bit_ordner,int bits_per_word,int extra_flags_8bit)
-typedef _dart_spi_advanced = Pointer<Void> Function(
+// int spi_open_advanced(spi_t *spi, const char *path, unsigned int mode, uint32_t max_speed,
+//                      spi_bit_order_t bit_order, uint8_t bits_per_word, uint8_t extra_flags);
+typedef _spi_advanced = Int32 Function(
+    Pointer<Void> spi,
+    Pointer<Utf8> path,
+    Uint32 mode,
+    Uint32 maxSpeed,
+    Uint32 bitOrder,
+    Uint8 bitsPerWord,
+    Uint8 extraFlags8bit);
+typedef _SPIadvanced = int Function(
+    Pointer<Void> spi,
+    Pointer<Utf8> path,
+    int mode,
+    int maxSpeedInt32,
+    int bitOrder,
+    int bitsPerWord,
+    int extraFlags8bit);
+final _nativeSPIopenAdvanced = _peripheryLib
+    .lookup<NativeFunction<_spi_advanced>>('spi_open_advanced')
+    .asFunction<_SPIadvanced>();
+
+// int spi_open_advanced2(spi_t *spi, const char *path, unsigned int mode, uint32_t max_speed,
+//                       spi_bit_order_t bit_order, uint8_t bits_per_word, uint32_t extra_flags)
+typedef _spi_advanced2 = Int32 Function(
+    Pointer<Void> spi,
     Pointer<Utf8> path,
     Int32 mode,
     Int32 maxSpeed,
     Int32 bitOrder,
-    Int32 bitsPerWord,
+    Int8 bitsPerWord,
     Int32 extraFlags8bit);
-typedef _SPIadvanced = Pointer<Void> Function(Pointer<Utf8> path, int mode,
-    int maxSpeedInt32, int bitOrder, int bitsPerWord, int extraFlags8bit);
-final _nativeAdvanced = _peripheryLib
-    .lookup<NativeFunction<_dart_spi_advanced>>('dart_spi_advanced')
-    .asFunction<_SPIadvanced>();
+typedef _SPIadvanced2 = int Function(
+    Pointer<Void> spi,
+    Pointer<Utf8> path,
+    int mode,
+    int maxSpeedInt32,
+    int bitOrder,
+    int bitsPerWord,
+    int extraFlags32bit);
+final _nativeSPIopenAdvanced2 = _peripheryLib
+    .lookup<NativeFunction<_spi_advanced2>>('spi_open_advanced2')
+    .asFunction<_SPIadvanced2>();
 
-final _nativeAdvanced2 = _peripheryLib
-    .lookup<NativeFunction<_dart_spi_advanced>>('dart_spi_advanced2')
-    .asFunction<_SPIadvanced>();
+// int spi_get_mode(spi_t *spi, unsigned int *mode);
+var _nativeSPIgetMode = intVoidInt32PtrM('spi_get_mode');
 
-// int dart_spi_fd(spi_t *spi)
-typedef _dart_spi_fd = Int32 Function(Pointer<Void> handle);
-typedef _spiFd = int Function(Pointer<Void> handle);
-final _nativeFD = _peripheryLib
-    .lookup<NativeFunction<_dart_spi_fd>>('dart_spi_fd')
-    .asFunction<_spiFd>();
+// int spi_get_max_speed(spi_t *spi, uint32_t *max_speed);
+var _nativeSPIgetMaxSpeed = intVoidInt32PtrM('spi_get_max_speed');
 
-// char *dart_spi_info(spi_t *spi)
-typedef _dart_spi_info = Pointer<Utf8> Function(Pointer<Void> handle);
-typedef _spiInfo = Pointer<Utf8> Function(Pointer<Void> handle);
-final _nativeInfo = _peripheryLib
-    .lookup<NativeFunction<_dart_spi_info>>('dart_spi_info')
-    .asFunction<_spiInfo>();
+// int spi_get_bit_order(spi_t *spi, spi_bit_order_t *bit_order);
+var _nativeSPIgetBitOrder = intVoidInt32PtrM('spi_get_bit_order');
 
-// int dart_spi_transfer(const uint8_t *txbuf,const uint8_t *rxbuf,size_t len)
-typedef _dart_spi_transfer = Int32 Function(
-    Pointer<Void> handle, Pointer<Int8> txbuf, Pointer<Int8> rxbuf, Int32 len);
-typedef _spiTransfer = int Function(
-    Pointer<Void> handle, Pointer<Int8> txbuf, Pointer<Int8> rxbuf, int len);
-final _nativeTransfer = _peripheryLib
-    .lookup<NativeFunction<_dart_spi_transfer>>('dart_spi_transfer')
-    .asFunction<_spiTransfer>();
+// int spi_get_extra_flags32(spi_t *spi, uint32_t *extra_flags);
+var _nativeSPIgetExtraFlags32 = intVoidInt32PtrM('spi_get_extra_flags32');
 
-// int dart_get_property(spi_t *spi,SPIproperty prop)
-final _nativeGetProperty = intVoidIntM('dart_get_property');
+// int spi_get_bits_per_word(spi_t *spi, uint8_t *bits_per_word);
+var _nativeSPIgetBitsPerWord = intVoidInt8PtrM('spi_get_bits_per_word');
 
-// int dart_set_property(spi_t *spi,SPIproperty prop,int value)
-final _nativeSetProperty = intVoidIntIntM('dart_set_property');
+// int spi_get_extra_flags(spi_t *spi, uint8_t *extra_flags);
+var _nativeSPIgetExtraFlags = intVoidInt8PtrM('spi_get_extra_flags');
+
+// int spi_set_mode(spi_t *spi, unsigned int mode);
+var _nativeSPIsetMode = intVoidIntM('spi_set_mode');
+
+// int spi_set_max_speed(spi_t *spi, uint32_t max_speed);
+var _nativeSPIsetMaxSpeed = intVoidIntM('spi_set_max_speed');
+
+// int spi_set_bit_order(spi_t *spi, spi_bit_order_t bit_order);
+var _nativeSPIsetBitOrder = intVoidIntM('spi_set_bit_order');
+
+// int spi_set_extra_flags32(spi_t *spi, uint32_t extra_flags);
+var _nativeSPIsetExtraFlags32 = intVoidIntM('spi_set_extra_flags32');
+
+// int spi_set_bits_per_word(spi_t *spi, uint8_t bits_per_word);
+var _nativeSPIsetBitsPerWord = intVoidUint8M('spi_set_bits_per_word');
+
+// int spi_set_extra_flags(spi_t *spi, uint8_t extra_flags);
+var _nativeSPIsetExtraFlags = intVoidUint8M('spi_set_extra_flags');
 
 String _getErrmsg(Pointer<Void> handle) {
-  return _nativeErrmsg(handle).toDartString();
+  return _nativeSPIerrnMsg(handle).toDartString();
 }
+
+const BUFFER_LEN = 256;
 
 int _checkError(int value) {
   if (value < 0) {
@@ -207,8 +241,18 @@ class SPI {
         extraFlags = 0,
         path = '/dev/spidev$bus.$chip' {
     _checkSPI(bus, chip);
-    _spiHandle =
-        _checkHandle(_nativeOpen(path.toNativeUtf8(), mode.index, maxSpeed));
+    _spiHandle = _spiOpen(path, mode, maxSpeed);
+  }
+
+  Pointer<Void> _spiOpen(String path, SPImode mode, int maxSpeed) {
+    var _spiHandle = _nativeSPInew();
+    if (_spiHandle == nullptr) {
+      return throw SPIexception(
+          SPIerrorCode.SPI_ERROR_OPEN, 'Error opening SPI bus');
+    }
+    _checkError(
+        _nativeSPIopen(_spiHandle, path.toNativeUtf8(), mode.index, maxSpeed));
+    return _spiHandle;
   }
 
   /// Opens the SPI device at the specified path ("/dev/spidev[bus].[chip]"), with the specified SPI mode,
@@ -221,8 +265,20 @@ class SPI {
       this.bitsPerWord, this.extraFlags)
       : path = '/dev/spidev$bus.$chip' {
     _checkSPI(bus, chip);
-    _spiHandle = _checkHandle(_nativeAdvanced(path.toNativeUtf8(), mode.index,
-        maxSpeed, bitOrder.index, bitsPerWord, extraFlags));
+    _spiHandle = _spiOpenAdvanced(
+        path, mode, maxSpeed, bitOrder, bitsPerWord, extraFlags);
+  }
+
+  Pointer<Void> _spiOpenAdvanced(String path, SPImode mode, int maxSpeed,
+      BitOrder bitOrder, int bitsPerWord, int extraFlags) {
+    var _spiHandle = _nativeSPInew();
+    if (_spiHandle == nullptr) {
+      return throw SPIexception(
+          SPIerrorCode.SPI_ERROR_OPEN, 'Error opening SPI bus');
+    }
+    _checkError(_nativeSPIopenAdvanced(_spiHandle, path.toNativeUtf8(),
+        mode.index, maxSpeed, bitOrder.index, bitsPerWord, extraFlags));
+    return _spiHandle;
   }
 
   /// Opens the SPI device at the specified [path], with the specified SPI mode,
@@ -235,8 +291,20 @@ class SPI {
   SPI.openAdvanced2(this.bus, this.chip, this.path, this.mode, this.maxSpeed,
       this.bitOrder, this.bitsPerWord, this.extraFlags) {
     _checkSPI(bus, chip);
-    _spiHandle = _checkHandle(_nativeAdvanced2(path.toNativeUtf8(), mode.index,
-        maxSpeed, bitOrder.index, bitsPerWord, extraFlags));
+    _spiHandle = _spiOpenAdvanced2(
+        path, mode, maxSpeed, bitOrder, bitsPerWord, extraFlags);
+  }
+
+  Pointer<Void> _spiOpenAdvanced2(String path, SPImode mode, int maxSpeed,
+      BitOrder bitOrder, int bitsPerWord, int extraFlags) {
+    var _spiHandle = _nativeSPInew();
+    if (_spiHandle == nullptr) {
+      return throw SPIexception(
+          SPIerrorCode.SPI_ERROR_OPEN, 'Error opening SPI bus');
+    }
+    _checkError(_nativeSPIopenAdvanced2(_spiHandle, path.toNativeUtf8(),
+        mode.index, maxSpeed, bitOrder.index, bitsPerWord, extraFlags));
+    return _spiHandle;
   }
 
   /// Converts the native error code [value] to [GPIOerrorCode].
@@ -258,29 +326,21 @@ class SPI {
   void _checkStatus() {
     if (_invalid) {
       throw SPIexception(SPIerrorCode.SPI_ERROR_CLOSE,
-          'spi interface has the status released.');
+          'SPI interface has the status released.');
     }
-  }
-
-  Pointer<Void> _checkHandle(Pointer<Void> handle) {
-    // handle 0 indicates an internal error
-    if (handle.address == 0) {
-      throw SPIexception(SPIerrorCode.SPI_ERROR_OPEN, 'Error opening SPI bus');
-    }
-    return handle;
   }
 
   /// Shifts out [data], while shifting in the data to the result buffer. If [reuseBuffer]
-  /// is true, [data] will be used the result buffer, for false a new buffer
+  /// is true, [data] will be used for the result buffer, for false a new buffer
   /// will be created.
   ///
   /// Returns a 'List<int>' result buffer.
   List<int> transfer(List<int> data, bool reuseBuffer) {
     // ignore: avoid_init_to_null
-    Pointer<Int8>? inPtr = null;
+    Pointer<Uint8>? inPtr = null;
     // ignore: avoid_init_to_null
-    Pointer<Int8>? outPtr = null;
-    var input = malloc<Int8>(data.length);
+    Pointer<Uint8>? outPtr = null;
+    var input = malloc<Uint8>(data.length);
     try {
       var index = 0;
       for (var v in data) {
@@ -290,19 +350,20 @@ class SPI {
         inPtr = outPtr = input;
       } else {
         inPtr = input;
-        outPtr = malloc<Int8>(data.length);
+        outPtr = malloc<Uint8>(data.length);
       }
 
       _checkError(_nativeTransfer(_spiHandle, inPtr, outPtr, data.length));
 
       List<int> result;
+      var length = data.length;
       if (reuseBuffer) {
         data.clear();
         result = data;
       } else {
         result = <int>[];
       }
-      for (var i = 0; i < data.length; ++i) {
+      for (var i = 0; i < length; ++i) {
         result.add(outPtr[i]);
       }
       return result;
@@ -321,15 +382,15 @@ class SPI {
   /// will be created.
   ///
   /// Returns a ' Pointer<Int8>' result buffer. Be aware to malloc.free the low level system memory buffers!
-  Pointer<Int8> transferInt8(Pointer<Int8> data, bool reuseBuffer, int len) {
-    Pointer<Int8> inPtr;
+  Pointer<Uint8> transferInt8(Pointer<Uint8> data, bool reuseBuffer, int len) {
+    Pointer<Uint8> inPtr;
     // ignore: avoid_init_to_null
-    Pointer<Int8>? outPtr = null;
+    Pointer<Uint8>? outPtr = null;
     if (reuseBuffer) {
       inPtr = outPtr = data;
     } else {
       inPtr = data;
-      outPtr = malloc<Int8>(len);
+      outPtr = malloc<Uint8>(len);
     }
     _checkError(_nativeTransfer(_spiHandle, inPtr, outPtr, len));
     return outPtr;
@@ -339,115 +400,125 @@ class SPI {
   void dispose() {
     _checkStatus();
     _invalid = true;
-    _checkError(_nativeDispose(_spiHandle));
-  }
-
-  /// Returns the file descriptor (for the underlying SPI-dev device) of the SPI handle.
-  int getSerialFD() {
-    _checkStatus();
-    return _checkError(_nativeFD(_spiHandle));
+    _checkError(_nativeSPIclose(_spiHandle));
+    _nativeSPIfree(_spiHandle);
   }
 
   /// Returns a string representation of the spi handle.
   String getSPIinfo() {
     _checkStatus();
-    final ptr = _nativeInfo(_spiHandle);
-    if (ptr.address == 0) {
-      // throw an exception
-      _checkError(getErrno());
-      return '?';
+    var data = malloc<Int8>(BUFFER_LEN).cast<Utf8>();
+    try {
+      _checkError(_nativeSPIinfo(_spiHandle, data, BUFFER_LEN));
+      return data.toDartString();
+    } finally {
+      malloc.free(data);
     }
-    var text = ptr.toDartString();
-    malloc.free(ptr);
-    return text;
   }
 
   /// Returns the libc errno of the last failure that occurred.
   int getErrno() {
     _checkStatus();
-    return _nativeErrno(_spiHandle);
+    return _nativeSPIerrno(_spiHandle);
+  }
+
+  int _getInt32Value(intVoidInt32PtrF f) {
+    _checkStatus();
+    var data = malloc<Int32>(1);
+    try {
+      _checkError(f(_spiHandle, data));
+      return data[0];
+    } finally {
+      malloc.free(data);
+    }
+  }
+
+  int _getInt8Value(intVoidInt8PtrF f) {
+    _checkStatus();
+    var data = malloc<Int8>(1);
+    try {
+      _checkError(f(_spiHandle, data));
+      return data[0];
+    } finally {
+      malloc.free(data);
+    }
   }
 
   /// Returns the [SPImode].
   SPImode getSPImode() {
     _checkStatus();
-    return SPImode.values[
-        _checkError(_nativeGetProperty(_spiHandle, _SPIproperty.MODE.index))];
+    return SPImode.values[_checkError(_getInt32Value(_nativeSPIgetMode))];
   }
 
   /// Sets the [SPImode].
   void setSPImode(SPImode mode) {
     _checkStatus();
-    _checkError(
-        _nativeSetProperty(_spiHandle, _SPIproperty.MODE.index, mode.index));
+    _checkError(_nativeSPIsetMode(_spiHandle, mode.index));
   }
 
   /// Returns the max speed of the SPI bus.
   int getSPImaxSpeed() {
     _checkStatus();
-    return _checkError(
-        _nativeGetProperty(_spiHandle, _SPIproperty.MAX_SPEED.index));
+    return _checkError(_getInt32Value(_nativeSPIgetMaxSpeed));
   }
 
   /// Sets the [maxSpeed] of the SPI bus.
   void setSPImaxSpeed(int maxSpeed) {
     _checkStatus();
-    _checkError(
-        _nativeSetProperty(_spiHandle, _SPIproperty.MAX_SPEED.index, maxSpeed));
+    _checkError(_nativeSPIsetMaxSpeed(_spiHandle, maxSpeed));
   }
 
   /// Returns the [BitOrder].
   BitOrder getSPIbitOrder() {
     _checkStatus();
-    return BitOrder.values[_checkError(
-        _nativeGetProperty(_spiHandle, _SPIproperty.BIT_ORDER.index))];
+    return BitOrder.values[_checkError(_getInt32Value(_nativeSPIgetBitOrder))];
   }
 
   /// Sets the [bitOrder].
   void setSPIbitOrder(BitOrder bitOrder) {
     _checkStatus();
-    _checkError(_nativeSetProperty(
-        _spiHandle, _SPIproperty.BIT_ORDER.index, bitOrder.index));
+    _checkError(_nativeSPIsetBitOrder(_spiHandle, bitOrder.index));
   }
 
   /// Returns bits per word.
   int getSPIbitsPerWord() {
     _checkStatus();
-    return _checkError(
-        _nativeGetProperty(_spiHandle, _SPIproperty.BITS_PER_WORD.index));
+    return _checkError(_getInt8Value(_nativeSPIgetBitsPerWord));
+  }
+
+  /// Sets the bits per word.
+  void setSPIbitsPerWord(int value) {
+    _checkStatus();
+    _checkError(_nativeSPIsetBitsPerWord(_spiHandle, value));
   }
 
   /// Returns the 8-bit extra flags mask.
   int getSPIextraFlags() {
     _checkStatus();
-    return _checkError(
-        _nativeGetProperty(_spiHandle, _SPIproperty.EXTRA_FLAGS.index));
+    return _checkError(_getInt8Value(_nativeSPIgetExtraFlags));
   }
 
   /// Sets the 8-bit extra flags mask.
   void setSPIextraFlags(int value) {
     _checkStatus();
-    _checkError(
-        _nativeSetProperty(_spiHandle, _SPIproperty.EXTRA_FLAGS.index, value));
+    _checkError(_nativeSPIsetExtraFlags(_spiHandle, value));
   }
 
   /// Returns the 32-bit extra flags mask.
   int getSPIextraFlags32() {
     _checkStatus();
-    return _checkError(
-        _nativeGetProperty(_spiHandle, _SPIproperty.EXTRA_FLAGS32.index));
+    return _checkError(_getInt32Value(_nativeSPIgetExtraFlags32));
   }
 
   /// Sets the 32-bit extra flags mask.
   void setSPIextraFlags32(int value) {
     _checkStatus();
-    _checkError(_nativeSetProperty(
-        _spiHandle, _SPIproperty.EXTRA_FLAGS32.index, value));
+    _checkError(_nativeSPIsetExtraFlags32(_spiHandle, value));
   }
 
   /// Returns the file descriptor (for the underlying <tt>spidev</tt> device) of the SPI handle.
   int getSPIfd() {
     _checkStatus();
-    return _nativeGetProperty(_spiHandle, _SPIproperty.FILE_DESCRIPTOR.index);
+    return _checkError(_nativeSPIfd(_spiHandle));
   }
 }

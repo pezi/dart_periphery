@@ -4,8 +4,13 @@
 
 export 'src/version.dart' show getCperipheryVersion, DART_PERIPHERY_VERSION;
 export 'src/library.dart'
-    show useSharedLibray, setCustomLibrary, useLocalLibrary;
-export 'src/led.dart' show Led, LedException;
+    show
+        useSharedLibray,
+        setCustomLibrary,
+        useLocalLibrary,
+        getFlutterPiArgs,
+        isFutterPiEnv;
+export 'src/led.dart' show Led, LedException, LedErrorCode;
 export 'src/pwm.dart' show PWM, PWMexception, Polarity, PWMerrorCode;
 export 'src/gpio.dart'
     show
@@ -89,3 +94,4 @@ export 'src/hardware/bme680.dart'
         FilterSize,
         HeaterProfile,
         SENSOR_READ_RETRY_COUNTER;
+export 'src/errno.dart' show ERNO, Errno, ErrnoNotFound;

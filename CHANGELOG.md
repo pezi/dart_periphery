@@ -1,6 +1,12 @@
+## 0.8.22-beta 2021-04-17
+
+* Remove any glue C library - access the c-periphery library only with FFI.
+* Extended flutter-pi support.
+* Port test scripts for PWM, Serial, I2C, SPI and Led - fix errors
+
 ## 0.8.21-beta 2021-03-28
 
-* Fix [MPU6050 sensor] - second fix
+* Fix [MPU6050 sensor](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mpu6050.dart) - second fix
 * Add JSON support for BME680, BME280, SGP30 and SHT31
 
 ## 0.8.20-beta 2021-03-25
@@ -14,7 +20,7 @@
 
 ## 0.8.18-beta 2021-03-18
 
-* Rework Dart doucmentation/API-documentation
+* Rework Dart documentation/API-documentation
 
 ## 0.8.17-beta 2021-03-17
 

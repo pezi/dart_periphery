@@ -8,35 +8,10 @@
 // https://github.com/dart-lang/samples/tree/master/ffi
 
 import 'dart:ffi';
-
 import 'dart:convert';
 import 'library.dart';
 import 'package:ffi/ffi.dart';
 import 'signature.dart';
-
-enum _SerialProperty {
-  BAUDRATE,
-  DATABITS,
-  PARITY,
-  STOPBITS,
-  XONXOFF,
-  RTSCTS,
-  VMIN
-}
-
-// map native struct
-//
-// typedef struct read_event
-// {
-//    int count;
-//    uint8_t *data;
-// } read_event_t;
-//
-class _ReadEvent extends Struct {
-  @Int32()
-  external int count;
-  external Pointer<Int8> data;
-}
 
 /// Result of a [Serial.read] operation.
 class SerialReadEvent {
@@ -44,17 +19,16 @@ class SerialReadEvent {
   bool isTimeout = false;
   int count = 0;
   List<int> data = [];
-  SerialReadEvent(_ReadEvent event) {
-    if (event.count == 0) {
+  SerialReadEvent(int read, Pointer<Uint8> buf) {
+    if (read == 0) {
       isTimeout = true;
       count = 0;
-      data = [];
     } else {
       isTimeout = false;
-      count = event.count;
-      data = [];
-      for (var i = 0; i < event.count; ++i) {
-        data.add(event.data[i]);
+      count = read;
+      data = <int>[];
+      for (var i = 0; i < read; ++i) {
+        data.add(buf[i]);
       }
     }
   }
@@ -165,19 +139,84 @@ enum Parity {
 
 final DynamicLibrary _peripheryLib = getPeripheryLib();
 
-// serial_t *dart_serial_open(const char *path, int baudrate)
-typedef _dart_serial_open = Pointer<Void> Function(
-    Pointer<Utf8> path, Int32 baudrate);
-typedef _SerialOpen = Pointer<Void> Function(Pointer<Utf8> path, int baudrate);
-final _nativeOpen = _peripheryLib
-    .lookup<NativeFunction<_dart_serial_open>>('dart_serial_open')
+// serial_t *serial_new(void);
+final _nativeSerialNew = voidPtrVOIDM('serial_new');
+
+//int serial_open(serial_t *serial, const char *path, uint32_t baudrate);
+typedef _dart_serial_open = Int32 Function(
+    Pointer<Void> handle, Pointer<Utf8> path, Uint32 baudrate);
+typedef _SerialOpen = int Function(
+    Pointer<Void> handle, Pointer<Utf8> path, int baudrate);
+final _nativeSerialOpen = _peripheryLib
+    .lookup<NativeFunction<_dart_serial_open>>('serial_open')
     .asFunction<_SerialOpen>();
 
-// serial_t * dart_serial_open_advanced(const char *path,
-//                              uint32_t baudrate, unsigned int databits,
-//                              serial_parity_t parity, unsigned int stopbits,
-//                              int xonxoff, int rtscts)
-typedef _dart_serial_open_advanced = Pointer<Void> Function(
+// int serial_close(led_t *led);
+final _nativeSerialClose = intVoidM('serial_close');
+
+//  void serial_free(serial_t *i2c);
+final _nativeSerialFree = voidVoidM('serial_free');
+
+// int serial_errno(serial_t *i2c);
+final _nativeSerialErrno = intVoidM('serial_errno');
+
+// const char *serial_errmsg(serial_t *i2c);
+final _nativeSerialErrnMsg = utf8VoidM('serial_errmsg');
+
+// int serial_tostring(serial_t *led, char *str, size_t len);
+final _nativeSerialInfo = intVoidUtf8sizeTM('serial_tostring');
+
+// int serial_get_baudrate(serial_t *serial, uint32_t *baudrate);
+final _nativeSerialGetBaudrate = intVoidInt32PtrM('serial_get_baudrate');
+
+// int serial_get_databits(serial_t *serial, unsigned int *databits);
+final _nativeSerialGetDatabits = intVoidInt32PtrM('serial_get_databits');
+
+// int serial_get_parity(serial_t *serial, serial_parity_t *parity);
+final _nativeSerialGetParity = intVoidInt32PtrM('serial_get_parity');
+
+// int serial_get_stopbits(serial_t *serial, unsigned int *stopbits);
+final _nativeSerialGetStopbits = intVoidInt32PtrM('serial_get_stopbits');
+
+// int serial_get_xonxoff(serial_t *serial, bool *xonxoff);
+final _nativeSerialGetXonxoff = intVoidInt8PtrM('serial_get_xonxoff');
+
+// int serial_get_rtscts(serial_t *serial, bool *rtscts);
+final _nativeSerialGetRtscts = intVoidInt8PtrM('serial_get_rtscts');
+
+// int serial_get_vmin(serial_t *serial, unsigned int *vmin);
+final _nativeSerialGetVmin = intVoidInt32PtrM('serial_get_vmin');
+
+// int serial_fd(serial_t *serial);
+final _nativeSerialFd = intVoidM('serial_fd');
+
+// int serial_set_baudrate(serial_t *serial, uint32_t baudrate);
+final _nativeSerialSetBaudrate = intVoidIntM('serial_set_baudrate');
+
+// int serial_set_databits(serial_t *serial, unsigned int databits);
+final _nativeSerialSetDatabits = intVoidIntM('serial_set_databits');
+
+// int serial_set_parity(serial_t *serial, enum serial_parity parity);
+final _nativeSerialSetParity = intVoidIntM('serial_set_parity');
+
+// int serial_set_stopbits(serial_t *serial, unsigned int stopbits);
+final _nativeSerialSetStopbits = intVoidIntM('serial_set_stopbits');
+
+// int serial_set_xonxoff(serial_t *serial, bool enabled);
+final _nativeSerialSetXonxof = intVoidInt8M('serial_set_xonxoff');
+
+// int serial_set_rtscts(serial_t *serial, bool enabled)
+final _nativeSerialSetRtscts = intVoidInt8M('serial_set_rtscts');
+
+// int serial_set_vmin(serial_t *serial, unsigned int vmin);
+final _nativeSerialSetVmin = intVoidIntM('serial_set_vmin');
+
+// int serial_open_advanced(serial_t *serial, const char *path,
+//                          uint32_t baudrate, unsigned int databits,
+//                          serial_parity_t parity, unsigned int stopbits,
+//                          bool xonxoff, bool rtscts);
+typedef _serial_open_advanced = Int32 Function(
+    Pointer<Void> handle,
     Pointer<Utf8> path,
     Int32 baudrate,
     Int32 databits,
@@ -185,7 +224,8 @@ typedef _dart_serial_open_advanced = Pointer<Void> Function(
     Int32 stopbits,
     Int32 xonxoff,
     Int32 rtscts);
-typedef _SerialOpenAdvanced = Pointer<Void> Function(
+typedef _SerialOpenAdvanced = int Function(
+    Pointer<Void> handle,
     Pointer<Utf8> path,
     int baudrate,
     int databits,
@@ -194,106 +234,59 @@ typedef _SerialOpenAdvanced = Pointer<Void> Function(
     int xonxoff,
     int rtscts);
 final _nativeOpenAdvanced = _peripheryLib
-    .lookup<NativeFunction<_dart_serial_open_advanced>>(
-        'dart_serial_open_advanced')
+    .lookup<NativeFunction<_serial_open_advanced>>('serial_open_advanced')
     .asFunction<_SerialOpenAdvanced>();
 
-// const char *dart_serial_errmsg(serial_t *serial)
-final _nativeErrmsg = _peripheryLib
-    .lookup<NativeFunction<utf8VoidS>>('dart_serial_errmsg')
-    .asFunction<utf8VoidF>();
+//  int serial_read(serial_t *serial, uint8_t *buf, size_t len, int timeout_ms);
+typedef _serial_read = Int32 Function(
+    Pointer<Void> handle, Pointer<Uint8> buf, IntPtr len, Int32 timeoutMillis);
+typedef _SerialRead = int Function(
+    Pointer<Void> handle, Pointer<Uint8> buf, int len, int timeoutMillis);
+final _nativeSerialRead = _peripheryLib
+    .lookup<NativeFunction<_serial_read>>('serial_read')
+    .asFunction<_SerialRead>();
 
-// read_event_t *dart_serial_read(serial_t *serial, int len, int timeout_ms
-typedef _dart_serial_read = Pointer<_ReadEvent> Function(
-    Pointer<Void> handle, Int32 len, Int32 timeoutMillis);
-typedef _SerialReadEvent = Pointer<_ReadEvent> Function(
-    Pointer<Void> handle, int len, int timeoutMillis);
-final _nativeReadEvent = _peripheryLib
-    .lookup<NativeFunction<_dart_serial_read>>('dart_serial_read')
-    .asFunction<_SerialReadEvent>();
-
-// int dart_serial_write(serial_t *serial,const uint8_t *buf, size_t len)
-typedef _dart_serial_write = Int32 Function(
-    Pointer<Void> handle, Pointer<Int8>, Int32 len);
+// int serial_write(serial_t *serial, const uint8_t *buf, size_t len);
+typedef _serial_write = Int32 Function(
+    Pointer<Void> handle, Pointer<Uint8> buf, IntPtr len);
 typedef _SerialWrite = int Function(
-    Pointer<Void> handle, Pointer<Int8>, int len);
-final _nativeWrite = _peripheryLib
-    .lookup<NativeFunction<_dart_serial_write>>('dart_serial_write')
+    Pointer<Void> handle, Pointer<Uint8> buf, int len);
+final _nativeSerialWrite = _peripheryLib
+    .lookup<NativeFunction<_serial_write>>('serial_write')
     .asFunction<_SerialWrite>();
 
-// int dart_serial_flush(serial_t *serial)
-final _nativeFlush = _peripheryLib
-    .lookup<NativeFunction<intVoidS>>('dart_serial_flush')
-    .asFunction<intVoidF>();
+// int serial_flush(serial_t *serial);
+final _nativeSerialFlush = intVoidM('serial_flush');
 
-// int dart_serial_dispose(serial_t *serial)
-final _nativeDispose = _peripheryLib
-    .lookup<NativeFunction<intVoidS>>('dart_serial_dispose')
-    .asFunction<intVoidF>();
+// int serial_input_waiting(serial_t *serial, unsigned int *count);
+final _nativeSerialInputWaiting = intVoidInt32PtrM('serial_input_waiting');
 
-// int dart_serial_input_waiting(serial_t *serial)
-final _nativeSerialInputWaiting = _peripheryLib
-    .lookup<NativeFunction<intVoidS>>('dart_serial_input_waiting')
-    .asFunction<intVoidF>();
+// int serial_output_waiting(serial_t *serial, unsigned int *count);
+final _nativeSerialOutputWaiting = intVoidInt32PtrM('serial_output_waiting');
 
-// int dart_serial_output_waiting(serial_t *serial)
-final _nativeSerialOutputWaiting = _peripheryLib
-    .lookup<NativeFunction<intVoidS>>('dart_serial_output_waiting')
-    .asFunction<intVoidF>();
+// int serial_poll(serial_t *serial, int timeout_ms);
+final _nativeSerialPool = intVoidIntM('serial_poll');
 
-// int dart_serial_poll(serial_t *serial,int timeout_ms)
-final _nativePool = _peripheryLib
-    .lookup<NativeFunction<intVoidIntS>>('dart_serial_poll')
-    .asFunction<intVoidIntF>();
-
-//int dart_serial_get_property(serial_t *serial,SerialProperty_t property)
-final _nativeGetSerialProperty = _peripheryLib
-    .lookup<NativeFunction<intVoidIntS>>('dart_serial_get_property')
-    .asFunction<intVoidIntF>();
-
-// int dart_serial_set_property(serial_t *serial,SerialProperty_t property,int value
-typedef _dart_serial_set_property = Int32 Function(
-    Pointer<Void> handle, Int32 serialProperty, Int32 value);
-typedef _SerialSetProperty = int Function(
-    Pointer<Void> handle, int serialProperty, int value);
-final _nativeSetSerialProperty = _peripheryLib
-    .lookup<NativeFunction<_dart_serial_set_property>>(
-        'dart_serial_set_property')
-    .asFunction<_SerialSetProperty>();
-
-// double dart_serial_get_vtime(serial_t *serial)
-typedef _dart_serial_get_vtime = Double Function(Pointer<Void> handle);
-typedef _SerialGetVTIME = double Function(Pointer<Void> handle);
-final _nativeGetVTIME = _peripheryLib
-    .lookup<NativeFunction<_dart_serial_get_vtime>>('dart_serial_get_vtime')
+// int serial_get_vtime(serial_t *serial, float *vtime);
+typedef _serial_get_vtime = Int32 Function(
+    Pointer<Void> handle, Pointer<Float>);
+typedef _SerialGetVTIME = int Function(Pointer<Void> handle, Pointer<Float>);
+final _nativeSerialGetVtime = _peripheryLib
+    .lookup<NativeFunction<_serial_get_vtime>>('serial_get_vtime')
     .asFunction<_SerialGetVTIME>();
 
-// int dart_serial_set_vtime(serial_t *serial,double vtime)
-typedef _dart_serial_set_vtime = Int32 Function(
-    Pointer<Void> handle, Double vtime);
+// int serial_set_vtime(serial_t *serial, float vtime);
+typedef _serial_set_vtime = Int32 Function(Pointer<Void> handle, Float vtime);
 typedef _SerialSetVTIME = int Function(Pointer<Void> handle, double vtime);
-final _nativeSetVTIME = _peripheryLib
-    .lookup<NativeFunction<_dart_serial_set_vtime>>('dart_serial_set_vtime')
+final _nativeSerialSetVtime = _peripheryLib
+    .lookup<NativeFunction<_serial_set_vtime>>('serial_set_vtime')
     .asFunction<_SerialSetVTIME>();
 
-// int dart_serial_fd(serial_t *serial) {
-final _nativeFD = _peripheryLib
-    .lookup<NativeFunction<intVoidS>>('dart_serial_fd')
-    .asFunction<intVoidF>();
-
-// char *dart_serial_info(serial_t *serial)
-final _nativeInfo = _peripheryLib
-    .lookup<NativeFunction<utf8VoidS>>('dart_serial_info')
-    .asFunction<utf8VoidF>();
-
-// int serial_errno(serial_t *serial);
-final _nativeErrno = _peripheryLib
-    .lookup<NativeFunction<intVoidS>>('dart_serial_errno')
-    .asFunction<intVoidF>();
-
 String _getErrmsg(Pointer<Void> handle) {
-  return _nativeErrmsg(handle).toDartString();
+  return _nativeSerialErrnMsg(handle).toDartString();
 }
+
+const BUFFER_LEN = 256;
 
 int _checkError(int value) {
   if (value < 0) {
@@ -301,15 +294,6 @@ int _checkError(int value) {
     throw SerialException(errorCode, errorCode.toString());
   }
   return value;
-}
-
-Pointer<Void> _checkHandle(Pointer<Void> handle) {
-  // handle 0 indicates an internal error
-  if (handle.address == 0) {
-    throw SerialException(
-        SerialErrorCode.SERIAL_ERROR_OPEN, 'Error opening serial port');
-  }
-  return handle;
 }
 
 /// Serial wrapper functions for Linux userspace termios tty devices.
@@ -375,8 +359,18 @@ class Serial {
         stopbits = StopBits.SB1,
         rtsct = false,
         xonxoff = false,
-        _serialHandle = _checkHandle(
-            _nativeOpen(path.toNativeUtf8(), baudrate2Int(baudrate)));
+        _serialHandle = _openSerial(path, baudrate);
+
+  static Pointer<Void> _openSerial(String path, Baudrate baudrate) {
+    var _serialHandle = _nativeSerialNew();
+    if (_serialHandle == nullptr) {
+      return throw SerialException(
+          SerialErrorCode.SERIAL_ERROR_OPEN, 'Error opening serial interface');
+    }
+    _checkError(_nativeSerialOpen(
+        _serialHandle, path.toNativeUtf8(), baudrate2Int(baudrate)));
+    return _serialHandle;
+  }
 
   /// Opens the <tt>tty</tt> device at the specified [path] (e.g. "/dev/ttyUSB0"), with the specified [baudrate], [databits],
   /// [parity], [stopbits], software flow control ([xonxoff]), and hardware flow control ([rtsct]) settings.
@@ -385,14 +379,33 @@ class Serial {
   /// parity can be PARITY_NONE, PARITY_ODD, or PARITY_EVEN . StopBits can be 1 or 2.
   Serial.advanced(this.path, this.baudrate, this.databits, this.parity,
       this.stopbits, this.xonxoff, this.rtsct)
-      : _serialHandle = _checkHandle(_nativeOpenAdvanced(
-            path.toNativeUtf8(),
-            baudrate2Int(baudrate),
-            databits2Int(databits),
-            parity.index,
-            stopbits2Int(stopbits),
-            xonxoff ? 1 : 0,
-            rtsct ? 1 : 0));
+      : _serialHandle = _openSerialAdvanced(
+            path, baudrate, databits, parity, stopbits, xonxoff, rtsct);
+
+  static Pointer<Void> _openSerialAdvanced(
+      String path,
+      Baudrate baudrate,
+      DataBits databits,
+      Parity parity,
+      StopBits stopbits,
+      bool xonxoff,
+      bool rtsct) {
+    var _serialHandle = _nativeSerialNew();
+    if (_serialHandle == nullptr) {
+      return throw SerialException(
+          SerialErrorCode.SERIAL_ERROR_OPEN, 'Error opening serial interface');
+    }
+    _checkError(_nativeOpenAdvanced(
+        _serialHandle,
+        path.toNativeUtf8(),
+        baudrate2Int(baudrate),
+        databits2Int(databits),
+        parity.index,
+        stopbits2Int(stopbits),
+        xonxoff ? 1 : 0,
+        rtsct ? 1 : 0));
+    return _serialHandle;
+  }
 
   /// Polls for data available for reading from the serial port.
   ///
@@ -402,19 +415,43 @@ class Serial {
   /// Returns 'true' on success (data available for reading), 'false on timeout,
   bool poll(int timeout) {
     _checkStatus();
-    return _checkError(_nativePool(_serialHandle, timeout)) == 1 ? true : false;
+    return _checkError(_nativeSerialPool(_serialHandle, timeout)) == 1
+        ? true
+        : false;
+  }
+
+  int _getInt32Value(intVoidInt32PtrF f) {
+    _checkStatus();
+    var data = malloc<Int32>(1);
+    try {
+      _checkError(f(_serialHandle, data));
+      return data[0];
+    } finally {
+      malloc.free(data);
+    }
+  }
+
+  bool _getBoolValue(intVoidInt8PtrF f) {
+    _checkStatus();
+    var data = malloc<Int8>(1);
+    try {
+      _checkError(f(_serialHandle, data));
+      return data[0] != 0;
+    } finally {
+      malloc.free(data);
+    }
   }
 
   /// Gets the number of bytes waiting to be written to the serial port.
   int getOutputWaiting() {
     _checkStatus();
-    return _checkError(_nativeSerialOutputWaiting(_serialHandle));
+    return _getInt32Value(_nativeSerialOutputWaiting);
   }
 
   /// Gets the number of bytes waiting to be read from the serial port.
   int getInputWaiting() {
     _checkStatus();
-    return _checkError(_nativeSerialInputWaiting(_serialHandle));
+    return _getInt32Value(_nativeSerialInputWaiting);
   }
 
   /// Reads up to [len] number of bytes from the serial port with the specified
@@ -433,22 +470,21 @@ class Serial {
   /// Returns a 'ReadEvent' containing the number of bytes read and a bytes array on success, false on timeout.
   SerialReadEvent read(int len, int timeout) {
     _checkStatus();
-    var event = _nativeReadEvent(_serialHandle, len, timeout);
+
+    var data = malloc<Uint8>(len);
     try {
-      _checkError(event.ref.count);
-      return SerialReadEvent(event.ref);
+      var dataRead =
+          _checkError(_nativeSerialRead(_serialHandle, data, len, timeout));
+      return SerialReadEvent(dataRead, data);
     } finally {
-      if (event.ref.data.address != 0) {
-        malloc.free(event.ref.data);
-      }
-      malloc.free(event);
+      malloc.free(data);
     }
   }
 
   /// Returns the libc errno of the last failure that occurred.
   int getErrno() {
     _checkStatus();
-    return _nativeErrno(_serialHandle);
+    return _nativeSerialErrno(_serialHandle);
   }
 
   /// Writes a list of bytes to the serial port.
@@ -458,13 +494,13 @@ class Serial {
     if (list.isEmpty) {
       return 0;
     }
-    var ptr = malloc<Int8>(list.length);
+    var ptr = malloc<Uint8>(list.length);
     try {
       var index = 0;
       for (var i in list) {
         ptr[index++] = i;
       }
-      var result = _nativeWrite(_serialHandle, ptr, list.length);
+      var result = _nativeSerialWrite(_serialHandle, ptr, list.length);
       return _checkError(result);
     } finally {
       malloc.free(ptr);
@@ -480,106 +516,168 @@ class Serial {
   /// Flushes the write buffer of the serial port (i.e. force its write immediately).
   void flush() {
     _checkStatus();
-    _checkError(_nativeFlush(_serialHandle));
+    _checkError(_nativeSerialFlush(_serialHandle));
   }
 
   /// Releases all native resources.
   void dispose() {
     _checkStatus();
     _invalid = true;
-    _checkError(_nativeDispose(_serialHandle));
+    _checkError(_nativeSerialClose(_serialHandle));
+    _nativeSerialFree(_serialHandle);
   }
 
   /// Returns the baudrate.
   /// See [baudrate2Int] for converting the result to an integer.
   Baudrate getBaudrate() {
     _checkStatus();
-    return Baudrate.values[_checkError(_nativeGetSerialProperty(
-        _serialHandle, _SerialProperty.BAUDRATE.index))];
+    switch (_getInt32Value(_nativeSerialGetBaudrate)) {
+      case 50:
+        return Baudrate.B50;
+      case 75:
+        return Baudrate.B75;
+      case 110:
+        return Baudrate.B110;
+      case 134:
+        return Baudrate.B134;
+      case 150:
+        return Baudrate.B150;
+      case 200:
+        return Baudrate.B200;
+      case 300:
+        return Baudrate.B300;
+      case 600:
+        return Baudrate.B600;
+      case 1200:
+        return Baudrate.B1200;
+      case 1800:
+        return Baudrate.B1800;
+      case 2400:
+        return Baudrate.B2400;
+      case 4800:
+        return Baudrate.B4800;
+      case 9600:
+        return Baudrate.B9600;
+      case 19200:
+        return Baudrate.B19200;
+      case 38400:
+        return Baudrate.B38400;
+      case 57600:
+        return Baudrate.B57600;
+      case 115200:
+        return Baudrate.B115200;
+      case 230400:
+        return Baudrate.B230400;
+      case 460800:
+        return Baudrate.B460800;
+      case 500000:
+        return Baudrate.B500000;
+      case 576000:
+        return Baudrate.B576000;
+      case 1000000:
+        return Baudrate.B1000000;
+      case 1152000:
+        return Baudrate.B1152000;
+      case 2000000:
+        return Baudrate.B2000000;
+      case 2500000:
+        return Baudrate.B2500000;
+      case 3000000:
+        return Baudrate.B3000000;
+      case 3500000:
+        return Baudrate.B3500000;
+      case 4000000:
+        return Baudrate.B4000000;
+    }
+    throw SerialException(SerialErrorCode.ERROR_CODE_NOT_MAPPABLE,
+        'Unable to map baudrate to enum');
   }
 
   /// Sets the [baudrate].
   void setBaudrate(Baudrate baudrate) {
-    _checkError(_nativeSetSerialProperty(
-        _serialHandle, _SerialProperty.BAUDRATE.index, baudrate2Int(baudrate)));
+    _checkStatus();
+    _checkError(
+        _nativeSerialSetBaudrate(_serialHandle, baudrate2Int(baudrate)));
   }
 
   /// Returns the number of data bits.
   /// See [databits2Int] for converting the result to an integer.
   DataBits getDataBits() {
     _checkStatus();
-    return DataBits.values[_checkError(_nativeGetSerialProperty(
-        _serialHandle, _SerialProperty.DATABITS.index))];
+    switch (_getInt32Value(_nativeSerialGetDatabits)) {
+      case 5:
+        return DataBits.DB5;
+      case 6:
+        return DataBits.DB6;
+      case 7:
+        return DataBits.DB7;
+      case 8:
+        return DataBits.DB8;
+    }
+    throw SerialException(SerialErrorCode.ERROR_CODE_NOT_MAPPABLE,
+        'Unable to map data bits to enum');
   }
 
   /// Sets the number of [databits].
   void setDataBits(DataBits databits) {
     _checkStatus();
-    _checkError(_nativeSetSerialProperty(
-        _serialHandle, _SerialProperty.DATABITS.index, databits2Int(databits)));
+    _checkError(
+        _nativeSerialSetDatabits(_serialHandle, databits2Int(databits)));
   }
 
   /// Returns the number of stop bits.
   /// See [stopbits2Int] for converting the result to an integer.
   StopBits getStopBits() {
     _checkStatus();
-    return StopBits.values[_checkError(_nativeGetSerialProperty(
-        _serialHandle, _SerialProperty.STOPBITS.index))];
+    switch (_getInt32Value(_nativeSerialGetStopbits)) {
+      case 1:
+        return StopBits.SB1;
+      case 2:
+        return StopBits.SB2;
+    }
+    throw SerialException(SerialErrorCode.ERROR_CODE_NOT_MAPPABLE,
+        'Unable to map stop bits to enum');
   }
 
   /// Sets the number of [stopbits].
   void setStopBits(StopBits stopbits) {
     _checkStatus();
-    _checkError(_nativeSetSerialProperty(
-        _serialHandle, _SerialProperty.STOPBITS.index, stopbits2Int(stopbits)));
+    _checkError(
+        _nativeSerialSetStopbits(_serialHandle, stopbits2Int(stopbits)));
   }
 
   /// Returns the parity property.
   Parity getParity() {
     _checkStatus();
-    return Parity.values[_checkError(
-        _nativeGetSerialProperty(_serialHandle, _SerialProperty.PARITY.index))];
+    return Parity.values[_getInt32Value(_nativeSerialGetParity)];
   }
 
   /// Sets the [parity].
   void setParity(Parity parity) {
     _checkStatus();
-    _checkError(_nativeSetSerialProperty(
-        _serialHandle, _SerialProperty.PARITY.index, parity.index));
+    _checkError(_nativeSerialSetParity(_serialHandle, parity.index));
   }
 
   /// Returns if the setXONXOFF protocol is enabled or disabled.
-  bool isXONXOFF() {
-    _checkStatus();
-    return _checkError(_nativeGetSerialProperty(
-                _serialHandle, _SerialProperty.XONXOFF.index)) ==
-            1
-        ? true
-        : false;
+  bool getXONXOFF() {
+    return _getBoolValue(_nativeSerialGetXonxoff);
   }
 
   /// [flag] enables, or disables the setXONXOFF protocol.
   void setXONXOFF(bool flag) {
     _checkStatus();
-    _checkError(_nativeSetSerialProperty(
-        _serialHandle, _SerialProperty.XONXOFF.index, flag == true ? 1 : 0));
+    _checkError(_nativeSerialSetXonxof(_serialHandle, flag == true ? 1 : 0));
   }
 
   /// Returns if the RTS/CTS (request to send/ clear to send) flow control is enabled or disabled.
-  bool isRTSCTS() {
-    _checkStatus();
-    return _checkError(_nativeGetSerialProperty(
-                _serialHandle, _SerialProperty.RTSCTS.index)) ==
-            1
-        ? true
-        : false;
+  bool getRTSCTS() {
+    return _getBoolValue(_nativeSerialGetRtscts);
   }
 
   /// [flag] enables, or disables the RTSCTS flow control.
   void setRTSCTS(bool flag) {
     _checkStatus();
-    _checkError(_nativeSetSerialProperty(
-        _serialHandle, _SerialProperty.RTSCTS.index, flag == true ? 1 : 0));
+    _checkError(_nativeSerialSetRtscts(_serialHandle, flag == true ? 1 : 0));
   }
 
   /// Gets the termios VMIN settings, respectively, of the underlying tty device.
@@ -590,8 +688,7 @@ class Serial {
   /// vmin can be between 0 and 255. vtime can be between 0 and 25.5 seconds, with a resolution of 0.1 seconds.
   int getVMIN() {
     _checkStatus();
-    return _checkError(
-        _nativeGetSerialProperty(_serialHandle, _SerialProperty.VMIN.index));
+    return _getInt32Value(_nativeSerialGetVmin);
   }
 
   /// Sets the termios VMIN settings, respectively, of the underlying tty device.
@@ -602,8 +699,7 @@ class Serial {
   /// vmin can be between 0 and 255. vtime can be between 0 and 25.5 seconds, with a resolution of 0.1 seconds.
   void setVMIN(int vmin) {
     _checkStatus();
-    _checkError(_nativeSetSerialProperty(
-        _serialHandle, _SerialProperty.VMIN.index, vmin));
+    _checkError(_nativeSerialSetVmin(_serialHandle, vmin));
   }
 
   /// Gets the termios VTIME settings, respectively, of the underlying tty device.
@@ -614,9 +710,13 @@ class Serial {
   /// vmin can be between 0 and 255. vtime can be between 0 and 25.5 seconds, with a resolution of 0.1 seconds.
   double getVTIME() {
     _checkStatus();
-    var vtime = _nativeGetVTIME(_serialHandle);
-    _checkError(vtime.toInt());
-    return vtime;
+    var data = malloc<Float>(1);
+    try {
+      _checkError(_nativeSerialGetVtime(_serialHandle, data));
+      return data[0];
+    } finally {
+      malloc.free(data);
+    }
   }
 
   /// Sets the termios VTIME settings, respectively, of the underlying tty device.
@@ -627,26 +727,24 @@ class Serial {
   /// vmin can be between 0 and 255. vtime can be between 0 and 25.5 seconds, with a resolution of 0.1 seconds.
   void setVTIME(double vtime) {
     _checkStatus();
-    _checkError(_nativeSetVTIME(_serialHandle, vtime));
+    _checkError(_nativeSerialSetVtime(_serialHandle, vtime));
   }
 
   /// Returns the file descriptor (for the underlying tty device) of the Serial handle.
   int getSerialFD() {
     _checkStatus();
-    return _checkError(_nativeFD(_serialHandle));
+    return _nativeSerialFd(_serialHandle);
   }
 
   /// Returns a string representation of the Serial handle.
   String getSerialInfo() {
     _checkStatus();
-    var ptr = _nativeInfo(_serialHandle);
-    if (ptr.address == 0) {
-      // throw an exception
-      _checkError(getErrno());
-      return '?';
+    var data = malloc<Int8>(BUFFER_LEN).cast<Utf8>();
+    try {
+      _checkError(_nativeSerialInfo(_serialHandle, data, BUFFER_LEN));
+      return data.toDartString();
+    } finally {
+      malloc.free(data);
     }
-    var text = ptr.toDartString();
-    malloc.free(ptr);
-    return text;
   }
 }

@@ -96,7 +96,7 @@ class RawMeasurement {
   String toString() => 'RawMeasurement [h2=$h2, ethanol=$ethanol]';
 }
 
-/// Data container for the [SGP30] co2Equivalent and totalVOC sensor.
+/// [SGP30] measured data: co2Equivalent and totalVOC sensor.
 class SGP30result {
   int co2Equivalent;
   // Total Volatile Organic Compounds
@@ -113,7 +113,7 @@ class SGP30result {
   }
 }
 
-/// Sensirion eCO2 gas sensor, an air quality detection sensor..
+/// Sensirion eCO2 gas sensor, an air quality detection sensor.
 ///
 /// See for more
 /// * [SGP30 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sgp30.dart)

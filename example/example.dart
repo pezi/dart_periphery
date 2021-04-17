@@ -12,6 +12,7 @@ void main() {
   print('GPIO test');
   var gpio = GPIO(18, GPIOdirection.GPIO_DIR_OUT);
   var gpio2 = GPIO(16, GPIOdirection.GPIO_DIR_OUT);
+
   var gpio3 = GPIO.advanced(5, config);
 
   print('GPIO info: ' + gpio.getGPIOinfo());

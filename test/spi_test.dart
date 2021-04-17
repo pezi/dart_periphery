@@ -1,0 +1,127 @@
+// Copyright (c) 2021, the Dart project authors.  Please see the AUTHORS file
+// for details. All rights reserved. Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
+//
+
+// https://github.com/vsergeev/c-periphery/blob/master/tests/test_spi.c
+
+import 'package:dart_periphery/dart_periphery.dart';
+import 'util.dart';
+import 'dart:io';
+import 'package:collection/collection.dart';
+
+void test_arguments(int bus, int chip) {
+  // Invalid mode
+  // passert(spi_open(spi, device, 4, 1e6) == SPI_ERROR_ARG);
+  // passert(spi_open_advanced(spi, device, 0, 1e6, LSB_FIRST+1, 8, 0) == SPI_ERROR_ARG);
+  //
+  // Due the usage of enums this invald parameter can not be mapped
+}
+
+void test_open_config_close(int bus, int chip) {
+  var spi = SPI(bus, chip, SPImode.MODE0, 100000);
+  try {
+    assert(spi.bitOrder == BitOrder.MSB_FIRST);
+    assert(spi.bitsPerWord == 8);
+
+    // Not going to try different bit order or bits per word, because not all
+    //  SPI controllers support them
+
+    for (var mode in SPImode.values) {
+      spi.setSPImode(mode);
+      assert(spi.getSPImode() == mode);
+    }
+    spi.setSPImode(SPImode.MODE0);
+
+    // Try 100KHz, 500KHz, 1MHz
+    for (var f in [100e3, 500e3, 1e6]) {
+      spi.setSPImaxSpeed(f.toInt());
+      assert(spi.getSPImaxSpeed() == f.toInt());
+    }
+  } finally {
+    spi.dispose();
+  }
+}
+
+void test_loopback(int bus, int chip) {
+  var spi = SPI(bus, chip, SPImode.MODE0, 100000);
+  try {
+    Function eq = const ListEquality().equals;
+    var data = <int>[for (int i = 0; i < 32; ++i) i];
+    assert(eq(spi.transfer(data, false), data) == true);
+    spi.transfer(data, true);
+    data = [for (int i = 0; i < 32; ++i) i];
+    spi.transfer(data, true);
+  } finally {
+    spi.dispose();
+  }
+}
+
+void test_interactive(int bus, int chip) {
+  var buf = [0x55, 0xaa, 0x0f, 0xf0];
+  var spi = SPI(bus, chip, SPImode.MODE0, 100000);
+  try {
+    print('Starting interactive test. Get out your logic analyzer, buddy!');
+    print('Press enter to continue...');
+    pressKey();
+    print('SPI description: ${spi.getSPIinfo()}');
+    print('SPI description looks OK? y/n');
+    pressKeyYes();
+    for (var mode in SPImode.values) {
+      spi.setSPImode(mode);
+      print('Press enter to start transfer...');
+      pressKey();
+      spi.transfer(buf, true);
+      print('SPI data 0x55, 0xaa, 0x0f, 0xf');
+      print('SPI transfer speed <= 100KHz, mode ${mode.index} occurred? y/n');
+      pressKeyYes();
+    }
+    spi.setSPImode(SPImode.MODE0);
+    for (var f in [500e3, 1e6]) {
+      spi.setSPImaxSpeed(f.toInt());
+      print('Press enter to start transfer...');
+      pressKey();
+      spi.transfer(buf, true);
+      print('SPI data 0x55, 0xaa, 0x0f, 0xf');
+      print('SPI transfer speed <= ${f.toInt()}Hz, mode 0 occurred? y/n');
+      pressKeyYes();
+    }
+  } finally {
+    spi.dispose();
+  }
+}
+
+void main(List<String> argv) {
+  if (argv.length != 2) {
+    print('Usage: dart spi_test.dart <bus> <chip>');
+    print('Hint /dev/spidev[bus].[chip] e.g. /dev/spidev0.0');
+    print('[1/4] Arguments test: No requirements.');
+    print('[2/4] Open/close test: SPI device should be real.');
+    print(
+        '[3/4] Loopback test: SPI MISO and MOSI should be connected with a wire.');
+    print(
+        '[4/4] Interactive test: SPI MOSI, CLK, CS should be observed with an oscilloscope or logic analyzer.');
+    print('Hint: for Raspberry Pi 3, enable SPI0 with:');
+    print('   \$ echo "dtparam=spi=on" | sudo tee -a /boot/config.txt');
+    print('   \$ sudo reboot');
+    print(
+        'Use pins SPI0 MOSI (header pin 19), SPI0 MISO (header pin 21), SPI0 SCLK (header pin 23),');
+    print('connect a loopback between MOSI and MISO, and run this test with:');
+    print('    dart spi_test.dart 0 0');
+    exit(1);
+  }
+
+  var bus = int.parse(argv[0]);
+  var chip = int.parse(argv[1]);
+
+  test_arguments(bus, chip);
+  print('Arguments test passed.');
+  test_open_config_close(bus, chip);
+  print('Open/close test passed.');
+  test_loopback(bus, chip);
+  print('Loopback test passed.');
+  test_interactive(bus, chip);
+  print('Interactive test passed.');
+
+  print('All tests passed!\n');
+}

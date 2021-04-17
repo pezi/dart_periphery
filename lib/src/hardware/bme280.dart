@@ -98,9 +98,9 @@ class BME280exception implements Exception {
   BME280exception(this.errorMsg);
 }
 
-/// [BME280] data container for temperature, pressure and humidity (BME280 only).
+/// [BME280] measured data: temperature, pressure and humidity (BME280 only).
 class BME280result {
-  /// temperature
+  /// temperature °C
   final double temperature;
 
   /// pressure in hPa
@@ -115,7 +115,7 @@ class BME280result {
   String toString() =>
       'BME280result [temperature=$temperature, pressure=$pressure, humidity=$humidity]';
 
-  /// Returns [BME280] as a JSON string. [fractionDigits] controls the number fraction digits.
+  /// Returns a [BME280result] as a JSON string. [fractionDigits] controls the number fraction digits.
   String toJSON([int fractionDigits = 2]) {
     return '{"temperature":"${temperature.toStringAsFixed(fractionDigits)}","pressure":"${pressure.toStringAsFixed(fractionDigits)}","humidity":"${humidity.toStringAsFixed(fractionDigits)}"';
   }

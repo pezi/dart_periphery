@@ -8,8 +8,8 @@
 // https://github.com/dart-lang/samples/tree/master/ffi
 
 import 'dart:ffi';
-import 'library.dart';
 import 'package:ffi/ffi.dart';
+import 'signature.dart';
 
 /// [PWM] error code
 enum PWMerrorCode {
@@ -35,90 +35,82 @@ enum PWMerrorCode {
 /// [PWM] polarity of the  output
 enum Polarity { PWM_POLARITY_NORMAL, PWM_POLARITY_INVERSED }
 
-enum _PWMpropertyEnum {
-  PERIOD_NS,
-  DUTY_CYCLE_NS,
-  PERIOD,
-  DUTY_CYCLE,
-  FREQUENCY,
-  POLARITY,
-  CHIP,
-  CHANNEL
-}
+// pwm_t *pwm_new(void);
+final _nativePWMnew = voidPtrVOIDM('pwm_new');
 
-class PWMproperty extends Struct {
-  @Double()
-  external double doubleValue;
-  @Int64()
-  external int longValue;
-}
+// int pwm_close(pwm_t *pwm);
+final _nativePWMclose = intVoidM('pwm_close');
 
-// PWMproperty_t *dart_pwm_get_property(pwm_t *pwm,int prop)
-typedef _dart_pwm_get_property = Int32 Function(
-    Pointer<Void> handle, Int32 prop, Pointer<PWMproperty> result);
-typedef _PWMgetProperty = int Function(
-    Pointer<Void> handle, int prop, Pointer<PWMproperty> result);
-final _nativeGetProperty = _peripheryLib
-    .lookup<NativeFunction<_dart_pwm_get_property>>('dart_pwm_get_property')
-    .asFunction<_PWMgetProperty>();
-
-// int dart_pwm_set_property(pwm_t *pwm,PWMpropertyEnum_t prop,PWMproperty_t *data)
-typedef _dart_pwm_set_property = Int32 Function(
-    Pointer<Void> handle, Int32 prop, Pointer<PWMproperty> result);
-typedef _PWMsetProperty = int Function(
-    Pointer<Void> handle, int prop, Pointer<PWMproperty> result);
-final _nativeSetProperty = _peripheryLib
-    .lookup<NativeFunction<_dart_pwm_set_property>>('dart_pwm_set_property')
-    .asFunction<_PWMsetProperty>();
+// void pwm_free(pwm_t *pwm)
+final _nativePWMfree = voidVoidM('pwm_free');
 
 // int pwm_open(pwm_t *pwm, unsigned int chip, unsigned int channel);
-typedef _dart_pwm_open = Pointer<Void> Function(Int32 chip, Int32 channel);
-typedef _PWMopen = Pointer<Void> Function(int chip, int channel);
-final _nativeOpen = _peripheryLib
-    .lookup<NativeFunction<_dart_pwm_open>>('dart_pwm_open')
-    .asFunction<_PWMopen>();
-
-// int dart_pwm_dispose(pwm_t *pwm)
-typedef _dart_pwm_dispose = Int32 Function(Pointer<Void> handle);
-typedef _PWMdispose = int Function(Pointer<Void> handle);
-final _nativeDispose = _peripheryLib
-    .lookup<NativeFunction<_dart_pwm_dispose>>('dart_pwm_dispose')
-    .asFunction<_PWMdispose>();
+final _nativePWMopen = intVoidIntIntM('pwm_open');
 
 // int pwm_errno(pwm_t *pwm);
-typedef _dart_pwm_errno = Int32 Function(Pointer<Void> handle);
-typedef _PWMerrno = int Function(Pointer<Void> handle);
-final _nativeErrno = _peripheryLib
-    .lookup<NativeFunction<_dart_pwm_errno>>('dart_pwm_errno')
-    .asFunction<_PWMerrno>();
+final _nativePWMerrno = intVoidM('pwm_errno');
 
 // const char *pwm_errmsg(pwm_t *pwm);
-typedef _dart_pwm_errmsg = Pointer<Utf8> Function(Pointer<Void> handle);
-typedef _PWMerrmsg = Pointer<Utf8> Function(Pointer<Void> handle);
-final _nativeErrmsg = _peripheryLib
-    .lookup<NativeFunction<_dart_pwm_errmsg>>('dart_pwm_errmsg')
-    .asFunction<_PWMerrmsg>();
+final _nativePWMerrnMsg = utf8VoidM('pwm_errmsg');
 
-/// int pwm_enable(pwm_t *pwm);
-typedef _dart_pwm_enable = Int32 Function(Pointer<Void> handle);
-typedef _PWMenable = int Function(Pointer<Void> handle);
-final _nativeEnable = _peripheryLib
-    .lookup<NativeFunction<_dart_pwm_enable>>('dart_pwm_enable')
-    .asFunction<_PWMenable>();
+// int pwm_tostring(pwm_t *led, char *str, size_t len);
+final _nativePWMinfo = intVoidUtf8sizeTM('pwm_tostring');
 
-/// int pwm_disable(pwm_t *pwm)
-typedef _dart_pwm_disable = Int32 Function(Pointer<Void> handle);
-typedef _PWMdisable = int Function(Pointer<Void> handle);
-final _nativeDisable = _peripheryLib
-    .lookup<NativeFunction<_dart_pwm_disable>>('dart_pwm_disable')
-    .asFunction<_PWMdisable>();
+// int pwm_enable(pwm_t *pwm);
+final _nativePWMenable = intVoidM('pwm_enable');
 
-// char *dart_pwm_info(pwm_t *led)
-typedef _dart_pwm_info = Pointer<Utf8> Function(Pointer<Void> handle);
-typedef _PWMinfo = Pointer<Utf8> Function(Pointer<Void> handle);
-final _nativeInfo = _peripheryLib
-    .lookup<NativeFunction<_dart_pwm_info>>('dart_pwm_info')
-    .asFunction<_PWMinfo>();
+// int pwm_disable(pwm_t *pwm);
+final _nativePWMdisable = intVoidM('pwm_disable');
+
+// unsigned int pwm_chip(pwm_t *pwm);
+final _nativePWMchip = intVoidM('pwm_chip');
+
+// unsigned int pwm_channel(pwm_t *pwm);
+final _nativePWMchannel = intVoidM('pwm_chip');
+
+// int pwm_get_period_ns(pwm_t *pwm, uint64_t *period_ns);
+final _nativePWMgetPeriodNs = intVoidUint64PtrM('pwm_get_period_ns');
+
+// int pwm_get_duty_cycle_ns(pwm_t *pwm, uint64_t *duty_cycle_ns);
+final _nativePWMgetDutyCycleNs = intVoidUint64PtrM('pwm_get_duty_cycle_ns');
+
+// int pwm_get_polarity(pwm_t *pwm, pwm_polarity_t *polarity);
+final _nativePWMgetPolarity = intVoidInt32PtrM('pwm_get_polarity');
+
+// int pwm_get_enabled(pwm_t *pwm, bool *enabled);
+final _nativePWMgetEndabled = intVoidInt8PtrM('pwm_get_enabled');
+
+// int pwm_get_period(pwm_t *pwm, double *period);
+final _nativePWMgetPeriod = intVoidDoublePtrM('pwm_get_period');
+
+// int pwm_get_duty_cycle(pwm_t *pwm, double *duty_cycle);
+final _nativePWMgetDutyCycle = intVoidDoublePtrM('pwm_get_duty_cycle');
+
+// int pwm_get_frequency(pwm_t *pwm, double *frequency);
+final _nativePWMgetFrequency = intVoidDoublePtrM('pwm_get_frequency');
+
+// int pwm_set_enabled(pwm_t *pwm, bool enabled);
+final _nativePWMsetEnabled = intVoidBoolM('pwm_set_enabled');
+
+// int pwm_set_period_ns(pwm_t *pwm, uint64_t period_ns);
+final _nativePWMsetPeriodNs = intVoidUint64M('pwm_set_period_ns');
+
+// int pwm_set_duty_cycle_ns(pwm_t *pwm, uint64_t duty_cycle_ns);
+final _nativePWMsetDutyCycleNs = intVoidUint64M('pwm_set_duty_cycle_ns');
+
+// int pwm_set_polarity(pwm_t *pwm, pwm_polarity_t polarity);
+final _nativePWMsetPolarity = intVoidIntM('pwm_set_polarity');
+
+// int pwm_set_period(pwm_t *pwm, double period);
+final _nativePWMsetPeriod = intVoidDoubleM('pwm_set_period');
+
+// int pwm_set_duty_cycle(pwm_t *pwm, double duty_cycle);
+final _nativePWMsetCycle = intVoidDoubleM('pwm_set_duty_cycle');
+
+// int pwm_set_frequency(pwm_t *pwm, double frequency);
+final _nativePWMsetFrequency = intVoidDoubleM('pwm_set_frequency');
+
+const BUFFER_LEN = 256;
 
 int _checkError(int value) {
   if (value < 0) {
@@ -129,7 +121,7 @@ int _checkError(int value) {
 }
 
 String _getErrmsg(Pointer<Void> handle) {
-  return _nativeErrmsg(handle).toDartString();
+  return _nativePWMerrnMsg(handle).toDartString();
 }
 
 /// [PWM] exception
@@ -144,16 +136,7 @@ class PWMexception implements Exception {
   String toString() => errorMsg;
 }
 
-final DynamicLibrary _peripheryLib = getPeripheryLib();
-
-Pointer<Void> _checkHandle(Pointer<Void> handle) {
-  // handle 0 indicates an internal error
-  if (handle.address == 0) {
-    throw PWMexception(
-        PWMerrorCode.PWM_ERROR_OPEN, 'Error opening PWM chip/channel');
-  }
-  return handle;
-}
+// final DynamicLibrary _peripheryLib = getPeripheryLib();
 
 /// PWM wrapper functions for Linux userspace sysfs PWMs.
 ///
@@ -164,14 +147,24 @@ class PWM {
   final Pointer<Void> _pwmHandle;
   bool _invalid = false;
 
-  PWM(this.chip, this.channel)
-      : _pwmHandle = _checkHandle(_nativeOpen(chip, channel));
+  PWM(this.chip, this.channel) : _pwmHandle = _openPWM(chip, channel);
 
   void _checkStatus() {
     if (_invalid) {
       throw PWMexception(PWMerrorCode.PWM_ERROR_CLOSE,
           'PWM interface has the status released.');
     }
+  }
+
+  static Pointer<Void> _openPWM(int chip, int channel) {
+    var _pwmHandle = _nativePWMnew();
+    if (_pwmHandle == nullptr) {
+      return throw PWMexception(
+          PWMerrorCode.PWM_ERROR_OPEN, 'Error opening PWM chip/channel');
+    }
+    _checkError(_nativePWMopen(_pwmHandle, chip, channel));
+
+    return _pwmHandle;
   }
 
   /// Converts the native error code [value] to [PWMerrorCode].
@@ -194,139 +187,147 @@ class PWM {
   void dispose() {
     _checkStatus();
     _invalid = true;
-    _checkError(_nativeDispose(_pwmHandle));
+    _checkError(_nativePWMclose(_pwmHandle));
+    _nativePWMfree(_pwmHandle);
   }
 
   /// Enables the PWM output.
   void enable() {
     _checkStatus();
-    _checkError(_nativeEnable(_pwmHandle));
+    _checkError(_nativePWMenable(_pwmHandle));
   }
 
   /// Disables the PWM output.
   void disable() {
     _checkStatus();
-    _checkError(_nativeDisable(_pwmHandle));
+    _checkError(_nativePWMdisable(_pwmHandle));
   }
 
   /// Returns the libc errno of the last failure that occurred.
   int getErrno() {
     _checkStatus();
-    return _nativeErrno(_pwmHandle);
+    return _nativePWMerrno(_pwmHandle);
   }
 
   /// Returns a string representation of the PWM handle.
   String getPWMinfo() {
     _checkStatus();
-    final ptr = _nativeInfo(_pwmHandle);
-    if (ptr.address == 0) {
-      // throw an exception
-      _checkError(getErrno());
-      return '';
-    }
-    var text = ptr.toDartString();
-    malloc.free(ptr);
-    return text;
-  }
-
-  int _getIntProp(_PWMpropertyEnum propEnum) {
-    _checkStatus();
-    var prop = malloc<PWMproperty>(1);
-    _checkError(_nativeGetProperty(_pwmHandle, propEnum.index, prop));
+    var data = malloc<Int8>(BUFFER_LEN).cast<Utf8>();
     try {
-      return prop.ref.longValue;
+      _checkError(_nativePWMinfo(_pwmHandle, data, BUFFER_LEN));
+      return data.toDartString();
     } finally {
-      malloc.free(prop);
+      malloc.free(data);
     }
   }
 
-  void _setIntProp(_PWMpropertyEnum propEnum, int value) {
+  bool _getBoolValue(intVoidInt8PtrF f) {
     _checkStatus();
-    var prop = malloc<PWMproperty>(1);
+    var data = malloc<Int8>(1);
     try {
-      prop.ref.longValue = value;
-      _checkError(_nativeSetProperty(_pwmHandle, propEnum.index, prop));
+      _checkError(f(_pwmHandle, data));
+      return data[0] != 0;
     } finally {
-      malloc.free(prop);
+      malloc.free(data);
     }
   }
 
-  void _setDoubleProp(_PWMpropertyEnum propEnum, double value) {
+  int _getInt64Value(intVoidUint64PtrF f) {
     _checkStatus();
-    var prop = malloc<PWMproperty>(1);
+    var data = malloc<Uint64>(1);
     try {
-      prop.ref.doubleValue = value;
-      _checkError(_nativeSetProperty(_pwmHandle, propEnum.index, prop));
+      _checkError(f(_pwmHandle, data));
+      return data[0].toInt();
     } finally {
-      malloc.free(prop);
+      malloc.free(data);
     }
   }
 
-  double _getDoubleProp(_PWMpropertyEnum propEnum) {
+  int _getInt32Value(intVoidInt32PtrF f) {
     _checkStatus();
-    var prop = malloc<PWMproperty>(1);
-    _checkError(_nativeGetProperty(_pwmHandle, propEnum.index, prop));
+    var data = malloc<Int32>(1);
     try {
-      return prop.ref.doubleValue;
+      _checkError(f(_pwmHandle, data));
+      return data[0];
     } finally {
-      malloc.free(prop);
+      malloc.free(data);
+    }
+  }
+
+  double _getDoubleValue(intVoidDoublePtrF f) {
+    _checkStatus();
+    var data = malloc<Double>(1);
+    try {
+      _checkError(f(_pwmHandle, data));
+      return data[0];
+    } finally {
+      malloc.free(data);
     }
   }
 
   /// Gets the period in nanoseconds of the PWM.
   int getPeriodNs() {
-    return _getIntProp(_PWMpropertyEnum.PERIOD_NS);
+    return _getInt64Value(_nativePWMgetPeriodNs);
+  }
+
+  // Gets the output state of the PWM.
+  bool getEnabled() {
+    return _getBoolValue(_nativePWMgetEndabled);
   }
 
   /// Sets the period in [nanoseconds] of the PWM.
   void setPeriodNs(int nanoseconds) {
-    _setIntProp(_PWMpropertyEnum.PERIOD_NS, nanoseconds);
+    _checkError(_nativePWMsetPeriodNs(_pwmHandle, nanoseconds));
   }
 
-//
+  /// Sets the output state of the PWM.
+  void setEnabled(bool flag) {
+    _checkError(_nativePWMsetEnabled(_pwmHandle, flag == true ? 1 : 0));
+  }
+
   /// Gets the duty cycle in nanoseconds of the PWM.
   int getDutyCycleNs() {
-    return _getIntProp(_PWMpropertyEnum.DUTY_CYCLE_NS);
+    return _getInt64Value(_nativePWMgetDutyCycleNs);
   }
 
   /// Sets the duty cycle in [nanoseconds] of the PWM.
   void setDutyCycleNs(int nanoseconds) {
-    _setIntProp(_PWMpropertyEnum.DUTY_CYCLE_NS, nanoseconds);
+    _checkError(_nativePWMsetDutyCycleNs(_pwmHandle, nanoseconds));
   }
 
   /// Gets the period in seconds of the PWM.
   double getPeriod() {
-    return _getDoubleProp(_PWMpropertyEnum.PERIOD);
+    return _getDoubleValue(_nativePWMgetPeriod);
   }
 
   /// Sets the period in [seconds] of the PWM.
   void setPeriod(double seconds) {
-    _setDoubleProp(_PWMpropertyEnum.PERIOD, seconds);
+    _checkError(_nativePWMsetPeriod(_pwmHandle, seconds));
   }
 
   /// Gets the duty cycle as a ratio between 0.0 to 1.0 in second of the PWM.
   double getDutyCycle() {
-    return _getDoubleProp(_PWMpropertyEnum.DUTY_CYCLE);
+    return _getDoubleValue(_nativePWMgetDutyCycle);
   }
 
   /// Sets the [dutyCycle] as a ratio between 0.0 to 1.0 in second of the PWM.
   void setDutyCycle(double dutyCycle) {
-    _setDoubleProp(_PWMpropertyEnum.DUTY_CYCLE, dutyCycle);
+    _checkError(_nativePWMsetCycle(_pwmHandle, dutyCycle));
   }
 
   /// Gets the frequency in Hz of the PWM.
   double getFrequency() {
-    return _getDoubleProp(_PWMpropertyEnum.FREQUENCY);
+    return _getDoubleValue(_nativePWMgetFrequency);
   }
 
   /// Sets the [frequency] in Hz of the PWM.
   void setFrequency(double frequency) {
-    _setDoubleProp(_PWMpropertyEnum.FREQUENCY, frequency);
+    _checkError(_nativePWMsetFrequency(_pwmHandle, frequency));
   }
 
   /// Returns the polarity of the PWM.
   Polarity getPolarity() {
-    switch (_getIntProp(_PWMpropertyEnum.POLARITY)) {
+    switch (_getInt32Value(_nativePWMgetPolarity)) {
       case 0:
         return Polarity.PWM_POLARITY_NORMAL;
       case 1:
@@ -338,16 +339,16 @@ class PWM {
 
   /// Sets the output [polarity] of the PWM.
   void setPolarity(Polarity polarity) {
-    _setIntProp(_PWMpropertyEnum.POLARITY, polarity.index);
+    _checkError(_nativePWMsetPolarity(_pwmHandle, polarity.index));
   }
 
   /// Return the chip number of the PWM handle.
   int getChip() {
-    return _getIntProp(_PWMpropertyEnum.CHIP);
+    return _nativePWMchip(_pwmHandle);
   }
 
   /// Returns the channel number of the PWM handle.
   int getChannel() {
-    return _getIntProp(_PWMpropertyEnum.CHANNEL);
+    return _nativePWMchannel(_pwmHandle);
   }
 }

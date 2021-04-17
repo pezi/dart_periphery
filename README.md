@@ -3,7 +3,7 @@
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
 
-[![pub package](https://img.shields.io/badge/pub-v0.8.21--beta-orange)](https://pub.dartlang.org/packages/dart_periphery)
+[![pub package](https://img.shields.io/badge/pub-v0.8.22--beta-orange)](https://pub.dartlang.org/packages/dart_periphery)
 
 ## Introduction
 
@@ -26,7 +26,7 @@ Abstract from the project web site:
 >
 >interface access in userspace Linux. c-periphery simplifies and consolidates the native Linux APIs to these interfaces. c-periphery is useful in embedded Linux environments (including Raspberry Pi, BeagleBone, etc. platforms) for interfacing with external peripherals. c-periphery is re-entrant, has no dependencies outside the standard C library and Linux, compiles into a static library for easy integration with other projects, and is MIT licensed
 
-**dart_periphery** binds the c-periphery library with the help of the [dart:ffi](https://dart.dev/guides/libraries/c-interop) mechanism. A glue library handles the Dart specific parts. Nevertheless, **dart_periphery** tries to be close as possible to the original library. See following [documentation](https://github.com/vsergeev/c-periphery/tree/master/docs). Thanks to **Vanya Sergeev** for his great job!
+**dart_periphery** binds the c-periphery library with the help of the [dart:ffi](https://dart.dev/guides/libraries/c-interop) mechanism. Nevertheless, **dart_periphery** tries to be close as possible to the original library. See following [documentation](https://github.com/vsergeev/c-periphery/tree/master/docs). Thanks to **Vanya Sergeev** for his great job!
 
 ## Why c-periphery?
 
@@ -344,27 +344,50 @@ void main() {
 
 ## Install Dart on Raspian and Armbian
 
-### ARMv7
+1.) Go the home directory
 
 ``` bash
 cd ~
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.12.2/sdk/dartsdk-linux-arm-release.zip
+```
+
+2.) Download the last stable Dart SDK form [archiv](https://dart.dev/tools/sdk/archive) for your CPU architecture/OS.
+
+### ARMv7
+
+``` bash
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.12.4/sdk/dartsdk-linux-arm-release.zip
 unzip dartsdk-linux-arm-release.zip
-sudo mv dart-sdk /opt/
-sudo chmod -R +rx /opt/dart-sdk
 ```
 
 ### ARMv8
 
 ``` bash
-cd ~
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.12.2/sdk/dartsdk-linux-arm64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.12.4/sdk/dartsdk-linux-arm64-release.zip
 unzip dartsdk-linux-arm64-release.zip
+```
+
+### x86
+
+``` bash
+https://storage.googleapis.com/dart-archive/channels/stable/release/2.12.4/sdk/dartsdk-linux-ia32-release.zip
+unzip dartsdk-linux-ia32-release.zip
+```
+
+### x86_64
+
+``` bash
+https://storage.googleapis.com/dart-archive/channels/stable/release/2.12.4/sdk/dartsdk-linux-x64-release.zip
+unzip dartsdk-linux-x64-release.zip
+```
+
+3.) Unpack and install SDK
+
+``` bash
 sudo mv dart-sdk /opt/
 sudo chmod -R +rx /opt/dart-sdk
 ```
 
-add for bash as default
+4.) Add the Dart SDK to the path
 
 ``` bash
 nano ~/.profile
@@ -387,39 +410,28 @@ to apply the changes.
 Test the installion
 
 ``` bash
-root@nanopineo2:~# dart --version
-Dart SDK version: 2.12.2 (stable) (Wed Mar 17 10:30:20 2021 +0100) on "linux_arm64"
+pi@raspberrypi:~ $ dart --version
+Dart SDK version: 2.12.4 (stable) (Thu Apr 15 12:26:53 2021 +0200) on "linux_arm"
 ```
 
 ## Native libraries
 
-Currently **dart_periphery** ships with prebuild native libraries for ARMv7 and ARMv8 in two flavours - static and dynamic linking.
+Currently **dart_periphery** ships with four prebuild native c-periphery libraries for ARMv7/ARMv8/X86/X86_64
 
-* `dart_periphery_32.1.0.0.so` ➔ `/usr/local/lib/libperiphery.so`
-* `dart_periphery_static_32.1.0.0.so` (includes libperiphery.a)
-* `dart_periphery_64.1.0.0.so` ➔ `/usr/local/lib/libperiphery.so`
-* `dart_periphery_static_64.1.0.0.so`  (includes libperiphery.a)
+* libperiphery_arm.so
+* libperiphery_aarch64.so
+* libperiphery_x86.so
+* libperiphery_x86_64.so
 
-These **glue** libraries contain the Dart specific part of the **c-periphery** library. As default **dart_periphery** loads the static linked library.
+Following methods can be used to overwrite the loading of the prebuild library.
 
-Following methods can be used to overwrite the loading of the static linked library.
 But be aware, any of these methods must be called before any **dart_periphery** interface is used!
 
 ``` dart
 useSharedLibray();
 ```
 
-If this method is called, **dart_periphery** loads the shared library. For this case c-periphery must be installed as a shared library. See for [details](https://github.com/vsergeev/c-periphery#shared-library) - section Shared Library.
-
-The glue library, flavour shared, can be rebuild with following command:
-
-``` bash
-pub global activate dart_periphery
-```
-
-``` bash
-pub global run dart_periphery:build_lib
-```
+If this method is called, **dart_periphery** loads the shared library. For this case c-periphery must be installed as a shared library. See for [section Shared Library](https://github.com/vsergeev/c-periphery#shared-library) for details.
 
 To load a custom library call
 
@@ -427,7 +439,7 @@ To load a custom library call
 setCustomLibrary(String absolutePath)
 ```
 
-This method can be helpful in any case of a problem and for a currently not supported platform - e.g x86 based SoC.
+This method can be helpful in any case of a problem and for a currently not supported platform.
 
 For building a custom library please review following information
 
@@ -443,25 +455,17 @@ dart compile exe i2c_example.dart
 call
 
 ``` dart
-void useLocalLibrary([bool staticLib = true])
+void useLocalLibrary()
 ```
 
-to use the static or shared glue library with the correct bitness. The appropriate [library](https://github.com/pezi/dart_periphery/blob/main/lib/src/native) should be in same dirctory as the exe.
+The appropriate [library](https://github.com/pezi/dart_periphery/blob/main/lib/src/native) should be in same dirctory as the exe.
 
 ## flutter-pi
 
-**dart_periphery** works with flutter-pi, a light-weight [Flutter Engine Embedder](https://github.com/ardera/flutter-pi) for Raspberry Pi. For this environment the function
+**dart_periphery** works with flutter-pi, a light-weight [Flutter Engine Embedder](https://github.com/ardera/flutter-pi) for Raspberry Pi. For futter-pi the appropriate library must be copied inside the flutter asset directory.
 
-``` dart
-setCustomLibrary(String absolutePath)
-```
-
-must be called to provide the absolute path of the the appropriate library:
-
-* In most cases the ARMv7 static library [dart_periphery_static_32.1.0.0.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/dart_periphery_static_32.1.0.0.so)
-* ARMv7 shared library [dart_periphery_32.1.0.0.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/dart_periphery_32.1.0.0.so)
-* ARMv8 static library [dart_periphery_static_64.1.0.0.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/dart_periphery_static_64.1.0.0.so)
-* ARMv8 shared library [dart_periphery_64.1.0.0.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/dart_periphery_64.1.0.0.so)
+* In most cases the ARMv7 library: [libperiphery_arm.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm.so)
+* ARMv8 [libperiphery_aarch64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_aarch64.so)
 
 See last section, [native libraries](https://pub.dev/packages/dart_periphery#native-libraries) for details.
 
@@ -483,15 +487,33 @@ See last section, [native libraries](https://pub.dev/packages/dart_periphery#nat
 * [Grove Gesture](https://github.com/pezi/dart_periphery/blob/main/example/i2c_gesture_sensor.dart) can recognize 9 basic gestures.
 * [MPU-6050 Six-Axis](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mpu6050.dart) (Gyro + Accelerometer) sensor.
 * FriendlyARM [BakeBit Set](https://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
-* [Grove Base Hat](https://wiki.seeedstudio.com/Grove_Base_HAT/)/[GrovePi Plus](https://wiki.seeedstudio.com/GrovePi_Plus)
+* [Grove Base Hat](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi/)/[GrovePi Plus](https://wiki.seeedstudio.com/GrovePi_Plus)
 * SSD1306 OLED (in progress)
 
 ## Next steps
 
 * Add GPIO documentation for different SoCs.
-* Migrate the original c-periphery [test suite](https://github.com/vsergeev/c-periphery/tree/master/tests).
-* Improve the build process of the native libraries.
+* Migrate the original c-periphery [test suite](https://github.com/vsergeev/c-periphery/tree/master/tests) (started).
 * Port hardware devices from the [mattjlewis / diozero Java Project](https://github.com/mattjlewis/diozero/tree/master/diozero-core/src/main/java/com/diozero/devices) to **dart_periphery**
+
+## Test matrix
+
+[Test suite](https://github.com/pezi/dart_periphery/tree/main/test)
+
+| Architecture  | GPIO  |GPIO<sub>sysfs</sub>   | I2C   | SPI   | Serial| MMIO  | PWM   | LED   |
+| ------------- |:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|------:|
+| **ARM** ¹     |&#9744;|&#9744;|&#9989;|&#9989;|&#9989;|&#9744;|&#9989;|&#9989;|
+| **AARCH64** ² |&#9744;|&#9744;|&#9989;|&#9989;|&#9989;|&#9744;|&#9989;|&#9989;|
+| **X86** ³     |&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|
+| **X86_64** ³  |&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|
+
+&#9744; missing test | &#9989; test passed | &#10060; test failed
+
+¹ [Raspberry Pi 3 Model B](https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/)
+
+² [NanoPi Neo2](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO2) with a Allwinner H5, Quad-core 64-bit CPU
+
+³ no X86/X86_64 SOC for testing available
 
 ## Help wanted
 
