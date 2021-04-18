@@ -32,11 +32,11 @@ void test_open_config_close(String device) {
   var led = Led(device);
   try {
     // Check properties
-    assert(led.getLedName() == device);
+    passert(led.getLedName() == device);
 
     var max_brightness = led.getMaxBrightness();
     // Check max brightness
-    assert(max_brightness > 0);
+    passert(max_brightness > 0);
 
     try {
       led.setBrightness(max_brightness + 1);
@@ -49,18 +49,18 @@ void test_open_config_close(String device) {
     // Write false, read false, check brightness is zero
     led.write(false);
     sleep(Duration(seconds: 1));
-    assert(led.read() == false);
-    assert(led.getBrightness() == 0);
+    passert(led.read() == false);
+    passert(led.getBrightness() == 0);
 
     // Set brightness to 1, check brightness
     led.setBrightness(1);
     sleep(Duration(seconds: 1));
-    assert(led.getBrightness() >= 1);
+    passert(led.getBrightness() >= 1);
 
     // Set brightness to 0, check brightness
     led.setBrightness(0);
     sleep(Duration(seconds: 1));
-    assert(led.getBrightness() == 0);
+    passert(led.getBrightness() == 0);
   } finally {
     led.dispose();
   }
@@ -75,27 +75,27 @@ void test_interactive(String device) {
 
     print('LED description: ${led.getLedInfo()}');
     print('LED description looks OK? y/n');
-    assert(pressKeyYes());
+    passert(pressKeyYes());
 
     // Turn LED off
     led.write(false);
     print('LED is off? y/n');
-    assert(pressKeyYes());
+    passert(pressKeyYes());
 
     // Turn LED on
     led.write(true);
     print('LED is on? y/n');
-    assert(pressKeyYes());
+    passert(pressKeyYes());
 
     // Turn LED off
     led.write(false);
     print('LED is off? y/n');
-    assert(pressKeyYes());
+    passert(pressKeyYes());
 
     // Turn LED on
     led.write(true);
     print('LED is on? y/n');
-    assert(pressKeyYes());
+    passert(pressKeyYes());
   } finally {
     led.dispose();
   }

@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:io';
+import 'package:stack_trace/stack_trace.dart';
 
 void pressKey() {
   stdin.readLineSync();
@@ -10,4 +11,16 @@ void pressKey() {
 
 bool pressKeyYes() {
   return stdin.readLineSync().toString().toLowerCase().startsWith('y');
+}
+
+void main(List<String> args) {
+  passert(true);
+}
+
+void passert(bool b) {
+  if (!b) {
+    throw AssertionError();
+  }
+  var frame = Frame.caller(1);
+  print('[OK] file: ${frame.uri.path} line: ${frame.line}');
 }

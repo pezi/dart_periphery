@@ -45,7 +45,8 @@ void test_interactive(int i2cNum) {
     try {
       i2c.writeBytes(0x7a, msg);
     } on I2Cexception catch (e) {
-      assert(i2c.getErrno() == ERNO.EREMOTEIO.index);
+      assert(i2c.getErrno() == ERNO.EREMOTEIO.index ||
+          i2c.getErrno() == ERNO.ENXIO.index);
       assert(e.errorCode == I2CerrorCode.I2C_ERROR_TRANSFER);
     }
     print('I2C transfer occurred? y/n');

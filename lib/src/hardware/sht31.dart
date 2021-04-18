@@ -40,7 +40,7 @@ class SHT31excpetion implements Exception {
 
 /// [SHT31] measured data: temperature and humidity sensor.
 class SHT31result {
-  /// temperature °CS
+  /// temperature °C
   final double temperature;
 
   /// relative humidity %

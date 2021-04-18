@@ -337,9 +337,9 @@ class SPI {
   /// Returns a 'List<int>' result buffer.
   List<int> transfer(List<int> data, bool reuseBuffer) {
     // ignore: avoid_init_to_null
-    Pointer<Uint8>? inPtr = null;
+    Pointer<Uint8> inPtr = nullptr;
     // ignore: avoid_init_to_null
-    Pointer<Uint8>? outPtr = null;
+    Pointer<Uint8> outPtr = nullptr;
     var input = malloc<Uint8>(data.length);
     try {
       var index = 0;
@@ -368,10 +368,10 @@ class SPI {
       }
       return result;
     } finally {
-      if (inPtr != null) {
+      if (inPtr != nullptr) {
         malloc.free(inPtr);
       }
-      if (outPtr != null) {
+      if (outPtr != nullptr && !reuseBuffer) {
         malloc.free(outPtr);
       }
     }
@@ -384,8 +384,7 @@ class SPI {
   /// Returns a ' Pointer<Int8>' result buffer. Be aware to malloc.free the low level system memory buffers!
   Pointer<Uint8> transferInt8(Pointer<Uint8> data, bool reuseBuffer, int len) {
     Pointer<Uint8> inPtr;
-    // ignore: avoid_init_to_null
-    Pointer<Uint8>? outPtr = null;
+    Pointer<Uint8> outPtr = nullptr;
     if (reuseBuffer) {
       inPtr = outPtr = data;
     } else {

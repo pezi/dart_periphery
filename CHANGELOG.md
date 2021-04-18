@@ -1,5 +1,10 @@
+## 0.8.23-beta 2021-04-18
+
+* Fix SPI.transfer() crash - double call of native free
+
 ## 0.8.22-beta 2021-04-17
 
+* Switch to Dart 2.12.4
 * Remove any glue C library - access the c-periphery library only with FFI.
 * Extended flutter-pi support.
 * Port test scripts for PWM, Serial, I2C, SPI and Led - fix errors

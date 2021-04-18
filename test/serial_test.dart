@@ -11,48 +11,48 @@ import 'dart:io';
 
 void test_arguments() {
   // Invalid data bits (4 and 9)
-  // passert(serial_open_advanced(serial, device, 115200, 4, PARITY_NONE, 1, false, false) == SERIAL_ERROR_ARG);
-  // passert(serial_open_advanced(serial, device, 115200, 9, PARITY_NONE, 1, false, false) == SERIAL_ERROR_ARG);
+  // ppassert(serial_open_advanced(serial, device, 115200, 4, PARITY_NONE, 1, false, false) == SERIAL_ERROR_ARG);
+  // ppassert(serial_open_advanced(serial, device, 115200, 9, PARITY_NONE, 1, false, false) == SERIAL_ERROR_ARG);
   // Invalid parity
-  // passert(serial_open_advanced(serial, device, 115200, 8, PARITY_EVEN+1, 1, false, false) == SERIAL_ERROR_ARG);
+  // ppassert(serial_open_advanced(serial, device, 115200, 8, PARITY_EVEN+1, 1, false, false) == SERIAL_ERROR_ARG);
   //  Invalid stopbits
-  // passert(serial_open_advanced(serial, device, 115200, 8, PARITY_NONE, 0, false, false) == SERIAL_ERROR_ARG);
-  // passert(serial_open_advanced(serial, device, 115200, 8, PARITY_NONE, 3, false, false) == SERIAL_ERROR_ARG);
+  // ppassert(serial_open_advanced(serial, device, 115200, 8, PARITY_NONE, 0, false, false) == SERIAL_ERROR_ARG);
+  // ppassert(serial_open_advanced(serial, device, 115200, 8, PARITY_NONE, 3, false, false) == SERIAL_ERROR_ARG);
   // Due the usage of enums this invald parameter can not be mapped
 }
 
 void test_open_config_close(String device) {
   var serial = Serial(device, Baudrate.B115200);
   try {
-    assert(serial.getBaudrate() == Baudrate.B115200);
-    assert(serial.getDataBits() == DataBits.DB8);
-    assert(serial.getParity() == Parity.PARITY_NONE);
-    assert(serial.getStopBits() == StopBits.SB1);
-    assert(serial.getXONXOFF() == false);
-    assert(serial.getRTSCTS() == false);
-    assert(serial.getVMIN() == 0);
-    assert(serial.getVTIME() == 0);
+    passert(serial.getBaudrate() == Baudrate.B115200);
+    passert(serial.getDataBits() == DataBits.DB8);
+    passert(serial.getParity() == Parity.PARITY_NONE);
+    passert(serial.getStopBits() == StopBits.SB1);
+    passert(serial.getXONXOFF() == false);
+    passert(serial.getRTSCTS() == false);
+    passert(serial.getVMIN() == 0);
+    passert(serial.getVTIME() == 0);
 
     // Change some stuff around
     for (var b in [Baudrate.B4800, Baudrate.B9600]) {
       serial.setBaudrate(b);
-      assert(serial.getBaudrate() == b);
+      passert(serial.getBaudrate() == b);
     }
     serial.setDataBits(DataBits.DB7);
-    assert(serial.getDataBits() == DataBits.DB7);
+    passert(serial.getDataBits() == DataBits.DB7);
     serial.setParity(Parity.PARITY_ODD);
-    assert(serial.getParity() == Parity.PARITY_ODD);
+    passert(serial.getParity() == Parity.PARITY_ODD);
     serial.setStopBits(StopBits.SB2);
-    assert(serial.getStopBits() == StopBits.SB2);
+    passert(serial.getStopBits() == StopBits.SB2);
     serial.setXONXOFF(true);
-    assert(serial.getXONXOFF() == true);
+    passert(serial.getXONXOFF() == true);
     // Test serial port may not support rtscts
     // serial.setRTSCTS(true);
-    // assert(serial.getRTSCTS() == true);
+    // passert(serial.getRTSCTS() == true);
     serial.setVMIN(50);
-    assert(serial.getVMIN() == 50);
+    passert(serial.getVMIN() == 50);
     serial.setVTIME(15.3);
-    assert((serial.getVTIME() - 15.3).abs() < 0.1);
+    passert((serial.getVTIME() - 15.3).abs() < 0.1);
   } finally {
     serial.dispose();
   }
@@ -64,57 +64,57 @@ const String loreIpsum =
 void test_loopback(String device) {
   var serial = Serial(device, Baudrate.B115200);
   try {
-    assert(serial.writeString(loreIpsum) == loreIpsum.length);
+    passert(serial.writeString(loreIpsum) == loreIpsum.length);
     serial.flush();
-    assert(serial.read(loreIpsum.length, -1).count == loreIpsum.length);
+    passert(serial.read(loreIpsum.length, -1).count == loreIpsum.length);
 
     // Test poll/write/flush/poll/input waiting/read
-    assert(serial.poll(500) == false);
-    assert(serial.writeString(loreIpsum) == loreIpsum.length);
+    passert(serial.poll(500) == false);
+    passert(serial.writeString(loreIpsum) == loreIpsum.length);
     serial.flush();
-    assert(serial.poll(500) == true);
+    passert(serial.poll(500) == true);
     sleep(Duration(microseconds: 500000));
-    assert(serial.getInputWaiting() == loreIpsum.length);
-    assert(serial.read(loreIpsum.length, -1).count == loreIpsum.length);
+    passert(serial.getInputWaiting() == loreIpsum.length);
+    passert(serial.read(loreIpsum.length, -1).count == loreIpsum.length);
 
     // Test non-blocking poll
-    assert(serial.poll(0) == false);
+    passert(serial.poll(0) == false);
 
     // Test a very large read-write (likely to exceed internal buffer size (~4096))
     var buf = List<int>.filled(4096 * 3, 0xAA);
-    assert(serial.write(buf) == buf.length);
+    passert(serial.write(buf) == buf.length);
     serial.flush();
-    assert(serial.read(buf.length, -1).count == buf.length);
+    passert(serial.read(buf.length, -1).count == buf.length);
     serial.flush();
 
     // Test read timeout
     var start = DateTime.now().millisecondsSinceEpoch;
     serial.read(buf.length, 2000);
     var stop = DateTime.now().millisecondsSinceEpoch;
-    assert(((stop - start) / 1000.0) > 1);
+    passert(((stop - start) / 1000.0) > 1);
 
     // Test non-blocking read
     start = DateTime.now().millisecondsSinceEpoch;
     serial.read(buf.length, 0);
     stop = DateTime.now().millisecondsSinceEpoch;
     // Assuming we weren't context switched out for a second and weren't on  thin time boundary ;)
-    assert(((stop - start) / 1000.0) == 0);
+    passert(((stop - start) / 1000.0) == 0);
 
     //  Test blocking read with vmin=5 termios timeout
     serial.setVMIN(5);
-    assert(serial.writeString(loreIpsum.substring(0, 5)) == 5);
+    passert(serial.writeString(loreIpsum.substring(0, 5)) == 5);
     serial.flush();
-    assert(serial.read(5, -1).count == 5);
+    passert(serial.read(5, -1).count == 5);
 
     // Test blocking read with vmin=5, vtime=2 termios timeout
     serial.setVTIME(2);
-    assert(serial.writeString(loreIpsum.substring(0, 3)) == 3);
+    passert(serial.writeString(loreIpsum.substring(0, 3)) == 3);
     serial.flush();
     start = DateTime.now().millisecondsSinceEpoch;
-    assert(serial.read(3, -1).count == 3);
+    passert(serial.read(3, -1).count == 3);
     stop = DateTime.now().millisecondsSinceEpoch;
 
-//    assert(((stop - start) / 1000.0) > 1);
+//    passert(((stop - start) / 1000.0) > 1);
   } finally {
     serial.dispose();
   }

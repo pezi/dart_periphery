@@ -344,7 +344,7 @@ void main() {
 
 ## Install Dart on Raspian and Armbian
 
-1.) Go the home directory
+1.) Go to the home directory
 
 ``` bash
 cd ~
@@ -418,10 +418,10 @@ Dart SDK version: 2.12.4 (stable) (Thu Apr 15 12:26:53 2021 +0200) on "linux_arm
 
 Currently **dart_periphery** ships with four prebuild native c-periphery libraries for ARMv7/ARMv8/X86/X86_64
 
-* libperiphery_arm.so
-* libperiphery_aarch64.so
-* libperiphery_x86.so
-* libperiphery_x86_64.so
+* [libperiphery_arm.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm.so)
+* [libperiphery_aarch64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_aarch64.so)
+* [libperiphery_x86.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86.so)
+* [libperiphery_x86_64.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86_64.so)
 
 Following methods can be used to overwrite the loading of the prebuild library.
 
@@ -440,11 +440,6 @@ setCustomLibrary(String absolutePath)
 ```
 
 This method can be helpful in any case of a problem and for a currently not supported platform.
-
-For building a custom library please review following information
-
-* dart_periphery [make file](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/build_all.sh)
-* build [c-periphery](https://github.com/vsergeev/c-periphery#building-c-periphery-with-cmake) - section Static or Shared Library.
 
 For a dart native binary, which can be deployed
 

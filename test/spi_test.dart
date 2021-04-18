@@ -12,8 +12,8 @@ import 'package:collection/collection.dart';
 
 void test_arguments(int bus, int chip) {
   // Invalid mode
-  // passert(spi_open(spi, device, 4, 1e6) == SPI_ERROR_ARG);
-  // passert(spi_open_advanced(spi, device, 0, 1e6, LSB_FIRST+1, 8, 0) == SPI_ERROR_ARG);
+  // ppassert(spi_open(spi, device, 4, 1e6) == SPI_ERROR_ARG);
+  // ppassert(spi_open_advanced(spi, device, 0, 1e6, LSB_FIRST+1, 8, 0) == SPI_ERROR_ARG);
   //
   // Due the usage of enums this invald parameter can not be mapped
 }
@@ -21,22 +21,22 @@ void test_arguments(int bus, int chip) {
 void test_open_config_close(int bus, int chip) {
   var spi = SPI(bus, chip, SPImode.MODE0, 100000);
   try {
-    assert(spi.bitOrder == BitOrder.MSB_FIRST);
-    assert(spi.bitsPerWord == 8);
+    passert(spi.bitOrder == BitOrder.MSB_FIRST);
+    passert(spi.bitsPerWord == 8);
 
     // Not going to try different bit order or bits per word, because not all
     //  SPI controllers support them
 
     for (var mode in SPImode.values) {
       spi.setSPImode(mode);
-      assert(spi.getSPImode() == mode);
+      passert(spi.getSPImode() == mode);
     }
     spi.setSPImode(SPImode.MODE0);
 
     // Try 100KHz, 500KHz, 1MHz
     for (var f in [100e3, 500e3, 1e6]) {
       spi.setSPImaxSpeed(f.toInt());
-      assert(spi.getSPImaxSpeed() == f.toInt());
+      passert(spi.getSPImaxSpeed() == f.toInt());
     }
   } finally {
     spi.dispose();
@@ -48,10 +48,7 @@ void test_loopback(int bus, int chip) {
   try {
     Function eq = const ListEquality().equals;
     var data = <int>[for (int i = 0; i < 32; ++i) i];
-    assert(eq(spi.transfer(data, false), data) == true);
-    spi.transfer(data, true);
-    data = [for (int i = 0; i < 32; ++i) i];
-    spi.transfer(data, true);
+    passert(eq(spi.transfer(data, false), data) == true);
   } finally {
     spi.dispose();
   }

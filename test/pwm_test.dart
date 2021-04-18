@@ -91,8 +91,8 @@ void test_open_config_close(int chip, int channel) {
   var pwm = PWM(chip, channel);
   try {
     // Check properties
-    assert(pwm.getChip() == chip);
-    assert(pwm.getChannel() == channel);
+    passert(pwm.getChip() == chip);
+    passert(pwm.getChannel() == channel);
 
     // Initialize period and duty cycle
     pwm.setPeriod(5e-3);
@@ -100,79 +100,79 @@ void test_open_config_close(int chip, int channel) {
 
     // Set period, check period, check period_ns, check frequency
     pwm.setPeriod(1e-3);
-    assert(fabs(pwm.getPeriod() - 1e-3) < 1e-4);
-    assert(fabs(pwm.getPeriodNs() - 1000000.0) < 1e-5);
-    assert(fabs(pwm.getFrequency() - 1000) < 100);
+    passert(fabs(pwm.getPeriod() - 1e-3) < 1e-4);
+    passert(fabs(pwm.getPeriodNs() - 1000000.0) < 1e-5);
+    passert(fabs(pwm.getFrequency() - 1000) < 100);
     pwm.setPeriod(5e-4);
-    assert(fabs(pwm.getPeriod() - 5e-4) < 1e-5);
-    assert(fabs(pwm.getPeriodNs() - 500000.0) < 1e-4);
-    assert(fabs(pwm.getFrequency() - 2000) < 100);
+    passert(fabs(pwm.getPeriod() - 5e-4) < 1e-5);
+    passert(fabs(pwm.getPeriodNs() - 500000.0) < 1e-4);
+    passert(fabs(pwm.getFrequency() - 2000) < 100);
 
     // Set frequency, check frequency, check period, check period_ns
     pwm.setFrequency(1000);
-    assert(fabs(pwm.getFrequency() - 1000) < 100);
-    assert(fabs(pwm.getPeriod() - 1e-3) < 1e-4);
-    assert(fabs(pwm.getPeriodNs() - 1000000.0) < 1e5);
+    passert(fabs(pwm.getFrequency() - 1000) < 100);
+    passert(fabs(pwm.getPeriod() - 1e-3) < 1e-4);
+    passert(fabs(pwm.getPeriodNs() - 1000000.0) < 1e5);
 
     pwm.setFrequency(2000);
-    assert(fabs(pwm.getFrequency() - 2000) < 100);
-    assert(fabs(pwm.getPeriod() - 5e-4) < 1e-5);
-    assert(fabs(pwm.getPeriodNs() - 500000) < 1e4);
+    passert(fabs(pwm.getFrequency() - 2000) < 100);
+    passert(fabs(pwm.getPeriod() - 5e-4) < 1e-5);
+    passert(fabs(pwm.getPeriodNs() - 500000) < 1e4);
 
     // Set period_ns, check period_ns, check period, check frequency
     pwm.setPeriodNs(1000000);
-    assert(fabs(pwm.getPeriodNs() - 1000000) < 1e5);
-    assert(fabs(pwm.getPeriod() - 1e-3) < 1e-4);
-    assert(fabs(pwm.getFrequency() - 1000) < 100);
+    passert(fabs(pwm.getPeriodNs() - 1000000) < 1e5);
+    passert(fabs(pwm.getPeriod() - 1e-3) < 1e-4);
+    passert(fabs(pwm.getFrequency() - 1000) < 100);
 
     pwm.setPeriodNs(500000);
-    assert(fabs(pwm.getPeriodNs() - 500000) < 1e4);
-    assert(fabs(pwm.getPeriod() - 5e-4) < 1e-5);
-    assert(fabs(pwm.getFrequency() - 2000) < 100);
+    passert(fabs(pwm.getPeriodNs() - 500000) < 1e4);
+    passert(fabs(pwm.getPeriod() - 5e-4) < 1e-5);
+    passert(fabs(pwm.getFrequency() - 2000) < 100);
 
     pwm.setPeriodNs(1000000);
 
     // Set duty cycle, check duty cycle, check duty_cycle_ns
     pwm.setDutyCycle(0.25);
-    assert(fabs(pwm.getDutyCycle() - 0.25) < 1e-3);
-    assert(fabs(pwm.getDutyCycleNs() - 250000) < 1e4);
+    passert(fabs(pwm.getDutyCycle() - 0.25) < 1e-3);
+    passert(fabs(pwm.getDutyCycleNs() - 250000) < 1e4);
 
     pwm.setDutyCycle(0.50);
-    assert(fabs(pwm.getDutyCycle() - 0.50) < 1e-3);
-    assert(fabs(pwm.getDutyCycleNs() - 500000) < 1e4);
+    passert(fabs(pwm.getDutyCycle() - 0.50) < 1e-3);
+    passert(fabs(pwm.getDutyCycleNs() - 500000) < 1e4);
 
     pwm.setDutyCycle(0.75);
-    assert(fabs(pwm.getDutyCycle() - 0.75) < 1e-3);
-    assert(fabs(pwm.getDutyCycleNs() - 750000) < 1e4);
+    passert(fabs(pwm.getDutyCycle() - 0.75) < 1e-3);
+    passert(fabs(pwm.getDutyCycleNs() - 750000) < 1e4);
 
     // Set duty_cycle_ns, check duty_cycle_ns, check duty_cycle
     pwm.setDutyCycleNs(250000);
-    assert(fabs(pwm.getDutyCycleNs() - 250000) < 1e4);
-    assert(fabs(pwm.getDutyCycle() - 0.25) < 1e-3);
+    passert(fabs(pwm.getDutyCycleNs() - 250000) < 1e4);
+    passert(fabs(pwm.getDutyCycle() - 0.25) < 1e-3);
 
     pwm.setDutyCycleNs(500000);
-    assert(fabs(pwm.getDutyCycleNs() - 500000) < 1e4);
-    assert(fabs(pwm.getDutyCycle() - 0.50) < 1e-3);
+    passert(fabs(pwm.getDutyCycleNs() - 500000) < 1e4);
+    passert(fabs(pwm.getDutyCycle() - 0.50) < 1e-3);
 
     pwm.setDutyCycleNs(750000);
-    assert(fabs(pwm.getDutyCycleNs() - 750000) < 1e4);
-    assert(fabs(pwm.getDutyCycle() - 0.75) < 1e-3);
+    passert(fabs(pwm.getDutyCycleNs() - 750000) < 1e4);
+    passert(fabs(pwm.getDutyCycle() - 0.75) < 1e-3);
 
     // Set polarity, check polarity
     pwm.setPolarity(Polarity.PWM_POLARITY_NORMAL);
-    assert(pwm.getPolarity() == Polarity.PWM_POLARITY_NORMAL);
+    passert(pwm.getPolarity() == Polarity.PWM_POLARITY_NORMAL);
 
     pwm.setPolarity(Polarity.PWM_POLARITY_INVERSED);
-    assert(pwm.getPolarity() == Polarity.PWM_POLARITY_INVERSED);
+    passert(pwm.getPolarity() == Polarity.PWM_POLARITY_INVERSED);
 
     // Set enabled, check enabled
     pwm.setEnabled(true);
-    assert(pwm.getEnabled() == true);
+    passert(pwm.getEnabled() == true);
 
     pwm.setEnabled(false);
-    assert(pwm.getEnabled() == false);
+    passert(pwm.getEnabled() == false);
 
-    // assert(pwm.setPolarity(pwm, 123) == PWM_ERROR_ARG);
+    // passert(pwm.setPolarity(pwm, 123) == PWM_ERROR_ARG);
     // can not mapped
 
     pwm.setPeriodNs(1000000);
