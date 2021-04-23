@@ -3,7 +3,7 @@
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
 
-[![pub package](https://img.shields.io/badge/pub-v0.8.22--beta-orange)](https://pub.dartlang.org/packages/dart_periphery)
+[![pub package](https://img.shields.io/badge/pub-v0.8.24--beta-orange)](https://pub.dartlang.org/packages/dart_periphery)
 
 ## Introduction
 
@@ -467,10 +467,10 @@ See last section, [native libraries](https://pub.dev/packages/dart_periphery#nat
 ## Tested SoC hardware
 
 * [Raspberry Pi 3 Model B](https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/), OS: Raspian
-* [NanoPi](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO) with a Allwinner H3, Quad-core 32-bit CPU, OS: [Armbian](https://www.armbian.com/)
-* [NanoPi M1](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_M1) with a Allwinner H3, Quad-core 32-bit CPU: OS [Armbian](https://www.armbian.com/)
-* [NanoPi Neo2](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO2) with a Allwinner H5, Quad-core 64-bit CPU, OS: [Armbian](https://www.armbian.com/)
-* [Banana Pi BPI-M1](https://en.wikipedia.org/wiki/Banana_Pi#Banana_Pi_BPI-M1) with a Allwinner A20 Dual-core, OS: [Armbian](https://www.armbian.com/)
+* [NanoPi](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO) with a Allwinner H3, Quad-core 32-bit CPU, OS: [Armbian](https://www.armbian.com/nanopi-neo-core-2-lts/)
+* [NanoPi M1](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_M1) with a Allwinner H3, Quad-core 32-bit CPU: OS [Armbian](https://www.armbian.com/nanopi-m1/)
+* [NanoPi Neo2](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO2) with a Allwinner H5, Quad-core 64-bit CPU, OS: [Armbian](https://www.armbian.com/nanopi-neo-2/)
+* [Banana Pi BPI-M1](https://en.wikipedia.org/wiki/Banana_Pi#Banana_Pi_BPI-M1) with a Allwinner A20 Dual-core, OS: [Armbian](https://www.armbian.com/bananapi/)
 
 ## Supported devices (sensors, actuators, expansion hats and displays)
 
@@ -497,8 +497,8 @@ See last section, [native libraries](https://pub.dev/packages/dart_periphery#nat
 
 | Architecture  | GPIO  |GPIO<sub>sysfs</sub>   | I2C   | SPI   | Serial| MMIO  | PWM   | LED   |
 | ------------- |:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|------:|
-| **ARM** ¹     |&#9744;|&#9744;|&#9989;|&#9989;|&#9989;|&#9744;|&#9989;|&#9989;|
-| **AARCH64** ² |&#9744;|&#9744;|&#9989;|&#9989;|&#9989;|&#9744;|&#9989;|&#9989;|
+| **ARM** ¹     |&#9989;|&#9989;|&#9989;|&#9989;|&#9989;|&#9744;|&#9989;|&#9989;|
+| **AARCH64** ² |&#10060;|&#9989;|&#9989;|&#9989;|&#9989;|&#9744;|&#9989;|&#9989;|
 | **X86** ³     |&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|
 | **X86_64** ³  |&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|
 

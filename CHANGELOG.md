@@ -1,3 +1,8 @@
+## 0.8.24-beta 2021-04-23
+
+* Port test scripts for GPIO and GPIO (sysfs) - fix errors
+* Add isolate support for GPIO
+
 ## 0.8.23-beta 2021-04-18
 
 * Fix SPI.transfer() crash - double call of native free

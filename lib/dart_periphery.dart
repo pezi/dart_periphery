@@ -94,4 +94,4 @@ export 'src/hardware/bme680.dart'
         FilterSize,
         HeaterProfile,
         SENSOR_READ_RETRY_COUNTER;
-export 'src/errno.dart' show ERNO, Errno, ErrnoNotFound;
+export 'src/errno.dart' show ERRNO, Errno, ErrnoNotFound;

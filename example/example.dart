@@ -6,7 +6,7 @@ import 'package:dart_periphery/dart_periphery.dart';
 import 'dart:io';
 
 void main() {
-  var config = GPIOconfig();
+  var config = GPIOconfig.defaultValues();
   config.direction = GPIOdirection.GPIO_DIR_OUT;
   print('Native c-periphery Version :  ${getCperipheryVersion()}');
   print('GPIO test');

@@ -11,6 +11,7 @@ import 'dart:ffi';
 import 'library.dart';
 import 'package:ffi/ffi.dart';
 import 'signature.dart';
+import 'dart:convert';
 
 /// Result codes of the [GPIO.poll].
 enum GPIOpolling { SUCCESS, TIMEOUT }
@@ -184,7 +185,9 @@ class GPIOconfig {
   bool inverted;
   // GPIO name
   String label;
-  GPIOconfig()
+  GPIOconfig(this.direction, this.edge, this.bias, this.drive, this.inverted,
+      this.label);
+  GPIOconfig.defaultValues()
       : direction = GPIOdirection.GPIO_DIR_IN,
         edge = GPIOedge.GPIO_EDGE_NONE,
         bias = GPIObias.GPIO_BIAS_DEFAULT,
@@ -355,7 +358,7 @@ typedef _gpio_multiple_poll = Int32 Function(Pointer<Pointer<Void>> gpios,
 typedef _GPIOmultiplePoll = int Function(
     Pointer<Pointer<Void>> gpios, int count, int timeoutMillis, Pointer<Int8>);
 final _nativeGPIOmultiplePoll = _peripheryLib
-    .lookup<NativeFunction<_gpio_multiple_poll>>('gpio_multiple_poll')
+    .lookup<NativeFunction<_gpio_multiple_poll>>('gpio_poll_multiple')
     .asFunction<_GPIOmultiplePoll>();
 
 String _getErrmsg(Pointer<Void> handle) {
@@ -371,6 +374,15 @@ int _checkError(int value) {
         GPIO.getGPIOerrorCode(value), GPIO.getGPIOerrorCode(value).toString());
   }
   return value;
+}
+
+final Map<String, dynamic> _map = {};
+
+Map<String, dynamic> _jsonMap(String json) {
+  if (_map.isEmpty) {
+    _map.addAll(jsonDecode(json) as Map<String, dynamic>);
+  }
+  return _map;
 }
 
 /// GPIO wrapper functions for Linux userspace character device gpio-cdev and sysfs GPIOs.
@@ -399,6 +411,11 @@ class GPIO {
   final String name;
   final Pointer<Void> _gpioHandle;
   bool _invalid = false;
+
+  /// Conveverts an [GPIO] to a JSON string. See constructor [isolate] for detials.
+  String toJson() {
+    return '{"path":"$path","chip":$chip,"line":$line,"direction":${direction.index},"name":"$name","handle":${_gpioHandle.address}}';
+  }
 
   /// Sets an alternative [chipBasePath], default value is '/dev/gpiochip'
   static void setBaseGPIOpath(String chipBasePath) {
@@ -525,6 +542,17 @@ class GPIO {
         name = '',
         _gpioHandle = _openSysfsGPIO(line, direction);
 
+  /// Duplicates an existing [GPIO] from a JSON string. This special constustor
+  /// is used to transfer an existing [GPIO] to an ohter isolate.
+  GPIO.isoloate(String json)
+      : chip = _jsonMap(json)['chip'] as int,
+        line = _jsonMap(json)['line'] as int,
+        name = _jsonMap(json)['name'] as String,
+        path = _jsonMap(json)['path'] as String,
+        direction = GPIOdirection.values[_jsonMap(json)['direction'] as int],
+        _gpioHandle =
+            Pointer<Void>.fromAddress(_jsonMap(json)['handle'] as int);
+
   static Pointer<Void> _openSysfsGPIO(int line, GPIOdirection direction) {
     var _gpioHandle = _nativeGPIOnew();
     if (_gpioHandle == nullptr) {
@@ -590,7 +618,7 @@ class GPIO {
 
   /// Reads the edge event that occurred with the GPIO.
   /// This method is intended for use with character device GPIOs and is unsupported by sysfs GPIOs.
-  GPIOreadEvent readEvent(int timeoutMillis) {
+  GPIOreadEvent readEvent() {
     _checkStatus();
     var edge = malloc<Int32>(1);
     var time = malloc<Uint64>(1);
@@ -654,7 +682,7 @@ class GPIO {
   }
 
   /// Returns if the GPIO line is inverted,
-  bool isInverted() {
+  bool getGPIOinverted() {
     return _getBoolValue(_nativeGPIOgetInverted);
   }
 
@@ -683,7 +711,7 @@ class GPIO {
   }
 
   /// Inverts the GPIO line.
-  void setInverted(bool inverted) {
+  void setGPIOinverted(bool inverted) {
     _checkStatus();
     _checkError(_nativeGPIOsetInverted(_gpioHandle, inverted == true ? 1 : 0));
   }
