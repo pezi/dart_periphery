@@ -18,4 +18,4 @@ String getCperipheryVersion() {
   return _nativeVersion().toDartString();
 }
 
-const String DART_PERIPHERY_VERSION = '0.8.24-beta';
+const String DART_PERIPHERY_VERSION = '0.8.25-RC';

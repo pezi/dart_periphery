@@ -1,3 +1,7 @@
+## 0.8.25-RC 2021-04-26
+
+* Add isolate support for SPI, I2C and Serial.
+
 ## 0.8.24-beta 2021-04-23
 
 * Port test scripts for GPIO and GPIO (sysfs) - fix errors

@@ -10,7 +10,7 @@ import 'util.dart';
 import 'dart:io';
 
 void test_arguments() {
-  /* No real argument validation needed in the i2c wrapper */
+  // No real argument validation needed in the i2c wrapper
 }
 
 void test_open_config_close(int i2cNum) {
@@ -22,6 +22,12 @@ void test_open_config_close(int i2cNum) {
     }
   }
   var validBus = I2C(i2cNum);
+  // isolat test
+  var isolate = I2C.isolate(validBus.toJson());
+  passert(validBus.busNum == isolate.busNum);
+  passert(validBus.path == isolate.path);
+  passert(validBus.getHandle() == isolate.getHandle());
+
   validBus.dispose();
 }
 

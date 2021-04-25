@@ -21,6 +21,14 @@ void test_open_config_close(int pinInput, int pinOutput) {
   }
   var gpio = GPIO(pinOutput, GPIOdirection.GPIO_DIR_IN);
   try {
+    // isolate test
+    var isolate = GPIO.isolate(gpio.toJson());
+    passert(gpio.chip == isolate.chip);
+    passert(gpio.line == isolate.line);
+    passert(gpio.direction == isolate.direction);
+    passert(gpio.path == isolate.path);
+    passert(gpio.getHandle() == isolate.getHandle());
+
     // Check properties
     passert(gpio.getLine() == gpio.line);
     passert(gpio.getGPIOfd() > 0);
@@ -134,7 +142,7 @@ void isolate(SendPort sendPort) async {
   await for (var msg in port) {
     var replyTo = msg[0] as SendPort;
     var json = msg[1] as String;
-    var gpio = GPIO.isoloate(json);
+    var gpio = GPIO.isolate(json);
     replyTo.send('start polling');
     var result = gpio.poll(1000);
     replyTo.send(result.index);

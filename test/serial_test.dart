@@ -24,6 +24,16 @@ void test_arguments() {
 void test_open_config_close(String device) {
   var serial = Serial(device, Baudrate.B115200);
   try {
+    // isolate test
+    var isolate = Serial.isolate(serial.toJson());
+    passert(serial.path == isolate.path);
+    passert(serial.rtsct == isolate.rtsct);
+    passert(serial.baudrate == isolate.baudrate);
+    passert(serial.stopbits == isolate.stopbits);
+    passert(serial.databits == isolate.databits);
+    passert(serial.xonxoff == isolate.xonxoff);
+    passert(serial.getHandle() == isolate.getHandle());
+
     passert(serial.getBaudrate() == Baudrate.B115200);
     passert(serial.getDataBits() == DataBits.DB8);
     passert(serial.getParity() == Parity.PARITY_NONE);

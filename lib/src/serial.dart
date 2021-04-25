@@ -296,6 +296,15 @@ int _checkError(int value) {
   return value;
 }
 
+final Map<String, dynamic> _map = {};
+
+Map<String, dynamic> _jsonMap(String json) {
+  if (_map.isEmpty) {
+    _map.addAll(jsonDecode(json) as Map<String, dynamic>);
+  }
+  return _map;
+}
+
 /// Serial wrapper functions for Linux userspace termios tty devices.
 ///
 /// c-periphery [Serial](https://github.com/vsergeev/c-periphery/blob/master/docs/serial.md) documentation.
@@ -309,6 +318,11 @@ class Serial {
   final bool rtsct;
   final Pointer<Void> _serialHandle;
   bool _invalid = false;
+
+  /// Converts a [Serial] to a JSON string. See constructor [isolate] for detials.
+  String toJson() {
+    return '{"path":"$path","baudrate":${baudrate.index},"databits":${databits.index},"parity":${parity.index},"stopbits":${stopbits.index},"xonxoff":$xonxoff,"rtsct":$rtsct,"handle":${_serialHandle.address}}';
+  }
 
   void _checkStatus() {
     if (_invalid) {
@@ -381,6 +395,19 @@ class Serial {
       this.stopbits, this.xonxoff, this.rtsct)
       : _serialHandle = _openSerialAdvanced(
             path, baudrate, databits, parity, stopbits, xonxoff, rtsct);
+
+  /// Duplicates an existing [Serial] from a JSON string. This special constructor
+  /// is used to transfer an existing [GPIO] to an other isolate.
+  Serial.isolate(String json)
+      : path = _jsonMap(json)['path'] as String,
+        baudrate = Baudrate.values[_jsonMap(json)['baudrate'] as int],
+        databits = DataBits.values[_jsonMap(json)['databits'] as int],
+        stopbits = StopBits.values[_jsonMap(json)['stopbits'] as int],
+        parity = Parity.values[_jsonMap(json)['parity'] as int],
+        rtsct = _jsonMap(json)['rtsct'] as bool,
+        xonxoff = _jsonMap(json)['xonxoff'] as bool,
+        _serialHandle =
+            Pointer<Void>.fromAddress(_jsonMap(json)['handle'] as int);
 
   static Pointer<Void> _openSerialAdvanced(
       String path,
@@ -525,6 +552,11 @@ class Serial {
     _invalid = true;
     _checkError(_nativeSerialClose(_serialHandle));
     _nativeSerialFree(_serialHandle);
+  }
+
+  /// Returns the address of the internal handle.
+  int getHandle() {
+    return _serialHandle.address;
   }
 
   /// Returns the baudrate.

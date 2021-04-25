@@ -3,7 +3,7 @@
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
 
-[![pub package](https://img.shields.io/badge/pub-v0.8.24--beta-orange)](https://pub.dartlang.org/packages/dart_periphery)
+[![pub package](https://img.shields.io/badge/pub-v0.8.25--RC-orange)](https://pub.dartlang.org/packages/dart_periphery)
 
 ## Introduction
 
@@ -488,27 +488,31 @@ See last section, [native libraries](https://pub.dev/packages/dart_periphery#nat
 ## Next steps
 
 * Add GPIO documentation for different SoCs.
-* Migrate the original c-periphery [test suite](https://github.com/vsergeev/c-periphery/tree/master/tests) (started).
 * Port hardware devices from the [mattjlewis / diozero Java Project](https://github.com/mattjlewis/diozero/tree/master/diozero-core/src/main/java/com/diozero/devices) to **dart_periphery**
 
 ## Test matrix
 
 [Test suite](https://github.com/pezi/dart_periphery/tree/main/test)
 
-| Architecture  | GPIO  |GPIO<sub>sysfs</sub>   | I2C   | SPI   | Serial| MMIO  | PWM   | LED   |
+| Architecture  | GPIO  |GPIO<sub>sysfs</sub>   | I2C   | SPI   | Serial| MMIO¹  | PWM   | LED   |
 | ------------- |:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|------:|
-| **ARM** ¹     |&#9989;|&#9989;|&#9989;|&#9989;|&#9989;|&#9744;|&#9989;|&#9989;|
-| **AARCH64** ² |&#10060;|&#9989;|&#9989;|&#9989;|&#9989;|&#9744;|&#9989;|&#9989;|
-| **X86** ³     |&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|
-| **X86_64** ³  |&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|
+| **ARM** ²     |&#9989;|&#9989;|&#9989;|&#9989;|&#9989;|&#9744;|&#9989;|&#9989;|
+| **AARCH64** ³ |&#10060;⁴|&#9989;|&#9989;|&#9989;|&#9989;|&#9744;|&#9989;|&#9989;|
+| **X86** ⁵     |&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|
+| **X86_64** ⁵  |&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|
 
 &#9744; missing test | &#9989; test passed | &#10060; test failed
 
-¹ [Raspberry Pi 3 Model B](https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/)
+¹ Delayed until FFI inline @Array() support in Dart Version >=2.13 is [available](https://github.com/dart-lang/sdk/issues/35763)
 
-² [NanoPi Neo2](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO2) with a Allwinner H5, Quad-core 64-bit CPU
+² [Raspberry Pi 3 Model B](https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/)
 
-³ no X86/X86_64 SOC for testing available
+³ [NanoPi Neo2](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO2) with a Allwinner H5, Quad-core 64-bit CPU
+
+⁴ Fails for NanoPi, NanoPi Neo2 and Banana Pi on Armbian- same behaviour like the original c-peripherey [test program](https://github.com/vsergeev/c-periphery/blob/master/tests/test_gpio.c). Point of deeper investigations
+
+⁵ no X86/X86_64 SOC for testing available
+
 
 ## Help wanted
 

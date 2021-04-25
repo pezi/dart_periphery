@@ -68,7 +68,7 @@ void isolate(SendPort sendPort) async {
   await for (var msg in port) {
     var replyTo = msg[0] as SendPort;
     var json = msg[1] as String;
-    var gpio = GPIO.isoloate(json);
+    var gpio = GPIO.isolate(json);
     replyTo.send('start polling');
     var result = gpio.poll(1000);
     replyTo.send(result.index);

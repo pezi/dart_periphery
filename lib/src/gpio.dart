@@ -412,7 +412,7 @@ class GPIO {
   final Pointer<Void> _gpioHandle;
   bool _invalid = false;
 
-  /// Conveverts an [GPIO] to a JSON string. See constructor [isolate] for detials.
+  /// Converts a [GPIO] to a JSON string. See constructor [isolate] for detials.
   String toJson() {
     return '{"path":"$path","chip":$chip,"line":$line,"direction":${direction.index},"name":"$name","handle":${_gpioHandle.address}}';
   }
@@ -542,9 +542,9 @@ class GPIO {
         name = '',
         _gpioHandle = _openSysfsGPIO(line, direction);
 
-  /// Duplicates an existing [GPIO] from a JSON string. This special constustor
-  /// is used to transfer an existing [GPIO] to an ohter isolate.
-  GPIO.isoloate(String json)
+  /// Duplicates an existing [GPIO] from a JSON string. This special constructor
+  /// is used to transfer an existing [GPIO] to an other isolate.
+  GPIO.isolate(String json)
       : chip = _jsonMap(json)['chip'] as int,
         line = _jsonMap(json)['line'] as int,
         name = _jsonMap(json)['name'] as String,
@@ -629,6 +629,11 @@ class GPIO {
       malloc.free(edge);
       malloc.free(time);
     }
+  }
+
+  /// Returns the address of the internal handle.
+  int getHandle() {
+    return _gpioHandle.address;
   }
 
   /// Releases all internal native resoures.

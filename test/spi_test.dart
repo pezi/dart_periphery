@@ -21,6 +21,16 @@ void test_arguments(int bus, int chip) {
 void test_open_config_close(int bus, int chip) {
   var spi = SPI(bus, chip, SPImode.MODE0, 100000);
   try {
+    var isolate = SPI.isolate(spi.toJson());
+    passert(spi.path == isolate.path);
+    passert(spi.bitOrder == isolate.bitOrder);
+    passert(spi.bitsPerWord == isolate.bitsPerWord);
+    passert(spi.bus == isolate.bus);
+    passert(spi.chip == isolate.chip);
+    passert(spi.extraFlags == isolate.extraFlags);
+    passert(spi.maxSpeed == isolate.maxSpeed);
+    passert(spi.getHandle() == isolate.getHandle());
+
     passert(spi.bitOrder == BitOrder.MSB_FIRST);
     passert(spi.bitsPerWord == 8);
 

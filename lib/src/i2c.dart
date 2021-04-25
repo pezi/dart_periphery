@@ -12,6 +12,7 @@ import 'library.dart';
 import 'package:ffi/ffi.dart';
 import 'signature.dart';
 import 'hardware/util.dart';
+import 'dart:convert';
 
 /*
     #define I2C_M_TEN		0x0010
@@ -228,6 +229,15 @@ String _getErrmsg(Pointer<Void> handle) {
   return _nativeI2CerrnMsg(handle).toDartString();
 }
 
+final Map<String, dynamic> _map = {};
+
+Map<String, dynamic> _jsonMap(String json) {
+  if (_map.isEmpty) {
+    _map.addAll(jsonDecode(json) as Map<String, dynamic>);
+  }
+  return _map;
+}
+
 /// I2C wrapper functions for Linux userspace i2c-dev devices.
 ///
 /// c-periphery [I2C](https://github.com/vsergeev/c-periphery/blob/master/docs/i2c.md) documentation.
@@ -242,6 +252,18 @@ class I2C {
   I2C(this.busNum)
       : path = _i2cBasePath + busNum.toString(),
         _i2cHandle = _openI2C(_i2cBasePath + busNum.toString());
+
+  /// Duplicates an existing [I2C] from a JSON string. This special constustor
+  /// is used to transfer an existing [I2C] to an other isolate.
+  I2C.isolate(String json)
+      : path = _jsonMap(json)['path'] as String,
+        busNum = _jsonMap(json)['bus'] as int,
+        _i2cHandle = Pointer<Void>.fromAddress(_jsonMap(json)['handle'] as int);
+
+  /// Converts a [I2C] to a JSON string. See constructor [isolate] for detials.
+  String toJson() {
+    return '{"path":"$path","bus":$busNum,"handle":${_i2cHandle.address}}';
+  }
 
   void _checkStatus() {
     if (_invalid) {
@@ -507,6 +529,11 @@ class I2C {
     _invalid = true;
     _checkError(_nativeI2Cclose(_i2cHandle));
     _nativeI2Cfree(_i2cHandle);
+  }
+
+  /// Returns the address of the internal handle.
+  int getHandle() {
+    return _i2cHandle.address;
   }
 
   /// Returns the file descriptor (for the underlying i2c-dev device) of the I2C handle.

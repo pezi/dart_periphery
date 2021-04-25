@@ -12,6 +12,7 @@ import 'library.dart';
 import 'package:ffi/ffi.dart';
 import 'signature.dart';
 import 'hardware/util.dart';
+import 'dart:convert';
 
 /// Mapped native [SPI] error codes with the same index, but different leading sign.
 enum SPIerrorCode {
@@ -190,6 +191,15 @@ int _checkError(int value) {
   return value;
 }
 
+final Map<String, dynamic> _map = {};
+
+Map<String, dynamic> _jsonMap(String json) {
+  if (_map.isEmpty) {
+    _map.addAll(jsonDecode(json) as Map<String, dynamic>);
+  }
+  return _map;
+}
+
 /// SPI wrapper functions for Linux userspace <tt>spidev</tt> devices.
 ///
 /// c-periphery [SPI](https://github.com/vsergeev/c-periphery/blob/master/docs/spi.md) documentation.
@@ -230,6 +240,11 @@ class SPI {
     }
   }
 
+  /// Converts a [SPI] to a JSON string. See constructor [isolate] for detials.
+  String toJson() {
+    return '{"bus":$bus,"chip":$chip,"path":"$path","bitOrder":${bitOrder.index},"mode":${mode.index},"speed":$maxSpeed,"bits":$bitsPerWord,"flags":$extraFlags,"handle":${_spiHandle.address}}';
+  }
+
   /// Opens the SPI device at the  path ("/dev/spidev[bus].[chip]"), with the specified
   /// SPI [mode], specified [maxSpeed] in hertz, and the defaults of MSB_FIRST bit order,
   /// and 8 bits per word.
@@ -268,6 +283,19 @@ class SPI {
     _spiHandle = _spiOpenAdvanced(
         path, mode, maxSpeed, bitOrder, bitsPerWord, extraFlags);
   }
+
+  /// Duplicates an existing [SPI] from a JSON string. This special constructor
+  /// is used to transfer an existing [SPI] to an other isolate.
+  SPI.isolate(String json)
+      : path = _jsonMap(json)['path'] as String,
+        chip = _jsonMap(json)['chip'] as int,
+        maxSpeed = _jsonMap(json)['speed'] as int,
+        bus = _jsonMap(json)['bus'] as int,
+        bitsPerWord = _jsonMap(json)['bits'] as int,
+        extraFlags = _jsonMap(json)['flags'] as int,
+        bitOrder = BitOrder.values[_jsonMap(json)['bitOrder'] as int],
+        mode = SPImode.values[_jsonMap(json)['mode'] as int],
+        _spiHandle = Pointer<Void>.fromAddress(_jsonMap(json)['handle'] as int);
 
   Pointer<Void> _spiOpenAdvanced(String path, SPImode mode, int maxSpeed,
       BitOrder bitOrder, int bitsPerWord, int extraFlags) {
@@ -519,5 +547,10 @@ class SPI {
   int getSPIfd() {
     _checkStatus();
     return _checkError(_nativeSPIfd(_spiHandle));
+  }
+
+  /// Returns the address of the internal handle.
+  int getHandle() {
+    return _spiHandle.address;
   }
 }
