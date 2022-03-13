@@ -27,7 +27,7 @@ class Mmio_handle extends Struct {
   external int base;
   @IntPtr()
   external int aligned_base;
-  Pointer<Void> ptr;
+  external Pointer<Void> ptr;
   external Error error;
 }
 

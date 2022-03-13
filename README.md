@@ -3,7 +3,7 @@
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
 
-[![pub package](https://img.shields.io/badge/pub-v0.8.25--RC-orange)](https://pub.dartlang.org/packages/dart_periphery)
+[![pub package](https://img.shields.io/badge/pub-v0.8.26-orange)](https://pub.dartlang.org/packages/dart_periphery)
 
 ## Introduction
 
@@ -355,28 +355,28 @@ cd ~
 ### ARMv7
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.12.4/sdk/dartsdk-linux-arm-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.16.1/sdk/dartsdk-linux-arm-release.zip
 unzip dartsdk-linux-arm-release.zip
 ```
 
 ### ARMv8
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.12.4/sdk/dartsdk-linux-arm64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.16.1/sdk/dartsdk-linux-arm64-release.zip
 unzip dartsdk-linux-arm64-release.zip
 ```
 
 ### x86
 
 ``` bash
-https://storage.googleapis.com/dart-archive/channels/stable/release/2.12.4/sdk/dartsdk-linux-ia32-release.zip
+https://storage.googleapis.com/dart-archive/channels/stable/release/2.16.1/sdk/dartsdk-linux-ia32-release.zip
 unzip dartsdk-linux-ia32-release.zip
 ```
 
 ### x86_64
 
 ``` bash
-https://storage.googleapis.com/dart-archive/channels/stable/release/2.12.4/sdk/dartsdk-linux-x64-release.zip
+https://storage.googleapis.com/dart-archive/channels/stable/release/2.16.1/sdk/dartsdk-linux-x64-release.zip
 unzip dartsdk-linux-x64-release.zip
 ```
 
@@ -411,7 +411,7 @@ Test the installion
 
 ``` bash
 pi@raspberrypi:~ $ dart --version
-Dart SDK version: 2.12.4 (stable) (Thu Apr 15 12:26:53 2021 +0200) on "linux_arm"
+Dart SDK version: 2.16.1 (stable) (Tue Feb 8 12:02:33 2022 +0100) on "linux_arm64"
 ```
 
 ## Native libraries
@@ -419,11 +419,13 @@ Dart SDK version: 2.12.4 (stable) (Thu Apr 15 12:26:53 2021 +0200) on "linux_arm
 Currently **dart_periphery** ships with four prebuild native c-periphery libraries for ARMv7/ARMv8/X86/X86_64
 
 * [libperiphery_arm.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm.so)
-* [libperiphery_aarch64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_aarch64.so)
+* [libperiphery_arm64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm64.so)
 * [libperiphery_x86.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86.so)
 * [libperiphery_x86_64.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86_64.so)
 
-Following methods can be used to overwrite the loading of the prebuild library.
+**dart_periphery** calls uname() to detect the CPU architecture.
+
+Following methods can be used to overwrite the autoloading of the prebuild library. 
 
 But be aware, any of these methods must be called before any **dart_periphery** interface is used!
 
@@ -433,13 +435,25 @@ useSharedLibray();
 
 If this method is called, **dart_periphery** loads the shared library. For this case c-periphery must be installed as a shared library. See for [section Shared Library](https://github.com/vsergeev/c-periphery#shared-library) for details.
 
+
 To load a custom library call
 
 ``` dart
 setCustomLibrary(String absolutePath)
 ```
 
-This method can be helpful in any case of a problem and for a currently not supported platform.
+These methods can be helpful in any case of a problem, for a currently not supported platform...
+
+``` dart
+setCustomLibrary(String absolutePath)
+```
+
+... and if the CPU architecture auto detection fails. 
+
+``` dart
+void setCPUarchitecture(CPU_ARCHITECTURE arch)
+```
+
 
 For a dart native binary, which can be deployed
 

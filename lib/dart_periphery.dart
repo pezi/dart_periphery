@@ -5,6 +5,7 @@
 export 'src/version.dart' show getCperipheryVersion, DART_PERIPHERY_VERSION;
 export 'src/library.dart'
     show
+        setCPUarchitecture,
         useSharedLibray,
         setCustomLibrary,
         useLocalLibrary,
@@ -95,3 +96,5 @@ export 'src/hardware/bme680.dart'
         HeaterProfile,
         SENSOR_READ_RETRY_COUNTER;
 export 'src/errno.dart' show ERRNO, Errno, ErrnoNotFound;
+export 'src/cpu_architecture.dart'
+    show Uname, CPU_ARCHITECTURE, CpuArch, nativeUname;

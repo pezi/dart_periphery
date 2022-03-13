@@ -4,7 +4,6 @@
 import 'package:dart_periphery/dart_periphery.dart';
 import 'package:dart_periphery/src/hardware/util.dart';
 
-import '../i2c.dart';
 import 'util.dart';
 import 'dart:io';
 
