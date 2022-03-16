@@ -10,7 +10,7 @@
 
 import 'dart:io';
 import '../i2c.dart';
-import 'util.dart';
+import 'utils/byte_buffer.dart';
 
 const int PRODUCT_TYPE = 0;
 const int I2C_ADDRESS = 0x58;

@@ -5,7 +5,7 @@
 import 'dart:io';
 import '../i2c.dart';
 import '../spi.dart';
-import 'util.dart';
+import 'utils/byte_buffer.dart';
 import 'bosch.dart';
 
 // Bosch BMx280 pressure and temperature sensor. The BME280 includes an additional humidity sensor.

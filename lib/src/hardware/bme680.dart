@@ -5,7 +5,7 @@
 import 'dart:io';
 import '../i2c.dart';
 import 'dart:collection';
-import 'util.dart';
+import 'utils/byte_buffer.dart';
 import 'dart:math';
 import 'bosch.dart';
 
