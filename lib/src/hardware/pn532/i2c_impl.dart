@@ -3,7 +3,7 @@ import 'package:dart_periphery/dart_periphery.dart';
 import 'package:dart_periphery/src/hardware/pn532/base_protocol.dart';
 import 'package:dart_periphery/src/hardware/pn532/constants.dart';
 import 'package:dart_periphery/src/hardware/pn532/exceptions.dart';
-import 'package:dart_periphery/src/hardware/utils/uint8.dart';
+import 'package:dart_periphery/src/hardware/utils/uint.dart';
 
 
 class PN532I2CImpl extends PN532BaseProtocol {

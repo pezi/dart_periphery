@@ -4,7 +4,7 @@ import 'package:dart_periphery/dart_periphery.dart';
 
 import 'package:dart_periphery/src/hardware/pn532/base_protocol.dart';
 import 'package:dart_periphery/src/hardware/pn532/constants.dart';
-import 'package:dart_periphery/src/hardware/utils/uint8.dart';
+import 'package:dart_periphery/src/hardware/utils/uint.dart';
 
 
 class PN532SpiImpl extends PN532BaseProtocol {
@@ -52,7 +52,7 @@ class PN532SpiImpl extends PN532BaseProtocol {
   }
 
   List<int> reverseUint8List(List<int> list) {
-    return list.map((integer) => Uint8(integer).reverseByte().value).toList();
+    return list.map((integer) => Uint8(integer).reverseBytes().value).toList();
   }
 
   List<int> readWriteHelper(List<int> message) {

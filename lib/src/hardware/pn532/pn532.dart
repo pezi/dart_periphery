@@ -4,10 +4,9 @@ import 'package:dart_periphery/src/hardware/pn532/base_protocol.dart';
 
 import 'package:dart_periphery/src/hardware/pn532/constants.dart';
 import 'package:dart_periphery/src/hardware/pn532/exceptions.dart';
-import 'package:dart_periphery/src/hardware/utils/uint8.dart';
+import 'package:dart_periphery/src/hardware/utils/uint.dart';
 
 typedef ListCompare = bool Function(List<dynamic>, List<dynamic>);
-
 
 
 class PN532 {
@@ -82,6 +81,112 @@ class PN532 {
     // check the command was executed as expected.
     List<int> parameters = [Uint8(mode).value, Uint8(timeout).value, Uint8(irqPin).value];
     callPN532Function(pn532CommandSamConfiguration, parameters: parameters);
+  }
+
+
+  /// Read a block of data from the card. Block number should be the block to read.
+  List<int> mifareClassicReadBlock(Uint8 blockNumber) {
+    final List<int> parameters = [0x01, mifareCmdRead, blockNumber.value];
+
+    final List<int> readBlockResponse = callPN532Function(
+      pn532CommandInDataExchange, 
+      parameters: parameters, 
+      responseLength: mifareBlockLength + 1
+    );
+      
+    // Check first response is 0x00 to show success.
+    if (readBlockResponse.first != pn532ErrorNone) {
+      throw PN532BadResponseException(
+        response: readBlockResponse,
+        additionalInformation: "The first byte should be '$pn532ErrorNone' but it was '${readBlockResponse[0]}'"
+      );
+    }
+
+    return readBlockResponse.sublist(1, mifareBlockLength);
+  }
+
+
+  /// Write a block of data to the card.  Block number should be the block
+  /// to write and data should be a byte array of length 16 with the data to write.
+  void mifareClassicWriteBlock(Uint8 blockNumber, List<int> data) {
+    List<int> parameters = List.generate(mifareBlockLength + 3, (index) => 0);
+    
+    parameters[0] = 0x01; // Max card numbers
+    parameters[1] = mifareCmdWrite;
+    parameters[2] = blockNumber.value;
+
+    for (int i = 0; i < mifareBlockLength; i++) {
+      parameters[3 + i] = data[i];
+    }
+
+    final List<int> responseCode = callPN532Function(
+      pn532CommandInDataExchange,
+      parameters: parameters,
+      responseLength: 1
+    );
+
+    if (responseCode.first != pn532ErrorNone) {
+      throw PN532BadResponseException(
+        response: responseCode,
+        additionalInformation: "The first byte should be '$pn532ErrorNone' but it was '${responseCode[0]}'"
+      );
+    }
+  }
+
+
+  /// Read a block of data from the card. Block number should be the block
+  /// to read.
+  /// Returns `List<int>` of length 4 if the block is successfully read.
+  List<int> ntag2xxReadBlock(Uint8 blockNumber) {
+    final List<int> parameters = [0x01, mifareCmdRead, blockNumber.value];
+
+    // The response length of NTAG2xx is same as Mifare's 
+    // Send InDataExchange request to read block of MiFare data.
+    final List<int> readBlockResponse = callPN532Function(
+      pn532CommandInDataExchange,
+      parameters: parameters,
+      responseLength: mifareBlockLength + 1,
+    );
+
+    // Check first response is 0x00 to show success.
+    if (readBlockResponse.first != pn532ErrorNone) {
+      throw PN532BadResponseException(
+        response: readBlockResponse,
+        additionalInformation: "The first byte should be '$pn532ErrorNone' but it was '${readBlockResponse[0]}'"
+      );
+    }
+
+    // Although the response length of NTAG2xx is same as Mifare's,
+    // only the first 4 bytes are available
+    return readBlockResponse.sublist(1, ntag2XxBlockLength);
+  }
+
+
+  /// Write a block of data to the card.  Block number should be the block
+  /// to write and data should be a byte array of length 4 with the data to
+  /// write.
+  void ntag2xxWriteBlock(Uint8 blockNumber, List<int> data) {
+    final List<int> parameters = List.generate(ntag2XxBlockLength + 3, (index) => 0);
+    parameters[0] = 0x01; // Max card numbers
+    parameters[1] = mifareUltralightCmdWrite;
+    parameters[2] = blockNumber.value;
+
+    for (int i = 0; i < ntag2XxBlockLength; i++) {
+        parameters[3 + i] = data[i];
+    }
+
+    final List<int> responseCode = callPN532Function(
+      pn532CommandInDataExchange,
+      parameters: parameters,
+      responseLength: 1
+    );
+
+    if (responseCode.first != pn532ErrorNone) {
+      throw PN532BadResponseException(
+        response: responseCode,
+        additionalInformation: "The first byte should be '$pn532ErrorNone' but it was '${responseCode[0]}'"
+      );
+    }
   }
 
 
