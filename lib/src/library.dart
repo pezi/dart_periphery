@@ -15,12 +15,11 @@ const String version = '1.0.0';
 
 final String sharedLib = 'libperiphery.so';
 
-String library = ""; // prebuildLib;
+String library = "";
 
 late DynamicLibrary _peripheryLib;
 bool isPeripheryLibLoaded = false;
 String _peripheryLibPath = '';
-CPU_ARCHITECTURE cpuArch = CPU_ARCHITECTURE.UNDEFINED;
 
 /// Build a file path.
 String toFilePath(String parent, String path, {bool windows = false}) {
@@ -87,7 +86,9 @@ void setCPUarchitecture(CPU_ARCHITECTURE arch) {
     throw LibraryException(
         LibraryErrorCode.INVALID_PARAMETER, "Invalid parameter");
   }
-  cpuArch = arch;
+  var cpu = arch.toString();
+  cpu = cpu.substring(cpu.indexOf(".") + 1).toLowerCase();
+  library = 'libperiphery_$cpu.so';
 }
 
 String _autoDetectCPUarch() {
@@ -173,7 +174,7 @@ DynamicLibrary getPeripheryLib() {
   }
 
   String path;
-  if (isFutterPiEnv()) {
+  if (isFutterPiEnv() && _peripheryLibPath.isEmpty) {
     var args = getFlutterPiArgs();
     var index = 1;
     for (var i = 1; i < args.length; ++i) {
@@ -196,11 +197,16 @@ DynamicLibrary getPeripheryLib() {
     if (!dir.endsWith('/')) {
       dir += '/';
     }
+    if (library.isEmpty) {
+      library = _autoDetectCPUarch();
+    }
     path = dir + library;
   } else if (_peripheryLibPath.isNotEmpty) {
     path = _peripheryLibPath;
   } else {
-    library = _autoDetectCPUarch();
+    if (library.isEmpty) {
+      library = _autoDetectCPUarch();
+    }
     var location = findPackagePath(Directory.current.path);
     if (location.isEmpty) {
       throw LibraryException(LibraryErrorCode.LIBRARY_NOT_FOUND,

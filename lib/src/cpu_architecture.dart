@@ -10,6 +10,7 @@ NativeCall uname = nativeAddLib
     .lookup<NativeFunction<Int32 Function(Pointer<Int8>)>>("uname")
     .asFunction();
 
+// https://en.wikipedia.org/wiki/Uname
 class CpuArch {
   String machine;
   CPU_ARCHITECTURE cpuArch;
@@ -35,7 +36,7 @@ class CpuArch {
         cpuArch = CPU_ARCHITECTURE.ARM64;
         break;
       case 'armv':
-      case 'armv6l':
+      case 'armv6l': 
       case 'armv7l':
         cpuArch = CPU_ARCHITECTURE.ARM;
         break;

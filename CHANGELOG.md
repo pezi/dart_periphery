@@ -1,7 +1,12 @@
+## 0.8.27 2022-03-19
+
+* improve documentation, chapter [native libraries](https://pub.dev/packages/dart_periphery#native-libraries) 
+* Fix problems with flutter-pi
+
 ## 0.8.26 2022-03-13
 
 * replace system_info package by native uname() call to detect the cpu architecture.
-* add uname() support- see [example](https://github.com/pezi/dart_periphery/blob/main/example/uname.dart). 
+* add uname() support- see [example](https://github.com/pezi/dart_periphery/blob/main/example/uname.dart).
 
 ## 0.8.25-RC 2021-04-26
 

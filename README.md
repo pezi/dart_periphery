@@ -35,7 +35,7 @@ The number of GPIO libraries/interfaces is becoming increasingly smaller.
 * The famous wiringpi library is [deprecated](https://hackaday.com/2019/09/18/wiringpi-library-to-be-deprecated).
 * GPIO sysfs is [deprecated](https://www.raspberrypi.org/forums/viewtopic.php?t=274416).
 
-**dart_periphery** currently has beta status. All interfaces are ported:
+**dart_periphery** - all interfaces are ported:
 
 * [GPIO](#gpio) example / [API](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/GPIO-class.html)
 * [I2C](#i2c) example / [API](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/I2C-class.html)
@@ -423,11 +423,22 @@ Currently **dart_periphery** ships with four prebuild native c-periphery librari
 * [libperiphery_x86.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86.so)
 * [libperiphery_x86_64.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86_64.so)
 
-**dart_periphery** calls uname() to detect the CPU architecture.
+**dart_periphery** calls uname() function to detect the CPU architecture for loading the appropriate libray. This auto detection mechanism can fail. Internally the logic tries to match the `uname -m` value to predefined string values.
 
-Following methods can be used to overwrite the autoloading of the prebuild library. 
+Following methods can be used to overwrite the auto loading of the prebuild library. But be aware, any of these methods to disable the auto detection must be called before any **dart_periphery** interface is used!
 
-But be aware, any of these methods must be called before any **dart_periphery** interface is used!
+``` dart
+// enum CPU_ARCHITECTURE { X86, X86_64, ARM, ARM64 }
+void setCPUarchitecture(CPU_ARCHITECTURE arch)
+```
+
+sets explicit the CPU architecture, which loads a library according following mapping
+
+* CPU_ARCHITECTURE.ARM → [libperiphery_arm.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm.so)
+* CPU_ARCHITECTURE.ARM64 → [libperiphery_arm64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm64.so)
+* CPU_ARCHITECTURE.X86 → [libperiphery_x86.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86.so)
+* CPU_ARCHITECTURE.X86_64 → [libperiphery_x86_64.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86_64.so)
+
 
 ``` dart
 useSharedLibray();
@@ -439,21 +450,10 @@ If this method is called, **dart_periphery** loads the shared library. For this 
 To load a custom library call
 
 ``` dart
-setCustomLibrary(String absolutePath)
+void setCustomLibrary(String absolutePath)
 ```
 
-These methods can be helpful in any case of a problem, for a currently not supported platform...
-
-``` dart
-setCustomLibrary(String absolutePath)
-```
-
-... and if the CPU architecture auto detection fails. 
-
-``` dart
-void setCPUarchitecture(CPU_ARCHITECTURE arch)
-```
-
+This method can be helpful for a currently not supported platform.
 
 For a dart native binary, which can be deployed
 
@@ -464,23 +464,43 @@ dart compile exe i2c_example.dart
 call
 
 ``` dart
-void useLocalLibrary()
+// optional parameter enum CPU_ARCHITECTURE { X86, X86_64, ARM, ARM64 } 
+// to skip auto detection
+void useLocalLibrary([CPU_ARCHITECTURE arch])
 ```
 
-The appropriate [library](https://github.com/pezi/dart_periphery/blob/main/lib/src/native) should be in same dirctory as the exe.
+The appropriate [library](https://github.com/pezi/dart_periphery/blob/main/lib/src/native) should be in same directory as the exe.
 
 ## flutter-pi
 
 **dart_periphery** works with flutter-pi, a light-weight [Flutter Engine Embedder](https://github.com/ardera/flutter-pi) for Raspberry Pi. For futter-pi the appropriate library must be copied inside the flutter asset directory.
 
-* In most cases the ARMv7 library: [libperiphery_arm.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm.so)
-* ARMv8 [libperiphery_aarch64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_aarch64.so)
+* In most cases the ARMv7 library: [libperiphery_arm.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm.so) for Raspberry Pi OS 32-bit
+* ARMv8 [libperiphery_aarch64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_aarch64.so) for Raspberry Pi OS 64-bit
+  
+The appropriate library is loaded by auto detection of the CPU architecture. If this way fails, the auto detection can be overruled by following two methods:
 
-See last section, [native libraries](https://pub.dev/packages/dart_periphery#native-libraries) for details.
+``` dart
+// enum CPU_ARCHITECTURE { X86, X86_64, ARM, ARM64 }
+void setCPUarchitecture(CPU_ARCHITECTURE arch)
+void setCustomLibrary(String absolutePath)
+```
+
+This method must be called before any **dart_periphery** interface is used! See last section, [native libraries](https://pub.dev/packages/dart_periphery#native-libraries) for details.
+
+For flutter-pi the command
+
+``` dart
+List<String> getFlutterPiArgs(); 
+```
+
+returns the command line parameter list of the `flutter-pi` command. The last parameter contains the asset directory.
+
 
 ## Tested SoC hardware
 
-* [Raspberry Pi 3 Model B](https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/), OS: Raspian
+* [Raspberry Pi 3 Model B](https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/), OS: Raspberry Pi OS
+* [Raspberry Pi 3 Zero 2 W](https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/), OS: Raspberry Pi OS (32/64)
 * [NanoPi](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO) with a Allwinner H3, Quad-core 32-bit CPU, OS: [Armbian](https://www.armbian.com/nanopi-neo-core-2-lts/)
 * [NanoPi M1](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_M1) with a Allwinner H3, Quad-core 32-bit CPU: OS [Armbian](https://www.armbian.com/nanopi-m1/)
 * [NanoPi Neo2](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO2) with a Allwinner H5, Quad-core 64-bit CPU, OS: [Armbian](https://www.armbian.com/nanopi-neo-2/)
@@ -490,7 +510,7 @@ See last section, [native libraries](https://pub.dev/packages/dart_periphery#nat
 
 * [SGP30](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sgp30.dart): tVOC and eCO2 Gas Sensor
 * [BME280](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme280.dart): Temperature, humidity and pressure sensor.
-* [BME680](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme680.dart): Temperature, humidity pressure and gas (Indoor Airy Quaility) sensor.
+* [BME680](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme680.dart): Temperature, humidity pressure and gas (Indoor Airy Quality) sensor.
 * [SHT31](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht31.dart): Temperature and humidity sensor.
 * [CozIR](https://github.com/pezi/dart_periphery/blob/main/example/serial_cozir.dart): CO<sub>2</sub>, temperature and humidity sensor.
 * [Grove Gesture](https://github.com/pezi/dart_periphery/blob/main/example/i2c_gesture_sensor.dart) can recognize 9 basic gestures.
@@ -523,7 +543,7 @@ See last section, [native libraries](https://pub.dev/packages/dart_periphery#nat
 
 ³ [NanoPi Neo2](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO2) with a Allwinner H5, Quad-core 64-bit CPU
 
-⁴ Fails for NanoPi, NanoPi Neo2 and Banana Pi on Armbian- same behaviour like the original c-peripherey [test program](https://github.com/vsergeev/c-periphery/blob/master/tests/test_gpio.c). Point of deeper investigations
+⁴ Fails for NanoPi, NanoPi Neo2 and Banana Pi on Armbian- same behavior like the original c-periphery [test program](https://github.com/vsergeev/c-periphery/blob/master/tests/test_gpio.c). This is a point of deeper investigations
 
 ⁵ no X86/X86_64 SOC for testing available
 
@@ -532,4 +552,4 @@ See last section, [native libraries](https://pub.dev/packages/dart_periphery#nat
 
 * Testing **dart_periphery** on different [SoC platforms](https://www.armbian.com/download/)
 * Documentation review - I am not a native speaker.
-* Code review - this is my first public Dart project, I am a Java developer and probably I tend to solve problems rather in the Java than in the Dart way.
+* Code review - this is my first public Dart project. I am a Java developer and probably I tend to solve problems rather in the Java than in the Dart way.

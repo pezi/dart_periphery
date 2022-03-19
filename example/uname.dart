@@ -4,6 +4,8 @@
 
 import 'package:dart_periphery/dart_periphery.dart';
 
+// call linux uname() per dart:ffi
+// https://man7.org/linux/man-pages/man2/uname.2.html
 void main() {
   Uname uname = nativeUname();
   print('Release: ${uname.release}');

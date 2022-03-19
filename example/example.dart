@@ -6,6 +6,10 @@ import 'package:dart_periphery/dart_periphery.dart';
 import 'dart:io';
 
 void main() {
+  // to disable CPU autodection
+  // see https://pub.dev/packages/dart_periphery#native-libraries for details
+  // setCPUarchitecture(CPU_ARCHITECTURE.ARM);
+
   var config = GPIOconfig.defaultValues();
   config.direction = GPIOdirection.GPIO_DIR_OUT;
   print('Native c-periphery Version :  ${getCperipheryVersion()}');
