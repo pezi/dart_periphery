@@ -47,7 +47,7 @@ export 'src/i2c.dart'
         I2C;
 export 'src/spi.dart' show SPI, SPImode, SPIexception;
 export 'src/mmio.dart' show MMIO, MMIOexception, MMIOerrorCode;
-export 'src/hardware/util.dart' show BitOrder;
+export 'src/hardware/utils/byte_buffer.dart' show BitOrder;
 export 'src/hardware/bosch.dart' show OversamplingMultiplier;
 export 'src/hardware/bme280.dart'
     show

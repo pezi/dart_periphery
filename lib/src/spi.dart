@@ -11,7 +11,7 @@ import 'dart:ffi';
 import 'library.dart';
 import 'package:ffi/ffi.dart';
 import 'signature.dart';
-import 'hardware/util.dart';
+import 'hardware/utils/byte_buffer.dart';
 import 'dart:convert';
 
 /// Mapped native [SPI] error codes with the same index, but different leading sign.
