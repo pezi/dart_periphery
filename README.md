@@ -416,12 +416,12 @@ Dart SDK version: 2.16.1 (stable) (Tue Feb 8 12:02:33 2022 +0100) on "linux_arm6
 
 ## Native libraries
 
-Currently **dart_periphery** ships with four prebuild native c-periphery libraries for ARMv7/ARMv8/X86/X86_64
+Currently **dart_periphery** ships with four prebuild native c-periphery libraries for
 
-* [libperiphery_arm.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm.so)
-* [libperiphery_arm64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm64.so)
-* [libperiphery_x86.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86.so)
-* [libperiphery_x86_64.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86_64.so)
+* ARMv7 - [libperiphery_arm.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm.so)
+* ARMv8 - [libperiphery_arm64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm64.so)
+* X86 - [libperiphery_x86.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86.so)
+* X86_64 - [libperiphery_x86_64.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86_64.so)
 
 **dart_periphery** calls uname() function to detect the CPU architecture for loading the appropriate libray. This auto detection mechanism can fail. Internally the logic tries to match the `uname -m` value to predefined string values.
 
@@ -453,7 +453,7 @@ To load a custom library call
 void setCustomLibrary(String absolutePath)
 ```
 
-This method can be helpful for a currently not supported platform.
+This method can also be helpful for a currently not supported platform.
 
 For a dart native binary, which can be deployed
 
@@ -517,7 +517,7 @@ returns the command line parameter list of the `flutter-pi` command. The last pa
 * [MPU-6050 Six-Axis](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mpu6050.dart) (Gyro + Accelerometer) sensor.
 * FriendlyARM [BakeBit Set](https://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
 * [Grove Base Hat](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi/)/[GrovePi Plus](https://wiki.seeedstudio.com/GrovePi_Plus)
-* [PN5](https://github.com/pezi/dart_periphery/pull/6) - Thanks to UliPrantz
+* [PN532](https://github.com/pezi/dart_periphery/pull/6) NFC Reader Module, Thanks to UliPrantz!
 * SSD1306 OLED (in progress)
 
 ## Next steps

@@ -424,7 +424,7 @@ class BME680 {
   /// the optional [i2cAddress].
   ///
   /// Default [BME680_DEFAULT_I2C_ADDRESS] = 0x76, [BME680_ALTERNATIVE_I2C_ADDRESS] = 0x77
-  BME680(I2C i2c, [this.i2cAddress = BME680_DEFAULT_I2C_ADDRESS]) : i2c = i2c {
+  BME680(this.i2c, [this.i2cAddress = BME680_DEFAULT_I2C_ADDRESS]) {
     _initialize();
   }
 

@@ -1,8 +1,11 @@
+## 0.8.29 2022-03-19
+
+* Fix Documentation 
+
 ## 0.8.28 2022-03-19
 
-* Merge contributions provided by [UliPranz](https://github.com/pezi/dart_periphery/pull/6/commits)
+* Merge contributions provided by [UliPranz](https://github.com/pezi/dart_periphery/pull/6), a NFC Reader Module, Thanks to UliPrantz!
   
-
 ## 0.8.27 2022-03-19
 
 * improve documentation, chapter [native libraries](https://pub.dev/packages/dart_periphery#native-libraries) 

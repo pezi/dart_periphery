@@ -446,7 +446,6 @@ class GestureSensor {
         } else {
           gesture = Gesture.DOWN;
         }
-        ;
         return gesture;
       case GES_FORWARD_FLAG:
         sleep(Duration(milliseconds: gestureReactionTime));
