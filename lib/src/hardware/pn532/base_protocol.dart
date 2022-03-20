@@ -18,10 +18,11 @@ abstract class PN532BaseProtocol {
   PN532BaseProtocol({
     int? resetPin,
     int? irqPin,
-  }) : resetGpio = resetPin == null ? null : GPIO(resetPin, GPIOdirection.GPIO_DIR_OUT),
-       irqGpio = irqPin == null ? null : GPIO(irqPin, GPIOdirection.GPIO_DIR_IN)
-       
-  {
+  })  : resetGpio = resetPin == null
+            ? null
+            : GPIO(resetPin, GPIOdirection.GPIO_DIR_OUT),
+        irqGpio =
+            irqPin == null ? null : GPIO(irqPin, GPIOdirection.GPIO_DIR_IN) {
     pn532ReadyFunction = getCorrectReadyFunction();
     reset();
     wakeUp();
@@ -37,12 +38,12 @@ abstract class PN532BaseProtocol {
     return isReady;
   }
 
-  void waitReady({int timeout=pn532StandardTimeout}) {
+  void waitReady({int timeout = pn532StandardTimeout}) {
     int attemptCount = 0;
 
     final int timeStart = DateTime.now().millisecondsSinceEpoch;
     sleep(const Duration(milliseconds: 10));
-    
+
     bool pn532IsReady = pn532ReadyFunction(attemptCount);
     while (!pn532IsReady) {
       // this sleep is extremly important! (when we don't use the irqPin)
@@ -54,7 +55,6 @@ abstract class PN532BaseProtocol {
       if (!useIrq) {
         sleep(const Duration(milliseconds: 20));
       }
-      
 
       final int timeDelta = DateTime.now().millisecondsSinceEpoch - timeStart;
       if (timeDelta >= timeout) {
@@ -67,16 +67,17 @@ abstract class PN532BaseProtocol {
   }
 
   bool isReadyUsingInterrupt() {
-    assert(irqGpio != null, "isReadyUsingInterrupt() was called even though the irqPin/irqGpio wasn't provided");
+    assert(irqGpio != null,
+        "isReadyUsingInterrupt() was called even though the irqPin/irqGpio wasn't provided");
     return !irqGpio!.read();
   }
 
   /// The implementation is protocol based. Just check if the PN532 is ready
-  /// based on the used protocol (if an `irqPin`) was specified 
+  /// based on the used protocol (if an `irqPin`) was specified
   /// the `PN532BaseProtocol` will use the `irqPin` instead of this funciton!
-  /// 
+  ///
   /// The parameter `attemptCount` will provide you with a count that refelcts
-  /// how often this function was already called in this `waitReady` cyclus. 
+  /// how often this function was already called in this `waitReady` cyclus.
   /// Starting with 0!
   bool isReady(int attemptCount);
 

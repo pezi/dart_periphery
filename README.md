@@ -488,7 +488,7 @@ void setCustomLibrary(String absolutePath)
 
 This method must be called before any **dart_periphery** interface is used! See last section, [native libraries](https://pub.dev/packages/dart_periphery#native-libraries) for details.
 
-For flutter-pi the command
+For flutter-pi the method
 
 ``` dart
 List<String> getFlutterPiArgs(); 
@@ -517,6 +517,7 @@ returns the command line parameter list of the `flutter-pi` command. The last pa
 * [MPU-6050 Six-Axis](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mpu6050.dart) (Gyro + Accelerometer) sensor.
 * FriendlyARM [BakeBit Set](https://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
 * [Grove Base Hat](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi/)/[GrovePi Plus](https://wiki.seeedstudio.com/GrovePi_Plus)
+* [PN5](https://github.com/pezi/dart_periphery/pull/6) - Thanks to UliPrantz
 * SSD1306 OLED (in progress)
 
 ## Next steps
