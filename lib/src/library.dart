@@ -136,16 +136,16 @@ class LibraryException implements Exception {
 typedef _getpId = Int32 Function();
 typedef _GetpId = int Function();
 
-bool _isFutterPi = Platform.resolvedExecutable.endsWith('flutter-pi');
+bool _isFlutterPi = Platform.resolvedExecutable.endsWith('flutter-pi');
 
-bool isFutterPiEnv() {
-  return _isFutterPi;
+bool isFlutterPiEnv() {
+  return _isFlutterPi;
 }
 
 var _flutterPiArgs = <String>[];
 
 List<String> getFlutterPiArgs() {
-  if (!isFutterPiEnv()) {
+  if (!isFlutterPiEnv()) {
     return const <String>[];
   }
   if (_flutterPiArgs.isEmpty) {
@@ -174,7 +174,7 @@ DynamicLibrary getPeripheryLib() {
   }
 
   String path;
-  if (isFutterPiEnv() && _peripheryLibPath.isEmpty) {
+  if (isFlutterPiEnv() && _peripheryLibPath.isEmpty) {
     var args = getFlutterPiArgs();
     var index = 1;
     for (var i = 1; i < args.length; ++i) {
