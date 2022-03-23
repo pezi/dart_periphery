@@ -8,9 +8,9 @@
 ## Introduction
 
 **dart_periphery** is a Dart port of the native [c-periphery library](https://github.com/vsergeev/c-periphery)
-  for Linux Peripheral I/O (GPIO, LED, PWM, SPI, I2C, MMIO and Serial peripheral I/O). This package is specially intended for SoCs like Raspberry Pi, NanoPi, Banana Pi et al.  
+  for Linux Peripheral I/O (GPIO, LED, PWM, SPI, I2C, MMIO and Serial peripheral I/O). This package is specially intended for SoCs like Raspberry Pi, NanoPi, Banana Pi et al.
 
-### What is c-periphery?  
+### What is c-periphery?
 
 Abstract from the project web site:
 
@@ -125,7 +125,7 @@ ___
 ``` dart
 import 'package:dart_periphery/dart_periphery.dart';
 
-/// Grove - Temp&Humi Sensor(SHT31) is a highly reliable, accurate, 
+/// Grove - Temp&Humi Sensor(SHT31) is a highly reliable, accurate,
 /// quick response and integrated temperature & humidity sensor.
 void main() {
   // Select the right I2C bus number /dev/i2c-?
@@ -324,7 +324,7 @@ class MemMappedGPIO {
 void main() {
   // Needs root rights and the GPIO_BASE must be correct!
   // var mmio = MMIO(GPIO_BASE, BLOCK_SIZE);
-  
+
   var mmio = MMIO.advanced(0, BLOCK_SIZE, '/dev/gpiomem');
   var gpio = MemMappedGPIO(mmio);
   try {
@@ -464,7 +464,7 @@ dart compile exe i2c_example.dart
 call
 
 ``` dart
-// optional parameter enum CPU_ARCHITECTURE { X86, X86_64, ARM, ARM64 } 
+// optional parameter enum CPU_ARCHITECTURE { X86, X86_64, ARM, ARM64 }
 // to skip auto detection
 void useLocalLibrary([CPU_ARCHITECTURE arch])
 ```
@@ -473,11 +473,11 @@ The appropriate [library](https://github.com/pezi/dart_periphery/blob/main/lib/s
 
 ## flutter-pi
 
-**dart_periphery** works with flutter-pi, a light-weight [Flutter Engine Embedder](https://github.com/ardera/flutter-pi) for Raspberry Pi. For futter-pi the appropriate library must be copied inside the flutter asset directory.
+**dart_periphery** works with flutter-pi, a light-weight [Flutter Engine Embedder](https://github.com/ardera/flutter-pi) for Raspberry Pi. For flutter-pi the appropriate library must be copied inside the flutter asset directory.
 
 * In most cases the ARMv7 library: [libperiphery_arm.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm.so) for Raspberry Pi OS 32-bit
 * ARMv8 [libperiphery_aarch64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_aarch64.so) for Raspberry Pi OS 64-bit
-  
+
 The appropriate library is loaded by auto detection of the CPU architecture. If this way fails, the auto detection can be overruled by following two methods:
 
 ``` dart
@@ -491,7 +491,7 @@ This method must be called before any **dart_periphery** interface is used! See 
 For flutter-pi the method
 
 ``` dart
-List<String> getFlutterPiArgs(); 
+List<String> getFlutterPiArgs();
 ```
 
 returns the command line parameter list of the `flutter-pi` command. The last parameter contains the asset directory.
