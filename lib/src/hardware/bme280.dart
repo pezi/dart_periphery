@@ -194,8 +194,8 @@ class BME280 {
         throw BME280exception('Unknown model');
     }
     _readCoefficients();
-    setOperatingModes(OversamplingMultiplier.X1, OversamplingMultiplier.X1,
-        OversamplingMultiplier.X1, OperatingMode.MODE_NORMAL);
+    setOperatingModes(OversamplingMultiplier.x1, OversamplingMultiplier.x1,
+        OversamplingMultiplier.x1, OperatingMode.MODE_NORMAL);
     setStandbyAndFilterModes(
         StandbyDuration.STANDBY_1_S, FilterCoefficient.FILTER_OFF);
   }
@@ -286,23 +286,23 @@ class BME280 {
         bitOrder);
 
     // Unpack the raw 20-bit unsigned pressure value
-    var adc_p = ((buffer.getInt8() & 0xff) << 12) |
+    var adcP = ((buffer.getInt8() & 0xff) << 12) |
         ((buffer.getInt8() & 0xff) << 4) |
         ((buffer.getInt8() & 0xf0) >> 4);
     // Unpack the raw 20-bit unsigned temperature value
-    var adc_t = ((buffer.getInt8() & 0xff) << 12) |
+    var adcT = ((buffer.getInt8() & 0xff) << 12) |
         ((buffer.getInt8() & 0xff) << 4) |
         ((buffer.getInt8() & 0xf0) >> 4);
-    var adc_h = 0;
+    var adcH = 0;
     if (_model == BME280model.BME280) {
       // Unpack the raw 16-bit unsigned humidity value
-      adc_h = ((buffer.getInt8() & 0xff) << 8) | (buffer.getInt8() & 0xff);
+      adcH = ((buffer.getInt8() & 0xff) << 8) | (buffer.getInt8() & 0xff);
     }
 
-    var tvar1 = (((adc_t >> 3) - (_digT1 << 1)) * _digT2) >> 11;
-    var tvar2 = (((((adc_t >> 4) - _digT1) * ((adc_t >> 4) - _digT1)) >> 12) *
-            _digT3) >>
-        14;
+    var tvar1 = (((adcT >> 3) - (_digT1 << 1)) * _digT2) >> 11;
+    var tvar2 =
+        (((((adcT >> 4) - _digT1) * ((adcT >> 4) - _digT1)) >> 12) * _digT3) >>
+            14;
     var t_fine = tvar1 + tvar2;
 
     var temp = (t_fine * 5 + 128) >> 8;
@@ -317,7 +317,7 @@ class BME280 {
     if (pvar1 == 0) {
       pressure = 0; // Avoid exception caused by division by zero
     } else {
-      pressure = 1048576 - adc_p;
+      pressure = 1048576 - adcP;
       pressure = (((pressure << 31) - pvar2) * 3125) ~/ pvar1;
       pvar1 = (_digP9 * (pressure >> 13) * (pressure >> 13)) >> 25;
       pvar2 = (_digP8 * pressure) >> 19;
@@ -328,7 +328,7 @@ class BME280 {
     if (_model == BME280model.BME280) {
       var v_x1_u32r = t_fine - 76800;
       v_x1_u32r =
-          ((((adc_h << 14) - (_digH4 << 20) - (_digH5 * v_x1_u32r)) + 16384) >>
+          ((((adcH << 14) - (_digH4 << 20) - (_digH5 * v_x1_u32r)) + 16384) >>
                   15) *
               (((((((v_x1_u32r * _digH6) >> 10) *
                                       (((v_x1_u32r * _digH3) >> 11) + 32768)) >>

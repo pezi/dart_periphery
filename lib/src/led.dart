@@ -14,22 +14,22 @@ import 'signature.dart';
 /// [Led] error code
 enum LedErrorCode {
   /// Error code for not able to map the native C enum
-  ERROR_CODE_NOT_MAPPABLE,
+  errorCodeNotMappable,
 
   ///  Invalid arguments */
-  LED_ERROR_ARG,
+  ledErrorArg,
 
   /// Opening LED
-  LED_ERROR_OPEN,
+  ledErrorOpen,
 
   ///  Querying LED attributes
-  LED_ERROR_QUERY,
+  ledErrorQuery,
 
   /// Reading/writing LED brightness
-  LED_ERROR_IO,
+  ledErrorIO,
 
   /// Closing LED
-  LED_ERROR_CLOSE,
+  ledErrorClose,
 }
 
 // led_t *led_new(void);
@@ -71,7 +71,7 @@ final _nativeLedGetMaxBrightness = intVoidInt32PtrM('led_get_max_brightness');
 // int led_set_brightness(led_t *led, unsigned int brightness);
 final _nativeLedSetBrightness = intVoidIntM('led_set_brightness');
 
-const BUFFER_LEN = 256;
+const bufferLen = 256;
 
 int _checkError(int value) {
   if (value < 0) {
@@ -111,16 +111,15 @@ class Led {
 
   void _checkStatus() {
     if (_invalid) {
-      throw LedException(LedErrorCode.LED_ERROR_CLOSE,
-          'Led interface has the status released.');
+      throw LedException(
+          LedErrorCode.ledErrorClose, 'Led interface has the status released.');
     }
   }
 
   static Pointer<Void> _openLed(String name) {
     var _ledHandle = _nativeLedNew();
     if (_ledHandle == nullptr) {
-      return throw LedException(
-          LedErrorCode.LED_ERROR_OPEN, 'led_new() failed');
+      return throw LedException(LedErrorCode.ledErrorOpen, 'led_new() failed');
     }
     _checkError(_nativeLedOpen(_ledHandle, name.toNativeUtf8()));
     return _ledHandle;
@@ -130,14 +129,14 @@ class Led {
   static LedErrorCode getLedErrorCode(int value) {
     // must be negative
     if (value >= 0) {
-      return LedErrorCode.ERROR_CODE_NOT_MAPPABLE;
+      return LedErrorCode.errorCodeNotMappable;
     }
 
     value = -value;
 
     // check range
-    if (value > LedErrorCode.LED_ERROR_CLOSE.index) {
-      return LedErrorCode.ERROR_CODE_NOT_MAPPABLE;
+    if (value > LedErrorCode.ledErrorClose.index) {
+      return LedErrorCode.errorCodeNotMappable;
     }
 
     return LedErrorCode.values[value];
@@ -208,9 +207,9 @@ class Led {
   /// Returns a string representation of the led handle.
   String getLedInfo() {
     _checkStatus();
-    var data = malloc<Int8>(BUFFER_LEN).cast<Utf8>();
+    var data = malloc<Int8>(bufferLen).cast<Utf8>();
     try {
-      _checkError(_nativeLedInfo(_ledHandle, data, BUFFER_LEN));
+      _checkError(_nativeLedInfo(_ledHandle, data, bufferLen));
       return data.toDartString();
     } finally {
       malloc.free(data);
@@ -220,9 +219,9 @@ class Led {
   /// Returns the name of the led.
   String getLedName() {
     _checkStatus();
-    var data = malloc<Int8>(BUFFER_LEN).cast<Utf8>();
+    var data = malloc<Int8>(bufferLen).cast<Utf8>();
     try {
-      _checkError(_nativeLedName(_ledHandle, data, BUFFER_LEN));
+      _checkError(_nativeLedName(_ledHandle, data, bufferLen));
       return data.toDartString();
     } finally {
       malloc.free(data);

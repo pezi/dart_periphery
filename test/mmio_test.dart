@@ -2,43 +2,42 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-
 // https://github.com/vsergeev/c-periphery/blob/master/tests/test_mmio.c
 
 import 'package:dart_periphery/dart_periphery.dart';
 import 'dart:ffi';
 
-const int BCM2708_PERI_BASE = 0x3F000000; // Raspberry Pi 3
-const int GPIO_BASE = BCM2708_PERI_BASE + 0x200000;
-const int BLOCK_SIZE = 4 * 1024;
+const int bcm2708PeriBase = 0x3F000000; // Raspberry Pi 3
+const int gpioBase = bcm2708PeriBase + 0x200000;
+const int blockSize = 4 * 1024;
 
-void test_arguments() {}
+void testArguments() {}
 
 class Error extends Struct {
   @Int32()
-  external int c_errno;
+  external int cErrno;
   //   char errmsg[96];
   // @Array(8)
   //  external Array<Uint8> inlineArray;
 }
 
-class Mmio_handle extends Struct {
+class MmioHandle extends Struct {
   @IntPtr()
   external int base;
   @IntPtr()
-  external int aligned_base;
+  external int alignedBase;
   external Pointer<Void> ptr;
   external Error error;
 }
 
-void test_open_config_close() {
-  MMIO(GPIO_BASE, BLOCK_SIZE);
+void testOpenConfigClose() {
+  MMIO(gpioBase, blockSize);
 }
 
 void main(List<String> argv) {
-  test_arguments();
+  testArguments();
   print('Arguments test passed.');
-  test_open_config_close();
+  testOpenConfigClose();
   print('Open/close test passed.');
   // test_loopback();
   print('Loopback test passed.');

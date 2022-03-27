@@ -69,72 +69,72 @@ class SerialException implements Exception {
 
 /// [Serial] baudrate
 enum Baudrate {
-  B50,
-  B75,
-  B110,
-  B134,
-  B150,
-  B200,
-  B300,
-  B600,
-  B1200,
-  B1800,
-  B2400,
-  B4800,
-  B9600,
-  B19200,
-  B38400,
-  B57600,
-  B115200,
-  B230400,
-  B460800,
-  B500000,
-  B576000,
-  B921600,
-  B1000000,
-  B1152000,
-  B2000000,
-  B2500000,
-  B3000000,
-  B3500000,
-  B4000000,
+  b50,
+  b75,
+  b110,
+  b134,
+  b150,
+  b200,
+  b300,
+  b600,
+  b1200,
+  b1800,
+  b2400,
+  b4800,
+  b9600,
+  b19200,
+  b38400,
+  b57600,
+  b115200,
+  b230400,
+  b460800,
+  b500000,
+  b576000,
+  b921600,
+  b1000000,
+  b1152000,
+  b2000000,
+  b2500000,
+  b3000000,
+  b3500000,
+  b4000000,
 }
 
 /// [Serial] number of data bits
-enum DataBits { DB5, DB6, DB7, DB8 }
+enum DataBits { db5, db6, db7, db8 }
 
 /// Number of [Serial] stop bits
-enum StopBits { SB1, SB2 }
+enum StopBits { sb1, sb2 }
 
 /// [Serial] error codes
 enum SerialErrorCode {
   /// Error code for not able to map the native C enum
-  ERROR_CODE_NOT_MAPPABLE,
+  errorCodeNotMappable,
 
   /// Invalid arguments
-  SERIAL_ERROR_ARG,
+  serialErrorArg,
 
   /// Opening serial port
-  SERIAL_ERROR_OPEN,
+  serialErrorOpen,
 
   /// Querying serial port attributes
-  SERIAL_ERROR_QUERY,
+  serialErrorQuery,
 
   /// Configuring serial port attributes
-  SERIAL_ERROR_CONFIGURE,
+  serialErrorConfigure,
 
   /// Reading/writing serial port
-  SERIAL_ERROR_IO,
+  serialErrorIO,
 
   /// Closing serial port
-  SERIAL_ERROR_CLOSE
+  serialErrorClose
 }
 
 /// [Serial] parity
 enum Parity {
-  PARITY_NONE,
-  PARITY_ODD,
-  PARITY_EVEN,
+  parityNone,
+  parityOdd,
+  parityEven,
 }
 
 final DynamicLibrary _peripheryLib = getPeripheryLib();
@@ -286,7 +286,7 @@ String _getErrmsg(Pointer<Void> handle) {
   return _nativeSerialErrnMsg(handle).toDartString();
 }
 
-const BUFFER_LEN = 256;
+const bufferLen = 256;
 
 int _checkError(int value) {
   if (value < 0) {
@@ -326,7 +326,7 @@ class Serial {
 
   void _checkStatus() {
     if (_invalid) {
-      throw SerialException(SerialErrorCode.SERIAL_ERROR_CLOSE,
+      throw SerialException(SerialErrorCode.serialErrorClose,
           'Serial interface has the status released.');
     }
   }
@@ -335,13 +335,13 @@ class Serial {
   static SerialErrorCode getSerialErrorCode(int value) {
     // must be negative
     if (value >= 0) {
-      return SerialErrorCode.ERROR_CODE_NOT_MAPPABLE;
+      return SerialErrorCode.errorCodeNotMappable;
     }
     value = -value;
 
     // check range
-    if (value > SerialErrorCode.SERIAL_ERROR_CLOSE.index) {
-      return SerialErrorCode.ERROR_CODE_NOT_MAPPABLE;
+    if (value > SerialErrorCode.serialErrorClose.index) {
+      return SerialErrorCode.errorCodeNotMappable;
     }
 
     return SerialErrorCode.values[value];
@@ -368,9 +368,9 @@ class Serial {
   /// Opens the <tt>tty</tt> device at the specified [path] (e.g. "/dev/ttyUSB0"), with the specified [baudrate], and the
   /// defaults of 8 data bits, no parity, 1 stop bit, software flow control (xonxoff) off, hardware flow control (rtscts) off.
   Serial(this.path, this.baudrate)
-      : databits = DataBits.DB8,
-        parity = Parity.PARITY_NONE,
-        stopbits = StopBits.SB1,
+      : databits = DataBits.db8,
+        parity = Parity.parityNone,
+        stopbits = StopBits.sb1,
         rtsct = false,
         xonxoff = false,
         _serialHandle = _openSerial(path, baudrate);
@@ -379,7 +379,7 @@ class Serial {
     var _serialHandle = _nativeSerialNew();
     if (_serialHandle == nullptr) {
       return throw SerialException(
-          SerialErrorCode.SERIAL_ERROR_OPEN, 'Error opening serial interface');
+          SerialErrorCode.serialErrorOpen, 'Error opening serial interface');
     }
     _checkError(_nativeSerialOpen(
         _serialHandle, path.toNativeUtf8(), baudrate2Int(baudrate)));
@@ -420,7 +420,7 @@ class Serial {
     var _serialHandle = _nativeSerialNew();
     if (_serialHandle == nullptr) {
       return throw SerialException(
-          SerialErrorCode.SERIAL_ERROR_OPEN, 'Error opening serial interface');
+          SerialErrorCode.serialErrorOpen, 'Error opening serial interface');
     }
     _checkError(_nativeOpenAdvanced(
         _serialHandle,
@@ -565,64 +565,64 @@ class Serial {
     _checkStatus();
     switch (_getInt32Value(_nativeSerialGetBaudrate)) {
       case 50:
-        return Baudrate.B50;
+        return Baudrate.b50;
       case 75:
-        return Baudrate.B75;
+        return Baudrate.b75;
       case 110:
-        return Baudrate.B110;
+        return Baudrate.b110;
       case 134:
-        return Baudrate.B134;
+        return Baudrate.b134;
       case 150:
-        return Baudrate.B150;
+        return Baudrate.b150;
       case 200:
-        return Baudrate.B200;
+        return Baudrate.b200;
       case 300:
-        return Baudrate.B300;
+        return Baudrate.b300;
       case 600:
-        return Baudrate.B600;
+        return Baudrate.b600;
       case 1200:
-        return Baudrate.B1200;
+        return Baudrate.b1200;
       case 1800:
-        return Baudrate.B1800;
+        return Baudrate.b1800;
       case 2400:
-        return Baudrate.B2400;
+        return Baudrate.b2400;
       case 4800:
-        return Baudrate.B4800;
+        return Baudrate.b4800;
       case 9600:
-        return Baudrate.B9600;
+        return Baudrate.b9600;
       case 19200:
-        return Baudrate.B19200;
+        return Baudrate.b19200;
       case 38400:
-        return Baudrate.B38400;
+        return Baudrate.b38400;
       case 57600:
-        return Baudrate.B57600;
+        return Baudrate.b57600;
       case 115200:
-        return Baudrate.B115200;
+        return Baudrate.b115200;
       case 230400:
-        return Baudrate.B230400;
+        return Baudrate.b230400;
       case 460800:
-        return Baudrate.B460800;
+        return Baudrate.b460800;
       case 500000:
-        return Baudrate.B500000;
+        return Baudrate.b500000;
       case 576000:
-        return Baudrate.B576000;
+        return Baudrate.b576000;
       case 1000000:
-        return Baudrate.B1000000;
+        return Baudrate.b1000000;
       case 1152000:
-        return Baudrate.B1152000;
+        return Baudrate.b1152000;
       case 2000000:
-        return Baudrate.B2000000;
+        return Baudrate.b2000000;
       case 2500000:
-        return Baudrate.B2500000;
+        return Baudrate.b2500000;
       case 3000000:
-        return Baudrate.B3000000;
+        return Baudrate.b3000000;
       case 3500000:
-        return Baudrate.B3500000;
+        return Baudrate.b3500000;
       case 4000000:
-        return Baudrate.B4000000;
+        return Baudrate.b4000000;
     }
-    throw SerialException(SerialErrorCode.ERROR_CODE_NOT_MAPPABLE,
-        'Unable to map baudrate to enum');
+    throw SerialException(
+        SerialErrorCode.errorCodeNotMappable, 'Unable to map baudrate to enum');
   }
 
   /// Sets the [baudrate].
@@ -638,15 +638,15 @@ class Serial {
     _checkStatus();
     switch (_getInt32Value(_nativeSerialGetDatabits)) {
       case 5:
-        return DataBits.DB5;
+        return DataBits.db5;
       case 6:
-        return DataBits.DB6;
+        return DataBits.db6;
       case 7:
-        return DataBits.DB7;
+        return DataBits.db7;
       case 8:
-        return DataBits.DB8;
+        return DataBits.db8;
     }
-    throw SerialException(SerialErrorCode.ERROR_CODE_NOT_MAPPABLE,
+    throw SerialException(SerialErrorCode.errorCodeNotMappable,
         'Unable to map data bits to enum');
   }
 
@@ -663,11 +663,11 @@ class Serial {
     _checkStatus();
     switch (_getInt32Value(_nativeSerialGetStopbits)) {
       case 1:
-        return StopBits.SB1;
+        return StopBits.sb1;
       case 2:
-        return StopBits.SB2;
+        return StopBits.sb2;
     }
-    throw SerialException(SerialErrorCode.ERROR_CODE_NOT_MAPPABLE,
+    throw SerialException(SerialErrorCode.errorCodeNotMappable,
         'Unable to map stop bits to enum');
   }
 
@@ -771,9 +771,9 @@ class Serial {
   /// Returns a string representation of the Serial handle.
   String getSerialInfo() {
     _checkStatus();
-    var data = malloc<Int8>(BUFFER_LEN).cast<Utf8>();
+    var data = malloc<Int8>(bufferLen).cast<Utf8>();
     try {
-      _checkError(_nativeSerialInfo(_serialHandle, data, BUFFER_LEN));
+      _checkError(_nativeSerialInfo(_serialHandle, data, bufferLen));
       return data.toDartString();
     } finally {
       malloc.free(data);

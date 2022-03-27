@@ -3,7 +3,7 @@
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
 
-[![pub package](https://img.shields.io/badge/pub-v0.8.26-orange)](https://pub.dartlang.org/packages/dart_periphery)
+[![pub package](https://img.shields.io/badge/pub-v0.8.30-orange)](https://pub.dartlang.org/packages/dart_periphery)
 
 ## Introduction
 
@@ -473,7 +473,7 @@ The appropriate [library](https://github.com/pezi/dart_periphery/blob/main/lib/s
 
 ## flutter-pi
 
-**dart_periphery** works with flutter-pi, a light-weight [Flutter Engine Embedder](https://github.com/ardera/flutter-pi) for Raspberry Pi. For futter-pi the appropriate library must be copied inside the flutter asset directory.
+**dart_periphery** works with flutter-pi, a light-weight [Flutter Engine Embedder](https://github.com/ardera/flutter-pi) for Raspberry Pi. For flutter-pi the appropriate library must be copied inside the flutter asset directory.
 
 * In most cases the ARMv7 library: [libperiphery_arm.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm.so) for Raspberry Pi OS 32-bit
 * ARMv8 [libperiphery_aarch64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_aarch64.so) for Raspberry Pi OS 64-bit
@@ -486,7 +486,7 @@ void setCPUarchitecture(CPU_ARCHITECTURE arch)
 void setCustomLibrary(String absolutePath)
 ```
 
-This method must be called before any **dart_periphery** interface is used! See last section, [native libraries](https://pub.dev/packages/dart_periphery#native-libraries) for details.
+These methods must be called before any **dart_periphery** interface is used! See last section, [native libraries](https://pub.dev/packages/dart_periphery#native-libraries) for details.
 
 For flutter-pi the method
 
@@ -512,10 +512,10 @@ returns the command line parameter list of the `flutter-pi` command. The last pa
 * [BME280](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme280.dart): Temperature, humidity and pressure sensor.
 * [BME680](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme680.dart): Temperature, humidity pressure and gas (Indoor Airy Quality) sensor.
 * [SHT31](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht31.dart): Temperature and humidity sensor.
-* [CozIR](https://github.com/pezi/dart_periphery/blob/main/example/serial_cozir.dart): CO<sub>2</sub>, temperature and humidity sensor.
+* [CozIR](https://github.com/pezi/dart_periphery/blob/main/example/serial_cozir.dart): CO₂, temperature and humidity sensor.
 * [Grove Gesture](https://github.com/pezi/dart_periphery/blob/main/example/i2c_gesture_sensor.dart) can recognize 9 basic gestures.
 * [MPU-6050 Six-Axis](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mpu6050.dart) (Gyro + Accelerometer) sensor.
-* FriendlyARM [BakeBit Set](https://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
+* FriendlyARM [BakeBit Set](https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
 * [Grove Base Hat](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi/)/[GrovePi Plus](https://wiki.seeedstudio.com/GrovePi_Plus)
 * [PN532](https://github.com/pezi/dart_periphery/pull/6) NFC Reader Module, Thanks to UliPrantz!
 * SSD1306 OLED (in progress)
@@ -546,7 +546,7 @@ returns the command line parameter list of the `flutter-pi` command. The last pa
 
 ⁴ Fails for NanoPi, NanoPi Neo2 and Banana Pi on Armbian- same behavior like the original c-periphery [test program](https://github.com/vsergeev/c-periphery/blob/master/tests/test_gpio.c). This is a point of deeper investigations
 
-⁵ no X86/X86_64 SOC for testing available
+⁵ no X86/X86_64 SoC for testing available
 
 
 ## Help wanted

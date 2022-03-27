@@ -9,15 +9,15 @@ import 'package:dart_periphery/dart_periphery.dart';
 import 'util.dart';
 import 'dart:io';
 
-void test_arguments() {
+void testArguments() {
   // No real argument validation needed in the i2c wrapper
 }
 
-void test_open_config_close(int i2cNum) {
+void testOpenConfigClose(int i2cNum) {
   try {
     I2C(99999);
   } on I2Cexception catch (e) {
-    if (e.errorCode != I2CerrorCode.I2C_ERROR_OPEN) {
+    if (e.errorCode != I2CerrorCode.i2cErrorOpen) {
       rethrow;
     }
   }
@@ -31,12 +31,12 @@ void test_open_config_close(int i2cNum) {
   validBus.dispose();
 }
 
-void test_loopback() {
+void testLoopback() {
   print(
       'No general way to do a loopback test for I2C without a real component, skipping...');
 }
 
-void test_interactive(int i2cNum) {
+void testInteractive(int i2cNum) {
   var msg = [0xaa, 0xbb, 0xcc, 0xdd];
   var i2c = I2C(i2cNum);
   try {
@@ -51,9 +51,9 @@ void test_interactive(int i2cNum) {
     try {
       i2c.writeBytes(0x7a, msg);
     } on I2Cexception catch (e) {
-      passert(i2c.getErrno() == ERRNO.EREMOTEIO.index ||
-          i2c.getErrno() == ERRNO.ENXIO.index);
-      passert(e.errorCode == I2CerrorCode.I2C_ERROR_TRANSFER);
+      passert(i2c.getErrno() == ERRNO.eremoteio.index ||
+          i2c.getErrno() == ERRNO.enxio.index);
+      passert(e.errorCode == I2CerrorCode.i2cErrorTransfer);
     }
     print('I2C transfer occurred? y/n');
     pressKeyYes();
@@ -68,7 +68,7 @@ void main(List<String> argv) {
 
     print('[1/4] Arguments test: No requirements.');
     print('[2/4] Open/close test: I2C device should be real.');
-    print('[3/4] Loopback test: No test.\.');
+    print('[3/4] Loopback test: No test.');
     print(
         '[4/4] Interactive test: I2C bus should be observed with an oscilloscope or logic analyzer.');
     print('Hint: for Raspberry Pi 3, enable I2C1 with:');
@@ -82,13 +82,13 @@ void main(List<String> argv) {
 
   var i2cNum = int.parse(argv[0]);
 
-  test_arguments();
+  testArguments();
   print('Arguments test passed.');
-  test_open_config_close(i2cNum);
+  testOpenConfigClose(i2cNum);
   print('Open/close test passed.');
-  test_loopback();
+  testLoopback();
   print('Loopback test passed.');
-  test_interactive(i2cNum);
+  testInteractive(i2cNum);
   print('Interactive test passed.');
 
   print('All tests passed!\n');

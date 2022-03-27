@@ -10,7 +10,7 @@ import 'util.dart';
 import 'dart:io';
 import 'package:collection/collection.dart';
 
-void test_arguments(int bus, int chip) {
+void testArguments(int bus, int chip) {
   // Invalid mode
   // ppassert(spi_open(spi, device, 4, 1e6) == SPI_ERROR_ARG);
   // ppassert(spi_open_advanced(spi, device, 0, 1e6, LSB_FIRST+1, 8, 0) == SPI_ERROR_ARG);
@@ -18,8 +18,8 @@ void test_arguments(int bus, int chip) {
   // Due the usage of enums this invald parameter can not be mapped
 }
 
-void test_open_config_close(int bus, int chip) {
-  var spi = SPI(bus, chip, SPImode.MODE0, 100000);
+void testOpenConfigClose(int bus, int chip) {
+  var spi = SPI(bus, chip, SPImode.mode0, 100000);
   try {
     var isolate = SPI.isolate(spi.toJson());
     passert(spi.path == isolate.path);
@@ -41,7 +41,7 @@ void test_open_config_close(int bus, int chip) {
       spi.setSPImode(mode);
       passert(spi.getSPImode() == mode);
     }
-    spi.setSPImode(SPImode.MODE0);
+    spi.setSPImode(SPImode.mode0);
 
     // Try 100KHz, 500KHz, 1MHz
     for (var f in [100e3, 500e3, 1e6]) {
@@ -53,8 +53,8 @@ void test_open_config_close(int bus, int chip) {
   }
 }
 
-void test_loopback(int bus, int chip) {
-  var spi = SPI(bus, chip, SPImode.MODE0, 100000);
+void testLoopback(int bus, int chip) {
+  var spi = SPI(bus, chip, SPImode.mode0, 100000);
   try {
     Function eq = const ListEquality().equals;
     var data = <int>[for (int i = 0; i < 32; ++i) i];
@@ -64,9 +64,9 @@ void test_loopback(int bus, int chip) {
   }
 }
 
-void test_interactive(int bus, int chip) {
+void testInteractive(int bus, int chip) {
   var buf = [0x55, 0xaa, 0x0f, 0xf0];
-  var spi = SPI(bus, chip, SPImode.MODE0, 100000);
+  var spi = SPI(bus, chip, SPImode.mode0, 100000);
   try {
     print('Starting interactive test. Get out your logic analyzer, buddy!');
     print('Press enter to continue...');
@@ -83,7 +83,7 @@ void test_interactive(int bus, int chip) {
       print('SPI transfer speed <= 100KHz, mode ${mode.index} occurred? y/n');
       pressKeyYes();
     }
-    spi.setSPImode(SPImode.MODE0);
+    spi.setSPImode(SPImode.mode0);
     for (var f in [500e3, 1e6]) {
       spi.setSPImaxSpeed(f.toInt());
       print('Press enter to start transfer...');
@@ -121,13 +121,13 @@ void main(List<String> argv) {
   var bus = int.parse(argv[0]);
   var chip = int.parse(argv[1]);
 
-  test_arguments(bus, chip);
+  testArguments(bus, chip);
   print('Arguments test passed.');
-  test_open_config_close(bus, chip);
+  testOpenConfigClose(bus, chip);
   print('Open/close test passed.');
-  test_loopback(bus, chip);
+  testLoopback(bus, chip);
   print('Loopback test passed.');
-  test_interactive(bus, chip);
+  testInteractive(bus, chip);
   print('Interactive test passed.');
 
   print('All tests passed!\n');

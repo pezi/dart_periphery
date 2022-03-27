@@ -353,7 +353,7 @@ class GestureSensor {
     try {
       data0 = i2c.readByteReg(PAJ7620_ID, 0);
     } on I2Cexception catch (e) {
-      if (e.errorCode == I2CerrorCode.I2C_ERROR_TRANSFER) {
+      if (e.errorCode == I2CerrorCode.i2cErrorTransfer) {
         sleep(Duration(milliseconds: 10));
         // sensor should be up at this point!
         data0 = i2c.readByteReg(PAJ7620_ID, 0);

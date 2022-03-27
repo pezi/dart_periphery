@@ -10,7 +10,7 @@ import 'package:dart_periphery/dart_periphery.dart';
 void main() {
   // Select the right I2C bus number /dev/i2c-0
   // 1 for Raspbery Pi, 0 for NanoPi
-  var spi = SPI(0, 0, SPImode.MODE0, 500000);
+  var spi = SPI(0, 0, SPImode.mode0, 500000);
   try {
     print('SPI info:' + spi.getSPIinfo());
     var data = <int>[for (int i = 0; i < 10; ++i) i];

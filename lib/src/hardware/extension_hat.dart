@@ -5,7 +5,7 @@
 import 'dart:io';
 import '../i2c.dart';
 
-const int DIGITAL_READ = 1;
+const int digialRead = 1;
 const int DIGITAL_WRITE = 2;
 const int ANALOG_READ = 3;
 const int ANALOG_WRITE = 4;
@@ -153,7 +153,7 @@ class ArduinoBasedHat {
     var error = I2Cexception.empty();
     for (var i = 0; i < RETRY; ++i) {
       try {
-        write_i2c_block(HatCmd(DIGITAL_READ).getCmdSeqExt(pin));
+        write_i2c_block(HatCmd(digialRead).getCmdSeqExt(pin));
         sleep(Duration(milliseconds: DELAY));
         var value = i2c.readByteReg(HAT_ARDUINO_I2C_ADDRESS, 1);
         _updateLastAction();

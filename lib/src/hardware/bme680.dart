@@ -303,13 +303,13 @@ class GasSettings {
 
 class SensorSettings {
   /// Humidity oversampling
-  OversamplingMultiplier oversamplingHumidity = OversamplingMultiplier.X0;
+  OversamplingMultiplier oversamplingHumidity = OversamplingMultiplier.x0;
 
   /// Temperature oversampling
-  OversamplingMultiplier oversamplingTemperature = OversamplingMultiplier.X0;
+  OversamplingMultiplier oversamplingTemperature = OversamplingMultiplier.x0;
 
   /// Pressure oversampling
-  OversamplingMultiplier oversamplingPressure = OversamplingMultiplier.X0;
+  OversamplingMultiplier oversamplingPressure = OversamplingMultiplier.x0;
 
   /// Filter coefficient
   FilterSize filter = FilterSize.NONE;
@@ -446,9 +446,9 @@ class BME680 {
 
     // It is highly recommended to set first osrs_h<2:0> followed by osrs_t<2:0> and
     // osrs_p<2:0> in one write command (see Section 3.3).
-    setHumidityOversample(OversamplingMultiplier.X2); // 0x72
-    setTemperatureOversample(OversamplingMultiplier.X4); // 0x74
-    setPressureOversample(OversamplingMultiplier.X8); // 0x74
+    setHumidityOversample(OversamplingMultiplier.x2); // 0x72
+    setTemperatureOversample(OversamplingMultiplier.x4); // 0x74
+    setPressureOversample(OversamplingMultiplier.x8); // 0x74
 
     setFilter(FilterSize.SIZE_3);
 

@@ -7,9 +7,9 @@ import 'dart:io';
 
 /// https://elinux.org/RPi_GPIO_Code_Samples
 
-const int BCM2708_PERI_BASE = 0x3F000000; // Raspberry Pi 3
-const int GPIO_BASE = BCM2708_PERI_BASE + 0x200000;
-const int BLOCK_SIZE = 4 * 1024;
+const int bcm2708PeriBase = 0x3F000000; // Raspberry Pi 3
+const int gpioBase = bcm2708PeriBase + 0x200000;
+const int blockSize = 4 * 1024;
 
 class MemMappedGPIO {
   MMIO mmio;
@@ -51,7 +51,7 @@ class MemMappedGPIO {
 void main() {
   // Needs root rights and the GPIO_BASE must be correct!
   // var mmio = MMIO(GPIO_BASE, BLOCK_SIZE);
-  var mmio = MMIO.advanced(0, BLOCK_SIZE, '/dev/gpiomem');
+  var mmio = MMIO.advanced(0, blockSize, '/dev/gpiomem');
   var gpio = MemMappedGPIO(mmio);
   try {
     print(mmio.getMMIOinfo());

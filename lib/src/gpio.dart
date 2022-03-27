@@ -14,69 +14,69 @@ import 'signature.dart';
 import 'dart:convert';
 
 /// Result codes of the [GPIO.poll].
-enum GPIOpolling { SUCCESS, TIMEOUT }
+enum GPIOpolling { success, timeout }
 
 /// Mapped native [GPIO] error codes with the same index, but different leading sign.
 enum GPIOerrorCode {
   /// Error code for not able to map the native C enum
-  ERROR_CODE_NOT_MAPPABLE,
+  errorCodeNotMappable,
 
   ///  Invalid arguments
-  GPIO_ERROR_ARG,
+  gpioErrorArg,
 
   /// Opening GPIO
-  GPIO_ERROR_OPEN,
+  gpioErrorOpen,
 
   /// Line name not found
-  GPIO_ERROR_NOT_FOUND,
+  gpioErrorNotFound,
 
   /// Querying GPIO attributes
-  GPIO_ERROR_QUERY,
+  gpioErrorQuery,
 
   /// Configuring GPIO attributes
-  GPIO_ERROR_CONFIGURE,
+  gpioErrorConfigure,
 
   /// Unsupported attribute or operation
-  GPIO_ERROR_UNSUPPORTED,
+  gpioErrorUnsupported,
 
   /// Invalid operation
-  GPIO_ERROR_INVALID_OPERATION,
+  gpioErrorInvalidOperation,
 
   /// Reading/writing GPIO
-  GPIO_ERROR_IO,
+  gpioErrorIO,
 
   /// Closing GPIO
-  GPIO_ERROR_CLOSE,
+  gpioErrorClose
 }
 
 /// [GPIO] input/output direction
 enum GPIOdirection {
   ///  Input
-  GPIO_DIR_IN,
+  gpioDirIn,
 
   /// Output, initialized to low
-  GPIO_DIR_OUT,
+  gpioDirOut,
 
   /// output, initialized to low
-  GPIO_DIR_OUT_LOW,
+  gpioDirOutLow,
 
   /// output, initialized to high
-  GPIO_DIR_OUT_HIGH
+  gpioDirOutHigh
 }
 
 /// [GPIO] edge
 enum GPIOedge {
   /// No interrupt edge
-  GPIO_EDGE_NONE,
+  gpioEdgeNone,
 
   /// Rising edge 0 -> 1
-  GPIO_EDGE_RISING,
+  gpioEdgeRising,
 
   /// Falling edge 1 -> 0
-  GPIO_EDGE_FALLING,
+  gpioEdgeFalling,
 
   /// Both edges X -> !X
-  GPIO_EDGE_BOTH
+  gpioEdgeBoth
 }
 
 /// [GPIO] bias
@@ -188,8 +188,8 @@ class GPIOconfig {
   GPIOconfig(this.direction, this.edge, this.bias, this.drive, this.inverted,
       this.label);
   GPIOconfig.defaultValues()
-      : direction = GPIOdirection.GPIO_DIR_IN,
-        edge = GPIOedge.GPIO_EDGE_NONE,
+      : direction = GPIOdirection.gpioDirIn,
+        edge = GPIOedge.gpioEdgeNone,
         bias = GPIObias.GPIO_BIAS_DEFAULT,
         drive = GPIOdrive.GPIO_DRIVE_DEFAULT,
         inverted = false,
@@ -426,13 +426,13 @@ class GPIO {
   static GPIOerrorCode getGPIOerrorCode(int value) {
     // must be negative
     if (value >= 0) {
-      return GPIOerrorCode.ERROR_CODE_NOT_MAPPABLE;
+      return GPIOerrorCode.errorCodeNotMappable;
     }
     value = -value;
 
     // check range
-    if (value > GPIOerrorCode.GPIO_ERROR_CLOSE.index) {
-      return GPIOerrorCode.ERROR_CODE_NOT_MAPPABLE;
+    if (value > GPIOerrorCode.gpioErrorClose.index) {
+      return GPIOerrorCode.errorCodeNotMappable;
     }
 
     return GPIOerrorCode.values[value];
@@ -440,7 +440,7 @@ class GPIO {
 
   void _checkStatus() {
     if (_invalid) {
-      throw GPIOexception(GPIOerrorCode.GPIO_ERROR_INVALID_OPERATION,
+      throw GPIOexception(GPIOerrorCode.gpioErrorInvalidOperation,
           'GPIO line has the status released!');
     }
   }
@@ -466,7 +466,7 @@ class GPIO {
       String path, int line, GPIOdirection direction) {
     var _gpioHandle = _nativeGPIOnew();
     if (_gpioHandle == nullptr) {
-      return throw GPIOexception(GPIOerrorCode.GPIO_ERROR_OPEN, OPEN_ERROR);
+      return throw GPIOexception(GPIOerrorCode.gpioErrorOpen, OPEN_ERROR);
     }
     _checkError(_nativeGPIOopen(
         _gpioHandle, path.toNativeUtf8(), line, direction.index));
@@ -486,7 +486,7 @@ class GPIO {
       String path, String name, GPIOdirection direction) {
     var _gpioHandle = _nativeGPIOnew();
     if (_gpioHandle == nullptr) {
-      return throw GPIOexception(GPIOerrorCode.GPIO_ERROR_OPEN, OPEN_ERROR);
+      return throw GPIOexception(GPIOerrorCode.gpioErrorOpen, OPEN_ERROR);
     }
     _checkError(_nativeGPIOopenName(_gpioHandle, path.toNativeUtf8(),
         name.toNativeUtf8(), direction.index));
@@ -507,7 +507,7 @@ class GPIO {
       String path, int line, GPIOconfig config) {
     var _gpioHandle = _nativeGPIOnew();
     if (_gpioHandle == nullptr) {
-      return throw GPIOexception(GPIOerrorCode.GPIO_ERROR_OPEN, OPEN_ERROR);
+      return throw GPIOexception(GPIOerrorCode.gpioErrorOpen, OPEN_ERROR);
     }
     _checkError(_nativeGPIOopenAdvanced(
         _gpioHandle, path.toNativeUtf8(), line, config.toNative()));
@@ -528,7 +528,7 @@ class GPIO {
       String path, String name, GPIOconfig config) {
     var _gpioHandle = _nativeGPIOnew();
     if (_gpioHandle == nullptr) {
-      return throw GPIOexception(GPIOerrorCode.GPIO_ERROR_OPEN, OPEN_ERROR);
+      return throw GPIOexception(GPIOerrorCode.gpioErrorOpen, OPEN_ERROR);
     }
     _checkError(_nativeGPIOopenNameAdvanced(_gpioHandle, path.toNativeUtf8(),
         name.toNativeUtf8(), config.toNative()));
@@ -557,7 +557,7 @@ class GPIO {
     var _gpioHandle = _nativeGPIOnew();
     if (_gpioHandle == nullptr) {
       return throw GPIOexception(
-          GPIOerrorCode.GPIO_ERROR_OPEN, 'Error opening GPIO interface');
+          GPIOerrorCode.gpioErrorOpen, 'Error opening GPIO interface');
     }
     _checkError(_nativeGPIOopenSysfs(_gpioHandle, line, direction.index));
     return _gpioHandle;
@@ -612,8 +612,8 @@ class GPIO {
   GPIOpolling poll(int timeoutMillis) {
     _checkStatus();
     return _checkError(_nativeGPIOpoll(_gpioHandle, timeoutMillis)) == 1
-        ? GPIOpolling.SUCCESS
-        : GPIOpolling.TIMEOUT;
+        ? GPIOpolling.success
+        : GPIOpolling.timeout;
   }
 
   /// Reads the edge event that occurred with the GPIO.

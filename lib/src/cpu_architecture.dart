@@ -3,7 +3,8 @@ import 'package:ffi/ffi.dart';
 
 typedef NativeCall = int Function(Pointer<Int8>);
 
-enum CPU_ARCHITECTURE { X86, X86_64, ARM, ARM64, NOT_SUPPORTED, UNDEFINED }
+/// Supported CPU architecture
+enum CPU_ARCHITECTURE { x86, x86_64, arm, arm64, notSupported, undefinded }
 
 final DynamicLibrary nativeAddLib = DynamicLibrary.open("libc.so.6");
 NativeCall uname = nativeAddLib
@@ -11,39 +12,48 @@ NativeCall uname = nativeAddLib
     .asFunction();
 
 // https://en.wikipedia.org/wiki/Uname
+
+///
 class CpuArch {
+  static CpuArch? _cpuArch;
   String machine;
   CPU_ARCHITECTURE cpuArch;
 
-  CpuArch()
+  factory CpuArch() {
+    _cpuArch ??= CpuArch._internal();
+    return _cpuArch as CpuArch;
+  }
+
+  CpuArch._internal()
       : machine = "",
-        cpuArch = CPU_ARCHITECTURE.NOT_SUPPORTED {
+        cpuArch = CPU_ARCHITECTURE.notSupported {
     Uname uname = nativeUname();
     machine = uname.machine;
     switch (uname.machine) {
       case 'i686':
       case 'i386':
-        cpuArch = CPU_ARCHITECTURE.X86;
+        cpuArch = CPU_ARCHITECTURE.x86;
         break;
       case 'x86_64':
-        cpuArch = CPU_ARCHITECTURE.X86_64;
+        cpuArch = CPU_ARCHITECTURE.x86_64;
         break;
       case 'aarch64':
       case 'aarch64_be':
       case 'arm64':
       case 'armv8b':
       case 'armv8l':
-        cpuArch = CPU_ARCHITECTURE.ARM64;
+        cpuArch = CPU_ARCHITECTURE.arm64;
         break;
       case 'armv':
-      case 'armv6l': 
+      case 'armv6l':
       case 'armv7l':
-        cpuArch = CPU_ARCHITECTURE.ARM;
+        cpuArch = CPU_ARCHITECTURE.arm;
         break;
     }
   }
 }
 
+/// Uname class, container for the Linux uname struct values.
 class Uname {
   String sysname;
   String nodename;
@@ -53,10 +63,12 @@ class Uname {
   Uname(this.sysname, this.nodename, this.release, this.version, this.machine);
 }
 
+/// Calls the native uname() function.
 Uname nativeUname() {
   // allocate a memory buffer for  struct utsname - size value derived from this source
   // https://man7.org/linux/man-pages/man2/uname.2.html
   const len = 6 * 257;
+  const enumElements = 5;
 
   Pointer<Int8> data = calloc<Int8>(len);
 
@@ -65,7 +77,7 @@ Uname nativeUname() {
       throw Exception('Calling uname() failed.');
     }
 
-    // calculate _UTSNAME_LENGTH length for char machine[];
+    // calculate _UTSNAME_LENGTH ;
     var utslen = 0;
     label:
     for (int i = 0; i < len; ++i) {
@@ -81,14 +93,14 @@ Uname nativeUname() {
 
     var values = <String>[];
 
-    // extrract these 5 strings from the memory
+    // extract these 5 strings from the memory
     //
-    //  char sysname[];    /* Operating system name (e.g., "Linux") */
-    //  char nodename[];   /* Name within "some implementation-defined network" */
-    //  char release[];    /* Operating system release (e.g., "2.6.28") */
-    //  char version[];    /* Operating system version */
-    //  char machine[];    /* /* Hardware identifier */
-    for (int i = 0; i < 5; ++i) {
+    // char sysname[];    /* Operating system name (e.g., "Linux") */
+    // char nodename[];   /* Name within "some implementation-defined network" */
+    // char release[];    /* Operating system release (e.g., "2.6.28") */
+    // char version[];    /* Operating system version */
+    // char machine[];    /* Hardware identifier */
+    for (int i = 0; i < enumElements; ++i) {
       var start = utslen * i;
       StringBuffer buf = StringBuffer();
       for (int i = start; i < len; ++i) {

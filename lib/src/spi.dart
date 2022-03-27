@@ -42,7 +42,7 @@ enum SPIerrorCode {
 }
 
 /// [SPI] modes
-enum SPImode { MODE0, MODE1, MODE2, MODE3 }
+enum SPImode { mode0, mode1, mode2, mode3 }
 
 /// [SPI] exception
 class SPIexception implements Exception {

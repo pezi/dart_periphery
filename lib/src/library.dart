@@ -81,8 +81,8 @@ void setCustomLibrary(String absolutePath) {
 
 /// Bypasses the autodection of the CPU architecture.
 void setCPUarchitecture(CPU_ARCHITECTURE arch) {
-  if (arch == CPU_ARCHITECTURE.NOT_SUPPORTED ||
-      arch == CPU_ARCHITECTURE.UNDEFINED) {
+  if (arch == CPU_ARCHITECTURE.notSupported ||
+      arch == CPU_ARCHITECTURE.undefinded) {
     throw LibraryException(
         LibraryErrorCode.INVALID_PARAMETER, "Invalid parameter");
   }
@@ -93,7 +93,7 @@ void setCPUarchitecture(CPU_ARCHITECTURE arch) {
 
 String _autoDetectCPUarch() {
   CpuArch arch = CpuArch();
-  if (arch.cpuArch == CPU_ARCHITECTURE.NOT_SUPPORTED) {
+  if (arch.cpuArch == CPU_ARCHITECTURE.notSupported) {
     throw LibraryException(LibraryErrorCode.CPU_ARCH_DETECTION_FAILED,
         "Unable to detect CPU architecture, found '${arch.machine}' . Use 'setCustomLibrary(String absolutePath)' - see documentation https://github.com/pezi/dart_periphery, or create an issue https://github.com/pezi/dart_periphery/issues");
   }
@@ -104,11 +104,11 @@ String _autoDetectCPUarch() {
 
 /// dart_periphery loads the library from the actual directory.
 /// See [native-libraries](https://pub.dev/packages/dart_periphery#native-libraries) for details.
-void useLocalLibrary([CPU_ARCHITECTURE arch = CPU_ARCHITECTURE.UNDEFINED]) {
-  if (arch == CPU_ARCHITECTURE.UNDEFINED) {
+void useLocalLibrary([CPU_ARCHITECTURE arch = CPU_ARCHITECTURE.undefinded]) {
+  if (arch == CPU_ARCHITECTURE.undefinded) {
     _peripheryLibPath = './' + _autoDetectCPUarch();
   } else {
-    if (arch == CPU_ARCHITECTURE.NOT_SUPPORTED) {
+    if (arch == CPU_ARCHITECTURE.notSupported) {
       throw LibraryException(
           LibraryErrorCode.INVALID_PARAMETER, "Invalid parameter");
     }
@@ -136,16 +136,16 @@ class LibraryException implements Exception {
 typedef _getpId = Int32 Function();
 typedef _GetpId = int Function();
 
-bool _isFutterPi = Platform.resolvedExecutable.endsWith('flutter-pi');
+bool _isFlutterPi = Platform.resolvedExecutable.endsWith('flutter-pi');
 
-bool isFutterPiEnv() {
-  return _isFutterPi;
+bool isFlutterPiEnv() {
+  return _isFlutterPi;
 }
 
 var _flutterPiArgs = <String>[];
 
 List<String> getFlutterPiArgs() {
-  if (!isFutterPiEnv()) {
+  if (!isFlutterPiEnv()) {
     return const <String>[];
   }
   if (_flutterPiArgs.isEmpty) {
@@ -174,7 +174,7 @@ DynamicLibrary getPeripheryLib() {
   }
 
   String path;
-  if (isFutterPiEnv() && _peripheryLibPath.isEmpty) {
+  if (isFlutterPiEnv() && _peripheryLibPath.isEmpty) {
     var args = getFlutterPiArgs();
     var index = 1;
     for (var i = 1; i < args.length; ++i) {

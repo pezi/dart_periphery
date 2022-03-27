@@ -9,21 +9,21 @@ import 'package:dart_periphery/dart_periphery.dart';
 import 'util.dart';
 import 'dart:io';
 
-void test_arguments() {
+void testArguments() {
   print(
       'test_arguments() - No real argument validation needed in the LED wrapper');
 }
 
-void test_loopback() {
+void testLoopback() {
   print('Starting test');
 }
 
-void test_open_config_close(String device) {
+void testOpenConfigClose(String device) {
   // Open non-existent LED
   try {
     Led('nonexistent');
   } on LedException catch (e) {
-    if (e.errorCode != LedErrorCode.LED_ERROR_OPEN) {
+    if (e.errorCode != LedErrorCode.ledErrorOpen) {
       rethrow;
     }
   }
@@ -34,14 +34,14 @@ void test_open_config_close(String device) {
     // Check properties
     passert(led.getLedName() == device);
 
-    var max_brightness = led.getMaxBrightness();
+    var maxBrightness = led.getMaxBrightness();
     // Check max brightness
-    passert(max_brightness > 0);
+    passert(maxBrightness > 0);
 
     try {
-      led.setBrightness(max_brightness + 1);
+      led.setBrightness(maxBrightness + 1);
     } on LedException catch (e) {
-      if (e.errorCode != LedErrorCode.LED_ERROR_ARG) {
+      if (e.errorCode != LedErrorCode.ledErrorArg) {
         rethrow;
       }
     }
@@ -66,7 +66,7 @@ void test_open_config_close(String device) {
   }
 }
 
-void test_interactive(String device) {
+void testInteractive(String device) {
   var led = Led(device);
   try {
     print('Starting interactive test.');
@@ -117,13 +117,13 @@ void main(List<String> argv) {
 
   var device = argv[0];
 
-  test_arguments();
+  testArguments();
   print('Arguments test passed.');
-  test_open_config_close(device);
+  testOpenConfigClose(device);
   print('Open/close test passed.');
-  test_loopback();
+  testLoopback();
   print('Loopback test passed.');
-  test_interactive(device);
+  testInteractive(device);
   print('Interactive test passed.');
   print('All tests passed!\n');
 }
