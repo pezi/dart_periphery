@@ -5,7 +5,7 @@ const int pn532I2CAddress = 0x48 >> 1;
 const int pn532I2CReadByte = 0x01;
 const int pn532I2CBusy = 0x00;
 const int pn532I2CReady = 0x01;
-const int pn532I2CReadytimeout = 20;
+const int pn532I2CReadyTimeout = 20;
 
 const int pn532SpiStartRead = 0x02;
 const int pn532SpiDataWrite = 0x01;
