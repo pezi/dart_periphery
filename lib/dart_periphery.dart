@@ -50,6 +50,7 @@ export 'src/mmio.dart' show MMIO, MMIOexception, MMIOerrorCode;
 export 'src/hardware/utils/byte_buffer.dart' show BitOrder;
 export 'src/hardware/utils/uint.dart';
 export 'src/hardware/pn532/pn532.dart';
+export 'src/hardware/pn532/base_protocol.dart';
 export 'src/hardware/pn532/i2c_impl.dart';
 export 'src/hardware/pn532/spi_impl.dart';
 export 'src/hardware/pn532/exceptions.dart';
