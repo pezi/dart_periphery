@@ -18,11 +18,10 @@ abstract class PN532BaseProtocol {
   PN532BaseProtocol({
     int? resetPin,
     int? irqPin,
-  })  : resetGpio = resetPin == null
-            ? null
-            : GPIO(resetPin, GPIOdirection.GPIO_DIR_OUT),
+  })  : resetGpio = 
+          resetPin == null ? null : GPIO(resetPin, GPIOdirection.GPIO_DIR_OUT),
         irqGpio =
-            irqPin == null ? null : GPIO(irqPin, GPIOdirection.GPIO_DIR_IN) {
+          irqPin == null ? null : GPIO(irqPin, GPIOdirection.GPIO_DIR_IN) {
     pn532ReadyFunction = getCorrectReadyFunction();
     reset();
     wakeUp();
@@ -85,11 +84,9 @@ abstract class PN532BaseProtocol {
 
   void reset() {
     resetGpio?.write(true);
-    sleep(const Duration(milliseconds: 100));
     resetGpio?.write(false);
-    sleep(const Duration(milliseconds: 500));
     resetGpio?.write(true);
-    sleep(const Duration(milliseconds: 100));
+    sleep(const Duration(milliseconds: 500));
   }
 
   void writeData(List<int> data);
