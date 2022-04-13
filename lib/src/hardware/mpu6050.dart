@@ -13,21 +13,21 @@ import '../i2c.dart';
 
 /// Digital Low Pass Filter
 enum DLPF {
-  FILTER0,
-  FILTER1,
-  FILTER2,
-  FILTER3,
-  FILTER4,
-  FILTER5,
-  FILTER6,
-  FILTER7
+  filter0,
+  filter1,
+  filter2,
+  filter3,
+  filter4,
+  filter5,
+  filter6,
+  filter7
 }
 
 // Default address of the MPU6050 device.
 const int DEFAULT_MPU6050_ADDRESS = 0x68;
 
 // Default value for the digital low pass filter (DLPF) setting for both gyroscope and accelerometer.
-const DLPF DEFAULT_DLPF_CFG = DLPF.FILTER6;
+const DLPF DEFAULT_DLPF_CFG = DLPF.filter6;
 
 // Default value for the sample rate divider.
 const int DEFAULT_SMPLRT_DIV = 0x00;
@@ -276,7 +276,7 @@ class MPU6050 {
   ///
   int getSampleRate() {
     var gyroscopeOutputRate =
-        (_dlpfCfg == DLPF.FILTER0 || _dlpfCfg == DLPF.FILTER7)
+        (_dlpfCfg == DLPF.filter0 || _dlpfCfg == DLPF.filter7)
             ? 8000
             : 1000; // 8kHz if DLPG disabled, and 1kHz if enabled.
     return gyroscopeOutputRate ~/ (1 + _smplrtDiv);

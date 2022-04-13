@@ -64,7 +64,7 @@ void testOpenConfigClose(int pinInput, int pinOutput) {
 
     // Attempt to set interrupt edge on output GPIO
     try {
-      gpio.setGPIOedge(GPIOedge.GPIO_EDGE_RISING);
+      gpio.setGPIOedge(GPIOedge.gpioEdgeRising);
     } on GPIOexception catch (e) {
       if (e.errorCode != GPIOerrorCode.gpioErrorInvalidOperation) {
         rethrow;
@@ -101,7 +101,7 @@ void testOpenConfigClose(int pinInput, int pinOutput) {
     */
 
     try {
-      gpio.setGPIOdrive(GPIOdrive.GPIO_DRIVE_OPEN_DRAIN);
+      gpio.setGPIOdrive(GPIOdrive.gpioDriveOpenDrain);
     } on GPIOexception catch (e) {
       if (e.errorCode != GPIOerrorCode.gpioErrorInvalidOperation) {
         rethrow;
@@ -111,22 +111,17 @@ void testOpenConfigClose(int pinInput, int pinOutput) {
     gpio.dispose();
   }
 
-  var config = GPIOconfig(
-      GPIOdirection.gpioDirIn,
-      GPIOedge.GPIO_EDGE_RISING,
-      GPIObias.GPIO_BIAS_DEFAULT,
-      GPIOdrive.GPIO_DRIVE_DEFAULT,
-      false,
-      'test123');
+  var config = GPIOconfig(GPIOdirection.gpioDirIn, GPIOedge.gpioEdgeRising,
+      GPIObias.gpioBiasDefault, GPIOdrive.gpioDriveDefault, false, 'test123');
   gpio = GPIO.advanced(pinOutput, config);
   try {
     passert(gpio.getLine() == gpio.line);
     passert(gpio.getGPIOfd() > 0);
     passert(gpio.getGPIOchipFD() > 0);
     passert(gpio.getGPIOdirection() == GPIOdirection.gpioDirIn);
-    passert(gpio.getGPIOedge() == GPIOedge.GPIO_EDGE_RISING);
-    passert(gpio.getGPIObias() == GPIObias.GPIO_BIAS_DEFAULT);
-    passert(gpio.getGPIOdrive() == GPIOdrive.GPIO_DRIVE_DEFAULT);
+    passert(gpio.getGPIOedge() == GPIOedge.gpioEdgeRising);
+    passert(gpio.getGPIObias() == GPIObias.gpioBiasDefault);
+    passert(gpio.getGPIOdrive() == GPIOdrive.gpioDriveDefault);
     passert(!gpio.getGPIOinverted());
     passert(gpio.getGPIOlabel() == 'test123');
   } finally {
@@ -185,7 +180,7 @@ Future<void> testLoopback(int pinInput, int pinOutput) async {
     passert(gpioIn.read());
 
     // Check poll falling 1 -> 0 interrupt
-    gpioIn.setGPIOedge(GPIOedge.GPIO_EDGE_FALLING);
+    gpioIn.setGPIOedge(GPIOedge.gpioEdgeFalling);
 
     var sendPort = await startIsolate();
     var response = ReceivePort();
@@ -193,33 +188,33 @@ Future<void> testLoopback(int pinInput, int pinOutput) async {
 
     passert(await sync(response, gpioOut, false) == GPIOpolling.success.index);
     passert(!gpioIn.read());
-    passert(gpioIn.readEvent().edge == GPIOedge.GPIO_EDGE_FALLING);
+    passert(gpioIn.readEvent().edge == GPIOedge.gpioEdgeFalling);
 
     // Check poll rising 0 -> 1 interrupt
-    gpioIn.setGPIOedge(GPIOedge.GPIO_EDGE_RISING);
+    gpioIn.setGPIOedge(GPIOedge.gpioEdgeRising);
 
     sendPort = await startIsolate();
     response = ReceivePort();
     sendPort.send([response.sendPort, gpioIn.toJson()]);
     passert(await sync(response, gpioOut, true) == GPIOpolling.success.index);
     passert(gpioIn.read());
-    passert(gpioIn.readEvent().edge == GPIOedge.GPIO_EDGE_RISING);
+    passert(gpioIn.readEvent().edge == GPIOedge.gpioEdgeRising);
 
     // Set both edge
-    gpioIn.setGPIOedge(GPIOedge.GPIO_EDGE_BOTH);
+    gpioIn.setGPIOedge(GPIOedge.gpioEdgeBoth);
     sendPort = await startIsolate();
     response = ReceivePort();
     sendPort.send([response.sendPort, gpioIn.toJson()]);
     passert(await sync(response, gpioOut, false) == GPIOpolling.success.index);
     passert(!gpioIn.read());
-    passert(gpioIn.readEvent().edge == GPIOedge.GPIO_EDGE_FALLING);
+    passert(gpioIn.readEvent().edge == GPIOedge.gpioEdgeFalling);
 
     sendPort = await startIsolate();
     response = ReceivePort();
     sendPort.send([response.sendPort, gpioIn.toJson()]);
     passert(await sync(response, gpioOut, true) == GPIOpolling.success.index);
     passert(gpioIn.read());
-    passert(gpioIn.readEvent().edge == GPIOedge.GPIO_EDGE_RISING);
+    passert(gpioIn.readEvent().edge == GPIOedge.gpioEdgeRising);
 
     // Check poll timeout
     passert(gpioIn.poll(1000) == GPIOpolling.timeout);
@@ -228,13 +223,13 @@ Future<void> testLoopback(int pinInput, int pinOutput) async {
     gpioOut.write(false);
     passert(GPIO.pollMultiple([gpioIn], 1000).hasEventOccured(gpioIn));
     passert(!gpioIn.read());
-    passert(gpioIn.readEvent().edge == GPIOedge.GPIO_EDGE_FALLING);
+    passert(gpioIn.readEvent().edge == GPIOedge.gpioEdgeFalling);
 
     // Check poll rising 0 -> 1 interrupt
     gpioOut.write(true);
     passert(GPIO.pollMultiple([gpioIn], 1000).hasEventOccured(gpioIn));
     passert(gpioIn.read());
-    passert(gpioIn.readEvent().edge == GPIOedge.GPIO_EDGE_RISING);
+    passert(gpioIn.readEvent().edge == GPIOedge.gpioEdgeRising);
 
     // Check poll timeout
     passert(!GPIO.pollMultiple([gpioIn], 1000).hasEventOccured(gpioIn));

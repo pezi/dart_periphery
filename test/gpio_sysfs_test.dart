@@ -111,7 +111,7 @@ Future<void> testLoopback(int pinInput, int pinOutput) async {
     passert(gpioIn.read());
 
     // Check poll falling 1 -> 0 interrupt
-    gpioIn.setGPIOedge(GPIOedge.GPIO_EDGE_FALLING);
+    gpioIn.setGPIOedge(GPIOedge.gpioEdgeFalling);
 
     var sendPort = await startIsolate();
     var response = ReceivePort();
@@ -121,7 +121,7 @@ Future<void> testLoopback(int pinInput, int pinOutput) async {
     passert(!gpioIn.read());
 
     // Check poll rising 0 -> 1 interrupt
-    gpioIn.setGPIOedge(GPIOedge.GPIO_EDGE_RISING);
+    gpioIn.setGPIOedge(GPIOedge.gpioEdgeRising);
 
     sendPort = await startIsolate();
     response = ReceivePort();
@@ -130,7 +130,7 @@ Future<void> testLoopback(int pinInput, int pinOutput) async {
     passert(gpioIn.read());
 
     // Set both edge
-    gpioIn.setGPIOedge(GPIOedge.GPIO_EDGE_BOTH);
+    gpioIn.setGPIOedge(GPIOedge.gpioEdgeBoth);
     sendPort = await startIsolate();
     response = ReceivePort();
     sendPort.send([response.sendPort, gpioIn.toJson()]);

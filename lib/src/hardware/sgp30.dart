@@ -12,13 +12,13 @@ import 'dart:io';
 import '../i2c.dart';
 import 'utils/byte_buffer.dart';
 
-const int PRODUCT_TYPE = 0;
-const int I2C_ADDRESS = 0x58;
+const int productType = 0;
+const int i2cAddress = 0x58;
 
 // command and constants for reading the serial ID
-const int CMD_GET_SERIAL_ID = 0x3682;
-const int CMD_GET_SERIAL_ID_WORDS = 3;
-const int CMD_GET_SERIAL_ID_DELAY_MS = 1;
+const int cmdGetSerialId = 0x3682;
+const int cmdGetSerialIdWords = 3;
+const int cmdGetSerialDelayMs = 1;
 
 // command and constants for reading the featureset version
 const int CMD_GET_FEATURESET = 0x202f;
@@ -157,7 +157,7 @@ class SGP30 {
       buffer.add(crc8(data));
     }
 
-    i2c.writeBytes(I2C_ADDRESS, buffer);
+    i2c.writeBytes(i2cAddress, buffer);
 
     sleep(Duration(milliseconds: delayMs));
 
@@ -165,7 +165,7 @@ class SGP30 {
       return const <int>[];
     }
 
-    var read = i2c.readBytes(I2C_ADDRESS, 3 * responseLength);
+    var read = i2c.readBytes(i2cAddress, 3 * responseLength);
 
     if (!checkCRC(read)) {
       throw SGP30excpetion('CRC8 mismatch!');
@@ -181,8 +181,8 @@ class SGP30 {
 
   /// Returns the sensor serial ID.
   int getSerialId() {
-    var response = _command(
-        CMD_GET_SERIAL_ID, CMD_GET_SERIAL_ID_WORDS, CMD_GET_SERIAL_ID_DELAY_MS);
+    var response =
+        _command(cmdGetSerialId, cmdGetSerialIdWords, cmdGetSerialDelayMs);
 
     return (response[0] << 32) | (response[1] << 16) | response[2];
   }

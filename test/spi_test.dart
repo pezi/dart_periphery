@@ -31,7 +31,7 @@ void testOpenConfigClose(int bus, int chip) {
     passert(spi.maxSpeed == isolate.maxSpeed);
     passert(spi.getHandle() == isolate.getHandle());
 
-    passert(spi.bitOrder == BitOrder.MSB_FIRST);
+    passert(spi.bitOrder == BitOrder.msbFirst);
     passert(spi.bitsPerWord == 8);
 
     // Not going to try different bit order or bits per word, because not all

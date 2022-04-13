@@ -143,6 +143,7 @@ final DynamicLibrary _peripheryLib = getPeripheryLib();
 final _nativeSerialNew = voidPtrVOIDM('serial_new');
 
 //int serial_open(serial_t *serial, const char *path, uint32_t baudrate);
+// ignore: camel_case_types
 typedef _dart_serial_open = Int32 Function(
     Pointer<Void> handle, Pointer<Utf8> path, Uint32 baudrate);
 typedef _SerialOpen = int Function(
@@ -215,7 +216,8 @@ final _nativeSerialSetVmin = intVoidIntM('serial_set_vmin');
 //                          uint32_t baudrate, unsigned int databits,
 //                          serial_parity_t parity, unsigned int stopbits,
 //                          bool xonxoff, bool rtscts);
-typedef _serial_open_advanced = Int32 Function(
+// ignore: camel_case_types
+typedef _serialOpenAdvanced = Int32 Function(
     Pointer<Void> handle,
     Pointer<Utf8> path,
     Int32 baudrate,
@@ -234,25 +236,27 @@ typedef _SerialOpenAdvanced = int Function(
     int xonxoff,
     int rtscts);
 final _nativeOpenAdvanced = _peripheryLib
-    .lookup<NativeFunction<_serial_open_advanced>>('serial_open_advanced')
+    .lookup<NativeFunction<_serialOpenAdvanced>>('serial_open_advanced')
     .asFunction<_SerialOpenAdvanced>();
 
 //  int serial_read(serial_t *serial, uint8_t *buf, size_t len, int timeout_ms);
-typedef _serial_read = Int32 Function(
+// ignore: camel_case_types
+typedef _serialRead = Int32 Function(
     Pointer<Void> handle, Pointer<Uint8> buf, IntPtr len, Int32 timeoutMillis);
 typedef _SerialRead = int Function(
     Pointer<Void> handle, Pointer<Uint8> buf, int len, int timeoutMillis);
 final _nativeSerialRead = _peripheryLib
-    .lookup<NativeFunction<_serial_read>>('serial_read')
+    .lookup<NativeFunction<_serialRead>>('serial_read')
     .asFunction<_SerialRead>();
 
 // int serial_write(serial_t *serial, const uint8_t *buf, size_t len);
-typedef _serial_write = Int32 Function(
+// ignore: camel_case_types
+typedef _serialWrite = Int32 Function(
     Pointer<Void> handle, Pointer<Uint8> buf, IntPtr len);
 typedef _SerialWrite = int Function(
     Pointer<Void> handle, Pointer<Uint8> buf, int len);
 final _nativeSerialWrite = _peripheryLib
-    .lookup<NativeFunction<_serial_write>>('serial_write')
+    .lookup<NativeFunction<_serialWrite>>('serial_write')
     .asFunction<_SerialWrite>();
 
 // int serial_flush(serial_t *serial);
@@ -268,18 +272,19 @@ final _nativeSerialOutputWaiting = intVoidInt32PtrM('serial_output_waiting');
 final _nativeSerialPool = intVoidIntM('serial_poll');
 
 // int serial_get_vtime(serial_t *serial, float *vtime);
-typedef _serial_get_vtime = Int32 Function(
-    Pointer<Void> handle, Pointer<Float>);
+// ignore: camel_case_types
+typedef _serialGetVtime = Int32 Function(Pointer<Void> handle, Pointer<Float>);
 typedef _SerialGetVTIME = int Function(Pointer<Void> handle, Pointer<Float>);
 final _nativeSerialGetVtime = _peripheryLib
-    .lookup<NativeFunction<_serial_get_vtime>>('serial_get_vtime')
+    .lookup<NativeFunction<_serialGetVtime>>('serial_get_vtime')
     .asFunction<_SerialGetVTIME>();
 
 // int serial_set_vtime(serial_t *serial, float vtime);
-typedef _serial_set_vtime = Int32 Function(Pointer<Void> handle, Float vtime);
+// ignore: camel_case_types
+typedef _serialSetVtime = Int32 Function(Pointer<Void> handle, Float vtime);
 typedef _SerialSetVTIME = int Function(Pointer<Void> handle, double vtime);
 final _nativeSerialSetVtime = _peripheryLib
-    .lookup<NativeFunction<_serial_set_vtime>>('serial_set_vtime')
+    .lookup<NativeFunction<_serialSetVtime>>('serial_set_vtime')
     .asFunction<_SerialSetVTIME>();
 
 String _getErrmsg(Pointer<Void> handle) {

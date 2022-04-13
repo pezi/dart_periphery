@@ -2,10 +2,10 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-/// Bit order of multiple byte data of [I2C] or [SPI] devices. This order
+/// Bit order of multiple byte data of [i2c] or [spi] devices. This order
 /// is defined by manufacturer of the device.
-enum BitOrder { MSB_FIRST, MSB_LAST }
-enum ByteBufferSrc { I2C, SPI, UNDEFINED }
+enum BitOrder { msbFirst, msbLast }
+enum ByteBufferSrc { i2c, spi, undefined }
 
 /// Helper class for reading 16/8-bit values from a byte array.
 class ByteBuffer {
@@ -16,17 +16,17 @@ class ByteBuffer {
 
   /// Creates a byte buffer with [data] and a default [bitOrder]. [dataSource] defines the source, a I2C or a SPI read operation.
   ///
-  /// For [dataSource] = [ByteBufferSrc.SPI] the internal buffer index starts with 1.
+  /// For [dataSource] = [ByteBufferSrc.spi] the internal buffer index starts with 1.
   ByteBuffer(this.data, this.dataSource, this.bitOrder)
-      : _index = (dataSource == ByteBufferSrc.I2C ||
-                dataSource == ByteBufferSrc.UNDEFINED)
+      : _index = (dataSource == ByteBufferSrc.i2c ||
+                dataSource == ByteBufferSrc.undefined)
             ? 0
             : 1;
 
   /// Returns a signed 16-bit value.
   int getInt16() {
     int pos1, pos2;
-    if (bitOrder == BitOrder.MSB_FIRST) {
+    if (bitOrder == BitOrder.msbFirst) {
       pos1 = _index + 1;
       pos2 = _index;
     } else {

@@ -12,7 +12,7 @@ const int buttonPin = 4;
 
 void main() {
   var hub = NanoHatHub();
-  hub.pinMode(buzzerPin, PinMode.OUTPUT);
-  hub.pinMode(buttonPin, PinMode.INPUT);
+  hub.pinMode(buzzerPin, PinMode.output);
+  hub.pinMode(buttonPin, PinMode.input);
   while (true) {}
 }

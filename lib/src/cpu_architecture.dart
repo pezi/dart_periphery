@@ -13,7 +13,7 @@ NativeCall uname = nativeAddLib
 
 // https://en.wikipedia.org/wiki/Uname
 
-///
+/// Class
 class CpuArch {
   static CpuArch? _cpuArch;
   String machine;

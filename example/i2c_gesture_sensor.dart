@@ -15,7 +15,7 @@ void main() {
     print('Grove Gesture sensor is running...');
     while (true) {
       var g = gesture.getGesture();
-      if (g != Gesture.NOTHING) {
+      if (g != Gesture.nothing) {
         print(g.toString());
       }
     }

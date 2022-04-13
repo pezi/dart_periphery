@@ -15,16 +15,16 @@ import 'signature.dart';
 /// [MMIO] error code
 enum MMIOerrorCode {
   /// Error code for not able to map the native C enum
-  ERROR_CODE_NOT_MAPPABLE,
+  errorCodeNotMappable,
 
   ///  Invalid arguments
-  MMIO_ERROR_ARG,
+  mmioErrorArg,
 
   /// Opening MMIO
-  MMIO_ERROR_OPEN,
+  mmioErrorOpen,
 
   /// Closing MMIO
-  MMIO_ERROR_CLOSE
+  mmioErrorClose
 }
 
 final DynamicLibrary _peripheryLib = getPeripheryLib();
@@ -51,100 +51,111 @@ final _nativeMMIOinfo = intVoidUtf8sizeTM('mmio_tostring');
 // final _nativeMMIOsize = intVoidM('mmio_size');
 
 // int mmio_open(mmio_t *mmio, uintptr_t base, size_t size);
-typedef _mmio_open = Int32 Function(
+// ignore: camel_case_types
+typedef _mmioOpen = Int32 Function(
     Pointer<Void> handle, IntPtr base, IntPtr size);
 typedef _MMIOopen = int Function(Pointer<Void> handle, int base, int size);
 
 final _nativeMMIOopen = _peripheryLib
-    .lookup<NativeFunction<_mmio_open>>('mmio_open')
+    .lookup<NativeFunction<_mmioOpen>>('mmio_open')
     .asFunction<_MMIOopen>();
 
 // int mmio_open_advanced(mmio_t *mmio, uintptr_t base, size_t size, const char *path);
-typedef _mmio_open_advanced = Int32 Function(
+// ignore: camel_case_types
+typedef _mmioOpenAdvanced = Int32 Function(
     Pointer<Void> handle, IntPtr base, IntPtr size, Pointer<Utf8> path);
 typedef _MMIOopenAdvanced = int Function(
     Pointer<Void> handle, int base, int size, Pointer<Utf8> path);
 final _nativeMMIOopenAdvanced = _peripheryLib
-    .lookup<NativeFunction<_mmio_open_advanced>>('mmio_open_advanced')
+    .lookup<NativeFunction<_mmioOpenAdvanced>>('mmio_open_advanced')
     .asFunction<_MMIOopenAdvanced>();
 
 // int mmio_read32(mmio_t *mmio, uintptr_t offset, uint32_t *value);
-typedef _mmio_read_32 = Int32 Function(
+// ignore: camel_case_types
+typedef _mmioRead_32 = Int32 Function(
     Pointer<Void> handle, IntPtr offset, Pointer<Uint32> value);
-typedef _MMIOread_32 = int Function(
+typedef _MMIOread32 = int Function(
     Pointer<Void> handle, int offset, Pointer<Uint32> value);
 
 final _nativeMMIOread_32 = _peripheryLib
-    .lookup<NativeFunction<_mmio_read_32>>('mmio_read32')
-    .asFunction<_MMIOread_32>();
+    .lookup<NativeFunction<_mmioRead_32>>('mmio_read32')
+    .asFunction<_MMIOread32>();
 
 // int mmio_read16(mmio_t *mmio, uintptr_t offset, uint16_t *value);
-typedef _mmio_read_16 = Int32 Function(
+// ignore: camel_case_types
+typedef _mmioRead16 = Int32 Function(
     Pointer<Void> handle, IntPtr offset, Pointer<Uint16> value);
-typedef _MMIOread_16 = int Function(
+typedef _MMIOread16 = int Function(
     Pointer<Void> handle, int offset, Pointer<Uint16> value);
 
-final _nativeMMIOread_16 = _peripheryLib
-    .lookup<NativeFunction<_mmio_read_16>>('mmio_read16')
-    .asFunction<_MMIOread_16>();
+final _nativeMMIOread16 = _peripheryLib
+    .lookup<NativeFunction<_mmioRead16>>('mmio_read16')
+    .asFunction<_MMIOread16>();
 
 // int mmio_read8(mmio_t *mmio, uintptr_t offset, uint8_t *value);
-typedef _mmio_read_8 = Int32 Function(
+// ignore: camel_case_types
+typedef _mmioRead8 = Int32 Function(
     Pointer<Void> handle, IntPtr offset, Pointer<Uint8> value);
-typedef _MMIOread_8 = int Function(
+typedef _MMIOread8 = int Function(
     Pointer<Void> handle, int offset, Pointer<Uint8> value);
 
 final _nativeMMIOread_8 = _peripheryLib
-    .lookup<NativeFunction<_mmio_read_8>>('mmio_read8')
-    .asFunction<_MMIOread_8>();
+    .lookup<NativeFunction<_mmioRead8>>('mmio_read8')
+    .asFunction<_MMIOread8>();
 
 // int mmio_read(mmio_t *mmio, uintptr_t offset, uint8_t *buf, size_t len);
-typedef _mmio_read_buf = Int32 Function(
+// ignore: camel_case_types
+typedef _mmiReadbuf = Int32 Function(
     Pointer<Void> handle, IntPtr offset, Pointer<Uint8> value, IntPtr len);
 typedef _MMIOreadBuf = int Function(
     Pointer<Void> handle, int offset, Pointer<Uint8> value, int len);
 
 final _nativeMMIOreadBuf = _peripheryLib
-    .lookup<NativeFunction<_mmio_read_buf>>('mmio_read')
+    .lookup<NativeFunction<_mmiReadbuf>>('mmio_read')
     .asFunction<_MMIOreadBuf>();
 
 // int mmio_write32(mmio_t *mmio, uintptr_t offset, uint32_t value);
-typedef mmio_write_32 = Int64 Function(
+// ignore: camel_case_types
+typedef _mmioWrite32 = Int64 Function(
     Pointer<Void> handle, IntPtr offset, Uint32 value);
-typedef _MMIOwrite = int Function(Pointer<Void> handle, int offset, int value);
+typedef _MMIOwrite32 = int Function(
+    Pointer<Void> handle, int offset, int value);
 
-final _nativeMMIOwrite_32 = _peripheryLib
-    .lookup<NativeFunction<mmio_write_32>>('mmio_write32')
-    .asFunction<_MMIOwrite>();
+final _nativeMMIOwrite32 = _peripheryLib
+    .lookup<NativeFunction<_mmioWrite32>>('mmio_write32')
+    .asFunction<_MMIOwrite32>();
 
 // int mmio_write16(mmio_t *mmio, uintptr_t offset, uint16_t value);
-typedef mmio_write_16 = Int64 Function(
+// ignore: camel_case_types
+typedef _mmioWrite16 = Int64 Function(
     Pointer<Void> handle, IntPtr offset, Uint16 value);
 
-final _nativeMMIOwrite_16 = _peripheryLib
-    .lookup<NativeFunction<mmio_write_16>>('mmio_write16')
-    .asFunction<_MMIOwrite>();
+final _nativeMMIOwrite16 = _peripheryLib
+    .lookup<NativeFunction<_mmioWrite16>>('mmio_write16')
+    .asFunction<_MMIOwrite32>();
 
 // int mmio_write8(mmio_t *mmio, uintptr_t offset, uint8_t value);
-typedef mmio_write_8 = Int64 Function(
+// ignore: camel_case_types
+typedef _mmioWrite8 = Int64 Function(
     Pointer<Void> handle, IntPtr offset, Uint8 value);
 
-final _nativeMMIOwrite_8 = _peripheryLib
-    .lookup<NativeFunction<mmio_write_8>>('mmio_write8')
-    .asFunction<_MMIOwrite>();
+final _nativeMMIOwrite8 = _peripheryLib
+    .lookup<NativeFunction<_mmioWrite8>>('mmio_write8')
+    .asFunction<_MMIOwrite32>();
 
 // int mmio_write(mmio_t *mmio, uintptr_t offset, const uint8_t *buf, size_t len);
-typedef mmio_write_buf = Int64 Function(
+// ignore: camel_case_types
+typedef _mmioWriteBuf = Int64 Function(
     Pointer<Void> handle, IntPtr offset, Pointer<Uint8> value, IntPtr len);
 
 typedef _MMIOwriteBuf = int Function(
     Pointer<Void> handle, int offset, Pointer<Uint8> value, int len);
 
 final _nativeMMIOwriteBuf = _peripheryLib
-    .lookup<NativeFunction<mmio_write_buf>>('mmio_write')
+    .lookup<NativeFunction<_mmioWriteBuf>>('mmio_write')
     .asFunction<_MMIOwriteBuf>();
 
-const BUFFER_LEN = 256;
+const bufferLen = 256;
 
 int _checkError(int value) {
   if (value < 0) {
@@ -192,7 +203,7 @@ class MMIO {
     var _mmioHandle = _nativeMMIOnew();
     if (_mmioHandle == nullptr) {
       return throw MMIOexception(
-          MMIOerrorCode.MMIO_ERROR_OPEN, 'Error opening MMIO interface');
+          MMIOerrorCode.mmioErrorOpen, 'Error opening MMIO interface');
     }
     _checkError(_nativeMMIOopen(_mmioHandle, base, size));
     return _mmioHandle;
@@ -210,7 +221,7 @@ class MMIO {
     var _mmioHandle = _nativeMMIOnew();
     if (_mmioHandle == nullptr) {
       return throw MMIOexception(
-          MMIOerrorCode.MMIO_ERROR_OPEN, 'Error opening MMIO interface');
+          MMIOerrorCode.mmioErrorOpen, 'Error opening MMIO interface');
     }
     _checkError(
         _nativeMMIOopenAdvanced(_mmioHandle, base, size, path.toNativeUtf8()));
@@ -221,13 +232,13 @@ class MMIO {
   static MMIOerrorCode getMMIOerrorCode(int value) {
     // must be negative
     if (value >= 0) {
-      return MMIOerrorCode.ERROR_CODE_NOT_MAPPABLE;
+      return MMIOerrorCode.errorCodeNotMappable;
     }
     value = -value;
 
     // check range
-    if (value > MMIOerrorCode.MMIO_ERROR_CLOSE.index) {
-      return MMIOerrorCode.ERROR_CODE_NOT_MAPPABLE;
+    if (value > MMIOerrorCode.mmioErrorClose.index) {
+      return MMIOerrorCode.errorCodeNotMappable;
     }
 
     return MMIOerrorCode.values[value];
@@ -250,7 +261,7 @@ class MMIO {
   int read16(int offset) {
     var data = malloc<Uint16>(1);
     try {
-      _checkError(_nativeMMIOread_16(_mmioHandle, offset, data));
+      _checkError(_nativeMMIOread16(_mmioHandle, offset, data));
       return data.value;
     } finally {
       malloc.free(data);
@@ -288,19 +299,19 @@ class MMIO {
   /// Writes 32-bits from mapped physical memory, starting at the specified byte offset, relative to the
   /// base address the MMIO handle was opened with.
   void write32(int offset, int value) {
-    _checkError(_nativeMMIOwrite_32(_mmioHandle, offset, value));
+    _checkError(_nativeMMIOwrite32(_mmioHandle, offset, value));
   }
 
   /// Writes 16-bits from mapped physical memory, starting at the specified byte offset, relative to the
   /// base address the MMIO handle was opened with.
   void write16(int offset, int value) {
-    _checkError(_nativeMMIOwrite_16(_mmioHandle, offset, value));
+    _checkError(_nativeMMIOwrite16(_mmioHandle, offset, value));
   }
 
   /// Writes 8-bits from mapped physical memory, starting at the specified byte offset, relative to the
   /// base address the MMIO handle was opened with.
   void write8(int offset, int value) {
-    _checkError(_nativeMMIOwrite_8(_mmioHandle, offset, value));
+    _checkError(_nativeMMIOwrite8(_mmioHandle, offset, value));
   }
 
   /// Writes an byte array from mapped physical memory, starting at the specified byte offset, relative to the
@@ -325,7 +336,7 @@ class MMIO {
 
   void _checkStatus() {
     if (_invalid) {
-      throw MMIOexception(MMIOerrorCode.MMIO_ERROR_CLOSE,
+      throw MMIOexception(MMIOerrorCode.mmioErrorClose,
           'MMIO interface has the status released.');
     }
   }
@@ -347,9 +358,9 @@ class MMIO {
   /// Returns a string representation of the MMIO handle.
   String getMMIOinfo() {
     _checkStatus();
-    var data = malloc<Int8>(BUFFER_LEN).cast<Utf8>();
+    var data = malloc<Int8>(bufferLen).cast<Utf8>();
     try {
-      _checkError(_nativeMMIOinfo(_mmioHandle, data, BUFFER_LEN));
+      _checkError(_nativeMMIOinfo(_mmioHandle, data, bufferLen));
       return data.toDartString();
     } finally {
       malloc.free(data);

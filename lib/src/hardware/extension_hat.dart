@@ -5,19 +5,19 @@
 import 'dart:io';
 import '../i2c.dart';
 
-const int digialRead = 1;
-const int DIGITAL_WRITE = 2;
-const int ANALOG_READ = 3;
-const int ANALOG_WRITE = 4;
-const int PINMODE = 5;
-const int ULTRA_SONIC = 7;
-const int FIRMWARE = 8;
-const int LEDBAR_INIT = 110;
-const int LEDBAR_RELEASE = 111;
-const int LEDBAR_SHOW = 112;
-const int SERVO_ATTACH = 120;
-const int SERVO_DETACH = 121;
-const int SERVO_WRITE = 122;
+const int digitalReadCmd = 1;
+const int digitalWriteCmd = 2;
+const int analogReadCmd = 3;
+const int analogWriteCmd = 4;
+const int pinModeCmd = 5;
+const int ultraSonicCmd = 7;
+const int firmwareCmd = 8;
+const int ledbarInitCmd = 110;
+const int ledbarReleaseCmd = 111;
+const int ledbarShowCmd = 112;
+const int servoAttachCmd = 120;
+const int servoDetachCmd = 121;
+const int servoWriteCmd = 122;
 
 /// Command buffer for a hat command.
 ///
@@ -45,20 +45,20 @@ class HatCmd {
 }
 
 /// Digital value a [GrovePiPlusHat] or [NanoHatHub] pin.
-enum DigitalValue { LOW, HIGH }
+enum DigitalValue { low, high }
 
 /// Pin mode of a  [GrovePiPlusHat] or [NanoHatHub] pin.
-enum PinMode { INPUT, OUTPUT }
+enum PinMode { input, output }
 
 // default i2c address
-const int HAT_ARDUINO_I2C_ADDRESS = 0x04;
-const int HAT_REGISTER = 1;
+const int hatArduinoI2Caddress = 0x04;
+const int hatRegister = 1;
 
-const int DELAY = 50;
+const int delay = 50;
 
 // The orginal C code for the GrovePi Plus uses retries due a hardware problem :(!
 // NanoHat Hub has no problems, seems to be the better hardware!
-int RETRY = 3;
+int retry = 3;
 
 /// Base class for the I2C communication between the SoC
 /// (RaspberryPi & NanoPi) and the Arduino Nano based hat.
@@ -86,45 +86,45 @@ class ArduinoBasedHat {
     _autoWait = flag;
   }
 
-  /// Ensures that a delay of at last [DELAY] ms go by.
+  /// Ensures that a delay of at last [delay] ms go by.
   void autoWait() {
     if (_autoWait) {
       var diff = DateTime.now().millisecondsSinceEpoch - _lastAction;
-      if (diff < DELAY) {
+      if (diff < delay) {
         sleep(Duration(microseconds: diff));
       }
     }
   }
 
   /// Reads a byte array from the I2C bus.
-  List<int> read_i2c_block(int len) {
+  List<int> readI2Cblock(int len) {
     autoWait();
     var error = I2Cexception.empty();
-    for (var i = 0; i < RETRY; ++i) {
+    for (var i = 0; i < retry; ++i) {
       try {
-        var data = i2c.readBytesReg(HAT_ARDUINO_I2C_ADDRESS, HAT_REGISTER, len);
+        var data = i2c.readBytesReg(hatArduinoI2Caddress, hatRegister, len);
         _updateLastAction();
         return data;
       } on I2Cexception catch (e) {
         error = e;
-        sleep(Duration(milliseconds: DELAY));
+        sleep(Duration(milliseconds: delay));
       }
     }
     throw error;
   }
 
   /// Writes a byte array to the I2C bus.
-  void write_i2c_block(List<int> data) {
+  void writeI2Cblock(List<int> data) {
     autoWait();
     var error = I2Cexception.empty();
-    for (var i = 0; i < RETRY; ++i) {
+    for (var i = 0; i < retry; ++i) {
       try {
-        i2c.writeBytesReg(HAT_ARDUINO_I2C_ADDRESS, HAT_REGISTER, data);
+        i2c.writeBytesReg(hatArduinoI2Caddress, hatRegister, data);
         _updateLastAction();
         return;
       } on I2Cexception catch (e) {
         error = e;
-        sleep(Duration(milliseconds: DELAY));
+        sleep(Duration(milliseconds: delay));
       }
     }
     throw error;
@@ -134,14 +134,14 @@ class ArduinoBasedHat {
   void pinMode(int pin, PinMode mode) {
     autoWait();
     var error = I2Cexception.empty();
-    for (var i = 0; i < RETRY; ++i) {
+    for (var i = 0; i < retry; ++i) {
       try {
-        write_i2c_block(HatCmd(PINMODE).getCmdSeqExt(pin, mode.index));
+        writeI2Cblock(HatCmd(pinModeCmd).getCmdSeqExt(pin, mode.index));
         _updateLastAction();
         return;
       } on I2Cexception catch (e) {
         error = e;
-        sleep(Duration(milliseconds: DELAY));
+        sleep(Duration(milliseconds: delay));
       }
     }
     throw error;
@@ -151,19 +151,19 @@ class ArduinoBasedHat {
   DigitalValue digitalRead(int pin) {
     autoWait();
     var error = I2Cexception.empty();
-    for (var i = 0; i < RETRY; ++i) {
+    for (var i = 0; i < retry; ++i) {
       try {
-        write_i2c_block(HatCmd(digialRead).getCmdSeqExt(pin));
-        sleep(Duration(milliseconds: DELAY));
-        var value = i2c.readByteReg(HAT_ARDUINO_I2C_ADDRESS, 1);
+        writeI2Cblock(HatCmd(digitalReadCmd).getCmdSeqExt(pin));
+        sleep(Duration(milliseconds: delay));
+        var value = i2c.readByteReg(hatArduinoI2Caddress, 1);
         _updateLastAction();
         if (value == 0) {
-          return DigitalValue.LOW;
+          return DigitalValue.low;
         }
-        return DigitalValue.HIGH;
+        return DigitalValue.high;
       } on I2Cexception catch (e) {
         error = e;
-        sleep(Duration(milliseconds: DELAY));
+        sleep(Duration(milliseconds: delay));
       }
     }
     throw error;
@@ -173,14 +173,14 @@ class ArduinoBasedHat {
   void digitalWrite(int pin, DigitalValue value) {
     autoWait();
     var error = I2Cexception.empty();
-    for (var i = 0; i < RETRY; ++i) {
+    for (var i = 0; i < retry; ++i) {
       try {
-        write_i2c_block(HatCmd(DIGITAL_WRITE).getCmdSeqExt(pin, value.index));
+        writeI2Cblock(HatCmd(digitalWriteCmd).getCmdSeqExt(pin, value.index));
         _updateLastAction();
         return;
       } on I2Cexception catch (e) {
         error = e;
-        sleep(Duration(milliseconds: DELAY));
+        sleep(Duration(milliseconds: delay));
       }
     }
     throw error;
@@ -190,11 +190,11 @@ class ArduinoBasedHat {
   int analogRead(int pin) {
     autoWait();
     var error = I2Cexception.empty();
-    for (var i = 0; i < RETRY; ++i) {
+    for (var i = 0; i < retry; ++i) {
       try {
-        write_i2c_block(HatCmd(ANALOG_READ).getCmdSeqExt(pin));
-        sleep(Duration(milliseconds: DELAY));
-        var data = i2c.readBytesReg(HAT_ARDUINO_I2C_ADDRESS, HAT_REGISTER, 4);
+        writeI2Cblock(HatCmd(analogReadCmd).getCmdSeqExt(pin));
+        sleep(Duration(milliseconds: delay));
+        var data = i2c.readBytesReg(hatArduinoI2Caddress, hatRegister, 4);
         var value = (data[1] & 0xff) * 256 + (data[2]);
         if (value == 65535) {
           value = -1;
@@ -203,7 +203,7 @@ class ArduinoBasedHat {
         return value;
       } on I2Cexception catch (e) {
         error = e;
-        sleep(Duration(milliseconds: DELAY));
+        sleep(Duration(milliseconds: delay));
       }
     }
     throw error;
@@ -213,14 +213,14 @@ class ArduinoBasedHat {
   void analogWrite(int pin, int value) {
     autoWait();
     var error = I2Cexception.empty();
-    for (var i = 0; i < RETRY; ++i) {
+    for (var i = 0; i < retry; ++i) {
       try {
-        write_i2c_block(HatCmd(ANALOG_WRITE).getCmdSeqExt(pin, value));
+        writeI2Cblock(HatCmd(analogWriteCmd).getCmdSeqExt(pin, value));
         _updateLastAction();
         return;
       } on I2Cexception catch (e) {
         error = e;
-        sleep(Duration(milliseconds: DELAY));
+        sleep(Duration(milliseconds: delay));
       }
     }
     throw error;
@@ -230,17 +230,17 @@ class ArduinoBasedHat {
   String getFirmwareVersion() {
     autoWait();
     var error = I2Cexception.empty();
-    for (var i = 0; i < RETRY; ++i) {
+    for (var i = 0; i < retry; ++i) {
       try {
-        write_i2c_block(HatCmd(FIRMWARE).getCmdSeq());
+        writeI2Cblock(HatCmd(firmwareCmd).getCmdSeq());
         sleep(Duration(milliseconds: 100));
-        var data = i2c.readBytesReg(HAT_ARDUINO_I2C_ADDRESS, HAT_REGISTER, 4);
+        var data = i2c.readBytesReg(hatArduinoI2Caddress, hatRegister, 4);
         print(data.length);
         _updateLastAction();
         return '${data[1] & 0xff}.${data[2] & 0xff}.${data[3] & 0xff}';
       } on I2Cexception catch (e) {
         error = e;
-        sleep(Duration(milliseconds: DELAY));
+        sleep(Duration(milliseconds: delay));
       }
     }
     throw error;
@@ -249,14 +249,14 @@ class ArduinoBasedHat {
   void _sendCmd(int cmd, int pin, [int value1 = 0, int value2 = 0]) {
     autoWait();
     var error = I2Cexception.empty();
-    for (var i = 0; i < RETRY; ++i) {
+    for (var i = 0; i < retry; ++i) {
       try {
-        write_i2c_block(HatCmd(cmd).getCmdSeqExt(pin, value1, value2));
+        writeI2Cblock(HatCmd(cmd).getCmdSeqExt(pin, value1, value2));
         _updateLastAction();
         return;
       } on I2Cexception catch (e) {
         error = e;
-        sleep(Duration(milliseconds: DELAY));
+        sleep(Duration(milliseconds: delay));
       }
     }
     throw error;
@@ -272,40 +272,40 @@ class NanoHatHub extends ArduinoBasedHat {
 
   /// Initializes the [LED bar](http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_LED_Bar):
   void ledBarInitExt(int pin, int chipset, int ledNumber) {
-    _sendCmd(LEDBAR_INIT, pin, chipset, ledNumber);
+    _sendCmd(ledbarInitCmd, pin, chipset, ledNumber);
   }
 
   /// Initialize the LED bar.
   void ledBarInit(int pin) {
-    _sendCmd(LEDBAR_INIT, pin, 0, 5);
+    _sendCmd(ledbarInitCmd, pin, 0, 5);
   }
 
   /// Shows the LED bar.
   void ledBarShow(int pin, int highBits, int lowBits) {
-    _sendCmd(LEDBAR_SHOW, pin, highBits, lowBits);
+    _sendCmd(ledbarShowCmd, pin, highBits, lowBits);
   }
 
   /// Releases the LED bar.
   void ledBarRelease(int pin) {
-    _sendCmd(LEDBAR_RELEASE, pin);
+    _sendCmd(ledbarReleaseCmd, pin);
   }
 
   /// Attachs the servo to [pin].
   void servoAttach(int pin) {
-    _sendCmd(SERVO_ATTACH, pin);
+    _sendCmd(servoAttachCmd, pin);
   }
 
   /// Detatchs the servo from [pin].
   ///
   /// http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_Servo
   void servoDetach(int pin) {
-    _sendCmd(SERVO_DETACH, pin);
+    _sendCmd(servoDetachCmd, pin);
   }
 
   /// Steers the position of the servo at [pin] to [position].
   /// For detials see  http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_Servo
   void servoWrite(int pin, int position) {
-    _sendCmd(SERVO_WRITE, pin, position);
+    _sendCmd(servoWriteCmd, pin, position);
   }
 
   /// Reads a value from the 'Ultrasonic Ranger' in the range form range 5-300cm.
@@ -313,16 +313,16 @@ class NanoHatHub extends ArduinoBasedHat {
   int readUltrasonic(int pin) {
     autoWait();
     var error = I2Cexception.empty();
-    for (var i = 0; i < RETRY; ++i) {
+    for (var i = 0; i < retry; ++i) {
       try {
-        write_i2c_block(HatCmd(ULTRA_SONIC).getCmdSeqExt(pin));
+        writeI2Cblock(HatCmd(ultraSonicCmd).getCmdSeqExt(pin));
         sleep(Duration(milliseconds: 100));
-        var data = i2c.readBytesReg(HAT_ARDUINO_I2C_ADDRESS, HAT_REGISTER, 3);
+        var data = i2c.readBytesReg(hatArduinoI2Caddress, hatRegister, 3);
         _updateLastAction();
         return (data[1] & 0xff) * 256 | (data[2] & 0xff);
       } on I2Cexception catch (e) {
         error = e;
-        sleep(Duration(milliseconds: DELAY));
+        sleep(Duration(milliseconds: delay));
       }
     }
     throw error;
@@ -330,10 +330,10 @@ class NanoHatHub extends ArduinoBasedHat {
 }
 
 /// LED bar color - see [NanoHatHub.ledBarInitExt] for details.
-enum LedBarColor { GREEN, RED, YELLOW, BLUE, GHOST_WHITE, ORANGE, CYAN }
+enum LedBarColor { green, red, yellow, blue, ghostWhite, orange, cyan }
 
 /// LED bar led numeration - see [NanoHatHub.ledBarInitExt] for details.
-enum LedBarLed { LED1, LED2, LED3, LED4, LED5 }
+enum LedBarLed { led1, led2, led3, led4, led5 }
 
 /// Helper class for the [BakeBit LED bar](http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_LED_Bar) -
 /// see [NanoHatHub.ledBarInitExt] for details.
@@ -374,8 +374,8 @@ class GrovePiPlusHat extends ArduinoBasedHat {
   GrovePiPlusHat([this.i2cBus = 1]) : super(I2C(i2cBus));
 }
 
-const int RPI_HAT_PID = 0x04;
-const int RPI_ZERO_HAT_PID = 0x05;
+const int rpiHatPid = 0x04;
+const int rpiZeroHatPid = 0x05;
 
 /// SeedStudio [Grove Base Hat for Raspberry Pi](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi/)
 class GroveBaseHat {
@@ -398,10 +398,10 @@ class GroveBaseHat {
   String getName() {
     print(getId());
     switch (getId()) {
-      case RPI_HAT_PID:
+      case rpiHatPid:
         return 'Grove Base Hat RPi';
 
-      case RPI_ZERO_HAT_PID:
+      case rpiZeroHatPid:
         return 'Grove Base Hat RPi Zero';
     }
     return 'Unkown Hat model';
@@ -439,18 +439,18 @@ class GroveBaseHat {
   }
 
   int _read16BitRegister(int cmd) {
-    i2c.writeByte(HAT_ARDUINO_I2C_ADDRESS, cmd);
-    return i2c.readWord(HAT_ARDUINO_I2C_ADDRESS);
+    i2c.writeByte(hatArduinoI2Caddress, cmd);
+    return i2c.readWord(hatArduinoI2Caddress);
   }
 
   /// Changes the I2C address of the hat. NOT TESTED!
   void changeI2Caddress(int newI2Caddress) {
-    i2c.writeWordReg(HAT_ARDUINO_I2C_ADDRESS, 0, (0xC0 << 16) | newI2Caddress);
+    i2c.writeWordReg(hatArduinoI2Caddress, 0, (0xC0 << 16) | newI2Caddress);
   }
 
   /// Resets the hat. NOT TESTED!
   void resetHat() {
-    i2c.writeByteReg(HAT_ARDUINO_I2C_ADDRESS, 0, 0xF0);
+    i2c.writeByteReg(hatArduinoI2Caddress, 0, 0xF0);
   }
 
   /// Reads the ratio between channel input voltage and power voltage (most time it's 3.3V).
@@ -462,7 +462,7 @@ class GroveBaseHat {
 
   /// Returns true for the Pi Zero model, false for the Pi model.
   bool isHatRPiZero() {
-    return RPI_ZERO_HAT_PID == getId();
+    return rpiZeroHatPid == getId();
   }
 }
 

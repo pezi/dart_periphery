@@ -226,6 +226,7 @@ final _nativeI2Cinfo = intVoidUtf8sizeTM('i2c_tostring');
 final _nativeI2Cfd = intVoidM('i2c_fd');
 
 //  int i2c_transfer(i2c_t *i2c, struct i2c_msg *msgs, size_t count);
+// ignore: camel_case_types
 typedef _i2cTransfer = Int32 Function(
     Pointer<Void> handle, Pointer<NativeI2Cmsg> mgs, IntPtr count);
 typedef _I2Ctransfer = int Function(
@@ -388,10 +389,10 @@ class I2C {
   ///
   /// Some I2C devices can directly be written without an explizit register.
   void writeWord(int address, int wordValue,
-      [BitOrder order = BitOrder.MSB_LAST]) {
+      [BitOrder order = BitOrder.msbLast]) {
     var data = <I2Cmsg>[];
     var array = <int>[];
-    if (order == BitOrder.MSB_LAST) {
+    if (order == BitOrder.msbLast) {
       array = [wordValue | 0xff, wordValue >> 8];
     } else {
       array = [wordValue >> 8, wordValue | 0xff];
@@ -405,11 +406,11 @@ class I2C {
   ///
   /// The bit order depends on the I2C device.
   void writeWordReg(int address, int register, int wordValue,
-      [BitOrder order = BitOrder.MSB_LAST]) {
+      [BitOrder order = BitOrder.msbLast]) {
     var data = <I2Cmsg>[];
     var array = <int>[];
     array.add(register);
-    if (order == BitOrder.MSB_LAST) {
+    if (order == BitOrder.msbLast) {
       array.add(wordValue | 0xff);
       array.add(wordValue >> 8);
     } else {
@@ -424,14 +425,14 @@ class I2C {
   /// Reads a word from the I2C device with the [address] and the bit [order]].
   ///
   /// Some I2C devices can directly be written without an explizit register. The bit order depends on the I2C device.
-  int readWord(int address, [BitOrder order = BitOrder.MSB_LAST]) {
+  int readWord(int address, [BitOrder order = BitOrder.msbLast]) {
     var data = <I2Cmsg>[];
     data.add(I2Cmsg(address, [I2CmsgFlags.i2c_m_rd], 2));
     var result = transfer(data);
     try {
       var ptr = result._messages[0].buf;
-      var value = (ptr[(order == BitOrder.MSB_LAST ? 0 : 1)] & 0xff) |
-          (ptr[(order == BitOrder.MSB_LAST ? 1 : 0)] & 0xff) << 8;
+      var value = (ptr[(order == BitOrder.msbLast ? 0 : 1)] & 0xff) |
+          (ptr[(order == BitOrder.msbLast ? 1 : 0)] & 0xff) << 8;
       return value;
     } finally {
       result.dispose();
@@ -442,15 +443,15 @@ class I2C {
   ///
   /// The bit order depends on the I2C device.
   int readWordReg(int address, int register,
-      [BitOrder order = BitOrder.MSB_LAST]) {
+      [BitOrder order = BitOrder.msbLast]) {
     var data = <I2Cmsg>[];
     data.add(I2Cmsg.buffer(address, [], [register]));
     data.add(I2Cmsg(address, [I2CmsgFlags.i2c_m_rd], 2));
     var result = transfer(data);
     try {
       var ptr = result._messages[0].buf;
-      var value = (ptr[(order == BitOrder.MSB_LAST ? 0 : 1)] & 0xff) |
-          (ptr[(order == BitOrder.MSB_LAST ? 1 : 0)] & 0xff) << 8;
+      var value = (ptr[(order == BitOrder.msbLast ? 0 : 1)] & 0xff) |
+          (ptr[(order == BitOrder.msbLast ? 1 : 0)] & 0xff) << 8;
       return value;
     } finally {
       result.dispose();

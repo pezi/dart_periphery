@@ -10,7 +10,7 @@ export 'src/library.dart'
         setCustomLibrary,
         useLocalLibrary,
         getFlutterPiArgs,
-        isFutterPiEnv;
+        isFlutterPiEnv;
 export 'src/led.dart' show Led, LedException, LedErrorCode;
 export 'src/pwm.dart' show PWM, PWMexception, Polarity, PWMerrorCode;
 export 'src/gpio.dart'
@@ -55,10 +55,10 @@ export 'src/hardware/bme280.dart'
         BME280,
         BME280model,
         BME280exception,
-        BMP280_ID,
-        BME280_ID,
-        BME280_DEFAULT_I2C_ADDRESS,
-        BME280_ALTERNATIVE_I2C_ADDRESS,
+        bmp280Id,
+        bme280Id,
+        bme280DefaultI2Caddress,
+        bme280AlternativeI2Caddress,
         FilterCoefficient,
         OperatingMode,
         StandbyDuration;
@@ -67,8 +67,8 @@ export 'src/hardware/sht31.dart'
         SHT31,
         SHT31result,
         SHT31excpetion,
-        SHT31_ALTERNATIVE_I2C_ADDRESS,
-        SHT31_DEFAULT_I2C_ADDRESS;
+        sh31AlternativeI2CAdddress,
+        sh31DefaultI2CAdddress;
 export 'src/hardware/extension_hat.dart'
     show
         DigitalValue,

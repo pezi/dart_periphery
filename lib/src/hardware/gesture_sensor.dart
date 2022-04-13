@@ -12,39 +12,39 @@ import '../i2c.dart';
 const int GESTURE_REACTION_TIME = 500;
 const int GESTURE_QUIT_TIME = 1000;
 
-enum Bank { BANK0, BANK1 }
+enum Bank { bank0, bank1 }
 
-const int PAJ7620_ADDR_BASE = 0x00;
+const int paj7620AddrBase = 0x00;
 
 // REGISTER BANK SELECT
-const int PAJ7620_REGITER_BANK_SEL = (PAJ7620_ADDR_BASE + 0xEF); //W
+const int paj7620RegisterBankSel = (paj7620AddrBase + 0xEF); //W
 
 // DEVICE ID
-const int PAJ7620_ID = 0x73;
+const int paj7620Id = 0x73;
 
 // REGISTER BANK 0
-const int PAJ7620_ADDR_SUSPEND_CMD = (PAJ7620_ADDR_BASE + 0x3); //W
-const int PAJ7620_ADDR_GES_PS_DET_MASK_0 = (PAJ7620_ADDR_BASE + 0x41); //RW
-const int PAJ7620_ADDR_GES_PS_DET_MASK_1 = (PAJ7620_ADDR_BASE + 0x42); //RW
-const int PAJ7620_ADDR_GES_PS_DET_FLAG_0 = (PAJ7620_ADDR_BASE + 0x43); //R
-const int PAJ7620_ADDR_GES_PS_DET_FLAG_1 = (PAJ7620_ADDR_BASE + 0x44); //R
-const int PAJ7620_ADDR_STATE_INDICATOR = (PAJ7620_ADDR_BASE + 0x45); //R
-const int PAJ7620_ADDR_PS_HIGH_THRESHOLD = (PAJ7620_ADDR_BASE + 0x69); //RW
-const int PAJ7620_ADDR_PS_LOW_THRESHOLD = (PAJ7620_ADDR_BASE + 0x6A); //RW
-const int PAJ7620_ADDR_PS_APPROACH_STATE = (PAJ7620_ADDR_BASE + 0x6B); //R
-const int PAJ7620_ADDR_PS_RAW_DATA = (PAJ7620_ADDR_BASE + 0x6C); //R
+const int PAJ7620_ADDR_SUSPEND_CMD = (paj7620AddrBase + 0x3); //W
+const int PAJ7620_ADDR_GES_PS_DET_MASK_0 = (paj7620AddrBase + 0x41); //RW
+const int PAJ7620_ADDR_GES_PS_DET_MASK_1 = (paj7620AddrBase + 0x42); //RW
+const int PAJ7620_ADDR_GES_PS_DET_FLAG_0 = (paj7620AddrBase + 0x43); //R
+const int PAJ7620_ADDR_GES_PS_DET_FLAG_1 = (paj7620AddrBase + 0x44); //R
+const int PAJ7620_ADDR_STATE_INDICATOR = (paj7620AddrBase + 0x45); //R
+const int PAJ7620_ADDR_PS_HIGH_THRESHOLD = (paj7620AddrBase + 0x69); //RW
+const int PAJ7620_ADDR_PS_LOW_THRESHOLD = (paj7620AddrBase + 0x6A); //RW
+const int PAJ7620_ADDR_PS_APPROACH_STATE = (paj7620AddrBase + 0x6B); //R
+const int PAJ7620_ADDR_PS_RAW_DATA = (paj7620AddrBase + 0x6C); //R
 
 // REGISTER BANK 1
-const int PAJ7620_ADDR_PS_GAIN = (PAJ7620_ADDR_BASE + 0x44); //RW
-const int PAJ7620_ADDR_IDLE_S1_STEP_0 = (PAJ7620_ADDR_BASE + 0x67); //RW
-const int PAJ7620_ADDR_IDLE_S1_STEP_1 = (PAJ7620_ADDR_BASE + 0x68); //RW
-const int PAJ7620_ADDR_IDLE_S2_STEP_0 = (PAJ7620_ADDR_BASE + 0x69); //RW
-const int PAJ7620_ADDR_IDLE_S2_STEP_1 = (PAJ7620_ADDR_BASE + 0x6A); //RW
-const int PAJ7620_ADDR_OP_TO_S1_STEP_0 = (PAJ7620_ADDR_BASE + 0x6B); //RW
-const int PAJ7620_ADDR_OP_TO_S1_STEP_1 = (PAJ7620_ADDR_BASE + 0x6C); //RW
-const int PAJ7620_ADDR_OP_TO_S2_STEP_0 = (PAJ7620_ADDR_BASE + 0x6D); //RW
-const int PAJ7620_ADDR_OP_TO_S2_STEP_1 = (PAJ7620_ADDR_BASE + 0x6E); //RW
-const int PAJ7620_ADDR_OPERATION_ENABLE = (PAJ7620_ADDR_BASE + 0x72); //RW
+const int PAJ7620_ADDR_PS_GAIN = (paj7620AddrBase + 0x44); //RW
+const int PAJ7620_ADDR_IDLE_S1_STEP_0 = (paj7620AddrBase + 0x67); //RW
+const int PAJ7620_ADDR_IDLE_S1_STEP_1 = (paj7620AddrBase + 0x68); //RW
+const int PAJ7620_ADDR_IDLE_S2_STEP_0 = (paj7620AddrBase + 0x69); //RW
+const int PAJ7620_ADDR_IDLE_S2_STEP_1 = (paj7620AddrBase + 0x6A); //RW
+const int PAJ7620_ADDR_OP_TO_S1_STEP_0 = (paj7620AddrBase + 0x6B); //RW
+const int PAJ7620_ADDR_OP_TO_S1_STEP_1 = (paj7620AddrBase + 0x6C); //RW
+const int PAJ7620_ADDR_OP_TO_S2_STEP_0 = (paj7620AddrBase + 0x6D); //RW
+const int PAJ7620_ADDR_OP_TO_S2_STEP_1 = (paj7620AddrBase + 0x6E); //RW
+const int PAJ7620_ADDR_OPERATION_ENABLE = (paj7620AddrBase + 0x72); //RW
 
 //PAJ7620_REGITER_BANK_SEL
 const int PAJ7620_BANK0 = 0;
@@ -89,22 +89,22 @@ class GestureSensorException implements Exception {
 
 /// [Gesture] directions
 enum Gesture {
-  NOTHING,
-  FORWARD,
-  FORWARD_BACKWARD,
-  BACKWARD,
-  BACKWARD_FORWARD,
-  RIGHT,
-  RIGHT_LEFT,
-  LEFT,
-  LEFT_RIGHT,
-  UP,
-  UP_DOWN,
-  DOWN,
-  DOWN_UP,
-  CLOCKWISE,
-  ANTI_CLOCKWISE,
-  WAVE
+  nothing,
+  forward,
+  forwardBackward,
+  backward,
+  backwardForward,
+  right,
+  rightLeft,
+  left,
+  leftRight,
+  up,
+  upDown,
+  down,
+  downUp,
+  clockwise,
+  antiClockwise,
+  wave
 }
 
 // Initial register state
@@ -351,135 +351,135 @@ class GestureSensor {
 
     // At the first access Raspbery PI 3 runs into a timeout - sensor is still sleeping
     try {
-      data0 = i2c.readByteReg(PAJ7620_ID, 0);
+      data0 = i2c.readByteReg(paj7620Id, 0);
     } on I2Cexception catch (e) {
       if (e.errorCode == I2CerrorCode.i2cErrorTransfer) {
         sleep(Duration(milliseconds: 10));
         // sensor should be up at this point!
-        data0 = i2c.readByteReg(PAJ7620_ID, 0);
+        data0 = i2c.readByteReg(paj7620Id, 0);
       }
     }
 
-    var data1 = i2c.readByteReg(PAJ7620_ID, 1);
+    var data1 = i2c.readByteReg(paj7620Id, 1);
 
     if ((data0 != 0x20) || (data1 != 0x76)) {
       throw GestureSensorException(
           'Bad init data 0x${data0.toRadixString(16)}  != 0x20 and 0x${data1.toRadixString(16)} != 0x76');
     }
 
-    _paj7620SelectBank(Bank.BANK0);
+    _paj7620SelectBank(Bank.bank0);
 
     for (var v in initRegisterArray) {
-      i2c.writeByteReg(PAJ7620_ID, v >> 8, v & 0xff);
+      i2c.writeByteReg(paj7620Id, v >> 8, v & 0xff);
     }
 
-    _paj7620SelectBank(Bank.BANK1);
-    i2c.writeByteReg(PAJ7620_ID, 0x65, 0x12);
-    _paj7620SelectBank(Bank.BANK0);
+    _paj7620SelectBank(Bank.bank1);
+    i2c.writeByteReg(paj7620Id, 0x65, 0x12);
+    _paj7620SelectBank(Bank.bank0);
   }
 
   void _paj7620SelectBank(Bank bank) {
-    i2c.writeByteReg(PAJ7620_ID, PAJ7620_REGITER_BANK_SEL,
-        bank == Bank.BANK0 ? PAJ7620_BANK0 : PAJ7620_BANK1);
+    i2c.writeByteReg(paj7620Id, paj7620RegisterBankSel,
+        bank == Bank.bank0 ? PAJ7620_BANK0 : PAJ7620_BANK1);
   }
 
   /// Returns the actual detected gesture.
   Gesture getGesture() {
-    var gesture = Gesture.NOTHING;
-    switch (i2c.readByteReg(PAJ7620_ID, 0x43)) {
+    var gesture = Gesture.nothing;
+    switch (i2c.readByteReg(paj7620Id, 0x43)) {
       case GES_RIGHT_FLAG:
         sleep(Duration(milliseconds: gestureReactionTime));
-        var data = i2c.readByteReg(PAJ7620_ID, 0x43);
+        var data = i2c.readByteReg(paj7620Id, 0x43);
         if (data == GES_LEFT_FLAG) {
-          gesture = Gesture.RIGHT_LEFT;
+          gesture = Gesture.rightLeft;
         } else if (data == GES_FORWARD_FLAG) {
           sleep(Duration(milliseconds: gestureQuitTime));
-          gesture = Gesture.FORWARD;
+          gesture = Gesture.forward;
         } else if (data == GES_BACKWARD_FLAG) {
           sleep(Duration(milliseconds: gestureQuitTime));
-          gesture = Gesture.BACKWARD;
+          gesture = Gesture.backward;
         } else {
-          gesture = Gesture.RIGHT;
+          gesture = Gesture.right;
         }
         return gesture;
       case GES_LEFT_FLAG:
         sleep(Duration(milliseconds: gestureReactionTime));
-        var data = i2c.readByteReg(PAJ7620_ID, 0x43);
+        var data = i2c.readByteReg(paj7620Id, 0x43);
         if (data == GES_RIGHT_FLAG) {
-          gesture = Gesture.LEFT_RIGHT;
+          gesture = Gesture.leftRight;
         } else if (data == GES_FORWARD_FLAG) {
           sleep(Duration(milliseconds: gestureQuitTime));
-          gesture = Gesture.FORWARD;
+          gesture = Gesture.forward;
         } else if (data == GES_BACKWARD_FLAG) {
           sleep(Duration(milliseconds: gestureQuitTime));
-          gesture = Gesture.BACKWARD;
+          gesture = Gesture.backward;
         } else {
-          gesture = Gesture.LEFT;
+          gesture = Gesture.left;
         }
         return gesture;
       case GES_UP_FLAG:
         sleep(Duration(milliseconds: gestureReactionTime));
-        var data = i2c.readByteReg(PAJ7620_ID, 0x43);
+        var data = i2c.readByteReg(paj7620Id, 0x43);
         if (data == GES_DOWN_FLAG) {
-          gesture = Gesture.UP_DOWN;
+          gesture = Gesture.upDown;
         } else if (data == GES_FORWARD_FLAG) {
           sleep(Duration(milliseconds: gestureQuitTime));
-          gesture = Gesture.FORWARD;
+          gesture = Gesture.forward;
         } else if (data == GES_BACKWARD_FLAG) {
           sleep(Duration(milliseconds: gestureQuitTime));
-          gesture = Gesture.BACKWARD;
+          gesture = Gesture.backward;
         } else {
-          gesture = Gesture.UP;
+          gesture = Gesture.up;
         }
         return gesture;
       case GES_DOWN_FLAG:
         sleep(Duration(milliseconds: gestureReactionTime));
-        var data = i2c.readByteReg(PAJ7620_ID, 0x43);
+        var data = i2c.readByteReg(paj7620Id, 0x43);
         if (data == GES_UP_FLAG) {
-          gesture = Gesture.DOWN_UP;
+          gesture = Gesture.downUp;
         } else if (data == GES_FORWARD_FLAG) {
           sleep(Duration(milliseconds: gestureQuitTime));
-          gesture = Gesture.FORWARD;
+          gesture = Gesture.forward;
         } else if (data == GES_BACKWARD_FLAG) {
           sleep(Duration(milliseconds: gestureQuitTime));
-          gesture = Gesture.BACKWARD;
+          gesture = Gesture.backward;
         } else {
-          gesture = Gesture.DOWN;
+          gesture = Gesture.down;
         }
         return gesture;
       case GES_FORWARD_FLAG:
         sleep(Duration(milliseconds: gestureReactionTime));
-        var data = i2c.readByteReg(PAJ7620_ID, 0x43);
+        var data = i2c.readByteReg(paj7620Id, 0x43);
         if (data == GES_BACKWARD_FLAG) {
-          gesture = Gesture.FORWARD_BACKWARD;
+          gesture = Gesture.forwardBackward;
         } else {
-          gesture = Gesture.FORWARD;
+          gesture = Gesture.forward;
         }
         sleep(Duration(milliseconds: gestureQuitTime));
         return gesture;
       case GES_BACKWARD_FLAG:
         sleep(Duration(milliseconds: gestureReactionTime));
-        var data = i2c.readByteReg(PAJ7620_ID, 0x43);
+        var data = i2c.readByteReg(paj7620Id, 0x43);
         if (data == GES_FORWARD_FLAG) {
-          gesture = Gesture.BACKWARD_FORWARD;
+          gesture = Gesture.backwardForward;
         } else {
-          gesture = Gesture.BACKWARD;
+          gesture = Gesture.backward;
         }
         sleep(Duration(milliseconds: gestureQuitTime));
         return gesture;
       case GES_CLOCKWISE_FLAG:
-        return Gesture.CLOCKWISE;
+        return Gesture.clockwise;
       case GES_COUNT_CLOCKWISE_FLAG:
-        return Gesture.ANTI_CLOCKWISE;
+        return Gesture.antiClockwise;
       default:
-        var data = i2c.readByteReg(PAJ7620_ID, 0x44);
+        var data = i2c.readByteReg(paj7620Id, 0x44);
         if (data == GES_WAVE_FLAG) {
-          Gesture.WAVE;
+          Gesture.wave;
         } else {
-          return Gesture.NOTHING;
+          return Gesture.nothing;
         }
         break;
     }
-    return Gesture.NOTHING;
+    return Gesture.nothing;
   }
 }
