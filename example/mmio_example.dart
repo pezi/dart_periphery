@@ -49,8 +49,8 @@ class MemMappedGPIO {
 }
 
 void main() {
-  // Needs root rights and the GPIO_BASE must be correct!
-  // var mmio = MMIO(GPIO_BASE, BLOCK_SIZE);
+  // Needs root rights and the gpioBase must be correct!
+  // var mmio = MMIO(gpioBase, blockSize);
   var mmio = MMIO.advanced(0, blockSize, '/dev/gpiomem');
   var gpio = MemMappedGPIO(mmio);
   try {
