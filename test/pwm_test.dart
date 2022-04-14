@@ -19,11 +19,11 @@ class TestException implements Exception {
   String toString() => error;
 }
 
-void test_arguments() {}
+void testArguments() {}
 
-void test_loopback() {}
+void testLoopback() {}
 
-void test_interactive(int chip, int channel) {
+void testInteractive(int chip, int channel) {
   var pwm = PWM(chip, channel);
   try {
     print('Starting interactive test. Get out your logic analyzer, buddy!');
@@ -33,7 +33,7 @@ void test_interactive(int chip, int channel) {
     // Set initial parameters and enable PWM
     pwm.setDutyCycle(0);
     pwm.setFrequency(1e3);
-    pwm.setPolarity(Polarity.PWM_POLARITY_NORMAL);
+    pwm.setPolarity(Polarity.pwmPolarityNormal);
     pwm.setEnabled(true);
     print('PWM description: ${pwm.getPWMinfo()}');
     print('PWM description looks OK? y/n');
@@ -70,12 +70,12 @@ void test_interactive(int chip, int channel) {
   }
 }
 
-void test_open_config_close(int chip, int channel) {
+void testOpenConfigClose(int chip, int channel) {
   // Open non-existent PWM chip
   try {
     PWM(9999, channel);
   } on PWMexception catch (e) {
-    if (e.errorCode != PWMerrorCode.PWM_ERROR_OPEN) {
+    if (e.errorCode != PWMerrorCode.pwmErrorOpen) {
       throw TestException.unexpected(e);
     }
   }
@@ -83,7 +83,7 @@ void test_open_config_close(int chip, int channel) {
   try {
     PWM(chip, 9999);
   } on PWMexception catch (e) {
-    if (e.errorCode != PWMerrorCode.PWM_ERROR_OPEN) {
+    if (e.errorCode != PWMerrorCode.pwmErrorOpen) {
       throw TestException.unexpected(e);
     }
   }
@@ -159,11 +159,11 @@ void test_open_config_close(int chip, int channel) {
     passert(fabs(pwm.getDutyCycle() - 0.75) < 1e-3);
 
     // Set polarity, check polarity
-    pwm.setPolarity(Polarity.PWM_POLARITY_NORMAL);
-    passert(pwm.getPolarity() == Polarity.PWM_POLARITY_NORMAL);
+    pwm.setPolarity(Polarity.pwmPolarityNormal);
+    passert(pwm.getPolarity() == Polarity.pwmPolarityNormal);
 
-    pwm.setPolarity(Polarity.PWM_POLARITY_INVERSED);
-    passert(pwm.getPolarity() == Polarity.PWM_POLARITY_INVERSED);
+    pwm.setPolarity(Polarity.pwmPolarityInversed);
+    passert(pwm.getPolarity() == Polarity.pwmPolarityInversed);
 
     // Set enabled, check enabled
     pwm.setEnabled(true);
@@ -191,7 +191,7 @@ void main(List<String> argv) {
         '[4/4] Interactive test: PWM channel should be observed with an oscilloscope or logic analyzer.');
     print('Hint: for Raspberry Pi 3, enable PWM0 and PWM1 with:');
     print(
-        '   \$ echo \"dtoverlay=pwm-2chan,pin=18,func=2,pin2=13,func2=4\" | sudo tee -a /boot/config.txt');
+        '   \$ echo "dtoverlay=pwm-2chan,pin=18,func=2,pin2=13,func2=4" | sudo tee -a /boot/config.txt');
     print('   \$ sudo reboot');
     print('Monitor GPIO 18 (header pin 12), and run this test with:');
     print('    dart pwm_test 0 0');
@@ -203,13 +203,13 @@ void main(List<String> argv) {
   var chip = int.parse(argv[0]);
   var channel = int.parse(argv[1]);
 
-  test_arguments();
+  testArguments();
   print('Arguments test passed.');
-  test_open_config_close(chip, channel);
+  testOpenConfigClose(chip, channel);
   print('Open/close test passed.');
-  test_loopback();
+  testLoopback();
   print('Loopback test passed.');
-  test_interactive(chip, channel);
+  testInteractive(chip, channel);
   print('Interactive test passed.');
   print('All tests passed!\n');
 }

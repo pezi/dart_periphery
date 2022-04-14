@@ -1,6 +1,11 @@
+## 0.8.30 2022-04-14
+
+* **v0.9.00** is an API change release which fixes all the camel case warnings of the source code. When starting this project enums and variables from existing C und Java code were not converted to the camel case.
+* [pn532](https://github.com/pezi/dart_periphery/blob/main/example/pn532.dart)-example provided by [UliPranz](https://github.com/pezi/dart_periphery/pull/6), a NFC Reader Module, Thanks to UliPrantz!
+
 ## 0.8.29 2022-03-19
 
-* Fix Documentation 
+* Fix documentation
 
 ## 0.8.28 2022-03-19
 

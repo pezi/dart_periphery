@@ -2,41 +2,36 @@ import 'dart:io';
 
 import 'package:dart_periphery/dart_periphery.dart';
 
-import 'package:dart_periphery/src/hardware/pn532/base_protocol.dart';
 import 'package:dart_periphery/src/hardware/pn532/constants.dart';
-import 'package:dart_periphery/src/hardware/utils/uint.dart';
-
 
 class PN532SpiImpl extends PN532BaseProtocol {
-
   final GPIO? chipSelectGpio;
   final SPI spi;
 
   List<int> pn532StatusList = [pn532SpiStartRead, 0x00];
 
-  
   /// The `spiBus` and `spiChip` corresponds to /dev/spidev`[spiBus]`.`[spiChip]`.
-  /// 
+  ///
   /// The connection are the following:
   /// The `SCK/SCLK` of PN532 must be connected to `SCK/SCLK` of the Pi.
   /// The `MOSI` of PN532 must be connected to `MOSI` of the Pi.
   /// The `MISO` of PN532 must be connected to `MISO` of the Pi.
   /// The `SS/NSS` of PN532 must be connected to `CE0` or the one specifed in `chipSelectPin`.
-  /// 
+  ///
   /// The `irqPin` and the `resetPin` are both optional!
   /// OPTIONAL: The `IRQ` of PN532 should be connected to a `GPIO` pin of your choice (default: 16) of the Pi.
   /// OPTIONAL: The `RSTPDN` of PN532 should be connected to a `GPIO` pin of your choice (default: 12) of the Pi.
-  /// For the `IRQ`, `RSTPDN` and `chipSelectPin` pin you can choose any 
-  /// GPIO pin of the pi just be aware that it seems like that the used dart 
-  /// package `dart_periphery` can't open all GPIOs 
+  /// For the `IRQ`, `RSTPDN` and `chipSelectPin` pin you can choose any
+  /// GPIO pin of the pi just be aware that it seems like that the used dart
+  /// package `dart_periphery` can't open all GPIOs
   /// (like in my test GPIO09) - then just use a different one.
-  /// 
+  ///
   /// Also be sure that the `irqPin` is properly connected since the interrupt
   /// works the way that the `irqPin` uses low to activate - means that if it
   /// isn't properly connect the driver doesn't wait for the PN532 to be ready
   /// for a response and you get kind of cryptic responses like
   /// `PN532BadResponseException` just because of the wrongly connected `irqPin`.
-  /// 
+  ///
   /// Also be aware that the `RSTPDN` pin is NOT the `RSTO` Pin!
   PN532SpiImpl({
     int? resetPin,
@@ -44,10 +39,11 @@ class PN532SpiImpl extends PN532BaseProtocol {
     int? chipSelectPin,
     int spiBus = 0,
     int spiChip = 0,
-  }) : chipSelectGpio = chipSelectPin == null ? null : GPIO(chipSelectPin, GPIOdirection.GPIO_DIR_IN),
-       spi = SPI(spiBus, spiChip, SPImode.MODE0, 500000),
-       super(resetPin: resetPin, irqPin: irqPin)
-  {
+  })  : chipSelectGpio = chipSelectPin == null
+            ? null
+            : GPIO(chipSelectPin, GPIOdirection.gpioDirIn),
+        spi = SPI(spiBus, spiChip, SPImode.mode0, 500000),
+        super(resetPin: resetPin, irqPin: irqPin) {
     reset();
     wakeUp();
   }
@@ -57,7 +53,6 @@ class PN532SpiImpl extends PN532BaseProtocol {
   }
 
   List<int> readWriteHelper(List<int> message) {
-
     // pull the chipSelect low to start communication
     if (chipSelectGpio != null) {
       chipSelectGpio!.write(false);
@@ -82,10 +77,9 @@ class PN532SpiImpl extends PN532BaseProtocol {
     return response;
   }
 
-
   @override
   List<int> readData(int length) {
-    // generate a list of length + 1 and the first element is 
+    // generate a list of length + 1 and the first element is
     // `pn532SpiDataRead` and the rest is filled with zeros
     final List<int> frame = [pn532SpiDataRead, ...List.filled(length, 0)];
 
@@ -116,7 +110,7 @@ class PN532SpiImpl extends PN532BaseProtocol {
     if (chipSelectGpio != null) {
       sleep(const Duration(milliseconds: 1000));
       chipSelectGpio!.write(false);
-      sleep(const Duration(milliseconds: 2));// T_osc_start
+      sleep(const Duration(milliseconds: 2)); // T_osc_start
     }
 
     List<int> data = [0x00];
@@ -124,10 +118,9 @@ class PN532SpiImpl extends PN532BaseProtocol {
     sleep(const Duration(milliseconds: 1000));
   }
 
-
   @override
   void writeData(List<int> data) {
-    // generate a list of length + 1 and the first element is 
+    // generate a list of length + 1 and the first element is
     // `pn532SpiDataRead` and the rest is filled with zeros
     final List<int> frame = [pn532SpiDataWrite, ...data];
     readWriteHelper(frame);

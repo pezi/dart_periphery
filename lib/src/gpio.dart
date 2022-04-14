@@ -14,96 +14,96 @@ import 'signature.dart';
 import 'dart:convert';
 
 /// Result codes of the [GPIO.poll].
-enum GPIOpolling { SUCCESS, TIMEOUT }
+enum GPIOpolling { success, timeout }
 
 /// Mapped native [GPIO] error codes with the same index, but different leading sign.
 enum GPIOerrorCode {
   /// Error code for not able to map the native C enum
-  ERROR_CODE_NOT_MAPPABLE,
+  errorCodeNotMappable,
 
   ///  Invalid arguments
-  GPIO_ERROR_ARG,
+  gpioErrorArg,
 
   /// Opening GPIO
-  GPIO_ERROR_OPEN,
+  gpioErrorOpen,
 
   /// Line name not found
-  GPIO_ERROR_NOT_FOUND,
+  gpioErrorNotFound,
 
   /// Querying GPIO attributes
-  GPIO_ERROR_QUERY,
+  gpioErrorQuery,
 
   /// Configuring GPIO attributes
-  GPIO_ERROR_CONFIGURE,
+  gpioErrorConfigure,
 
   /// Unsupported attribute or operation
-  GPIO_ERROR_UNSUPPORTED,
+  gpioErrorUnsupported,
 
   /// Invalid operation
-  GPIO_ERROR_INVALID_OPERATION,
+  gpioErrorInvalidOperation,
 
   /// Reading/writing GPIO
-  GPIO_ERROR_IO,
+  gpioErrorIO,
 
   /// Closing GPIO
-  GPIO_ERROR_CLOSE,
+  gpioErrorClose
 }
 
 /// [GPIO] input/output direction
 enum GPIOdirection {
   ///  Input
-  GPIO_DIR_IN,
+  gpioDirIn,
 
   /// Output, initialized to low
-  GPIO_DIR_OUT,
+  gpioDirOut,
 
   /// output, initialized to low
-  GPIO_DIR_OUT_LOW,
+  gpioDirOutLow,
 
   /// output, initialized to high
-  GPIO_DIR_OUT_HIGH
+  gpioDirOutHigh
 }
 
 /// [GPIO] edge
 enum GPIOedge {
   /// No interrupt edge
-  GPIO_EDGE_NONE,
+  gpioEdgeNone,
 
   /// Rising edge 0 -> 1
-  GPIO_EDGE_RISING,
+  gpioEdgeRising,
 
   /// Falling edge 1 -> 0
-  GPIO_EDGE_FALLING,
+  gpioEdgeFalling,
 
   /// Both edges X -> !X
-  GPIO_EDGE_BOTH
+  gpioEdgeBoth
 }
 
 /// [GPIO] bias
 enum GPIObias {
   /// Default line bias
-  GPIO_BIAS_DEFAULT,
+  gpioBiasDefault,
 
   /// Pull-up
-  GPIO_BIAS_PULL_UP,
+  gpioBiasPullUp,
 
   /// Pull-down *
-  GPIO_BIAS_PULL_DOWN,
+  gpioBiasPullDown,
 
   /// Disable line bias
-  GPIO_BIAS_DISABLE,
+  gpioBiasDisabale,
 }
 
 /// [GPIO] drive
 enum GPIOdrive {
   /// Default line drive (push-pull)
-  GPIO_DRIVE_DEFAULT,
+  gpioDriveDefault,
 
   /// Open drain
-  GPIO_DRIVE_OPEN_DRAIN,
+  gpioDriveOpenDrain,
 
   ///  Open source
-  GPIO_DRIVE_OPEN_SOURCE,
+  gpioDriveOpenSource,
 }
 
 /// Result of the [GPIO.readEvent()].
@@ -188,10 +188,10 @@ class GPIOconfig {
   GPIOconfig(this.direction, this.edge, this.bias, this.drive, this.inverted,
       this.label);
   GPIOconfig.defaultValues()
-      : direction = GPIOdirection.GPIO_DIR_IN,
-        edge = GPIOedge.GPIO_EDGE_NONE,
-        bias = GPIObias.GPIO_BIAS_DEFAULT,
-        drive = GPIOdrive.GPIO_DRIVE_DEFAULT,
+      : direction = GPIOdirection.gpioDirIn,
+        edge = GPIOedge.gpioEdgeNone,
+        bias = GPIObias.gpioBiasDefault,
+        drive = GPIOdrive.gpioDriveDefault,
         inverted = false,
         label = '';
   Pointer<_GPIOconfig> toNative() {
@@ -290,48 +290,53 @@ final _nativeGPIOgetDrive = intVoidInt32PtrM('gpio_get_drive');
 final _nativeGPIOgetInverted = intVoidInt8PtrM('gpio_get_inverted');
 
 // int gpio_open(gpio_t *gpio, const char *path, unsigned int line, gpio_direction_t direction);
-typedef _gpio_open = Int32 Function(
+// ignore: camel_case_types
+typedef _gpioOpen = Int32 Function(
     Pointer<Void> handle, Pointer<Utf8> path, Int32 line, Int32 direction);
 typedef _GPIOopen = int Function(
     Pointer<Void> handle, Pointer<Utf8> path, int line, int direction);
 final _nativeGPIOopen = _peripheryLib
-    .lookup<NativeFunction<_gpio_open>>('gpio_open')
+    .lookup<NativeFunction<_gpioOpen>>('gpio_open')
     .asFunction<_GPIOopen>();
 
 // int gpio_open_name(gpio_t *gpio, const char *path, const char *name, gpio_direction_t direction);
-typedef _gpio_open_name = Int32 Function(Pointer<Void> handle,
-    Pointer<Utf8> path, Pointer<Utf8> name, Int32 direction);
+// ignore: camel_case_types
+typedef _gpioOpenName = Int32 Function(Pointer<Void> handle, Pointer<Utf8> path,
+    Pointer<Utf8> name, Int32 direction);
 typedef _GPIOopenName = int Function(Pointer<Void> handle, Pointer<Utf8> path,
     Pointer<Utf8> name, int direction);
 final _nativeGPIOopenName = _peripheryLib
-    .lookup<NativeFunction<_gpio_open_name>>('gpio_open_name')
+    .lookup<NativeFunction<_gpioOpenName>>('gpio_open_name')
     .asFunction<_GPIOopenName>();
 
 // int open_advanced(gpio_t *gpio, const char *path, unsigned int line, const gpio_config_t *config);
-typedef _gpio_open_advanced = Int32 Function(Pointer<Void> handle,
+// ignore: camel_case_types
+typedef _gpioOpenAdvanced = Int32 Function(Pointer<Void> handle,
     Pointer<Utf8> path, Int32 line, Pointer<_GPIOconfig> config);
 typedef _GPIOopenAdvanced = int Function(Pointer<Void> handle,
     Pointer<Utf8> path, int line, Pointer<_GPIOconfig> config);
 final _nativeGPIOopenAdvanced = _peripheryLib
-    .lookup<NativeFunction<_gpio_open_advanced>>('gpio_open_advanced')
+    .lookup<NativeFunction<_gpioOpenAdvanced>>('gpio_open_advanced')
     .asFunction<_GPIOopenAdvanced>();
 
 // int gpio_open_sysfs(gpio_t *gpio, unsigned int line, gpio_direction_t direction)
-typedef _gpio_open_sysfs = Int32 Function(
+// ignore: camel_case_types
+typedef _gpioOpenSysfs = Int32 Function(
     Pointer<Void> handle, Int32 line, Int32 direction);
 typedef _GPIOopenSysfs = int Function(
     Pointer<Void> handle, int line, int direction);
 final _nativeGPIOopenSysfs = _peripheryLib
-    .lookup<NativeFunction<_gpio_open_sysfs>>('gpio_open_sysfs')
+    .lookup<NativeFunction<_gpioOpenSysfs>>('gpio_open_sysfs')
     .asFunction<_GPIOopenSysfs>();
 
 // int gpio_open_name_advanced(gpio_t *gpio, const char *path, const char *name, const gpio_config_t *config);
-typedef _gpio_open_name_advanced = Int32 Function(Pointer<Void> handle,
+// ignore: camel_case_types
+typedef _gpioOpenNameAdvanced = Int32 Function(Pointer<Void> handle,
     Pointer<Utf8> path, Pointer<Utf8> name, Pointer<_GPIOconfig> config);
 typedef _GPIOopenNameAdvanced = int Function(Pointer<Void> handle,
     Pointer<Utf8> path, Pointer<Utf8> name, Pointer<_GPIOconfig> config);
 final _nativeGPIOopenNameAdvanced = _peripheryLib
-    .lookup<NativeFunction<_gpio_open_name_advanced>>('gpio_open_name_advanced')
+    .lookup<NativeFunction<_gpioOpenNameAdvanced>>('gpio_open_name_advanced')
     .asFunction<_GPIOopenNameAdvanced>();
 
 // int gpio_write(gpio_t *gpio, bool value)
@@ -341,32 +346,34 @@ final _nativeGPIOwrite = intVoidIntM('gpio_write');
 final _nativeGPIOread = intVoidInt8PtrM('gpio_read');
 
 // int gpio_read_event(gpio_t *gpio, gpio_edge_t *edge, uint64_t *timestamp);
-typedef _gpio_read_event = Int32 Function(
+// ignore: camel_case_types
+typedef _gpioReadEvent = Int32 Function(
     Pointer<Void>, Pointer<Int32> edge, Pointer<Uint64> timeoutMillis);
 typedef _GPIOreadEvent = int Function(
     Pointer<Void>, Pointer<Int32> edge, Pointer<Uint64> timeoutMillis);
 final _nativeGPIOReadEvent = _peripheryLib
-    .lookup<NativeFunction<_gpio_read_event>>('gpio_read_event')
+    .lookup<NativeFunction<_gpioReadEvent>>('gpio_read_event')
     .asFunction<_GPIOreadEvent>();
 
 // int gpio_poll(gpio_t *gpio, int timeout_ms);
 final _nativeGPIOpoll = intVoidIntM('gpio_poll');
 
 // int gpio_poll_multiple(gpio_t **gpios, size_t count, int timeout_ms, bool *gpios_ready);
-typedef _gpio_multiple_poll = Int32 Function(Pointer<Pointer<Void>> gpios,
+// ignore: camel_case_types
+typedef _gpioMultiplePoll = Int32 Function(Pointer<Pointer<Void>> gpios,
     IntPtr count, Int32 timoutMillis, Pointer<Int8>);
 typedef _GPIOmultiplePoll = int Function(
     Pointer<Pointer<Void>> gpios, int count, int timeoutMillis, Pointer<Int8>);
 final _nativeGPIOmultiplePoll = _peripheryLib
-    .lookup<NativeFunction<_gpio_multiple_poll>>('gpio_poll_multiple')
+    .lookup<NativeFunction<_gpioMultiplePoll>>('gpio_poll_multiple')
     .asFunction<_GPIOmultiplePoll>();
 
 String _getErrmsg(Pointer<Void> handle) {
   return _nativeGPIOerrnMsg(handle).toDartString();
 }
 
-const BUFFER_LEN = 256;
-const OPEN_ERROR = 'gpio_new() failed';
+const bufferLen = 256;
+const openError = 'gpio_new() failed';
 
 int _checkError(int value) {
   if (value < 0) {
@@ -426,13 +433,13 @@ class GPIO {
   static GPIOerrorCode getGPIOerrorCode(int value) {
     // must be negative
     if (value >= 0) {
-      return GPIOerrorCode.ERROR_CODE_NOT_MAPPABLE;
+      return GPIOerrorCode.errorCodeNotMappable;
     }
     value = -value;
 
     // check range
-    if (value > GPIOerrorCode.GPIO_ERROR_CLOSE.index) {
-      return GPIOerrorCode.ERROR_CODE_NOT_MAPPABLE;
+    if (value > GPIOerrorCode.gpioErrorClose.index) {
+      return GPIOerrorCode.errorCodeNotMappable;
     }
 
     return GPIOerrorCode.values[value];
@@ -440,7 +447,7 @@ class GPIO {
 
   void _checkStatus() {
     if (_invalid) {
-      throw GPIOexception(GPIOerrorCode.GPIO_ERROR_INVALID_OPERATION,
+      throw GPIOexception(GPIOerrorCode.gpioErrorInvalidOperation,
           'GPIO line has the status released!');
     }
   }
@@ -466,7 +473,7 @@ class GPIO {
       String path, int line, GPIOdirection direction) {
     var _gpioHandle = _nativeGPIOnew();
     if (_gpioHandle == nullptr) {
-      return throw GPIOexception(GPIOerrorCode.GPIO_ERROR_OPEN, OPEN_ERROR);
+      return throw GPIOexception(GPIOerrorCode.gpioErrorOpen, openError);
     }
     _checkError(_nativeGPIOopen(
         _gpioHandle, path.toNativeUtf8(), line, direction.index));
@@ -486,7 +493,7 @@ class GPIO {
       String path, String name, GPIOdirection direction) {
     var _gpioHandle = _nativeGPIOnew();
     if (_gpioHandle == nullptr) {
-      return throw GPIOexception(GPIOerrorCode.GPIO_ERROR_OPEN, OPEN_ERROR);
+      return throw GPIOexception(GPIOerrorCode.gpioErrorOpen, openError);
     }
     _checkError(_nativeGPIOopenName(_gpioHandle, path.toNativeUtf8(),
         name.toNativeUtf8(), direction.index));
@@ -507,7 +514,7 @@ class GPIO {
       String path, int line, GPIOconfig config) {
     var _gpioHandle = _nativeGPIOnew();
     if (_gpioHandle == nullptr) {
-      return throw GPIOexception(GPIOerrorCode.GPIO_ERROR_OPEN, OPEN_ERROR);
+      return throw GPIOexception(GPIOerrorCode.gpioErrorOpen, openError);
     }
     _checkError(_nativeGPIOopenAdvanced(
         _gpioHandle, path.toNativeUtf8(), line, config.toNative()));
@@ -528,7 +535,7 @@ class GPIO {
       String path, String name, GPIOconfig config) {
     var _gpioHandle = _nativeGPIOnew();
     if (_gpioHandle == nullptr) {
-      return throw GPIOexception(GPIOerrorCode.GPIO_ERROR_OPEN, OPEN_ERROR);
+      return throw GPIOexception(GPIOerrorCode.gpioErrorOpen, openError);
     }
     _checkError(_nativeGPIOopenNameAdvanced(_gpioHandle, path.toNativeUtf8(),
         name.toNativeUtf8(), config.toNative()));
@@ -557,7 +564,7 @@ class GPIO {
     var _gpioHandle = _nativeGPIOnew();
     if (_gpioHandle == nullptr) {
       return throw GPIOexception(
-          GPIOerrorCode.GPIO_ERROR_OPEN, 'Error opening GPIO interface');
+          GPIOerrorCode.gpioErrorOpen, 'Error opening GPIO interface');
     }
     _checkError(_nativeGPIOopenSysfs(_gpioHandle, line, direction.index));
     return _gpioHandle;
@@ -612,8 +619,8 @@ class GPIO {
   GPIOpolling poll(int timeoutMillis) {
     _checkStatus();
     return _checkError(_nativeGPIOpoll(_gpioHandle, timeoutMillis)) == 1
-        ? GPIOpolling.SUCCESS
-        : GPIOpolling.TIMEOUT;
+        ? GPIOpolling.success
+        : GPIOpolling.timeout;
   }
 
   /// Reads the edge event that occurred with the GPIO.
@@ -764,9 +771,9 @@ class GPIO {
 
   String _getString(intVoidUtf8IntF f) {
     _checkStatus();
-    var data = malloc<Int8>(BUFFER_LEN).cast<Utf8>();
+    var data = malloc<Int8>(bufferLen).cast<Utf8>();
     try {
-      _checkError(f(_gpioHandle, data, BUFFER_LEN));
+      _checkError(f(_gpioHandle, data, bufferLen));
       return data.toDartString();
     } finally {
       malloc.free(data);

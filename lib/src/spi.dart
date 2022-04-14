@@ -17,32 +17,32 @@ import 'dart:convert';
 /// Mapped native [SPI] error codes with the same index, but different leading sign.
 enum SPIerrorCode {
   /// Error code for not able to map the native C enum
-  ERROR_CODE_NOT_MAPPABLE,
+  errorCodeNotMappable,
 
   /// Invalid arguments
-  SPI_ERROR_ARG,
+  spiErrorArg,
 
   /// Opening SPI device
-  SPI_ERROR_OPEN,
+  spiErrorOpen,
 
   /// Querying SPI device attributes
-  SPI_ERROR_QUERY,
+  spiErrorQuery,
 
   /// Configuring SPI device attributes
-  SPI_ERROR_CONFIGURE,
+  spiErrorConfigure,
 
   /// SPI transfer
-  SPI_ERROR_TRANSFER,
+  spiErrorTransfer,
 
   /// Closing SPI device
-  SPI_ERROR_CLOSE,
+  spiErrorClose,
 
   /// Unsupported attribute or operation
-  SPI_ERROR_UNSUPPORTED
+  spiErrorUnsupported
 }
 
 /// [SPI] modes
-enum SPImode { MODE0, MODE1, MODE2, MODE3 }
+enum SPImode { mode0, mode1, mode2, mode3 }
 
 /// [SPI] exception
 class SPIexception implements Exception {
@@ -80,26 +80,29 @@ final _nativeSPIinfo = intVoidUtf8sizeTM('spi_tostring');
 final _nativeSPIfd = intVoidM('spi_fd');
 
 // int spi_transfer(spi_t *spi, const uint8_t *txbuf, uint8_t *rxbuf, size_t len);
-typedef _spi_transfer = Int32 Function(Pointer<Void> handle,
+// ignore: camel_case_types
+typedef _spiTransfer = Int32 Function(Pointer<Void> handle,
     Pointer<Uint8> txbuf, Pointer<Uint8> rxbuf, IntPtr len);
-typedef _spiTransfer = int Function(
+typedef _SpiTransfer = int Function(
     Pointer<Void> handle, Pointer<Uint8> txbuf, Pointer<Uint8> rxbuf, int len);
 final _nativeTransfer = _peripheryLib
-    .lookup<NativeFunction<_spi_transfer>>('spi_transfer')
-    .asFunction<_spiTransfer>();
+    .lookup<NativeFunction<_spiTransfer>>('spi_transfer')
+    .asFunction<_SpiTransfer>();
 
 // int spi_open(spi_t *spi, const char *path, unsigned int mode, uint32_t max_speed);
-typedef _spi_open = Int32 Function(
+// ignore: camel_case_types
+typedef _spiOpen = Int32 Function(
     Pointer<Void> spi, Pointer<Utf8> path, Uint32 mode, Uint32 maxSpeed);
 typedef _SPIopen = int Function(
     Pointer<Void> spi, Pointer<Utf8> path, int mode, int maxSpeed);
 final _nativeSPIopen = _peripheryLib
-    .lookup<NativeFunction<_spi_open>>('spi_open')
+    .lookup<NativeFunction<_spiOpen>>('spi_open')
     .asFunction<_SPIopen>();
 
 // int spi_open_advanced(spi_t *spi, const char *path, unsigned int mode, uint32_t max_speed,
 //                      spi_bit_order_t bit_order, uint8_t bits_per_word, uint8_t extra_flags);
-typedef _spi_advanced = Int32 Function(
+// ignore: camel_case_types
+typedef _spiAdvanced = Int32 Function(
     Pointer<Void> spi,
     Pointer<Utf8> path,
     Uint32 mode,
@@ -116,12 +119,13 @@ typedef _SPIadvanced = int Function(
     int bitsPerWord,
     int extraFlags8bit);
 final _nativeSPIopenAdvanced = _peripheryLib
-    .lookup<NativeFunction<_spi_advanced>>('spi_open_advanced')
+    .lookup<NativeFunction<_spiAdvanced>>('spi_open_advanced')
     .asFunction<_SPIadvanced>();
 
 // int spi_open_advanced2(spi_t *spi, const char *path, unsigned int mode, uint32_t max_speed,
 //                       spi_bit_order_t bit_order, uint8_t bits_per_word, uint32_t extra_flags)
-typedef _spi_advanced2 = Int32 Function(
+// ignore: camel_case_types
+typedef _spiAdvanced2 = Int32 Function(
     Pointer<Void> spi,
     Pointer<Utf8> path,
     Int32 mode,
@@ -138,7 +142,7 @@ typedef _SPIadvanced2 = int Function(
     int bitsPerWord,
     int extraFlags32bit);
 final _nativeSPIopenAdvanced2 = _peripheryLib
-    .lookup<NativeFunction<_spi_advanced2>>('spi_open_advanced2')
+    .lookup<NativeFunction<_spiAdvanced2>>('spi_open_advanced2')
     .asFunction<_SPIadvanced2>();
 
 // int spi_get_mode(spi_t *spi, unsigned int *mode);
@@ -181,7 +185,7 @@ String _getErrmsg(Pointer<Void> handle) {
   return _nativeSPIerrnMsg(handle).toDartString();
 }
 
-const BUFFER_LEN = 256;
+const bufferLen = 256;
 
 int _checkError(int value) {
   if (value < 0) {
@@ -233,10 +237,10 @@ class SPI {
 
   void _checkSPI(int bus, int chip) {
     if (bus < 0) {
-      throw SPIexception(SPIerrorCode.SPI_ERROR_ARG, "Bus can't be negative");
+      throw SPIexception(SPIerrorCode.spiErrorArg, "Bus can't be negative");
     }
     if (chip < 0) {
-      throw SPIexception(SPIerrorCode.SPI_ERROR_ARG, "Chip can't be negative");
+      throw SPIexception(SPIerrorCode.spiErrorArg, "Chip can't be negative");
     }
   }
 
@@ -251,7 +255,7 @@ class SPI {
   ///
   /// SPI [mode] can be 0, 1, 2, or 3.
   SPI(this.bus, this.chip, this.mode, this.maxSpeed)
-      : bitOrder = BitOrder.MSB_FIRST,
+      : bitOrder = BitOrder.msbFirst,
         bitsPerWord = 8,
         extraFlags = 0,
         path = '/dev/spidev$bus.$chip' {
@@ -263,7 +267,7 @@ class SPI {
     var _spiHandle = _nativeSPInew();
     if (_spiHandle == nullptr) {
       return throw SPIexception(
-          SPIerrorCode.SPI_ERROR_OPEN, 'Error opening SPI bus');
+          SPIerrorCode.spiErrorOpen, 'Error opening SPI bus');
     }
     _checkError(
         _nativeSPIopen(_spiHandle, path.toNativeUtf8(), mode.index, maxSpeed));
@@ -273,8 +277,8 @@ class SPI {
   /// Opens the SPI device at the specified path ("/dev/spidev[bus].[chip]"), with the specified SPI mode,
   /// [maxSpeed] in hertz, [bitOrder], [bitsPerWord], and [extraFlags].
   ///
-  /// SPI mode can be 0, 1, 2, or 3. [bitOrder] can be [BitOrder.MSB_FIRST] or
-  /// [BitOrder.MSB_LAST], [bitsPerWord] specifies the transfer word size.
+  /// SPI mode can be 0, 1, 2, or 3. [bitOrder] can be [BitOrder.msbFirst] or
+  /// [BitOrder.msbLast], [bitsPerWord] specifies the transfer word size.
   /// [extraFlags] specified additional flags bitwise-ORed with the SPI mode.
   SPI.openAdvanced(this.bus, this.chip, this.mode, this.maxSpeed, this.bitOrder,
       this.bitsPerWord, this.extraFlags)
@@ -302,7 +306,7 @@ class SPI {
     var _spiHandle = _nativeSPInew();
     if (_spiHandle == nullptr) {
       return throw SPIexception(
-          SPIerrorCode.SPI_ERROR_OPEN, 'Error opening SPI bus');
+          SPIerrorCode.spiErrorOpen, 'Error opening SPI bus');
     }
     _checkError(_nativeSPIopenAdvanced(_spiHandle, path.toNativeUtf8(),
         mode.index, maxSpeed, bitOrder.index, bitsPerWord, extraFlags));
@@ -313,8 +317,8 @@ class SPI {
   /// [maxSpeed] in hertz, [bitOrder], [bitsPerWord], and [extraFlags]. This open function is the same as
   /// [SPI.openAdvanced], except that extra_flags can be 32-bits.
   ///
-  /// SPI mode can be 0, 1, 2, or 3. [bitOrder] can be [BitOrder.MSB_FIRST] or
-  /// [BitOrder.MSB_LAST], [bitsPerWord] specifies the transfer word size.
+  /// SPI mode can be 0, 1, 2, or 3. [bitOrder] can be [BitOrder.msbFirst] or
+  /// [BitOrder.msbLast], [bitsPerWord] specifies the transfer word size.
   /// [extraFlags] specified additional flags bitwise-ORed with the SPI mode.
   SPI.openAdvanced2(this.bus, this.chip, this.path, this.mode, this.maxSpeed,
       this.bitOrder, this.bitsPerWord, this.extraFlags) {
@@ -328,7 +332,7 @@ class SPI {
     var _spiHandle = _nativeSPInew();
     if (_spiHandle == nullptr) {
       return throw SPIexception(
-          SPIerrorCode.SPI_ERROR_OPEN, 'Error opening SPI bus');
+          SPIerrorCode.spiErrorOpen, 'Error opening SPI bus');
     }
     _checkError(_nativeSPIopenAdvanced2(_spiHandle, path.toNativeUtf8(),
         mode.index, maxSpeed, bitOrder.index, bitsPerWord, extraFlags));
@@ -339,13 +343,13 @@ class SPI {
   static SPIerrorCode getSPIerrorCode(int value) {
     // must be negative
     if (value >= 0) {
-      return SPIerrorCode.ERROR_CODE_NOT_MAPPABLE;
+      return SPIerrorCode.errorCodeNotMappable;
     }
     value = -value;
 
     // check range
-    if (value > SPIerrorCode.SPI_ERROR_UNSUPPORTED.index) {
-      return SPIerrorCode.ERROR_CODE_NOT_MAPPABLE;
+    if (value > SPIerrorCode.spiErrorUnsupported.index) {
+      return SPIerrorCode.errorCodeNotMappable;
     }
 
     return SPIerrorCode.values[value];
@@ -353,8 +357,8 @@ class SPI {
 
   void _checkStatus() {
     if (_invalid) {
-      throw SPIexception(SPIerrorCode.SPI_ERROR_CLOSE,
-          'SPI interface has the status released.');
+      throw SPIexception(
+          SPIerrorCode.spiErrorClose, 'SPI interface has the status released.');
     }
   }
 
@@ -434,9 +438,9 @@ class SPI {
   /// Returns a string representation of the spi handle.
   String getSPIinfo() {
     _checkStatus();
-    var data = malloc<Int8>(BUFFER_LEN).cast<Utf8>();
+    var data = malloc<Int8>(bufferLen).cast<Utf8>();
     try {
-      _checkError(_nativeSPIinfo(_spiHandle, data, BUFFER_LEN));
+      _checkError(_nativeSPIinfo(_spiHandle, data, bufferLen));
       return data.toDartString();
     } finally {
       malloc.free(data);

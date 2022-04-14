@@ -15,79 +15,94 @@ import 'bosch.dart';
 // This code bases on the diozero project - Thanks to Matthew Lewis!
 // https://github.com/mattjlewis/diozero/blob/master/diozero-core/src/main/java/com/diozero/devices/BME280.java
 
-const int BME280_DEFAULT_I2C_ADDRESS = 0x76;
-const int BME280_ALTERNATIVE_I2C_ADDRESS = 0x77;
+const int bme280DefaultI2Caddress = 0x76;
+const int bme280AlternativeI2Caddress = 0x77;
 
-const int CALIB_00_REG = 0x88;
-const int ID_REG = 0xD0;
-const int RESET_REG = 0xE0;
-const int CALIB_26_REG = 0xe1;
-const int CTRL_HUM_REG = 0xF2;
-const int STATUS_REG = 0xF3;
-const int CTRL_MEAS_REG = 0xF4;
-const int CONFIG_REG = 0xF5;
-const int PRESS_MSB_REG = 0xF7;
+const int calib00reg = 0x88;
+const int idReg = 0xD0;
+const int resetReg = 0xE0;
+const int calib26reg = 0xe1;
+const int ctrlHumReg = 0xF2;
+const int statusReg = 0xF3;
+const int ctrlMeasReg = 0xF4;
+const int configReg = 0xF5;
+const int pressMsbReg = 0xF7;
 
 // Flags for ctrl_hum and ctrl_meas registers
-const int OVERSAMPLING_1_MASK = 1;
-const int OVERSAMPLING_2_MASK = 2;
-const int OVERSAMPLING_4_MASK = 3;
-const int OVERSAMPLING_8_MASK = 4;
-const int OVERSAMPLING_16_MASK = 5;
+const int oversampling1Mask = 1;
+const int oversampling2Mask = 2;
+const int oversampling4Mask = 3;
+const int oversampling8Mask = 4;
+const int oversampling16Mask = 5;
 
 // operation mode
-const int MODE_SLEEP = 0;
-const int MODE_FORCED = 1;
-const int MODE_NORMAL = 3;
+const int modeSleep = 0;
+const int modeForged = 1;
+const int modeNormal = 3;
 
 /// [BME280] operation mode
-enum OperatingMode { MODE_SLEEP, MODE_FORCED, MODE_NORMAL }
+enum OperatingMode { modeSleep, modeForced, modeNormal }
 
-const int STANDBY_500_US = 0;
-const int STANDBY_62_5_MS = 1;
-const int STANDBY_125_MS = 2;
-const int STANDBY_250_MS = 3;
-const int STANDBY_500_MS = 4;
-const int STANDBY_1_S = 5;
-const int STANDBY_10_MS = 6;
-const int STANDBY_20_MS = 7;
+///  0.5 ms
+const int standby500us = 0;
+
+/// 62.5 ms
+const int standby62p5ms = 1;
+
+/// 125 ms
+const int standby125ms = 2;
+
+/// 250 ms
+const int standby250ms = 3;
+
+/// 500 ms
+const int standby500ms = 4;
+
+/// 1 sec
+const int standby1s = 5;
+
+/// 10 ms
+const int atandby10ms = 6;
+
+/// 20 ms
+const int standby20ms = 7;
 
 /// [BME280] inactive duration in standby mode
 enum StandbyDuration {
-  STANDBY_500_US,
-  STANDBY_62_5_MS,
-  STANDBY_125_MS,
-  STANDBY_250_MS,
-  STANDBY_500_MS,
-  STANDBY_1_S,
-  STANDBY_10_MS,
-  STANDBY_20_MS
+  standby500us,
+  standby62p5ms,
+  standby125ms,
+  standby250ms,
+  standby500ms,
+  standby1s,
+  standby10ms,
+  standby20ms
 }
 
 /// [BME280] IIR Filter coefficient
-enum FilterCoefficient { FILTER_OFF, FILTER_2, FILTER_4, FILTER_8, FILTER_16 }
+enum FilterCoefficient { filterOff, filter2, filiter4, filter8, filter16 }
 
 // filter
-const int FILTER_OFF = 0;
-const int FILTER_2 = 1;
-const int FILTER_4 = 2;
-const int FILTER_8 = 3;
-const int FILTER_16 = 4;
+const int filterOff = 0;
+const int filter2 = 1;
+const int filter4 = 2;
+const int filter8 = 3;
+const int filter16 = 4;
 
-/// Supported [BME280] models
+/// Supported [bme280] models
 enum BME280model {
   /// temperature and pressure
-  BMP280,
+  bmp280,
 
   /// temperature, pressure and humidity
-  BME280
+  bme280
 }
 
 /// BMP280 hardware ID
-const int BMP280_ID = 0x58;
+const int bmp280Id = 0x58;
 
 /// BME280 hardware ID
-const int BME280_ID = 0x60;
+const int bme280Id = 0x60;
 
 /// [BME280] exception
 class BME280exception implements Exception {
@@ -164,11 +179,11 @@ class BME280 {
   /// Creates a BME280/BMP280 sensor instance that uses the [i2c] bus with
   /// the optional [i2cAddress].
   ///
-  /// Default [BME280_DEFAULT_I2C_ADDRESS] = 0x76, [BME280_ALTERNATIVE_I2C_ADDRESS] = 0x77
-  BME280(I2C i2c, [this.i2cAddress = BME280_DEFAULT_I2C_ADDRESS])
+  /// Default [bme280DefaultI2Caddress] = 0x76, [bme280AlternativeI2Caddress] = 0x77
+  BME280(I2C i2c, [this.i2cAddress = bme280DefaultI2Caddress])
       : _i2c = i2c,
         isI2C = true,
-        bitOrder = BitOrder.MSB_LAST {
+        bitOrder = BitOrder.msbLast {
     _initialize();
   }
 
@@ -183,33 +198,33 @@ class BME280 {
 
   void _initialize() {
     // get model
-    switch (_readByte(ID_REG)) {
-      case BMP280_ID:
-        _model = BME280model.BMP280;
+    switch (_readByte(idReg)) {
+      case bmp280Id:
+        _model = BME280model.bmp280;
         break;
-      case BME280_ID:
-        _model = BME280model.BME280;
+      case bme280Id:
+        _model = BME280model.bme280;
         break;
       default:
         throw BME280exception('Unknown model');
     }
     _readCoefficients();
-    setOperatingModes(OversamplingMultiplier.X1, OversamplingMultiplier.X1,
-        OversamplingMultiplier.X1, OperatingMode.MODE_NORMAL);
+    setOperatingModes(OversamplingMultiplier.x1, OversamplingMultiplier.x1,
+        OversamplingMultiplier.x1, OperatingMode.modeNormal);
     setStandbyAndFilterModes(
-        StandbyDuration.STANDBY_1_S, FilterCoefficient.FILTER_OFF);
+        StandbyDuration.standby1s, FilterCoefficient.filterOff);
   }
 
   /// Returns the sensor model.
   BME280model getModel() => _model;
 
   void _readCoefficients() {
-    while (_readByte(STATUS_REG) & 0x01 != 0) {
+    while (_readByte(statusReg) & 0x01 != 0) {
       sleep(Duration(milliseconds: 10));
     }
     var buffer = ByteBuffer(
-        _readByteBlock(CALIB_00_REG, _model == BME280model.BMP280 ? 24 : 26),
-        isI2C ? ByteBufferSrc.I2C : ByteBufferSrc.SPI,
+        _readByteBlock(calib00reg, _model == BME280model.bmp280 ? 24 : 26),
+        isI2C ? ByteBufferSrc.i2c : ByteBufferSrc.spi,
         bitOrder);
 
     // Temperature coefficients
@@ -228,15 +243,15 @@ class BME280 {
     _digP8 = buffer.getInt16();
     _digP9 = buffer.getInt16();
 
-    if (_model == BME280model.BME280) {
+    if (_model == BME280model.bme280) {
       // Skip 1 byte
       buffer.skipBytes(1);
       // Read 1 byte of data from address 0xA1(161)
       _digH1 = buffer.getInt8() & 0xff;
 
       // Read 7 bytes of data from address 0xE1(225)
-      buffer = ByteBuffer(_readByteBlock(CALIB_26_REG, 7),
-          isI2C ? ByteBufferSrc.I2C : ByteBufferSrc.SPI, bitOrder);
+      buffer = ByteBuffer(_readByteBlock(calib26reg, 7),
+          isI2C ? ByteBufferSrc.i2c : ByteBufferSrc.spi, bitOrder);
 
       // Humidity coefficients
       _digH2 = buffer.getInt16();
@@ -255,17 +270,17 @@ class BME280 {
       OversamplingMultiplier pressOversampling,
       OversamplingMultiplier humOversampling,
       OperatingMode operatingMode) {
-    if (_model == BME280model.BME280) {
+    if (_model == BME280model.bme280) {
       // Humidity over sampling rate = 1
-      _writeByte(CTRL_HUM_REG, humOversampling.index);
+      _writeByte(ctrlHumReg, humOversampling.index);
     }
     // Normal mode, temp and pressure oversampling rate = 1
     _writeByte(
-        CTRL_MEAS_REG,
+        ctrlMeasReg,
         ((tempOversampling.index) << 5) |
             ((pressOversampling.index) << 2) |
-            (operatingMode == OperatingMode.MODE_NORMAL
-                ? MODE_NORMAL
+            (operatingMode == OperatingMode.modeNormal
+                ? modeNormal
                 : operatingMode.index));
   }
 
@@ -273,7 +288,7 @@ class BME280 {
   void setStandbyAndFilterModes(
       StandbyDuration standbyDuration, FilterCoefficient filterCoefficient) {
     // Stand_by time = 1000 ms, filter off
-    _writeByte(CONFIG_REG,
+    _writeByte(configReg,
         (standbyDuration.index << 5) | (filterCoefficient.index << 2));
   }
 
@@ -281,33 +296,33 @@ class BME280 {
   BME280result getValues() {
     // Read the pressure, temperature, and humidity registers
     var buffer = ByteBuffer(
-        _readByteBlock(PRESS_MSB_REG, _model == BME280model.BMP280 ? 6 : 8),
-        isI2C ? ByteBufferSrc.I2C : ByteBufferSrc.SPI,
+        _readByteBlock(pressMsbReg, _model == BME280model.bmp280 ? 6 : 8),
+        isI2C ? ByteBufferSrc.i2c : ByteBufferSrc.spi,
         bitOrder);
 
     // Unpack the raw 20-bit unsigned pressure value
-    var adc_p = ((buffer.getInt8() & 0xff) << 12) |
+    var adcP = ((buffer.getInt8() & 0xff) << 12) |
         ((buffer.getInt8() & 0xff) << 4) |
         ((buffer.getInt8() & 0xf0) >> 4);
     // Unpack the raw 20-bit unsigned temperature value
-    var adc_t = ((buffer.getInt8() & 0xff) << 12) |
+    var adcT = ((buffer.getInt8() & 0xff) << 12) |
         ((buffer.getInt8() & 0xff) << 4) |
         ((buffer.getInt8() & 0xf0) >> 4);
-    var adc_h = 0;
-    if (_model == BME280model.BME280) {
+    var adcH = 0;
+    if (_model == BME280model.bme280) {
       // Unpack the raw 16-bit unsigned humidity value
-      adc_h = ((buffer.getInt8() & 0xff) << 8) | (buffer.getInt8() & 0xff);
+      adcH = ((buffer.getInt8() & 0xff) << 8) | (buffer.getInt8() & 0xff);
     }
 
-    var tvar1 = (((adc_t >> 3) - (_digT1 << 1)) * _digT2) >> 11;
-    var tvar2 = (((((adc_t >> 4) - _digT1) * ((adc_t >> 4) - _digT1)) >> 12) *
-            _digT3) >>
-        14;
-    var t_fine = tvar1 + tvar2;
+    var tvar1 = (((adcT >> 3) - (_digT1 << 1)) * _digT2) >> 11;
+    var tvar2 =
+        (((((adcT >> 4) - _digT1) * ((adcT >> 4) - _digT1)) >> 12) * _digT3) >>
+            14;
+    var tFine = tvar1 + tvar2;
 
-    var temp = (t_fine * 5 + 128) >> 8;
+    var temp = (tFine * 5 + 128) >> 8;
 
-    var pvar1 = t_fine - 128000;
+    var pvar1 = tFine - 128000;
     var pvar2 = pvar1 * pvar1 * _digP6;
     pvar2 = pvar2 + ((pvar1 * _digP5) << 17);
     pvar2 = pvar2 + ((_digP4) << 35);
@@ -317,7 +332,7 @@ class BME280 {
     if (pvar1 == 0) {
       pressure = 0; // Avoid exception caused by division by zero
     } else {
-      pressure = 1048576 - adc_p;
+      pressure = 1048576 - adcP;
       pressure = (((pressure << 31) - pvar2) * 3125) ~/ pvar1;
       pvar1 = (_digP9 * (pressure >> 13) * (pressure >> 13)) >> 25;
       pvar2 = (_digP8 * pressure) >> 19;
@@ -325,23 +340,23 @@ class BME280 {
     }
 
     var humidity = 0;
-    if (_model == BME280model.BME280) {
-      var v_x1_u32r = t_fine - 76800;
-      v_x1_u32r =
-          ((((adc_h << 14) - (_digH4 << 20) - (_digH5 * v_x1_u32r)) + 16384) >>
+    if (_model == BME280model.bme280) {
+      var vX1u32r = tFine - 76800;
+      vX1u32r =
+          ((((adcH << 14) - (_digH4 << 20) - (_digH5 * vX1u32r)) + 16384) >>
                   15) *
-              (((((((v_x1_u32r * _digH6) >> 10) *
-                                      (((v_x1_u32r * _digH3) >> 11) + 32768)) >>
+              (((((((vX1u32r * _digH6) >> 10) *
+                                      (((vX1u32r * _digH3) >> 11) + 32768)) >>
                                   10) +
                               2097152) *
                           _digH2 +
                       8192) >>
                   14);
-      v_x1_u32r = v_x1_u32r -
-          (((((v_x1_u32r >> 15) * (v_x1_u32r >> 15)) >> 7) * _digH1) >> 4);
-      v_x1_u32r = v_x1_u32r < 0 ? 0 : v_x1_u32r;
-      v_x1_u32r = v_x1_u32r > 419430400 ? 419430400 : v_x1_u32r;
-      humidity = (v_x1_u32r) >> 12;
+      vX1u32r = vX1u32r -
+          (((((vX1u32r >> 15) * (vX1u32r >> 15)) >> 7) * _digH1) >> 4);
+      vX1u32r = vX1u32r < 0 ? 0 : vX1u32r;
+      vX1u32r = vX1u32r > 419430400 ? 419430400 : vX1u32r;
+      humidity = (vX1u32r) >> 12;
     }
 
     return BME280result(temp / 100.0, pressure / 25600.0, humidity / 1024.0);
@@ -361,12 +376,12 @@ class BME280 {
 
   /// Resets the sensor.
   void reset() {
-    _writeByte(RESET_REG, 0xB6);
+    _writeByte(resetReg, 0xB6);
   }
 
   /// Indicates, if data are available.
   bool isDataAvailable() {
-    return (_readByte(STATUS_REG) & 0x08) == 0;
+    return (_readByte(statusReg) & 0x08) == 0;
   }
 
   int _readByte(int register) {

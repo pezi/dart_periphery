@@ -14,26 +14,26 @@ import 'signature.dart';
 /// [PWM] error code
 enum PWMerrorCode {
   /// Error code for not able to map the native C enum
-  ERROR_CODE_NOT_MAPPABLE,
+  errorCodeNotMappable,
 
   ///  Invalid arguments */
-  PWM_ERROR_ARG,
+  pwmErrorArg,
 
   /// Opening PWM
-  PWM_ERROR_OPEN,
+  pwmErrorOpen,
 
   ///  Querying PWM attributes
-  PWM_ERROR_QUERY,
+  pwmErrorQuery,
 
   /// Configuring PWM attributes
-  PWM_ERROR_CONFIGURE,
+  pwmErrorConfigure,
 
   // Closing PWM
-  PWM_ERROR_CLOSE
+  pwmErrorClose
 }
 
 /// [PWM] polarity of the  output
-enum Polarity { PWM_POLARITY_NORMAL, PWM_POLARITY_INVERSED }
+enum Polarity { pwmPolarityNormal, pwmPolarityInversed }
 
 // pwm_t *pwm_new(void);
 final _nativePWMnew = voidPtrVOIDM('pwm_new');
@@ -110,7 +110,7 @@ final _nativePWMsetCycle = intVoidDoubleM('pwm_set_duty_cycle');
 // int pwm_set_frequency(pwm_t *pwm, double frequency);
 final _nativePWMsetFrequency = intVoidDoubleM('pwm_set_frequency');
 
-const BUFFER_LEN = 256;
+const bufferLen = 256;
 
 int _checkError(int value) {
   if (value < 0) {
@@ -151,8 +151,8 @@ class PWM {
 
   void _checkStatus() {
     if (_invalid) {
-      throw PWMexception(PWMerrorCode.PWM_ERROR_CLOSE,
-          'PWM interface has the status released.');
+      throw PWMexception(
+          PWMerrorCode.pwmErrorClose, 'PWM interface has the status released.');
     }
   }
 
@@ -160,7 +160,7 @@ class PWM {
     var _pwmHandle = _nativePWMnew();
     if (_pwmHandle == nullptr) {
       return throw PWMexception(
-          PWMerrorCode.PWM_ERROR_OPEN, 'Error opening PWM chip/channel');
+          PWMerrorCode.pwmErrorOpen, 'Error opening PWM chip/channel');
     }
     _checkError(_nativePWMopen(_pwmHandle, chip, channel));
 
@@ -171,13 +171,13 @@ class PWM {
   static PWMerrorCode getPWMerrorCode(int value) {
     // must be negative
     if (value >= 0) {
-      return PWMerrorCode.ERROR_CODE_NOT_MAPPABLE;
+      return PWMerrorCode.errorCodeNotMappable;
     }
     value = -value;
 
     // check range
-    if (value > PWMerrorCode.PWM_ERROR_CLOSE.index) {
-      return PWMerrorCode.ERROR_CODE_NOT_MAPPABLE;
+    if (value > PWMerrorCode.pwmErrorClose.index) {
+      return PWMerrorCode.errorCodeNotMappable;
     }
 
     return PWMerrorCode.values[value];
@@ -212,9 +212,9 @@ class PWM {
   /// Returns a string representation of the PWM handle.
   String getPWMinfo() {
     _checkStatus();
-    var data = malloc<Int8>(BUFFER_LEN).cast<Utf8>();
+    var data = malloc<Int8>(bufferLen).cast<Utf8>();
     try {
-      _checkError(_nativePWMinfo(_pwmHandle, data, BUFFER_LEN));
+      _checkError(_nativePWMinfo(_pwmHandle, data, bufferLen));
       return data.toDartString();
     } finally {
       malloc.free(data);
@@ -329,11 +329,11 @@ class PWM {
   Polarity getPolarity() {
     switch (_getInt32Value(_nativePWMgetPolarity)) {
       case 0:
-        return Polarity.PWM_POLARITY_NORMAL;
+        return Polarity.pwmPolarityNormal;
       case 1:
-        return Polarity.PWM_POLARITY_INVERSED;
+        return Polarity.pwmPolarityInversed;
       default:
-        throw PWMexception(PWMerrorCode.PWM_ERROR_QUERY, 'Unkown polarity');
+        throw PWMexception(PWMerrorCode.pwmErrorQuery, 'Unkown polarity');
     }
   }
 

@@ -1,7 +1,4 @@
-import 'dart:io';
-
 import 'package:dart_periphery/dart_periphery.dart';
-import 'package:dart_periphery/src/hardware/pn532/base_protocol.dart';
 
 void main() {
   PN532BaseProtocol pn532Impl = PN532I2CImpl(irqPin: 16);

@@ -25,16 +25,25 @@ import 'dart:convert';
     #define I2C_M_RECV_LEN		0x0400
 */
 
-/// [I2C] native i2c_msg flags from <linux/i2c.h>
+/// [I2C] native i2c_msg flags from <linux/i2c.h> - converted only to lower case
+/// camel case looks a little strange
 enum I2CmsgFlags {
-  I2C_M_TEN,
-  I2C_M_RD,
-  I2C_M_STOP,
-  I2C_M_NOSTART,
-  I2C_M_REV_DIR_ADDR,
-  I2C_M_IGNORE_NAK,
-  I2C_M_NO_RD_ACK,
-  I2C_M_RECV_LEN
+  // ignore: constant_identifier_names
+  i2c_m_ten,
+  // ignore: constant_identifier_names
+  i2c_m_rd,
+  // ignore: constant_identifier_names
+  i2c_m_stop,
+  // ignore: constant_identifier_names
+  i2c_m_nostart,
+  // ignore: constant_identifier_names
+  i2c_m_rev_dir_addr,
+  // ignore: constant_identifier_names
+  i2c_m_ignore_nak,
+  // ignore: constant_identifier_names
+  i2c_m_no_rd_ack,
+  // ignore: constant_identifier_names
+  i2c_m_recv_len
 }
 
 /// Helper class mapped to the C struct i2c_msg
@@ -60,7 +69,7 @@ class NativeI2CmsgHelper {
   /// Returns a Pointer<NativeI2Cmsg> to the native memory structures.
   Pointer<NativeI2Cmsg> getMessages() {
     if (_isFreed) {
-      throw I2Cexception(I2CerrorCode.I2C_ERROR_CLOSE,
+      throw I2Cexception(I2CerrorCode.i2cErrorClose,
           "Not allowed acccess to a 'dispose()'ed memory structure.");
     }
     return _messages;
@@ -124,7 +133,7 @@ class I2Cmsg {
       var flags = 0;
       if (data.flags.isNotEmpty) {
         for (var f in data.flags) {
-          flags |= I2C.I2CmsgFlags2Int(f);
+          flags |= I2C.i2cMsgFlags2Int(f);
         }
       }
       msg.flags = flags;
@@ -143,29 +152,29 @@ class I2Cmsg {
 /// [I2C] error codes
 enum I2CerrorCode {
   /// Error code for not able to map the native C enum
-  ERROR_CODE_NOT_MAPPABLE,
+  errorCodeNotMappable,
 
   /// Invalid arguments
-  I2C_ERROR_ARG,
+  i2cErrorArg,
 
   /// Opening I2C device
-  I2C_ERROR_OPEN,
+  i2cErrorOpen,
 
   /// Querying I2C device attributes
-  I2C_ERROR_QUERY,
+  i2cErrorQuery,
 
   /// I2C not supported on this device
 
-  I2C_ERROR_NOT_SUPPORTED,
+  i2cErrorNotSupported,
 
   /// I2C transfer
-  I2C_ERROR_TRANSFER,
+  i2cErrorTransfer,
 
   /// Closing I2C device
-  I2C_ERROR_CLOSE
+  i2cErrorClose
 }
 
-const BUFFER_LEN = 256;
+const bufferLen = 256;
 
 int _checkError(int value) {
   if (value < 0) {
@@ -180,7 +189,7 @@ class I2Cexception implements Exception {
   final I2CerrorCode errorCode;
   final String errorMsg;
   I2Cexception.empty()
-      : errorCode = I2CerrorCode.ERROR_CODE_NOT_MAPPABLE,
+      : errorCode = I2CerrorCode.errorCodeNotMappable,
         errorMsg = '';
   I2Cexception(this.errorCode, this.errorMsg);
   I2Cexception.errorCode(int code, Pointer<Void> handle)
@@ -217,12 +226,13 @@ final _nativeI2Cinfo = intVoidUtf8sizeTM('i2c_tostring');
 final _nativeI2Cfd = intVoidM('i2c_fd');
 
 //  int i2c_transfer(i2c_t *i2c, struct i2c_msg *msgs, size_t count);
-typedef _i2c_transfer = Int32 Function(
+// ignore: camel_case_types
+typedef _i2cTransfer = Int32 Function(
     Pointer<Void> handle, Pointer<NativeI2Cmsg> mgs, IntPtr count);
 typedef _I2Ctransfer = int Function(
     Pointer<Void> handle, Pointer<NativeI2Cmsg> mgs, int count);
 final _nativeI2ctransfer = _peripheryLib
-    .lookup<NativeFunction<_i2c_transfer>>('i2c_transfer')
+    .lookup<NativeFunction<_i2cTransfer>>('i2c_transfer')
     .asFunction<_I2Ctransfer>();
 
 String _getErrmsg(Pointer<Void> handle) {
@@ -267,8 +277,8 @@ class I2C {
 
   void _checkStatus() {
     if (_invalid) {
-      throw I2Cexception(I2CerrorCode.I2C_ERROR_CLOSE,
-          'I2C interface has the status released.');
+      throw I2Cexception(
+          I2CerrorCode.i2cErrorClose, 'I2C interface has the status released.');
     }
   }
 
@@ -276,7 +286,7 @@ class I2C {
     var _i2cHandle = _nativeI2Cnew();
     if (_i2cHandle == nullptr) {
       return throw I2Cexception(
-          I2CerrorCode.I2C_ERROR_OPEN, 'Error opening I2C bus');
+          I2CerrorCode.i2cErrorOpen, 'Error opening I2C bus');
     }
     _checkError(_nativeI2Copen(_i2cHandle, path.toNativeUtf8()));
     return _i2cHandle;
@@ -286,36 +296,36 @@ class I2C {
   static I2CerrorCode getI2CerrorCode(int value) {
     // must be negative
     if (value >= 0) {
-      return I2CerrorCode.ERROR_CODE_NOT_MAPPABLE;
+      return I2CerrorCode.errorCodeNotMappable;
     }
     value = -value;
 
     // check range
-    if (value > I2CerrorCode.I2C_ERROR_CLOSE.index) {
-      return I2CerrorCode.ERROR_CODE_NOT_MAPPABLE;
+    if (value > I2CerrorCode.i2cErrorClose.index) {
+      return I2CerrorCode.errorCodeNotMappable;
     }
 
     return I2CerrorCode.values[value];
   }
 
   /// Converts [I2CmsgFlags] to the native bit mask value.
-  static int I2CmsgFlags2Int(I2CmsgFlags flag) {
+  static int i2cMsgFlags2Int(I2CmsgFlags flag) {
     switch (flag) {
-      case I2CmsgFlags.I2C_M_TEN:
+      case I2CmsgFlags.i2c_m_ten:
         return 0x0010;
-      case I2CmsgFlags.I2C_M_RD:
+      case I2CmsgFlags.i2c_m_rd:
         return 0x0001;
-      case I2CmsgFlags.I2C_M_STOP:
+      case I2CmsgFlags.i2c_m_stop:
         return 0x8000;
-      case I2CmsgFlags.I2C_M_NOSTART:
+      case I2CmsgFlags.i2c_m_nostart:
         return 0x4000;
-      case I2CmsgFlags.I2C_M_REV_DIR_ADDR:
+      case I2CmsgFlags.i2c_m_rev_dir_addr:
         return 0x2000;
-      case I2CmsgFlags.I2C_M_IGNORE_NAK:
+      case I2CmsgFlags.i2c_m_ignore_nak:
         return 0x1000;
-      case I2CmsgFlags.I2C_M_NO_RD_ACK:
+      case I2CmsgFlags.i2c_m_no_rd_ack:
         return 0x0800;
-      case I2CmsgFlags.I2C_M_RECV_LEN:
+      case I2CmsgFlags.i2c_m_recv_len:
         return 0x0400;
     }
   }
@@ -379,10 +389,10 @@ class I2C {
   ///
   /// Some I2C devices can directly be written without an explizit register.
   void writeWord(int address, int wordValue,
-      [BitOrder order = BitOrder.MSB_LAST]) {
+      [BitOrder order = BitOrder.msbLast]) {
     var data = <I2Cmsg>[];
     var array = <int>[];
-    if (order == BitOrder.MSB_LAST) {
+    if (order == BitOrder.msbLast) {
       array = [wordValue | 0xff, wordValue >> 8];
     } else {
       array = [wordValue >> 8, wordValue | 0xff];
@@ -396,11 +406,11 @@ class I2C {
   ///
   /// The bit order depends on the I2C device.
   void writeWordReg(int address, int register, int wordValue,
-      [BitOrder order = BitOrder.MSB_LAST]) {
+      [BitOrder order = BitOrder.msbLast]) {
     var data = <I2Cmsg>[];
     var array = <int>[];
     array.add(register);
-    if (order == BitOrder.MSB_LAST) {
+    if (order == BitOrder.msbLast) {
       array.add(wordValue | 0xff);
       array.add(wordValue >> 8);
     } else {
@@ -415,14 +425,14 @@ class I2C {
   /// Reads a word from the I2C device with the [address] and the bit [order]].
   ///
   /// Some I2C devices can directly be written without an explizit register. The bit order depends on the I2C device.
-  int readWord(int address, [BitOrder order = BitOrder.MSB_LAST]) {
+  int readWord(int address, [BitOrder order = BitOrder.msbLast]) {
     var data = <I2Cmsg>[];
-    data.add(I2Cmsg(address, [I2CmsgFlags.I2C_M_RD], 2));
+    data.add(I2Cmsg(address, [I2CmsgFlags.i2c_m_rd], 2));
     var result = transfer(data);
     try {
       var ptr = result._messages[0].buf;
-      var value = (ptr[(order == BitOrder.MSB_LAST ? 0 : 1)] & 0xff) |
-          (ptr[(order == BitOrder.MSB_LAST ? 1 : 0)] & 0xff) << 8;
+      var value = (ptr[(order == BitOrder.msbLast ? 0 : 1)] & 0xff) |
+          (ptr[(order == BitOrder.msbLast ? 1 : 0)] & 0xff) << 8;
       return value;
     } finally {
       result.dispose();
@@ -433,15 +443,15 @@ class I2C {
   ///
   /// The bit order depends on the I2C device.
   int readWordReg(int address, int register,
-      [BitOrder order = BitOrder.MSB_LAST]) {
+      [BitOrder order = BitOrder.msbLast]) {
     var data = <I2Cmsg>[];
     data.add(I2Cmsg.buffer(address, [], [register]));
-    data.add(I2Cmsg(address, [I2CmsgFlags.I2C_M_RD], 2));
+    data.add(I2Cmsg(address, [I2CmsgFlags.i2c_m_rd], 2));
     var result = transfer(data);
     try {
       var ptr = result._messages[0].buf;
-      var value = (ptr[(order == BitOrder.MSB_LAST ? 0 : 1)] & 0xff) |
-          (ptr[(order == BitOrder.MSB_LAST ? 1 : 0)] & 0xff) << 8;
+      var value = (ptr[(order == BitOrder.msbLast ? 0 : 1)] & 0xff) |
+          (ptr[(order == BitOrder.msbLast ? 1 : 0)] & 0xff) << 8;
       return value;
     } finally {
       result.dispose();
@@ -453,7 +463,7 @@ class I2C {
   /// Some I2C devices can directly be read without explizit register.
   int readByte(int address) {
     var data = <I2Cmsg>[];
-    data.add(I2Cmsg(address, [I2CmsgFlags.I2C_M_RD], 1));
+    data.add(I2Cmsg(address, [I2CmsgFlags.i2c_m_rd], 1));
     var result = transfer(data);
     try {
       var ptr = result._messages[0].buf;
@@ -468,7 +478,7 @@ class I2C {
   int readByteReg(int address, int register) {
     var data = <I2Cmsg>[];
     data.add(I2Cmsg.buffer(address, [], [register]));
-    data.add(I2Cmsg(address, [I2CmsgFlags.I2C_M_RD], 1));
+    data.add(I2Cmsg(address, [I2CmsgFlags.i2c_m_rd], 1));
     var result = transfer(data);
     try {
       var ptr = result._messages[1].buf;
@@ -485,7 +495,7 @@ class I2C {
   List<int> readBytesReg(int address, int register, int len) {
     var data = <I2Cmsg>[];
     data.add(I2Cmsg.buffer(address, [], [register]));
-    data.add(I2Cmsg(address, [I2CmsgFlags.I2C_M_RD], len));
+    data.add(I2Cmsg(address, [I2CmsgFlags.i2c_m_rd], len));
 
     var result = transfer(data);
     var msg2 = result._messages[1];
@@ -506,7 +516,7 @@ class I2C {
   /// Reads [len] bytes from the I2C device with the [address].
   List<int> readBytes(int address, int len) {
     var data = <I2Cmsg>[];
-    data.add(I2Cmsg(address, [I2CmsgFlags.I2C_M_RD], len));
+    data.add(I2Cmsg(address, [I2CmsgFlags.i2c_m_rd], len));
     var result = transfer(data);
     var msg2 = result._messages[0];
     try {
@@ -545,9 +555,9 @@ class I2C {
   /// Returns a string representation of the I2C handle.
   String getI2Cinfo() {
     _checkStatus();
-    var data = malloc<Int8>(BUFFER_LEN).cast<Utf8>();
+    var data = malloc<Int8>(bufferLen).cast<Utf8>();
     try {
-      _checkError(_nativeI2Cinfo(_i2cHandle, data, BUFFER_LEN));
+      _checkError(_nativeI2Cinfo(_i2cHandle, data, bufferLen));
       return data.toDartString();
     } finally {
       malloc.free(data);

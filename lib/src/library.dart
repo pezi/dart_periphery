@@ -81,10 +81,10 @@ void setCustomLibrary(String absolutePath) {
 
 /// Bypasses the autodection of the CPU architecture.
 void setCPUarchitecture(CPU_ARCHITECTURE arch) {
-  if (arch == CPU_ARCHITECTURE.NOT_SUPPORTED ||
-      arch == CPU_ARCHITECTURE.UNDEFINED) {
+  if (arch == CPU_ARCHITECTURE.notSupported ||
+      arch == CPU_ARCHITECTURE.undefinded) {
     throw LibraryException(
-        LibraryErrorCode.INVALID_PARAMETER, "Invalid parameter");
+        LibraryErrorCode.invalidParameter, "Invalid parameter");
   }
   var cpu = arch.toString();
   cpu = cpu.substring(cpu.indexOf(".") + 1).toLowerCase();
@@ -93,8 +93,8 @@ void setCPUarchitecture(CPU_ARCHITECTURE arch) {
 
 String _autoDetectCPUarch() {
   CpuArch arch = CpuArch();
-  if (arch.cpuArch == CPU_ARCHITECTURE.NOT_SUPPORTED) {
-    throw LibraryException(LibraryErrorCode.CPU_ARCH_DETECTION_FAILED,
+  if (arch.cpuArch == CPU_ARCHITECTURE.notSupported) {
+    throw LibraryException(LibraryErrorCode.cpuArchDetectionFailed,
         "Unable to detect CPU architecture, found '${arch.machine}' . Use 'setCustomLibrary(String absolutePath)' - see documentation https://github.com/pezi/dart_periphery, or create an issue https://github.com/pezi/dart_periphery/issues");
   }
   var cpu = arch.cpuArch.toString();
@@ -104,13 +104,13 @@ String _autoDetectCPUarch() {
 
 /// dart_periphery loads the library from the actual directory.
 /// See [native-libraries](https://pub.dev/packages/dart_periphery#native-libraries) for details.
-void useLocalLibrary([CPU_ARCHITECTURE arch = CPU_ARCHITECTURE.UNDEFINED]) {
-  if (arch == CPU_ARCHITECTURE.UNDEFINED) {
+void useLocalLibrary([CPU_ARCHITECTURE arch = CPU_ARCHITECTURE.undefinded]) {
+  if (arch == CPU_ARCHITECTURE.undefinded) {
     _peripheryLibPath = './' + _autoDetectCPUarch();
   } else {
-    if (arch == CPU_ARCHITECTURE.NOT_SUPPORTED) {
+    if (arch == CPU_ARCHITECTURE.notSupported) {
       throw LibraryException(
-          LibraryErrorCode.INVALID_PARAMETER, "Invalid parameter");
+          LibraryErrorCode.invalidParameter, "Invalid parameter");
     }
     var cpu = arch.toString();
     cpu = cpu.substring(cpu.indexOf(".") + 1).toLowerCase();
@@ -119,9 +119,9 @@ void useLocalLibrary([CPU_ARCHITECTURE arch = CPU_ARCHITECTURE.UNDEFINED]) {
 }
 
 enum LibraryErrorCode {
-  LIBRARY_NOT_FOUND,
-  CPU_ARCH_DETECTION_FAILED,
-  INVALID_PARAMETER
+  libraryNotFound,
+  cpuArchDetectionFailed,
+  invalidParameter
 }
 
 /// Library exception
@@ -133,6 +133,7 @@ class LibraryException implements Exception {
   String toString() => errorMsg;
 }
 
+// ignore: camel_case_types
 typedef _getpId = Int32 Function();
 typedef _GetpId = int Function();
 
@@ -209,7 +210,7 @@ DynamicLibrary getPeripheryLib() {
     }
     var location = findPackagePath(Directory.current.path);
     if (location.isEmpty) {
-      throw LibraryException(LibraryErrorCode.LIBRARY_NOT_FOUND,
+      throw LibraryException(LibraryErrorCode.libraryNotFound,
           "Unable to find native lib '$library'. Use 'setCustomLibrary(String absolutePath)' - see documentation https://github.com/pezi/dart_periphery, or create an issue https://github.com/pezi/dart_periphery/issues");
     }
     path = normalize(join(location, 'src', 'native', library));
@@ -217,7 +218,7 @@ DynamicLibrary getPeripheryLib() {
 
   if (path != 'libperiphery.so') {
     if (FileSystemEntity.typeSync(path) == FileSystemEntityType.notFound) {
-      throw LibraryException(LibraryErrorCode.LIBRARY_NOT_FOUND,
+      throw LibraryException(LibraryErrorCode.libraryNotFound,
           "Unable to find native lib '$path'");
     }
   }

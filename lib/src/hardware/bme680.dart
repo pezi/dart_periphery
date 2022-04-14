@@ -16,215 +16,207 @@ import 'bosch.dart';
 // https://cdn-shop.adafruit.com/product-files/3660/BME680.pdf
 
 /// Default I2C address for the sensor.
-const int BME680_DEFAULT_I2C_ADDRESS = 0x76;
+const int bme680DefaultI2Caddress = 0x76;
 
 /// Alternative I2C address for the sensor.
-const int BME680_ALTERNATIVE_I2C_ADDRESS = 0x77;
+const int bme680AlternativeI2Caddress = 0x77;
 
 /// Chip vendor for the BME680
-const String CHIP_VENDOR = 'Bosch';
+const String chipVendor = 'Bosch';
 
 /// Chip name for the BME680
-const String CHIP_NAME = 'BME680';
+const String chipName = 'BME680';
 
 /// Chip ID for the BME680
-const int CHIP_ID_BME680 = 0x61;
+const int chipIdBme680 = 0x61;
 
 /// Minimum pressure in hPa the sensor can measure.
-const double MIN_PRESSURE_HPA = 300;
+const double minPressurehPa = 300;
 
 /// Maximum pressure in hPa the sensor can measure.
-const double MAX_PRESSURE_HPA = 1100;
+const double maxPressurehPa = 1100;
 
 /// Minimum humidity in percentage the sensor can measure.
-const double MIN_HUMIDITY_PERCENT = 0;
+const double minHumidityPercent = 0;
 
 /// Maximum humidity in percentage the sensor can measure.
-const double MAX_HUMIDITY_PERCENT = 100;
+const double maxHumidityPercent = 100;
 
 /// Minimum humidity in percentage the sensor can measure.
-const double MIN_GAS_PERCENT = 10;
+const double minGasPercent = 10;
 
 /// Maximum humidity in percentage the sensor can measure.
-const double MAX_GAS_PERCENT = 95;
+const double maxGasPercent = 95;
 
 /// Maximum power consumption in micro-amperes when measuring temperature.
-const double MAX_POWER_CONSUMPTION_TEMP_UA = 350;
+const double maxPowerConsumptionTempUA = 350;
 
 /// Maximum power consumption in micro-amperes when measuring pressure.
-const double MAX_POWER_CONSUMPTION_PRESSURE_UA = 714;
+const double maxPowerConsumptionPressureUA = 714;
 
 /// Maximum power consumption in micro-amperes when measuring pressure.
-const double MAX_POWER_CONSUMPTION_HUMIDITY_UA = 340;
+const double maxPowerConsumptionHumidityUA = 340;
 
 /// Maximum power consumption in micro-amperes when measuring volatile gases.
-const double MAX_POWER_CONSUMPTION_GAS_UA = 13; // 12f
+const double maxPowerConsumptionGasUA = 13; // 12f
 
 /// Maximum frequency of the measurements.
-const double MAX_FREQ_HZ = 181;
+const double maxFreqHz = 181;
 
 /// Minimum frequency of the measurements.
-const double MIN_FREQ_HZ = 23.1;
+const double minFreqHz = 23.1;
 
-const int SENSOR_READ_RETRY_COUNTER = 10;
+const int sensorReadRetryCounter = 10;
 
 /// [BME680] power modes
-enum PowerMode { SLEEP, FORCED }
+enum PowerMode { sleep, forced }
 
 int oversampMulti2int(OversamplingMultiplier v) {
   return int.parse(v.toString().substring(1));
 }
 
 /// [BME680] IIR filter size
-enum FilterSize {
-  NONE,
-  SIZE_1,
-  SIZE_3,
-  SIZE_7,
-  SIZE_15,
-  SIZE_31,
-  SIZE_63,
-  SIZE_127
-}
+enum FilterSize { none, size1, size3, size7, size15, size31, size63, size127 }
 
 /// [BME680] gas heater profile
 enum HeaterProfile {
-  PROFILE_0,
-  PROFILE_1,
-  PROFILE_2,
-  PROFILE_3,
-  PROFILE_4,
-  PROFILE_5,
-  PROFILE_6,
-  PROFILE_7,
-  PROFILE_8,
-  PROFILE_9
+  profile0,
+  profile1,
+  profile2,
+  profile3,
+  profile4,
+  profile5,
+  profile6,
+  profile7,
+  profile8,
+  profile9
 }
 
 // Gas heater duration.
-const int MIN_HEATER_DURATION = 1;
-const int MAX_HEATER_DURATION = 4032;
+const int minHeaterDuration = 1;
+const int maxHeaterDuration = 4032;
 
 // Registers
-const int CHIP_ID_ADDRESS = 0xD0;
-const int SOFT_RESET_ADDRESS = 0xe0;
+const int chipIdAddress = 0xD0;
+const int softRestAddress = 0xe0;
 
 // Sensor configuration registers
-const int CONFIG_HEATER_CONTROL_ADDRESS = 0x70;
-const int CONFIG_ODR_RUN_GAS_NBC_ADDRESS = 0x71;
-const int CONFIG_OS_H_ADDRESS = 0x72;
-const int CONFIG_T_P_MODE_ADDRESS = 0x74;
-const int CONFIG_ODR_FILTER_ADDRESS = 0x75;
+const int configHearerControlAddress = 0x70;
+const int configOdrRunGasNbcAddress = 0x71;
+const int configOsHaddress = 0x72;
+// ignore: constant_identifier_names
+const int configT_PmodeAddress = 0x74;
+const int configODRfilterAddress = 0x75;
 
 // field_x related defines
-const int FIELD0_ADDRESS = 0x1d;
-const int FIELD_LENGTH = 15;
-const int FIELD_ADDRESS_OFFSET = 17;
+const int field0Address = 0x1d;
+const int fieldLenth = 15;
+const int fieldAddressOffset = 17;
 
 // Heater settings
-const int RESISTANCE_HEAT0_ADDRESS = 0x5a;
-const int GAS_WAIT0_ADDRESS = 0x64;
+const int resistanceHeat0Address = 0x5a;
+const int gasWait0Address = 0x64;
 
 // Commands
-const int SOFT_RESET_COMMAND = 0xb6;
+const int softResetCommand = 0xb6;
 
 // BME680 coefficients related defines
-const int COEFFICIENT_ADDRESS1_LEN = 25;
-const int COEFFICIENT_ADDRESS2_LEN = 16;
+const int coeffizientAddress1Len = 25;
+const int coeffizientAddress2Len = 16;
 
 // Coefficient's address
-const int COEFFICIENT_ADDRESS1 = 0x89;
-const int COEFFICIENT_ADDRESS2 = 0xe1;
+const int coeffizientAddress1 = 0x89;
+const int coeffizientAddress2 = 0xe1;
 
 // Other coefficient's address
-const int RESISTANCE_HEAT_VALUE_ADDRESS = 0x00;
-const int RESISTANCE_HEAT_RANGE_ADDRESS = 0x02;
-const int RANGE_SWITCHING_ERROR_ADDRESS = 0x04;
-const int SENSOR_CONFIG_START_ADDRESS = 0x5A;
-const int GAS_CONFIG_START_ADDRESS = 0x64;
+const int resistanceHeatValueAddress = 0x00;
+const int resistanceHeatRangeAddress = 0x02;
+const int rangeSwitchingErrorAddress = 0x04;
+const int sensorConfigStartAddress = 0x5A;
+const int gasConfigStartAddress = 0x64;
 
 // Mask definitions
-final int GAS_MEASURE_MASK = bin2int('0b00110000');
-final int NBCONVERSION_MASK = bin2int('0b00001111');
-final int FILTER_MASK = bin2int('0b00011100');
-final int OVERSAMPLING_TEMPERATURE_MASK = bin2int('0b11100000');
-final int OVERSAMPLING_PRESSURE_MASK = bin2int('0b00011100');
-final int OVERSAMPLING_HUMIDITY_MASK = bin2int('0b00000111');
-final int HEATER_CONTROL_MASK = bin2int('0b00001000');
-final int RUN_GAS_MASK = bin2int('0b00010000');
-final int MODE_MASK = bin2int('0b00000011');
-final int RESISTANCE_HEAT_RANGE_MASK = bin2int('0b00110000');
-final int RANGE_SWITCHING_ERROR_MASK = bin2int('0b11110000');
-final int NEW_DATA_MASK = bin2int('0b10000000');
-final int GAS_INDEX_MASK = bin2int('0b00001111');
-final int GAS_RANGE_MASK = bin2int('0b00001111');
-final int GASM_VALID_MASK = bin2int('0b00100000');
-final int HEAT_STABLE_MASK = bin2int('0b00010000');
-final int MEM_PAGE_MASK = bin2int('0b00010000');
-final int SPI_RD_MASK = bin2int('0b10000000');
-final int SPI_WR_MASK = bin2int('0b01111111');
-final int BIT_H1_DATA_MASK = bin2int('0b00001111');
+final int gasMeasureMask = bin2int('0b00110000');
+final int nbconversionMask = bin2int('0b00001111');
+final int filterMask = bin2int('0b00011100');
+final int oversamplingTemperatureMask = bin2int('0b11100000');
+final int oversamplingPressureMask = bin2int('0b00011100');
+final int oversamplingHumidityMask = bin2int('0b00000111');
+final int heaterControlMask = bin2int('0b00001000');
+final int runGasMask = bin2int('0b00010000');
+final int modeMask = bin2int('0b00000011');
+final int resistanceHeatRangeMask = bin2int('0b00110000');
+final int rangeSwitchingErrorMask = bin2int('0b11110000');
+final int newDataMask = bin2int('0b10000000');
+final int gasIndexMask = bin2int('0b00001111');
+final int gasRangeMask = bin2int('0b00001111');
+final int gasmValidMask = bin2int('0b00100000');
+final int heatStableMask = bin2int('0b00010000');
+final int memPageMask = bin2int('0b00010000');
+final int spiRDmask = bin2int('0b10000000');
+final int spiWRmask = bin2int('0b01111111');
+final int bitH1dataMask = bin2int('0b00001111');
 
 // Bit position definitions for sensor settings
-const int GAS_MEASURE_POSITION = 4;
-const int NBCONVERSION_POSITION = 0;
-const int FILTER_POSITION = 2;
-const int OVERSAMPLING_TEMPERATURE_POSITION = 5;
-const int OVERSAMPLING_PRESSURE_POSITION = 2;
-const int OVERSAMPLING_HUMIDITY_POSITION = 0;
-const int HEATER_CONTROL_POSITION = 3;
-const int RUN_GAS_POSITION = 4;
-const int MODE_POSITION = 0;
+const int gasMeasurePosition = 4;
+const int nbconversionPosition = 0;
+const int filterPosition = 2;
+const int oversamplingTemperaturePosition = 5;
+const int oversamplingPressurePosition = 2;
+const int oversamplingHumidityPosition = 0;
+const int heaterControlPosition = 3;
+const int runGasPosition = 4;
+const int modePostion = 0;
 
 // Array Index to Field data mapping for Calibration Data
-const int T2_LSB_REGISTER = 1;
-const int T2_MSB_REGISTER = 2;
-const int T3_REGISTER = 3;
-const int P1_LSB_REGISTER = 5;
-const int P1_MSB_REGISTER = 6;
-const int P2_LSB_REGISTER = 7;
-const int P2_MSB_REGISTER = 8;
-const int P3_REGISTER = 9;
-const int P4_LSB_REGISTER = 11;
-const int P4_MSB_REGISTER = 12;
-const int P5_LSB_REGISTER = 13;
-const int P5_MSB_REGISTER = 14;
-const int P7_REGISTER = 15;
-const int P6_REGISTER = 16;
-const int P8_LSB_REGISTER = 19;
-const int P8_MSB_REGISTER = 20;
-const int P9_LSB_REGISTER = 21;
-const int P9_MSB_REGISTER = 22;
-const int P10_REGISTER = 23;
-const int H2_MSB_REGISTER = 25;
-const int H2_LSB_REGISTER = 26;
-const int H1_LSB_REGISTER = 26;
-const int H1_MSB_REGISTER = 27;
-const int H3_REGISTER = 28;
-const int H4_REGISTER = 29;
-const int H5_REGISTER = 30;
-const int H6_REGISTER = 31;
-const int H7_REGISTER = 32;
-const int T1_LSB_REGISTER = 33;
-const int T1_MSB_REGISTER = 34;
-const int GH2_LSB_REGISTER = 35;
-const int GH2_MSB_REGISTER = 36;
-const int GH1_REGISTER = 37;
-const int GH3_REGISTER = 38;
+const int t2LSBregister = 1;
+const int t2MSBregister = 2;
+const int t3Register = 3;
+const int p1LSBregister = 5;
+const int p1MSBregister = 6;
+const int p2LSBregister = 7;
+const int p2MSBregister = 8;
+const int p3Register = 9;
+const int p4LSBregister = 11;
+const int p4MSBregister = 12;
+const int p5LSBregister = 13;
+const int p5MSBregister = 14;
+const int p7Register = 15;
+const int p6Register = 16;
+const int p8LSBregister = 19;
+const int p8MSBregister = 20;
+const int p9LSBregister = 21;
+const int p9MSBregister = 22;
+const int p10Register = 23;
+const int h2MSBregister = 25;
+const int h2LSBregister = 26;
+const int h1LSBregister = 26;
+const int h1MSBregister = 27;
+const int h3Register = 28;
+const int h4Register = 29;
+const int h5Register = 30;
+const int h6Register = 31;
+const int h7Register = 32;
+const int t1LSBregister = 33;
+const int t1MSBregister = 34;
+const int gh2LSBregister = 35;
+const int gh2MSBregister = 36;
+const int gh1Register = 37;
+const int gh3Register = 38;
 
 // This max value is used to provide precedence to multiplication or division
 // in pressure compensation equation to achieve least loss of precision and
 // avoiding overflows.
 // i.e Comparing value, BME680_MAX_OVERFLOW_VAL = INT32_C(1 << 30)
 // Other code has this at (1 << 31)
-const int MAX_OVERFLOW_VAL = 0x40000000;
+const int maxOverflowVal = 0x40000000;
 
-const int HUMIDITY_REGISTER_SHIFT_VALUE = 4;
-const int RESET_PERIOD_MILLISECONDS = 10;
-const int POLL_PERIOD_MILLISECONDS = 10;
+const int humidityRegisterShiftValue = 4;
+const int resetPeriodMilliseconds = 10;
+const int pollPeriodMilliseconds = 10;
 
 // Look up tables for the possible gas range values
-const List<int> GAS_RANGE_LOOKUP_TABLE_1 = [
+const List<int> gasRangeLookupTable1 = [
   2147483647,
   2147483647,
   2147483647,
@@ -243,7 +235,7 @@ const List<int> GAS_RANGE_LOOKUP_TABLE_1 = [
   2147483647
 ];
 
-const List<int> GAS_RANGE_LOOKUP_TABLE_2 = [
+const List<int> gasRangeLookupTable2 = [
   4096000000,
   2048000000,
   1024000000,
@@ -262,7 +254,7 @@ const List<int> GAS_RANGE_LOOKUP_TABLE_2 = [
   125000
 ];
 
-const int DATA_GAS_BURN_IN = 50;
+const int dataGasBurnIn = 50;
 
 /// [BME680] exception
 class BME680exception implements Exception {
@@ -292,7 +284,7 @@ class Calibration {
 class GasSettings {
   // Variable to store nb conversion
   // nb_conv is used to select heater set-points of the sensor. Values 0-9
-  HeaterProfile heaterProfile = HeaterProfile.PROFILE_0;
+  HeaterProfile heaterProfile = HeaterProfile.profile0;
   // Variable to store heater control
   bool heaterEnabled = false;
   // Run gas enable value
@@ -303,16 +295,16 @@ class GasSettings {
 
 class SensorSettings {
   /// Humidity oversampling
-  OversamplingMultiplier oversamplingHumidity = OversamplingMultiplier.X0;
+  OversamplingMultiplier oversamplingHumidity = OversamplingMultiplier.x0;
 
   /// Temperature oversampling
-  OversamplingMultiplier oversamplingTemperature = OversamplingMultiplier.X0;
+  OversamplingMultiplier oversamplingTemperature = OversamplingMultiplier.x0;
 
   /// Pressure oversampling
-  OversamplingMultiplier oversamplingPressure = OversamplingMultiplier.X0;
+  OversamplingMultiplier oversamplingPressure = OversamplingMultiplier.x0;
 
   /// Filter coefficient
-  FilterSize filter = FilterSize.NONE;
+  FilterSize filter = FilterSize.none;
 }
 
 /// [BME680] measured data: temperature, pressure, humidity and IAQ sensor.
@@ -399,7 +391,7 @@ class BME680 {
   // ! Gas Sensor settings
   final GasSettings _gasSettings = GasSettings();
   // ! Sensor power modes
-  PowerMode _powerMode = PowerMode.SLEEP;
+  PowerMode _powerMode = PowerMode.sleep;
   bool _heaterTempStable = false;
   bool _gasMeasurementValid = false;
   // The index of the heater profile used
@@ -417,14 +409,14 @@ class BME680 {
   // Indoor air quality score index
   double _airQualityScore = 0;
 
-  final ListQueue<int> _gasResistanceData = ListQueue(DATA_GAS_BURN_IN);
+  final ListQueue<int> _gasResistanceData = ListQueue(dataGasBurnIn);
   int _offsetTemperature = 0;
 
   /// Creates a BME680 sensor instance that uses the [i2c] bus with
   /// the optional [i2cAddress].
   ///
-  /// Default [BME680_DEFAULT_I2C_ADDRESS] = 0x76, [BME680_ALTERNATIVE_I2C_ADDRESS] = 0x77
-  BME680(this.i2c, [this.i2cAddress = BME680_DEFAULT_I2C_ADDRESS]) {
+  /// Default [bme680DefaultI2Caddress] = 0x76, [bme680AlternativeI2Caddress] = 0x77
+  BME680(this.i2c, [this.i2cAddress = bme680DefaultI2Caddress]) {
     _initialize();
   }
 
@@ -432,25 +424,25 @@ class BME680 {
   int getChipId() => _chipId;
 
   void _initialize() {
-    for (var i = 0; i < DATA_GAS_BURN_IN; i++) {
+    for (var i = 0; i < dataGasBurnIn; i++) {
       _gasResistanceData.add(0);
     }
-    _chipId = i2c.readByteReg(i2cAddress, CHIP_ID_ADDRESS);
-    if (_chipId != CHIP_ID_BME680) {
-      throw BME680exception('$CHIP_VENDOR $CHIP_NAME not found.');
+    _chipId = i2c.readByteReg(i2cAddress, chipIdAddress);
+    if (_chipId != chipIdBme680) {
+      throw BME680exception('$chipVendor $chipName not found.');
     }
     softReset();
-    setPowerMode(PowerMode.SLEEP);
+    setPowerMode(PowerMode.sleep);
 
     _getCalibrationData();
 
     // It is highly recommended to set first osrs_h<2:0> followed by osrs_t<2:0> and
     // osrs_p<2:0> in one write command (see Section 3.3).
-    setHumidityOversample(OversamplingMultiplier.X2); // 0x72
-    setTemperatureOversample(OversamplingMultiplier.X4); // 0x74
-    setPressureOversample(OversamplingMultiplier.X8); // 0x74
+    setHumidityOversample(OversamplingMultiplier.x2); // 0x72
+    setTemperatureOversample(OversamplingMultiplier.x4); // 0x74
+    setPressureOversample(OversamplingMultiplier.x8); // 0x74
 
-    setFilter(FilterSize.SIZE_3);
+    setFilter(FilterSize.size3);
 
     // setHeaterEnabled(true);
     setGasMeasurementEnabled(true);
@@ -463,9 +455,9 @@ class BME680 {
   /// Returns the temperature oversampling.
   OversamplingMultiplier getTemperatureOversample() {
     return OversamplingMultiplier.values[
-        (i2c.readByteReg(i2cAddress, CONFIG_T_P_MODE_ADDRESS) &
-                OVERSAMPLING_TEMPERATURE_MASK) >>
-            OVERSAMPLING_TEMPERATURE_POSITION];
+        (i2c.readByteReg(i2cAddress, configT_PmodeAddress) &
+                oversamplingTemperatureMask) >>
+            oversamplingTemperaturePosition];
   }
 
   /// Sets the temperature oversampling to [value].
@@ -475,17 +467,17 @@ class BME680 {
   /// However each step of oversampling adds about 2ms to the latency, causing a
   /// slower response time to fast transients.
   void setTemperatureOversample(OversamplingMultiplier value) {
-    _setRegByte(CONFIG_T_P_MODE_ADDRESS, OVERSAMPLING_TEMPERATURE_MASK,
-        OVERSAMPLING_TEMPERATURE_POSITION, value.index);
+    _setRegByte(configT_PmodeAddress, oversamplingTemperatureMask,
+        oversamplingTemperaturePosition, value.index);
     _sensorSettings.oversamplingTemperature = value;
   }
 
   /// Returns the humidity oversampling.
   OversamplingMultiplier getHumidityOversample() {
     return OversamplingMultiplier.values[
-        (i2c.readByteReg(i2cAddress, CONFIG_OS_H_ADDRESS) &
-                OVERSAMPLING_HUMIDITY_MASK) >>
-            OVERSAMPLING_HUMIDITY_POSITION];
+        (i2c.readByteReg(i2cAddress, configOsHaddress) &
+                oversamplingHumidityMask) >>
+            oversamplingHumidityPosition];
   }
 
   /// Sets the humidity oversampling to [value].
@@ -495,8 +487,8 @@ class BME680 {
   /// However each step of oversampling adds about 2ms to the latency, causing a
   /// slower response time to fast transients.
   void setHumidityOversample(final OversamplingMultiplier value) {
-    _setRegByte(CONFIG_OS_H_ADDRESS, OVERSAMPLING_HUMIDITY_MASK,
-        OVERSAMPLING_HUMIDITY_POSITION, value.index);
+    _setRegByte(configOsHaddress, oversamplingHumidityMask,
+        oversamplingHumidityPosition, value.index);
 
     _sensorSettings.oversamplingHumidity = value;
   }
@@ -508,8 +500,8 @@ class BME680 {
   /// However each step of oversampling adds about 2ms to the latency,
   /// causing a slower response time to fast transients.
   void setPressureOversample(final OversamplingMultiplier value) {
-    _setRegByte(CONFIG_T_P_MODE_ADDRESS, OVERSAMPLING_PRESSURE_MASK,
-        OVERSAMPLING_PRESSURE_POSITION, value.index);
+    _setRegByte(configT_PmodeAddress, oversamplingPressureMask,
+        oversamplingPressurePosition, value.index);
 
     _sensorSettings.oversamplingPressure = value;
   }
@@ -517,17 +509,16 @@ class BME680 {
   /// Returns the pressure oversampling.
   OversamplingMultiplier getPressureOversample() {
     return OversamplingMultiplier.values[
-        (i2c.readByteReg(i2cAddress, CONFIG_T_P_MODE_ADDRESS) &
-                OVERSAMPLING_PRESSURE_MASK) >>
-            OVERSAMPLING_PRESSURE_POSITION];
+        (i2c.readByteReg(i2cAddress, configT_PmodeAddress) &
+                oversamplingPressureMask) >>
+            oversamplingPressurePosition];
   }
 
   /// Returns the IIR filter size.
   FilterSize getFilter() {
     return FilterSize.values[
-        (i2c.readByteReg(i2cAddress, CONFIG_ODR_FILTER_ADDRESS) &
-                FILTER_MASK) >>
-            FILTER_POSITION];
+        (i2c.readByteReg(i2cAddress, configODRfilterAddress) & filterMask) >>
+            filterPosition];
   }
 
   /// Sets the IIR [filter] size.
@@ -542,7 +533,7 @@ class BME680 {
   /// effectively 20bit. When it is disabled, it is 16bit + oversampling-1 bits.
   void setFilter(final FilterSize filter) {
     _setRegByte(
-        CONFIG_ODR_FILTER_ADDRESS, FILTER_MASK, FILTER_POSITION, filter.index);
+        configODRfilterAddress, filterMask, filterPosition, filter.index);
 
     _sensorSettings.filter = filter;
   }
@@ -550,7 +541,7 @@ class BME680 {
   /// [gasMeasurementsEnabled] enables/disables the gas sensor.
   void setGasMeasurementEnabled(final bool gasMeasurementsEnabled) {
     // The gas conversions are started only in appropriate mode if run_gas = '1'
-    _setRegByte(CONFIG_ODR_RUN_GAS_NBC_ADDRESS, RUN_GAS_MASK, RUN_GAS_POSITION,
+    _setRegByte(configOdrRunGasNbcAddress, runGasMask, runGasPosition,
         gasMeasurementsEnabled ? 1 : 0);
 
     _gasSettings.gasMeasurementsEnabled = gasMeasurementsEnabled;
@@ -571,28 +562,27 @@ class BME680 {
 
   /// Initiates a soft reset
   void softReset() {
-    i2c.writeByteReg(i2cAddress, SOFT_RESET_ADDRESS, SOFT_RESET_COMMAND);
-    sleep(Duration(milliseconds: RESET_PERIOD_MILLISECONDS));
+    i2c.writeByteReg(i2cAddress, softRestAddress, softResetCommand);
+    sleep(Duration(milliseconds: resetPeriodMilliseconds));
   }
 
   /// Returns the power mode.
   PowerMode getPowerMode() {
-    _powerMode = PowerMode.values[
-        i2c.readByteReg(i2cAddress, CONFIG_T_P_MODE_ADDRESS) & MODE_MASK];
+    _powerMode = PowerMode
+        .values[i2c.readByteReg(i2cAddress, configT_PmodeAddress) & modeMask];
 
     return _powerMode;
   }
 
   /// Sets the [powerMode] of the sensor.
   void setPowerMode(PowerMode powerMode) {
-    _setRegByte(
-        CONFIG_T_P_MODE_ADDRESS, MODE_MASK, MODE_POSITION, powerMode.index);
+    _setRegByte(configT_PmodeAddress, modeMask, modePostion, powerMode.index);
 
     powerMode = powerMode;
 
     // Wait for the power mode to switch to the requested value
     while (getPowerMode() != powerMode) {
-      sleep(Duration(milliseconds: POLL_PERIOD_MILLISECONDS));
+      sleep(Duration(milliseconds: pollPeriodMilliseconds));
     }
   }
 
@@ -611,76 +601,72 @@ class BME680 {
 
   void _getCalibrationData() {
     // Read the raw calibration data
-    var calibration_data = _readCalibrationData();
+    var calibrationData = _readCalibrationData();
 
     // Temperature related coefficients
     _calibration.temperature[0] = _bytesToWord(
-        calibration_data[T1_MSB_REGISTER],
-        calibration_data[T1_LSB_REGISTER],
-        false);
+        calibrationData[t1MSBregister], calibrationData[t1LSBregister], false);
     _calibration.temperature[1] = _bytesToWord(
-        calibration_data[T2_MSB_REGISTER],
-        calibration_data[T2_LSB_REGISTER],
-        true);
-    _calibration.temperature[2] = calibration_data[T3_REGISTER];
+        calibrationData[t2MSBregister], calibrationData[t2LSBregister], true);
+    _calibration.temperature[2] = calibrationData[t3Register];
 
     // Pressure related coefficients
-    _calibration.pressure[0] = _bytesToWord(calibration_data[P1_MSB_REGISTER],
-        calibration_data[P1_LSB_REGISTER], false);
-    _calibration.pressure[1] = _bytesToWord(calibration_data[P2_MSB_REGISTER],
-        calibration_data[P2_LSB_REGISTER], true);
-    _calibration.pressure[2] = calibration_data[P3_REGISTER];
-    _calibration.pressure[3] = _bytesToWord(calibration_data[P4_MSB_REGISTER],
-        calibration_data[P4_LSB_REGISTER], true);
-    _calibration.pressure[4] = _bytesToWord(calibration_data[P5_MSB_REGISTER],
-        calibration_data[P5_LSB_REGISTER], true);
-    _calibration.pressure[5] = calibration_data[P6_REGISTER];
-    _calibration.pressure[6] = calibration_data[P7_REGISTER];
-    _calibration.pressure[7] = _bytesToWord(calibration_data[P8_MSB_REGISTER],
-        calibration_data[P8_LSB_REGISTER], true);
-    _calibration.pressure[8] = _bytesToWord(calibration_data[P9_MSB_REGISTER],
-        calibration_data[P9_LSB_REGISTER], true);
-    _calibration.pressure[9] = calibration_data[P10_REGISTER] & 0xFF;
+    _calibration.pressure[0] = _bytesToWord(
+        calibrationData[p1MSBregister], calibrationData[p1LSBregister], false);
+    _calibration.pressure[1] = _bytesToWord(
+        calibrationData[p2MSBregister], calibrationData[p2LSBregister], true);
+    _calibration.pressure[2] = calibrationData[p3Register];
+    _calibration.pressure[3] = _bytesToWord(
+        calibrationData[p4MSBregister], calibrationData[p4LSBregister], true);
+    _calibration.pressure[4] = _bytesToWord(
+        calibrationData[p5MSBregister], calibrationData[p5LSBregister], true);
+    _calibration.pressure[5] = calibrationData[p6Register];
+    _calibration.pressure[6] = calibrationData[p7Register];
+    _calibration.pressure[7] = _bytesToWord(
+        calibrationData[p8MSBregister], calibrationData[p8LSBregister], true);
+    _calibration.pressure[8] = _bytesToWord(
+        calibrationData[p9MSBregister], calibrationData[p9LSBregister], true);
+    _calibration.pressure[9] = calibrationData[p10Register] & 0xFF;
 
     // Humidity related coefficients
-    _calibration.humidity[0] = (((calibration_data[H1_MSB_REGISTER] & 0xff) <<
-                HUMIDITY_REGISTER_SHIFT_VALUE) |
-            (calibration_data[H1_LSB_REGISTER] & BIT_H1_DATA_MASK)) &
+    _calibration.humidity[0] = (((calibrationData[h1MSBregister] & 0xff) <<
+                humidityRegisterShiftValue) |
+            (calibrationData[h1LSBregister] & bitH1dataMask)) &
         0xffff;
-    _calibration.humidity[1] = (((calibration_data[H2_MSB_REGISTER] & 0xff) <<
-                HUMIDITY_REGISTER_SHIFT_VALUE) |
-            ((calibration_data[H2_LSB_REGISTER] & 0xff) >>
-                HUMIDITY_REGISTER_SHIFT_VALUE)) &
+    _calibration.humidity[1] = (((calibrationData[h2MSBregister] & 0xff) <<
+                humidityRegisterShiftValue) |
+            ((calibrationData[h2LSBregister] & 0xff) >>
+                humidityRegisterShiftValue)) &
         0xffff;
-    _calibration.humidity[2] = calibration_data[H3_REGISTER];
-    _calibration.humidity[3] = calibration_data[H4_REGISTER];
-    _calibration.humidity[4] = calibration_data[H5_REGISTER];
-    _calibration.humidity[5] = calibration_data[H6_REGISTER] & 0xFF;
-    _calibration.humidity[6] = calibration_data[H7_REGISTER];
+    _calibration.humidity[2] = calibrationData[h3Register];
+    _calibration.humidity[3] = calibrationData[h4Register];
+    _calibration.humidity[4] = calibrationData[h5Register];
+    _calibration.humidity[5] = calibrationData[h6Register] & 0xFF;
+    _calibration.humidity[6] = calibrationData[h7Register];
 
     // Gas heater related coefficients
-    _calibration.gasHeater[0] = calibration_data[GH1_REGISTER];
-    _calibration.gasHeater[1] = _bytesToWord(calibration_data[GH2_MSB_REGISTER],
-        calibration_data[GH2_LSB_REGISTER], true);
-    _calibration.gasHeater[2] = calibration_data[GH3_REGISTER];
+    _calibration.gasHeater[0] = calibrationData[gh1Register];
+    _calibration.gasHeater[1] = _bytesToWord(
+        calibrationData[gh2MSBregister], calibrationData[gh2LSBregister], true);
+    _calibration.gasHeater[2] = calibrationData[gh3Register];
 
     // Other coefficients
     // Read other heater calibration data
     // res_heat_range is the heater range stored in register address 0x02 <5:4>
     _calibration.resistanceHeaterRange =
-        (i2c.readByteReg(i2cAddress, RESISTANCE_HEAT_RANGE_ADDRESS) &
-                RESISTANCE_HEAT_RANGE_MASK) >>
+        (i2c.readByteReg(i2cAddress, resistanceHeatRangeAddress) &
+                resistanceHeatRangeMask) >>
             4;
     // res_heat_val is the heater resistance correction factor stored in register
     // address 0x00
     // (signed, value from -128 to 127)
     _calibration.resistanceHeaterValue =
-        i2c.readByteReg(i2cAddress, RESISTANCE_HEAT_VALUE_ADDRESS);
+        i2c.readByteReg(i2cAddress, resistanceHeatValueAddress);
 
     // Range switching error from register address 0x04 <7:4> (signed 4 bit)
     _calibration.rangeSwitchingError =
-        (i2c.readByteReg(i2cAddress, RANGE_SWITCHING_ERROR_ADDRESS) &
-                RANGE_SWITCHING_ERROR_MASK) >>
+        (i2c.readByteReg(i2cAddress, rangeSwitchingErrorAddress) &
+                rangeSwitchingErrorMask) >>
             4;
   }
 
@@ -688,9 +674,9 @@ class BME680 {
   List<int> _readCalibrationData() {
     return <int>[
       ...i2c.readBytesReg(
-          i2cAddress, COEFFICIENT_ADDRESS1, COEFFICIENT_ADDRESS1_LEN),
+          i2cAddress, coeffizientAddress1, coeffizientAddress1Len),
       ...i2c.readBytesReg(
-          i2cAddress, COEFFICIENT_ADDRESS2, COEFFICIENT_ADDRESS2_LEN)
+          i2cAddress, coeffizientAddress2, coeffizientAddress2Len)
     ];
   }
 
@@ -710,45 +696,45 @@ class BME680 {
   }
 
   /// Returns a [BME680result] with temperature, pressure, humidity and IAQ or throws
-  /// an exception after [SENSOR_READ_RETRY_COUNTER] retries to read sensor data.
+  /// an exception after [sensorReadRetryCounter] retries to read sensor data.
   BME680result getValues() {
-    setPowerMode(PowerMode.FORCED);
-    var retries = SENSOR_READ_RETRY_COUNTER;
+    setPowerMode(PowerMode.forced);
+    var retries = sensorReadRetryCounter;
     do {
-      var buffer = i2c.readBytesReg(i2cAddress, FIELD0_ADDRESS, FIELD_LENGTH);
+      var buffer = i2c.readBytesReg(i2cAddress, field0Address, fieldLenth);
 
       // Set to 1 during measurements, goes to 0 when measurements are completed
-      var new_data = (buffer[0] & NEW_DATA_MASK) == 0 ? true : false;
+      var newData = (buffer[0] & newDataMask) == 0 ? true : false;
 
-      if (new_data) {
-        _gasMeasurementIndex = buffer[0] & GAS_INDEX_MASK;
+      if (newData) {
+        _gasMeasurementIndex = buffer[0] & gasIndexMask;
         _measureIndex = buffer[1];
 
         // Read the raw data from the sensor
-        var adc_pres = ((buffer[2] & 0xff) << 12) |
+        var adcPres = ((buffer[2] & 0xff) << 12) |
             ((buffer[3] & 0xff) << 4) |
             ((buffer[4] & 0xff) >> 4);
-        var adc_temp = ((buffer[5] & 0xff) << 12) |
+        var adcTemp = ((buffer[5] & 0xff) << 12) |
             ((buffer[6] & 0xff) << 4) |
             ((buffer[7] & 0xff) >> 4);
-        var adc_hum = (buffer[8] << 8) | (buffer[9] & 0xff);
-        var adc_gas_resistance =
+        var adcHum = (buffer[8] << 8) | (buffer[9] & 0xff);
+        var adcGasResistance =
             ((buffer[13] & 0xff) << 2) | ((buffer[14] & 0xff) >> 6);
-        var gas_range = buffer[14] & GAS_RANGE_MASK;
+        var gasRange = buffer[14] & gasRangeMask;
 
-        _gasMeasurementValid = (buffer[14] & GASM_VALID_MASK) > 0;
-        _heaterTempStable = (buffer[14] & HEAT_STABLE_MASK) > 0;
+        _gasMeasurementValid = (buffer[14] & gasmValidMask) > 0;
+        _heaterTempStable = (buffer[14] & heatStableMask) > 0;
 
-        var temperature = _calculateTemperature(adc_temp);
+        var temperature = _calculateTemperature(adcTemp);
         _temperature = temperature / 100.0;
         // Save for heater calculations
         _ambientTemperature = temperature;
-        _pressure = _calculatePressure(adc_pres) / 100.0;
-        _humidity = _calculateHumidity(adc_hum) / 1000.0;
+        _pressure = _calculatePressure(adcPres) / 100.0;
+        _humidity = _calculateHumidity(adcHum) / 1000.0;
         _gasResistance =
-            _calculateGasResistance(adc_gas_resistance, gas_range).toDouble();
+            _calculateGasResistance(adcGasResistance, gasRange).toDouble();
         _airQualityScore =
-            _calculateAirQuality(adc_gas_resistance, _humidity.toInt());
+            _calculateAirQuality(adcGasResistance, _humidity.toInt());
 
         return BME680result(
             _temperature,
@@ -763,10 +749,10 @@ class BME680 {
       }
 
       // Delay to poll the data
-      sleep(Duration(milliseconds: POLL_PERIOD_MILLISECONDS));
+      sleep(Duration(milliseconds: pollPeriodMilliseconds));
     } while (--retries > 0);
     throw BME680exception(
-        'No data available: Give up after $SENSOR_READ_RETRY_COUNTER tries');
+        'No data available: Give up after $sensorReadRetryCounter tries');
   }
 
   int _calculateTemperature(final int temperatureAdc) {
@@ -796,83 +782,81 @@ class BME680 {
     var1 = var1 >> 18;
 
     var1 = ((32768 + var1) * _calibration.pressure[0]) >> 15;
-    var calculated_pressure = 1048576 - pressureAdc;
-    calculated_pressure = (calculated_pressure - (var2 >> 12)) * 3125;
+    var calculatedPressure = 1048576 - pressureAdc;
+    calculatedPressure = (calculatedPressure - (var2 >> 12)) * 3125;
 
-    if (calculated_pressure >= MAX_OVERFLOW_VAL) {
-      calculated_pressure = ((calculated_pressure ~/ var1) << 1);
+    if (calculatedPressure >= maxOverflowVal) {
+      calculatedPressure = ((calculatedPressure ~/ var1) << 1);
     } else {
-      calculated_pressure = ((calculated_pressure << 1) ~/ var1);
+      calculatedPressure = ((calculatedPressure << 1) ~/ var1);
     }
 
     var1 = (_calibration.pressure[8] *
-            (((calculated_pressure >> 3) * (calculated_pressure >> 3)) >>
-                13)) >>
+            (((calculatedPressure >> 3) * (calculatedPressure >> 3)) >> 13)) >>
         12;
-    var2 = ((calculated_pressure >> 2) * _calibration.pressure[7]) >> 13;
-    var var3 = ((calculated_pressure >> 8) *
-            (calculated_pressure >> 8) *
-            (calculated_pressure >> 8) *
+    var2 = ((calculatedPressure >> 2) * _calibration.pressure[7]) >> 13;
+    var var3 = ((calculatedPressure >> 8) *
+            (calculatedPressure >> 8) *
+            (calculatedPressure >> 8) *
             _calibration.pressure[9]) >>
         17;
 
-    calculated_pressure = calculated_pressure +
+    calculatedPressure = calculatedPressure +
         ((var1 + var2 + var3 + (_calibration.pressure[6] << 7)) >> 4);
 
-    return calculated_pressure;
+    return calculatedPressure;
   }
 
   int _calculateHumidity(final int humidityAdc) {
-    var temp_scaled = ((_temperatureFine * 5) + 128) >> 8;
+    var tempScaled = ((_temperatureFine * 5) + 128) >> 8;
     var var1 = humidityAdc -
         (_calibration.humidity[0] * 16) -
-        (((temp_scaled * _calibration.humidity[2]) ~/ 100) >> 1);
+        (((tempScaled * _calibration.humidity[2]) ~/ 100) >> 1);
     var var2 = (_calibration.humidity[1] *
-            (((temp_scaled * _calibration.humidity[3]) ~/ 100) +
-                (((temp_scaled *
-                            ((temp_scaled * _calibration.humidity[4]) ~/
-                                100)) >>
+            (((tempScaled * _calibration.humidity[3]) ~/ 100) +
+                (((tempScaled *
+                            ((tempScaled * _calibration.humidity[4]) ~/ 100)) >>
                         6) ~/
                     100) +
                 (1 << 14))) >>
         10;
     var var3 = var1 * var2;
     var var4 = _calibration.humidity[5] << 7;
-    var4 = (var4 + ((temp_scaled * _calibration.humidity[6]) ~/ 100)) >> 4;
+    var4 = (var4 + ((tempScaled * _calibration.humidity[6]) ~/ 100)) >> 4;
     var var5 = ((var3 >> 14) * (var3 >> 14)) >> 10;
     var var6 = (var4 * var5) >> 1;
-    var calc_hum = (((var3 + var6) >> 10) * 1000) >> 12;
+    var calcHum = (((var3 + var6) >> 10) * 1000) >> 12;
 
     // Cap at 100%rH
-    return min(max(calc_hum, 0), 100000);
+    return min(max(calcHum, 0), 100000);
   }
 
   int _calculateGasResistance(final int gasResistanceAdc, final int gasRange) {
     final var1 = (1340 + (5 * _calibration.rangeSwitchingError)) *
-            GAS_RANGE_LOOKUP_TABLE_1[gasRange] >>
+            gasRangeLookupTable1[gasRange] >>
         16;
     final var2 = ((((gasResistanceAdc) << 15) - 16777216) + var1);
-    final var3 = ((GAS_RANGE_LOOKUP_TABLE_2[gasRange] * var1) >> 9);
+    final var3 = ((gasRangeLookupTable2[gasRange] * var1) >> 9);
     return (var3 + (var2 >> 1)) ~/ var2;
   }
 
   int _calculateHeaterResistance(
       final int temperature, int ambientTemperature, Calibration calibration) {
     // Cap temperature
-    var normalised_temperature = min(max(temperature, 200), 400);
+    var normalisedTemperature = min(max(temperature, 200), 400);
 
     var var1 = ((ambientTemperature * calibration.gasHeater[2]) ~/ 1000) * 256;
     var var2 = (calibration.gasHeater[0] + 784) *
-        (((((calibration.gasHeater[1] + 154009) * normalised_temperature * 5) ~/
+        (((((calibration.gasHeater[1] + 154009) * normalisedTemperature * 5) ~/
                     100) +
                 3276800) ~/
             10);
     var var3 = var1 + (var2 ~/ 2);
     var var4 = (var3 ~/ (calibration.resistanceHeaterRange + 4));
     var var5 = (131 * calibration.resistanceHeaterValue) + 65536;
-    var heater_res_x100 = ((var4 ~/ var5) - 250) * 34;
+    var heaterResX100 = ((var4 ~/ var5) - 250) * 34;
 
-    return (heater_res_x100 + 50) ~/ 100;
+    return (heaterResX100 + 50) ~/ 100;
   }
 
   double _calculateAirQuality(int gasResistance, int humidity) {
@@ -888,7 +872,7 @@ class BME680 {
 
       // Collect gas resistance burn-in values, then use the average of the last n
       // values to set the upper limit for calculating gasBaseline.
-      var gasBaseline = (_sumQueueValues(_gasResistanceData) / DATA_GAS_BURN_IN)
+      var gasBaseline = (_sumQueueValues(_gasResistanceData) / dataGasBurnIn)
           .roundToDouble()
           .toInt();
 
@@ -931,9 +915,9 @@ class BME680 {
   void setSensorSettings(HeaterProfile profile, int heaterTemperature,
       int heaterDuration, FilterSize filterSize) {
     setGasConfig(profile, heaterTemperature, heaterDuration);
-    setPowerMode(PowerMode.SLEEP);
+    setPowerMode(PowerMode.sleep);
     // Set the filter size
-    if (filterSize != FilterSize.NONE) {
+    if (filterSize != FilterSize.none) {
       setFilter(filterSize);
     }
     // Selecting heater control for the sensor
@@ -949,7 +933,7 @@ class BME680 {
   /// * Target duration in milliseconds, between 1 and 4032
   void setGasConfig(final HeaterProfile profile, final int heaterTemperature,
       final int heaterDuration) {
-    if (_powerMode == PowerMode.FORCED) {
+    if (_powerMode == PowerMode.forced) {
       // Select the heater profile
       setGasHeaterProfile(profile);
 
@@ -957,11 +941,11 @@ class BME680 {
       // uint8_t gas_index;
       i2c.writeByteReg(
           i2cAddress,
-          RESISTANCE_HEAT0_ADDRESS + profile.index,
+          resistanceHeat0Address + profile.index,
           _calculateHeaterResistance(
               heaterTemperature, _ambientTemperature, _calibration));
       // uint16_t heatr_dur;
-      i2c.writeByteReg(i2cAddress, GAS_WAIT0_ADDRESS + profile.index,
+      i2c.writeByteReg(i2cAddress, gasWait0Address + profile.index,
           _calculateGasHeaterDuration(heaterDuration));
 
       // Bosch code only uses profile 0
@@ -972,24 +956,24 @@ class BME680 {
   /// Returns the gas sensor conversion profile.
   HeaterProfile getGasHeaterProfile() {
     return HeaterProfile.values[
-        i2c.readByteReg(i2cAddress, CONFIG_ODR_RUN_GAS_NBC_ADDRESS) &
-            NBCONVERSION_MASK];
+        i2c.readByteReg(i2cAddress, configOdrRunGasNbcAddress) &
+            nbconversionMask];
   }
 
   /// Sets the current gas sensor conversion [heaterProfile]. Select one of the 10
   /// configured heating durations/set points.
   void setGasHeaterProfile(final HeaterProfile heaterProfile) {
-    _setRegByte(CONFIG_ODR_RUN_GAS_NBC_ADDRESS, NBCONVERSION_MASK,
-        NBCONVERSION_POSITION, heaterProfile.index);
+    _setRegByte(configOdrRunGasNbcAddress, nbconversionMask,
+        nbconversionPosition, heaterProfile.index);
 
     _gasSettings.heaterProfile = heaterProfile;
   }
 
   /// Checks if the heater on the sensor enabled.
   bool isHeaterEnabled() {
-    return ((i2c.readByteReg(i2cAddress, CONFIG_HEATER_CONTROL_ADDRESS) &
-                    HEATER_CONTROL_MASK) >>
-                HEATER_CONTROL_POSITION) ==
+    return ((i2c.readByteReg(i2cAddress, configHearerControlAddress) &
+                    heaterControlMask) >>
+                heaterControlPosition) ==
             1
         ? false
         : true;
@@ -998,17 +982,17 @@ class BME680 {
   /// [heaterEnabled] enables/disables the heater on the sensor.
   void setHeaterEnabled(bool heaterEnabled) {
     // Turn off current injected to heater by setting bit to one
-    _setRegByte(CONFIG_HEATER_CONTROL_ADDRESS, HEATER_CONTROL_MASK,
-        HEATER_CONTROL_POSITION, heaterEnabled ? 0 : 1);
+    _setRegByte(configHearerControlAddress, heaterControlMask,
+        heaterControlPosition, heaterEnabled ? 0 : 1);
 
     _gasSettings.heaterEnabled = heaterEnabled;
   }
 
   /// Returns the current gas status.
   bool isGasMeasurementEnabled() {
-    return ((i2c.readByteReg(i2cAddress, CONFIG_ODR_RUN_GAS_NBC_ADDRESS) &
-                    RUN_GAS_MASK) >>
-                RUN_GAS_POSITION) ==
+    return ((i2c.readByteReg(i2cAddress, configOdrRunGasNbcAddress) &
+                    runGasMask) >>
+                runGasPosition) ==
             1
         ? true
         : false;
@@ -1038,16 +1022,16 @@ class BME680 {
     cycles += oversampMulti2int(_sensorSettings.oversamplingHumidity);
 
     /// TPH measurement duration calculated in microseconds [us]
-    var tph_duration = cycles * 1963;
-    tph_duration += (477 * 4); // TPH switching duration
-    tph_duration += (477 * 5); // Gas measurement duration
-    tph_duration += 500; // Get it to the closest whole number
-    tph_duration ~/= 1000; // Convert to milisecond [ms]
+    var tphDuration = cycles * 1963;
+    tphDuration += (477 * 4); // TPH switching duration
+    tphDuration += (477 * 5); // Gas measurement duration
+    tphDuration += 500; // Get it to the closest whole number
+    tphDuration ~/= 1000; // Convert to milisecond [ms]
 
-    tph_duration += 1; // Wake up duration of 1ms
+    tphDuration += 1; // Wake up duration of 1ms
 
     // The remaining time should be used for heating
-    _gasSettings.heaterDuration = duration - tph_duration;
+    _gasSettings.heaterDuration = duration - tphDuration;
   }
 
   /// Returns the total measurement duration im ms.

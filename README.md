@@ -3,7 +3,11 @@
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
 
-[![pub package](https://img.shields.io/badge/pub-v0.8.26-orange)](https://pub.dartlang.org/packages/dart_periphery)
+[![pub package](https://img.shields.io/badge/pub-v0.9.00-orange)](https://pub.dartlang.org/packages/dart_periphery)
+
+## Important hint
+
+**v0.9.00** is an API change release which fixes all the camel case warnings of the source code. When starting this project enums and variables from existing C und Java code were not converted to the camel case. 
 
 ## Introduction
 
@@ -355,21 +359,21 @@ cd ~
 ### ARMv7
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.16.1/sdk/dartsdk-linux-arm-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.16.2/sdk/dartsdk-linux-arm-release.zip
 unzip dartsdk-linux-arm-release.zip
 ```
 
 ### ARMv8
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.16.1/sdk/dartsdk-linux-arm64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.16.2/sdk/dartsdk-linux-arm64-release.zip
 unzip dartsdk-linux-arm64-release.zip
 ```
 
 ### x86
 
 ``` bash
-https://storage.googleapis.com/dart-archive/channels/stable/release/2.16.1/sdk/dartsdk-linux-ia32-release.zip
+https://storage.googleapis.com/dart-archive/channels/stable/release/2.16.2/sdk/dartsdk-linux-ia32-release.zip
 unzip dartsdk-linux-ia32-release.zip
 ```
 
@@ -439,13 +443,11 @@ sets explicit the CPU architecture, which loads a library according following ma
 * CPU_ARCHITECTURE.X86 → [libperiphery_x86.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86.so)
 * CPU_ARCHITECTURE.X86_64 → [libperiphery_x86_64.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86_64.so)
 
-
 ``` dart
 useSharedLibray();
 ```
 
 If this method is called, **dart_periphery** loads the shared library. For this case c-periphery must be installed as a shared library. See for [section Shared Library](https://github.com/vsergeev/c-periphery#shared-library) for details.
-
 
 To load a custom library call
 
@@ -486,7 +488,7 @@ void setCPUarchitecture(CPU_ARCHITECTURE arch)
 void setCustomLibrary(String absolutePath)
 ```
 
-This method must be called before any **dart_periphery** interface is used! See last section, [native libraries](https://pub.dev/packages/dart_periphery#native-libraries) for details.
+These methods must be called before any **dart_periphery** interface is used! See last section, [native libraries](https://pub.dev/packages/dart_periphery#native-libraries) for details.
 
 For flutter-pi the method
 
@@ -495,7 +497,6 @@ List<String> getFlutterPiArgs();
 ```
 
 returns the command line parameter list of the `flutter-pi` command. The last parameter contains the asset directory.
-
 
 ## Tested SoC hardware
 
@@ -512,10 +513,10 @@ returns the command line parameter list of the `flutter-pi` command. The last pa
 * [BME280](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme280.dart): Temperature, humidity and pressure sensor.
 * [BME680](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme680.dart): Temperature, humidity pressure and gas (Indoor Airy Quality) sensor.
 * [SHT31](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht31.dart): Temperature and humidity sensor.
-* [CozIR](https://github.com/pezi/dart_periphery/blob/main/example/serial_cozir.dart): CO<sub>2</sub>, temperature and humidity sensor.
+* [CozIR](https://github.com/pezi/dart_periphery/blob/main/example/serial_cozir.dart): CO₂, temperature and humidity sensor.
 * [Grove Gesture](https://github.com/pezi/dart_periphery/blob/main/example/i2c_gesture_sensor.dart) can recognize 9 basic gestures.
 * [MPU-6050 Six-Axis](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mpu6050.dart) (Gyro + Accelerometer) sensor.
-* FriendlyARM [BakeBit Set](https://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
+* FriendlyARM [BakeBit Set](https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
 * [Grove Base Hat](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi/)/[GrovePi Plus](https://wiki.seeedstudio.com/GrovePi_Plus)
 * [PN532](https://github.com/pezi/dart_periphery/pull/6) NFC Reader Module, Thanks to UliPrantz!
 * SSD1306 OLED (in progress)
@@ -546,7 +547,7 @@ returns the command line parameter list of the `flutter-pi` command. The last pa
 
 ⁴ Fails for NanoPi, NanoPi Neo2 and Banana Pi on Armbian- same behavior like the original c-periphery [test program](https://github.com/vsergeev/c-periphery/blob/master/tests/test_gpio.c). This is a point of deeper investigations
 
-⁵ no X86/X86_64 SOC for testing available
+⁵ no X86/X86_64 SoC for testing available
 
 
 ## Help wanted

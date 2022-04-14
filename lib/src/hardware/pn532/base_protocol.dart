@@ -4,7 +4,6 @@ import 'package:meta/meta.dart';
 import 'package:dart_periphery/dart_periphery.dart';
 
 import 'package:dart_periphery/src/hardware/pn532/constants.dart';
-import 'package:dart_periphery/src/hardware/pn532/exceptions.dart';
 
 typedef PN532ReadyFunction = bool Function(int attemptCount);
 
@@ -18,10 +17,10 @@ abstract class PN532BaseProtocol {
   PN532BaseProtocol({
     int? resetPin,
     int? irqPin,
-  })  : resetGpio = 
-          resetPin == null ? null : GPIO(resetPin, GPIOdirection.GPIO_DIR_OUT),
+  })  : resetGpio =
+            resetPin == null ? null : GPIO(resetPin, GPIOdirection.gpioDirOut),
         irqGpio =
-          irqPin == null ? null : GPIO(irqPin, GPIOdirection.GPIO_DIR_IN) {
+            irqPin == null ? null : GPIO(irqPin, GPIOdirection.gpioDirIn) {
     pn532ReadyFunction = getCorrectReadyFunction();
     reset();
     wakeUp();

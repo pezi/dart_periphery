@@ -10,7 +10,7 @@ import 'dart:io';
 ///
 void main() {
   print('Serial test - COZIR CO2 Sensor');
-  var s = Serial('/dev/serial0', Baudrate.B9600);
+  var s = Serial('/dev/serial0', Baudrate.b9600);
   try {
     print('Serial interface info: ' + s.getSerialInfo());
 

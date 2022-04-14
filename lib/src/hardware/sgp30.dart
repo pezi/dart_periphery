@@ -12,60 +12,60 @@ import 'dart:io';
 import '../i2c.dart';
 import 'utils/byte_buffer.dart';
 
-const int PRODUCT_TYPE = 0;
-const int I2C_ADDRESS = 0x58;
+const int productType = 0;
+const int i2cAddress = 0x58;
 
 // command and constants for reading the serial ID
-const int CMD_GET_SERIAL_ID = 0x3682;
-const int CMD_GET_SERIAL_ID_WORDS = 3;
-const int CMD_GET_SERIAL_ID_DELAY_MS = 1;
+const int cmdGetSerialId = 0x3682;
+const int cmdGetSerialIdWords = 3;
+const int cmdGetSerialDelayMs = 1;
 
 // command and constants for reading the featureset version
-const int CMD_GET_FEATURESET = 0x202f;
-const int CMD_GET_FEATURESET_WORDS = 1;
-const int CMD_GET_FEATURESET_DELAY_MS = 10;
+const int cmdGetFeatureSet = 0x202f;
+const int cmdGetFeatureSetWords = 1;
+const int cmdGetFeatureSetDelayMs = 10;
 
 // command and constants for on-chip self-test
-const int CMD_MEASURE_TEST = 0x2032;
-const int CMD_MEASURE_TEST_WORDS = 1;
-const int CMD_MEASURE_TEST_DELAY_MS = 220;
-const int CMD_MEASURE_TEST_OK = 0xd400;
+const int cmdMeasureTest = 0x2032;
+const int cmdMeasureTestWords = 1;
+const int cmdMeasureTestTestDelayMs = 220;
+const int cmdMeasureTestOk = 0xd400;
 
 // command and constants for IAQ init
-const int CMD_IAQ_INIT = 0x2003;
-const int CMD_IAQ_INIT_DELAY_MS = 10;
+const int cmdIaqInit = 0x2003;
+const int cmdIaqInitDelayMs = 10;
 
 // command and constants for IAQ measure
-const int CMD_IAQ_MEASURE = 0x2008;
-const int CMD_IAQ_MEASURE_WORDS = 2;
-const int CMD_IAQ_MEASURE_DELAY_MS = 12;
+const int cmdIaqMeasure = 0x2008;
+const int cmdIaqMeasureWords = 2;
+const int cmdIaqMeasureDelayMs = 12;
 
 // command and constants for getting IAQ baseline
-const int CMD_GET_IAQ_BASELINE = 0x2015;
-const int CMD_GET_IAQ_BASELINE_WORDS = 2;
-const int CMD_GET_IAQ_BASELINE_DELAY_MS = 10;
+const int cmdGetIaqBaseline = 0x2015;
+const int cmdGetIaqBaselineWords = 2;
+const int cmdGetIaqBaselineDelayMs = 10;
 
 // command and constants for setting IAQ baseline
-const int CMD_SET_IAQ_BASELINE = 0x201e;
-const int CMD_SET_IAQ_BASELINE_DELAY_MS = 10;
+const int cmdSetIaqBaseline = 0x201e;
+const int cmdSetIaqDelayMs = 10;
 
 // command and constants for raw measure
-const int CMD_RAW_MEASURE = 0x2050;
-const int CMD_RAW_MEASURE_WORDS = 2;
-const int CMD_RAW_MEASURE_DELAY_MS = 25;
+const int cmdRawMeasure = 0x2050;
+const int cmdRawMeasureWords = 2;
+const int cmdRawMeasureDelayMs = 25;
 
 // command and constants for setting absolute humidity
-const int CMD_SET_ABSOLUTE_HUMIDITY = 0x2061;
-const int CMD_SET_ABSOLUTE_HUMIDITY_DELAY_MS = 10;
+const int cmdSetAbsoluteHumidity = 0x2061;
+const int cmdSetAbsoluteDelayMs = 10;
 
 // command and constants for getting TVOC inceptive baseline
-const int CMD_GET_TVOC_INCEPTIVE_BASELINE = 0x20b3;
-const int CMD_GET_TVOC_INCEPTIVE_BASELINE_WORDS = 1;
-const int CMD_GET_TVOC_INCEPTIVE_BASELINE_DELAY_MS = 10;
+const int cmdGetTVOCinceptiveBaseline = 0x20b3;
+const int cmdGetTVOCinceptiveBaselineWords = 1;
+const int cmdGetTVOCinceptiveBaselineDelayMs = 10;
 
 // command and constants for setting TVOC baseline
-const int CMD_SET_TVOC_BASELINE = 0x2077;
-const int CMD_SET_TVOC_BASELINE_DELAY_MS = 10;
+const int cmdSetTVOCbaseline = 0x2077;
+const int cmdSetTVOCbaselineDelayMs = 10;
 
 /// [SGP30] exception
 class SGP30excpetion implements Exception {
@@ -157,7 +157,7 @@ class SGP30 {
       buffer.add(crc8(data));
     }
 
-    i2c.writeBytes(I2C_ADDRESS, buffer);
+    i2c.writeBytes(i2cAddress, buffer);
 
     sleep(Duration(milliseconds: delayMs));
 
@@ -165,7 +165,7 @@ class SGP30 {
       return const <int>[];
     }
 
-    var read = i2c.readBytes(I2C_ADDRESS, 3 * responseLength);
+    var read = i2c.readBytes(i2cAddress, 3 * responseLength);
 
     if (!checkCRC(read)) {
       throw SGP30excpetion('CRC8 mismatch!');
@@ -181,23 +181,23 @@ class SGP30 {
 
   /// Returns the sensor serial ID.
   int getSerialId() {
-    var response = _command(
-        CMD_GET_SERIAL_ID, CMD_GET_SERIAL_ID_WORDS, CMD_GET_SERIAL_ID_DELAY_MS);
+    var response =
+        _command(cmdGetSerialId, cmdGetSerialIdWords, cmdGetSerialDelayMs);
 
     return (response[0] << 32) | (response[1] << 16) | response[2];
   }
 
   /// Returns the internal features.
   FeatureSetVersion getFeatureSetVersion() {
-    var result = _command(CMD_GET_FEATURESET, CMD_GET_FEATURESET_WORDS,
-        CMD_GET_FEATURESET_DELAY_MS);
+    var result = _command(
+        cmdGetFeatureSet, cmdGetFeatureSetWords, cmdGetFeatureSetDelayMs);
     return FeatureSetVersion(result[0], result[1]);
   }
 
   /// Initializes the sensor for measurement.
   void iaqInit() {
     if (!_isInitialized) {
-      _command(CMD_IAQ_INIT, 0, CMD_IAQ_INIT_DELAY_MS);
+      _command(cmdIaqInit, 0, cmdIaqInitDelayMs);
       _isInitialized = true;
     }
   }
@@ -205,43 +205,42 @@ class SGP30 {
   /// Returns the baseline as an int value.
   int getTvocInceptiveBaseline() {
     return _command(
-            CMD_GET_TVOC_INCEPTIVE_BASELINE,
-            CMD_GET_TVOC_INCEPTIVE_BASELINE_WORDS,
-            CMD_GET_TVOC_INCEPTIVE_BASELINE_DELAY_MS)[0] &
+            cmdGetTVOCinceptiveBaseline,
+            cmdGetTVOCinceptiveBaselineWords,
+            cmdGetTVOCinceptiveBaselineDelayMs)[0] &
         0xffff;
   }
 
   /// Returns the baseline.
   SGP30result getIaqBaseline() {
-    var result = _command(CMD_GET_IAQ_BASELINE, CMD_GET_IAQ_BASELINE_WORDS,
-        CMD_GET_IAQ_BASELINE_DELAY_MS);
+    var result = _command(
+        cmdGetIaqBaseline, cmdGetIaqBaselineWords, cmdGetIaqBaselineDelayMs);
     return SGP30result(result[0], result[1]);
   }
 
   /// Sets the baseline of the sensor.
   void setIaqBaseline(SGP30result baseline) {
-    _commandData(CMD_SET_IAQ_BASELINE, 0, CMD_SET_IAQ_BASELINE_DELAY_MS,
+    _commandData(cmdSetIaqBaseline, 0, cmdSetIaqDelayMs,
         [baseline.totalVOC, baseline.co2Equivalent]);
   }
 
   /// Sets the absolute humidity for internal humidity compensation.
   void setHumidityCompensation(int humidity) {
     // Can only be set after iaq_init, can also be set between measurements
-    _commandData(CMD_SET_ABSOLUTE_HUMIDITY, 0,
-        CMD_SET_ABSOLUTE_HUMIDITY_DELAY_MS, [humidity]);
+    _commandData(cmdSetAbsoluteHumidity, 0, cmdSetAbsoluteDelayMs, [humidity]);
   }
 
   /// Returns the co2Equivalent and totalVOC measurement.
   SGP30result measureIaq() {
-    var result = _command(
-        CMD_IAQ_MEASURE, CMD_IAQ_MEASURE_WORDS, CMD_IAQ_MEASURE_DELAY_MS);
+    var result =
+        _command(cmdIaqMeasure, cmdIaqMeasureWords, cmdIaqMeasureDelayMs);
     return SGP30result(result[0], result[1]);
   }
 
   /// Returns the H<sub>2</sub> and Ethanol measurement.
   RawMeasurement measureRaw() {
-    var result = _command(
-        CMD_RAW_MEASURE, CMD_RAW_MEASURE_WORDS, CMD_RAW_MEASURE_DELAY_MS);
+    var result =
+        _command(cmdRawMeasure, cmdRawMeasureWords, cmdRawMeasureDelayMs);
     return RawMeasurement(result[0], result[1]);
   }
 
@@ -252,7 +251,7 @@ class SGP30 {
   /// init = false
   void measureTest() {
     var data = _command(
-        CMD_MEASURE_TEST, CMD_MEASURE_TEST_WORDS, CMD_MEASURE_TEST_DELAY_MS);
-    print(data[0] == CMD_MEASURE_TEST_OK);
+        cmdMeasureTest, cmdMeasureTestWords, cmdMeasureTestTestDelayMs);
+    print(data[0] == cmdMeasureTestOk);
   }
 }

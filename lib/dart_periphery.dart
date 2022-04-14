@@ -2,7 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-export 'src/version.dart' show getCperipheryVersion, DART_PERIPHERY_VERSION;
+export 'src/version.dart' show getCperipheryVersion, dartPeripheryVersion;
 export 'src/library.dart'
     show
         setCPUarchitecture,
@@ -61,10 +61,10 @@ export 'src/hardware/bme280.dart'
         BME280,
         BME280model,
         BME280exception,
-        BMP280_ID,
-        BME280_ID,
-        BME280_DEFAULT_I2C_ADDRESS,
-        BME280_ALTERNATIVE_I2C_ADDRESS,
+        bmp280Id,
+        bme280Id,
+        bme280DefaultI2Caddress,
+        bme280AlternativeI2Caddress,
         FilterCoefficient,
         OperatingMode,
         StandbyDuration;
@@ -73,8 +73,8 @@ export 'src/hardware/sht31.dart'
         SHT31,
         SHT31result,
         SHT31excpetion,
-        SHT31_ALTERNATIVE_I2C_ADDRESS,
-        SHT31_DEFAULT_I2C_ADDRESS;
+        sht31AlternativeI2Caddress,
+        sht31DefaultI2Caddress;
 export 'src/hardware/extension_hat.dart'
     show
         DigitalValue,
@@ -95,12 +95,12 @@ export 'src/hardware/bme680.dart'
         BME680,
         BME680exception,
         BME680result,
-        BME680_DEFAULT_I2C_ADDRESS,
-        BME680_ALTERNATIVE_I2C_ADDRESS,
+        bme680DefaultI2Caddress,
+        bme680AlternativeI2Caddress,
         PowerMode,
         FilterSize,
         HeaterProfile,
-        SENSOR_READ_RETRY_COUNTER;
+        sensorReadRetryCounter;
 export 'src/errno.dart' show ERRNO, Errno, ErrnoNotFound;
 export 'src/cpu_architecture.dart'
     show Uname, CPU_ARCHITECTURE, CpuArch, nativeUname;

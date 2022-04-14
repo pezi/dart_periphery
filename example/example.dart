@@ -11,11 +11,11 @@ void main() {
   // setCPUarchitecture(CPU_ARCHITECTURE.ARM);
 
   var config = GPIOconfig.defaultValues();
-  config.direction = GPIOdirection.GPIO_DIR_OUT;
+  config.direction = GPIOdirection.gpioDirOut;
   print('Native c-periphery Version :  ${getCperipheryVersion()}');
   print('GPIO test');
-  var gpio = GPIO(18, GPIOdirection.GPIO_DIR_OUT);
-  var gpio2 = GPIO(16, GPIOdirection.GPIO_DIR_OUT);
+  var gpio = GPIO(18, GPIOdirection.gpioDirOut);
+  var gpio2 = GPIO(16, GPIOdirection.gpioDirOut);
 
   var gpio3 = GPIO.advanced(5, config);
 

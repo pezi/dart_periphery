@@ -9,36 +9,36 @@ import 'util.dart';
 import 'dart:io';
 import 'dart:isolate';
 
-void test_arguments() {}
+void testArguments() {}
 
-void test_open_config_close(int pinInput, int pinOutput) {
+void testOpenConfigClose(int pinInput, int pinOutput) {
   // Open non-existent GPIO -- export should fail
   try {
-    GPIO.sysfs(-1, GPIOdirection.GPIO_DIR_IN);
+    GPIO.sysfs(-1, GPIOdirection.gpioDirIn);
   } on GPIOexception catch (e) {
-    if (e.errorCode != GPIOerrorCode.GPIO_ERROR_OPEN) {
+    if (e.errorCode != GPIOerrorCode.gpioErrorOpen) {
       rethrow;
     }
   }
 
-  var gpio = GPIO.sysfs(pinOutput, GPIOdirection.GPIO_DIR_IN);
+  var gpio = GPIO.sysfs(pinOutput, GPIOdirection.gpioDirIn);
   try {
     // Check properties
     passert(gpio.getLine() == gpio.line);
     passert(gpio.getGPIOfd() > 0);
 
     // Set direction out, check direction out, check value low
-    gpio.setGPIOdirection(GPIOdirection.GPIO_DIR_OUT);
-    passert(gpio.getGPIOdirection() == GPIOdirection.GPIO_DIR_OUT);
+    gpio.setGPIOdirection(GPIOdirection.gpioDirOut);
+    passert(gpio.getGPIOdirection() == GPIOdirection.gpioDirOut);
     passert(!gpio.read());
 
     // Set direction out, check direction out, check value low
-    gpio.setGPIOdirection(GPIOdirection.GPIO_DIR_OUT_LOW);
-    passert(gpio.getGPIOdirection() == GPIOdirection.GPIO_DIR_OUT);
+    gpio.setGPIOdirection(GPIOdirection.gpioDirOutLow);
+    passert(gpio.getGPIOdirection() == GPIOdirection.gpioDirOut);
     passert(!gpio.read());
 
-    gpio.setGPIOdirection(GPIOdirection.GPIO_DIR_OUT_HIGH);
-    passert(gpio.getGPIOdirection() == GPIOdirection.GPIO_DIR_OUT);
+    gpio.setGPIOdirection(GPIOdirection.gpioDirOutHigh);
+    passert(gpio.getGPIOdirection() == GPIOdirection.gpioDirOut);
     passert(gpio.read());
 
     // Check GPIO inverted
@@ -47,7 +47,7 @@ void test_open_config_close(int pinInput, int pinOutput) {
       passert(gpio.getGPIOinverted() == b);
     }
 
-    gpio.setGPIOdirection(GPIOdirection.GPIO_DIR_IN);
+    gpio.setGPIOdirection(GPIOdirection.gpioDirIn);
 
     // Check GPIO edge
     for (var edge in GPIOedge.values) {
@@ -98,9 +98,9 @@ Future<SendPort> startIsolate() async {
   return port;
 }
 
-Future<void> test_loopback(int pinInput, int pinOutput) async {
-  var gpioIn = GPIO.sysfs(pinInput, GPIOdirection.GPIO_DIR_IN);
-  var gpioOut = GPIO.sysfs(pinOutput, GPIOdirection.GPIO_DIR_OUT);
+Future<void> testLoopback(int pinInput, int pinOutput) async {
+  var gpioIn = GPIO.sysfs(pinInput, GPIOdirection.gpioDirIn);
+  var gpioOut = GPIO.sysfs(pinOutput, GPIOdirection.gpioDirOut);
   try {
     // Drive out low, check in low
     gpioOut.write(false);
@@ -111,40 +111,40 @@ Future<void> test_loopback(int pinInput, int pinOutput) async {
     passert(gpioIn.read());
 
     // Check poll falling 1 -> 0 interrupt
-    gpioIn.setGPIOedge(GPIOedge.GPIO_EDGE_FALLING);
+    gpioIn.setGPIOedge(GPIOedge.gpioEdgeFalling);
 
     var sendPort = await startIsolate();
     var response = ReceivePort();
     sendPort.send([response.sendPort, gpioIn.toJson()]);
 
-    passert(await sync(response, gpioOut, false) == GPIOpolling.SUCCESS.index);
+    passert(await sync(response, gpioOut, false) == GPIOpolling.success.index);
     passert(!gpioIn.read());
 
     // Check poll rising 0 -> 1 interrupt
-    gpioIn.setGPIOedge(GPIOedge.GPIO_EDGE_RISING);
+    gpioIn.setGPIOedge(GPIOedge.gpioEdgeRising);
 
     sendPort = await startIsolate();
     response = ReceivePort();
     sendPort.send([response.sendPort, gpioIn.toJson()]);
-    passert(await sync(response, gpioOut, true) == GPIOpolling.SUCCESS.index);
+    passert(await sync(response, gpioOut, true) == GPIOpolling.success.index);
     passert(gpioIn.read());
 
     // Set both edge
-    gpioIn.setGPIOedge(GPIOedge.GPIO_EDGE_BOTH);
+    gpioIn.setGPIOedge(GPIOedge.gpioEdgeBoth);
     sendPort = await startIsolate();
     response = ReceivePort();
     sendPort.send([response.sendPort, gpioIn.toJson()]);
-    passert(await sync(response, gpioOut, false) == GPIOpolling.SUCCESS.index);
+    passert(await sync(response, gpioOut, false) == GPIOpolling.success.index);
     passert(!gpioIn.read());
 
     sendPort = await startIsolate();
     response = ReceivePort();
     sendPort.send([response.sendPort, gpioIn.toJson()]);
-    passert(await sync(response, gpioOut, true) == GPIOpolling.SUCCESS.index);
+    passert(await sync(response, gpioOut, true) == GPIOpolling.success.index);
     passert(gpioIn.read());
 
     // Check poll timeout
-    passert(gpioIn.poll(1000) == GPIOpolling.TIMEOUT);
+    passert(gpioIn.poll(1000) == GPIOpolling.timeout);
 
     // Check poll falling 1 -> 0 interrupt
     gpioOut.write(false);
@@ -165,8 +165,8 @@ Future<void> test_loopback(int pinInput, int pinOutput) async {
   }
 }
 
-void test_interactive(int pinOutput) {
-  var gpioOut = GPIO.sysfs(pinOutput, GPIOdirection.GPIO_DIR_OUT);
+void testInteractive(int pinOutput) {
+  var gpioOut = GPIO.sysfs(pinOutput, GPIOdirection.gpioDirOut);
   try {
     print('Starting interactive test. Get out your logic analyzer, buddy!');
     print('Press enter to continue...');
@@ -213,13 +213,13 @@ Future<void> main(List<String> argv) async {
   var pinInput = int.parse(argv[0]);
   var pinOutput = int.parse(argv[1]);
 
-  test_arguments();
+  testArguments();
   print('Arguments test passed.');
-  test_open_config_close(pinInput, pinOutput);
+  testOpenConfigClose(pinInput, pinOutput);
   print('Open/close test passed.');
-  await test_loopback(pinInput, pinOutput);
+  await testLoopback(pinInput, pinOutput);
   print('Loopback test passed.');
-  test_interactive(pinOutput);
+  testInteractive(pinOutput);
   print('Interactive test passed.');
   print('All tests passed!\n');
 }

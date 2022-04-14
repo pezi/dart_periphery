@@ -9,7 +9,7 @@ import 'package:dart_periphery/dart_periphery.dart';
 import 'util.dart';
 import 'dart:io';
 
-void test_arguments() {
+void testArguments() {
   // Invalid data bits (4 and 9)
   // ppassert(serial_open_advanced(serial, device, 115200, 4, PARITY_NONE, 1, false, false) == SERIAL_ERROR_ARG);
   // ppassert(serial_open_advanced(serial, device, 115200, 9, PARITY_NONE, 1, false, false) == SERIAL_ERROR_ARG);
@@ -21,8 +21,8 @@ void test_arguments() {
   // Due the usage of enums this invald parameter can not be mapped
 }
 
-void test_open_config_close(String device) {
-  var serial = Serial(device, Baudrate.B115200);
+void testOpenConfigClose(String device) {
+  var serial = Serial(device, Baudrate.b115200);
   try {
     // isolate test
     var isolate = Serial.isolate(serial.toJson());
@@ -34,26 +34,26 @@ void test_open_config_close(String device) {
     passert(serial.xonxoff == isolate.xonxoff);
     passert(serial.getHandle() == isolate.getHandle());
 
-    passert(serial.getBaudrate() == Baudrate.B115200);
-    passert(serial.getDataBits() == DataBits.DB8);
-    passert(serial.getParity() == Parity.PARITY_NONE);
-    passert(serial.getStopBits() == StopBits.SB1);
+    passert(serial.getBaudrate() == Baudrate.b115200);
+    passert(serial.getDataBits() == DataBits.db8);
+    passert(serial.getParity() == Parity.parityNone);
+    passert(serial.getStopBits() == StopBits.sb1);
     passert(serial.getXONXOFF() == false);
     passert(serial.getRTSCTS() == false);
     passert(serial.getVMIN() == 0);
     passert(serial.getVTIME() == 0);
 
     // Change some stuff around
-    for (var b in [Baudrate.B4800, Baudrate.B9600]) {
+    for (var b in [Baudrate.b4800, Baudrate.b9600]) {
       serial.setBaudrate(b);
       passert(serial.getBaudrate() == b);
     }
-    serial.setDataBits(DataBits.DB7);
-    passert(serial.getDataBits() == DataBits.DB7);
-    serial.setParity(Parity.PARITY_ODD);
-    passert(serial.getParity() == Parity.PARITY_ODD);
-    serial.setStopBits(StopBits.SB2);
-    passert(serial.getStopBits() == StopBits.SB2);
+    serial.setDataBits(DataBits.db7);
+    passert(serial.getDataBits() == DataBits.db7);
+    serial.setParity(Parity.parityOdd);
+    passert(serial.getParity() == Parity.parityOdd);
+    serial.setStopBits(StopBits.sb2);
+    passert(serial.getStopBits() == StopBits.sb2);
     serial.setXONXOFF(true);
     passert(serial.getXONXOFF() == true);
     // Test serial port may not support rtscts
@@ -71,8 +71,8 @@ void test_open_config_close(String device) {
 const String loreIpsum =
     'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
 
-void test_loopback(String device) {
-  var serial = Serial(device, Baudrate.B115200);
+void testLoopback(String device) {
+  var serial = Serial(device, Baudrate.b115200);
   try {
     passert(serial.writeString(loreIpsum) == loreIpsum.length);
     serial.flush();
@@ -130,8 +130,8 @@ void test_loopback(String device) {
   }
 }
 
-void test_interactive(String device) {
-  var serial = Serial(device, Baudrate.B4800);
+void testInteractive(String device) {
+  var serial = Serial(device, Baudrate.b4800);
   var buf = '"Hello World';
   try {
     print('Starting interactive test. Get out your logic analyzer, buddy!');
@@ -144,7 +144,7 @@ void test_interactive(String device) {
     print('Press enter to start transfer...');
     pressKey();
 
-    for (var brate in [Baudrate.B4800, Baudrate.B9600, Baudrate.B115200]) {
+    for (var brate in [Baudrate.b4800, Baudrate.b9600, Baudrate.b115200]) {
       serial.setBaudrate(brate);
       serial.writeString(buf);
       print('Serial transfer baudrate $brate, 8n1 occurred? y/n');
@@ -166,7 +166,7 @@ void main(List<String> argv) {
         '[4/4] Interactive test: Serial TX should be observed with an oscilloscope or logic analyzer.');
     print('Hint: for Raspberry Pi 3, enable UART0 with:');
     print(
-        '   \$ echo \"dtoverlay=pi3-disable-bt\" | sudo tee -a /boot/config.txt');
+        '   \$ echo "dtoverlay=pi3-disable-bt" | sudo tee -a /boot/config.txt');
     print('   \$ sudo systemctl disable hciuart');
     print('   \$ sudo reboot');
     print('   (Note that this will disable Bluetooth)');
@@ -177,14 +177,14 @@ void main(List<String> argv) {
   }
 
   var device = argv[0];
-  test_arguments();
+  testArguments();
 
   print('Arguments test passed.');
-  test_open_config_close(device);
+  testOpenConfigClose(device);
   print('Open/close test passed.');
-  test_loopback(device);
+  testLoopback(device);
   print('Loopback test passed.');
-  test_interactive(device);
+  testInteractive(device);
   print('Interactive test passed.');
 
   print('All tests passed!\n');

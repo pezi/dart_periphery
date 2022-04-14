@@ -3,8 +3,8 @@ import 'package:test/test.dart';
 import 'package:dart_periphery/src/hardware/utils/uint.dart';
 
 void main() {
-  const int maxUint8 = 255;
-  const int maxUint16 = 65535;
+  // const int maxUint8 = 255;
+  // const int maxUint16 = 65535;
   const int maxUint32 = 4294967295;
 
   test("Uint8 utility test", () {
@@ -103,6 +103,6 @@ void main() {
     expect(Uint32(0) << 2, Uint32(0));
     expect(Uint32(1) << 1, Uint32(2));
     expect(~Uint32(maxUint32), Uint32(0));
-    expect(~Uint32(maxUint32-1), Uint32(1));
+    expect(~Uint32(maxUint32 - 1), Uint32(1));
   });
 }

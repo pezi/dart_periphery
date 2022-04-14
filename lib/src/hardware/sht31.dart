@@ -12,21 +12,21 @@ import 'dart:io';
 // https://github.com/ControlEverythingCommunity/SHT31/blob/master/Java/SHT31.java
 // https://github.com/adafruit/Adafruit_CircuitPython_SHT31D/blob/master/adafruit_sht31d.py
 
-const int SHT31_DEFAULT_I2C_ADDRESS = 0x44;
-const int SHT31_ALTERNATIVE_I2C_ADDRESS = 0x45;
+const int sht31DefaultI2Caddress = 0x44;
+const int sht31AlternativeI2Caddress = 0x45;
 
-const int SHT31_MEAS_HIGHREP_STRETCH = 0x2C06;
-const int SHT31_MEAS_MEDREP_STRETCH = 0x2C0D;
-const int SHT31_MEAS_LOWREP_STRETCH = 0x2C10;
-const int SHT31_MEAS_HIGHREP = 0x2400;
-const int SHT31_MEAS_MEDREP = 0x240B;
-const int SHT31_MEAS_LOWREP = 0x2416;
-const int SHT31_READSTATUS = 0xF32D;
-const int SHT31_CLEARSTATUS = 0x3041;
-const int SHT31_SOFTRESET = 0x30A2;
-const int SHT31_HEATEREN = 0x306D;
-const int SHT31_HEATERDIS = 0x3066;
-const int SHT31_READSERIALNBR = 0x3780;
+const int sht31MeasHighrepStretch = 0x2C06;
+const int sht31MeasMedrepStretch = 0x2C0D;
+const int sht31MeasLowrepStretch = 0x2C10;
+const int sht31MeasHighrep = 0x2400;
+const int sht31MeasMedrep = 0x240B;
+const int sht31MeasLowrep = 0x2416;
+const int sht31ReadStatus = 0xF32D;
+const int sht31ClearStatus = 0x3041;
+const int sht31SoftReset = 0x30A2;
+const int sht31HeaterEnable = 0x306D;
+const int sh31HeaterDisable = 0x3066;
+const int sh31ReadSerialNumber = 0x3780;
 
 /// [SHT31] exception
 class SHT31excpetion implements Exception {
@@ -64,7 +64,7 @@ class SHT31 {
 
   /// Creates a SHT31 sensor instance that uses the [i2c] bus with
   /// the optional [i2cAddress].
-  SHT31(this.i2c, [this.i2cAddress = SHT31_DEFAULT_I2C_ADDRESS]) {
+  SHT31(this.i2c, [this.i2cAddress = sht31DefaultI2Caddress]) {
     reset();
   }
 
@@ -77,28 +77,28 @@ class SHT31 {
   /// This command can destroy the sensor, if the heater runs too long.
   void heater(bool heater) {
     if (heater) {
-      _writeCommand(SHT31_HEATEREN);
+      _writeCommand(sht31HeaterEnable);
     } else {
-      _writeCommand(SHT31_HEATERDIS);
+      _writeCommand(sh31HeaterDisable);
     }
   }
 
   /// Resets the sensor.
   void reset() {
-    _writeCommand(SHT31_SOFTRESET);
+    _writeCommand(sht31SoftReset);
     sleep(Duration(milliseconds: 5));
   }
 
   /// Returns the status of the sensor.
   int getStatus() {
-    _writeCommand(SHT31_READSTATUS);
+    _writeCommand(sht31ReadStatus);
     sleep(Duration(milliseconds: 5));
-    return i2c.readWord(i2cAddress, BitOrder.MSB_FIRST);
+    return i2c.readWord(i2cAddress, BitOrder.msbFirst);
   }
 
   /// Returns the serial number of the sensor.
   int getSerialNumber() {
-    _writeCommand(SHT31_READSERIALNBR);
+    _writeCommand(sh31ReadSerialNumber);
     sleep(Duration(milliseconds: 5));
     var data = i2c.readBytesReg(i2cAddress, 0, 6);
     if (!checkCRC(data)) {
@@ -116,7 +116,7 @@ class SHT31 {
 
   // Reads a [SHT31result] from the sensor with a high accuracy in a period of 500 milliseconds.
   SHT31result getValues() {
-    _writeCommand(SHT31_MEAS_HIGHREP_STRETCH);
+    _writeCommand(sht31MeasHighrepStretch);
 
     sleep(Duration(milliseconds: 500));
 
