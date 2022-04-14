@@ -7,7 +7,7 @@
 
 ## Important hint
 
-**v0.9.00** is an API change release which fixes all the camel case warnings of the source code. When starting this project enums and variables from existing C und Java code were not converted to camel case. 
+**v0.9.00** is an API change release, which fixes all the camel case warnings of the source code. When starting this project enums and variables from existing C und Java code were not converted to camel case. 
 
 ## Introduction
 
