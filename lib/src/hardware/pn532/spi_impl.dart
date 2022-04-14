@@ -2,9 +2,7 @@ import 'dart:io';
 
 import 'package:dart_periphery/dart_periphery.dart';
 
-import 'package:dart_periphery/src/hardware/pn532/base_protocol.dart';
 import 'package:dart_periphery/src/hardware/pn532/constants.dart';
-import 'package:dart_periphery/src/hardware/utils/uint.dart';
 
 class PN532SpiImpl extends PN532BaseProtocol {
   final GPIO? chipSelectGpio;
@@ -12,10 +10,6 @@ class PN532SpiImpl extends PN532BaseProtocol {
 
   List<int> pn532StatusList = [pn532SpiStartRead, 0x00];
 
-  /// The `irqPin` and the `resetPin` are both optional!
-  /// Actually the `irqPin` isn't used at all and the `resetPin` doesn't seem
-  /// to work (at least at my board - I always have to power it off once it hangs).
-  ///
   /// The `spiBus` and `spiChip` corresponds to /dev/spidev`[spiBus]`.`[spiChip]`.
   ///
   /// The connection are the following:
@@ -23,9 +17,11 @@ class PN532SpiImpl extends PN532BaseProtocol {
   /// The `MOSI` of PN532 must be connected to `MOSI` of the Pi.
   /// The `MISO` of PN532 must be connected to `MISO` of the Pi.
   /// The `SS/NSS` of PN532 must be connected to `CE0` or the one specifed in `chipSelectPin`.
+  ///
+  /// The `irqPin` and the `resetPin` are both optional!
   /// OPTIONAL: The `IRQ` of PN532 should be connected to a `GPIO` pin of your choice (default: 16) of the Pi.
-  /// OPTIONAL: The `RSTO` of PN532 should be connected to a `GPIO` pin of your choice (default: 12) of the Pi.
-  /// For the `IRQ`, `RSTO` and `chipSelectPin` pin you can choose any
+  /// OPTIONAL: The `RSTPDN` of PN532 should be connected to a `GPIO` pin of your choice (default: 12) of the Pi.
+  /// For the `IRQ`, `RSTPDN` and `chipSelectPin` pin you can choose any
   /// GPIO pin of the pi just be aware that it seems like that the used dart
   /// package `dart_periphery` can't open all GPIOs
   /// (like in my test GPIO09) - then just use a different one.
@@ -35,6 +31,8 @@ class PN532SpiImpl extends PN532BaseProtocol {
   /// isn't properly connect the driver doesn't wait for the PN532 to be ready
   /// for a response and you get kind of cryptic responses like
   /// `PN532BadResponseException` just because of the wrongly connected `irqPin`.
+  ///
+  /// Also be aware that the `RSTPDN` pin is NOT the `RSTO` Pin!
   PN532SpiImpl({
     int? resetPin,
     int? irqPin,

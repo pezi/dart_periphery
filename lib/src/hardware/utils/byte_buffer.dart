@@ -2,7 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-/// Bit order of multiple byte data of [i2c] or [spi] devices. This order
+/// Bit order of multiple byte data of [I2C] or [SPI] devices. This order
 /// is defined by manufacturer of the device.
 enum BitOrder { msbFirst, msbLast }
 enum ByteBufferSrc { i2c, spi, undefined }
@@ -52,7 +52,7 @@ class ByteBuffer {
   }
 }
 
-const int POLYNOMIAL = 0x31;
+const int polynomial = 0x31;
 
 /// CRC8 checksum
 int crc8(List<int> data) {

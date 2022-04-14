@@ -12,8 +12,8 @@ import 'dart:io';
 // https://github.com/ControlEverythingCommunity/SHT31/blob/master/Java/SHT31.java
 // https://github.com/adafruit/Adafruit_CircuitPython_SHT31D/blob/master/adafruit_sht31d.py
 
-const int sh31DefaultI2CAdddress = 0x44;
-const int sh31AlternativeI2CAdddress = 0x45;
+const int sht31DefaultI2Caddress = 0x44;
+const int sht31AlternativeI2Caddress = 0x45;
 
 const int sht31MeasHighrepStretch = 0x2C06;
 const int sht31MeasMedrepStretch = 0x2C0D;
@@ -64,7 +64,7 @@ class SHT31 {
 
   /// Creates a SHT31 sensor instance that uses the [i2c] bus with
   /// the optional [i2cAddress].
-  SHT31(this.i2c, [this.i2cAddress = sh31DefaultI2CAdddress]) {
+  SHT31(this.i2c, [this.i2cAddress = sht31DefaultI2Caddress]) {
     reset();
   }
 

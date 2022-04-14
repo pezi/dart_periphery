@@ -14,7 +14,13 @@ class PN532 {
 
   final PN532BaseProtocol pn532ProtocolImpl;
   
+
+  /// This is the basic implementation of all the functions of the PN532.
+  /// Also the protocol unspecific communication with PN532 is implemented within 
+  /// this class. 
+  /// CAUTION: I only test `getFirmwareVersion()` and `readPassivTargetId()`!
   PN532({required this.pn532ProtocolImpl});
+
 
   void dispose() {
     pn532ProtocolImpl.dispose();
@@ -84,6 +90,42 @@ class PN532 {
   }
 
 
+  /// Authenticate specified block number for a MiFare classic card.
+  /// uid: A byte array with the UID of the card.
+  /// block_number: The block to authenticate.
+  /// key_number: The key type (like MIFARE_CMD_AUTH_A or MIFARE_CMD_AUTH_B).
+  ///  A byte array with the key data.
+  void mifareClassicAuthenticateBlock(List<Uint8> uid, Uint8 blockNumber, Uint8 keyNumber, List<Uint8> key) {
+    // Build parameters for InDataExchange command to authenticate MiFare card.
+    List<int> parameters = List.generate(3 + mifareKeyLength + uid.length, (_) => 0);
+    parameters[0] = 0x01;
+    parameters[1] = keyNumber.value;
+    parameters[2] = blockNumber.value;
+
+    // params[3:3+keylen] = key
+    for (int i = 0; i < mifareKeyLength; i++) {
+        parameters[3 + i] = key[i].value;
+    }
+    // params[3+keylen:] = uid
+    for (int i = 0; i < uid.length; i++) {
+        parameters[3 + mifareKeyLength + i] = uid[i].value;
+    }
+
+    List<int> response = callPN532Function(
+      pn532CommandInDataExchange,
+      parameters: parameters,
+      responseLength: 1
+    );
+
+    if (response.first != pn532ErrorNone) {
+      throw PN532BadResponseException(
+        response: response,
+        additionalInformation: "The first byte should be '$pn532ErrorNone' but it was '${response.first}'"
+      );
+    }
+  }
+
+
   /// Read a block of data from the card. Block number should be the block to read.
   List<int> mifareClassicReadBlock(Uint8 blockNumber) {
     final List<int> parameters = [0x01, mifareCmdRead, blockNumber.value];
@@ -98,7 +140,7 @@ class PN532 {
     if (readBlockResponse.first != pn532ErrorNone) {
       throw PN532BadResponseException(
         response: readBlockResponse,
-        additionalInformation: "The first byte should be '$pn532ErrorNone' but it was '${readBlockResponse[0]}'"
+        additionalInformation: "The first byte should be '$pn532ErrorNone' but it was '${readBlockResponse.first}'"
       );
     }
 
@@ -128,7 +170,7 @@ class PN532 {
     if (responseCode.first != pn532ErrorNone) {
       throw PN532BadResponseException(
         response: responseCode,
-        additionalInformation: "The first byte should be '$pn532ErrorNone' but it was '${responseCode[0]}'"
+        additionalInformation: "The first byte should be '$pn532ErrorNone' but it was '${responseCode.first}'"
       );
     }
   }
@@ -152,7 +194,7 @@ class PN532 {
     if (readBlockResponse.first != pn532ErrorNone) {
       throw PN532BadResponseException(
         response: readBlockResponse,
-        additionalInformation: "The first byte should be '$pn532ErrorNone' but it was '${readBlockResponse[0]}'"
+        additionalInformation: "The first byte should be '$pn532ErrorNone' but it was '${readBlockResponse.first}'"
       );
     }
 
@@ -184,7 +226,7 @@ class PN532 {
     if (responseCode.first != pn532ErrorNone) {
       throw PN532BadResponseException(
         response: responseCode,
-        additionalInformation: "The first byte should be '$pn532ErrorNone' but it was '${responseCode[0]}'"
+        additionalInformation: "The first byte should be '$pn532ErrorNone' but it was '${responseCode.first}'"
       );
     }
   }
@@ -208,7 +250,6 @@ class PN532 {
       rethrow;
     }
     
-
     // Wait for chip to say its ready!
     pn532ProtocolImpl.waitReady(timeout: timeout);
 

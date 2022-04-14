@@ -48,6 +48,12 @@ export 'src/i2c.dart'
 export 'src/spi.dart' show SPI, SPImode, SPIexception;
 export 'src/mmio.dart' show MMIO, MMIOexception, MMIOerrorCode;
 export 'src/hardware/utils/byte_buffer.dart' show BitOrder;
+export 'src/hardware/utils/uint.dart';
+export 'src/hardware/pn532/pn532.dart';
+export 'src/hardware/pn532/base_protocol.dart';
+export 'src/hardware/pn532/i2c_impl.dart';
+export 'src/hardware/pn532/spi_impl.dart';
+export 'src/hardware/pn532/exceptions.dart';
 export 'src/hardware/bosch.dart' show OversamplingMultiplier;
 export 'src/hardware/bme280.dart'
     show
@@ -67,8 +73,8 @@ export 'src/hardware/sht31.dart'
         SHT31,
         SHT31result,
         SHT31excpetion,
-        sh31AlternativeI2CAdddress,
-        sh31DefaultI2CAdddress;
+        sht31AlternativeI2Caddress,
+        sht31DefaultI2Caddress;
 export 'src/hardware/extension_hat.dart'
     show
         DigitalValue,
@@ -89,12 +95,12 @@ export 'src/hardware/bme680.dart'
         BME680,
         BME680exception,
         BME680result,
-        BME680_DEFAULT_I2C_ADDRESS,
-        BME680_ALTERNATIVE_I2C_ADDRESS,
+        bme680DefaultI2Caddress,
+        bme680AlternativeI2Caddress,
         PowerMode,
         FilterSize,
         HeaterProfile,
-        SENSOR_READ_RETRY_COUNTER;
+        sensorReadRetryCounter;
 export 'src/errno.dart' show ERRNO, Errno, ErrnoNotFound;
 export 'src/cpu_architecture.dart'
     show Uname, CPU_ARCHITECTURE, CpuArch, nativeUname;

@@ -4,7 +4,6 @@ import 'package:meta/meta.dart';
 import 'package:dart_periphery/dart_periphery.dart';
 
 import 'package:dart_periphery/src/hardware/pn532/constants.dart';
-import 'package:dart_periphery/src/hardware/pn532/exceptions.dart';
 
 typedef PN532ReadyFunction = bool Function(int attemptCount);
 
@@ -84,11 +83,9 @@ abstract class PN532BaseProtocol {
 
   void reset() {
     resetGpio?.write(true);
-    sleep(const Duration(milliseconds: 100));
     resetGpio?.write(false);
-    sleep(const Duration(milliseconds: 500));
     resetGpio?.write(true);
-    sleep(const Duration(milliseconds: 100));
+    sleep(const Duration(milliseconds: 500));
   }
 
   void writeData(List<int> data);
