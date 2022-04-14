@@ -7,7 +7,7 @@
 
 ## Important hint
 
-**v0.9.00** is an API change release which fixes all the camel case warnings of the source code. When starting this project enums and variables from existing C und Java code were not converted to the camel case. 
+**v0.9.00** is an API change release which fixes all the camel case warnings of the source code. When starting this project enums and variables from existing C und Java code were not converted to camel case. 
 
 ## Introduction
 
@@ -61,11 +61,11 @@ import 'dart:io';
 
 void main() {
   var config = GPIOconfig();
-  config.direction = GPIOdirection.GPIO_DIR_OUT;
+  config.direction = GPIOdirection.gpioDirOut;
   print('Native c-periphery Version :  ${getCperipheryVersion()}');
   print('GPIO test');
-  var gpio = GPIO(18, GPIOdirection.GPIO_DIR_OUT);
-  var gpio2 = GPIO(16, GPIOdirection.GPIO_DIR_OUT);
+  var gpio = GPIO(18, GPIOdirection.gpioDirOut);
+  var gpio2 = GPIO(16, GPIOdirection.gpioDirOut;
   var gpio3 = GPIO.advanced(5, config);
 
   print('GPIO info: ' + gpio.getGPIOinfo());
@@ -156,7 +156,7 @@ void main() {
 import 'package:dart_periphery/dart_periphery.dart';
 
 void main() {
-  var spi = SPI(0, 0, SPImode.MODE0, 1000000);
+  var spi = SPI(0, 0, SPImode.mode0, 1000000);
   try {
     print('SPI info:' + spi.getSPIinfo());
     var bme280 = BME280.spi(spi);
@@ -183,7 +183,7 @@ import 'dart:io';
 ///
 void main() {
   print('Serial test - COZIR CO2 Sensor');
-  var s = Serial('/dev/serial0', Baudrate.B9600);
+  var s = Serial('/dev/serial0', Baudrate.b9600);
   try {
     print('Serial interface info: ' + s.getSerialInfo());
 
@@ -283,11 +283,10 @@ void main() {
 import 'package:dart_periphery/dart_periphery.dart';
 import 'dart:io';
 
-const int BCM2708_PERI_BASE = 0x3F000000; // Raspberry Pi 3
-const int GPIO_BASE = BCM2708_PERI_BASE + 0x200000;
-const int BLOCK_SIZE = 4 * 1024;
+const int bcm2708PeriBase = 0x3F000000; // Raspberry Pi 3
+const int gpioBase = bcm2708PeriBase + 0x200000;
+const int blockSize = 4 * 1024;
 
-/// Helper class for the hardcore bit manipulation.
 class MemMappedGPIO {
   MMIO mmio;
   MemMappedGPIO(this.mmio);
@@ -309,7 +308,7 @@ class MemMappedGPIO {
     mmio[offset] = value;
   }
 
-  // #define GPIO_SET *(gpio+7) - sets bits which are 1 ignores bits which are 0
+  // #define GPIO_SET *(gpio+7) - sets   bits which are 1 ignores bits which are 0
   void setPinHigh(int pin) {
     mmio[7 * 4] = 1 << pin;
   }
@@ -326,10 +325,9 @@ class MemMappedGPIO {
 }
 
 void main() {
-  // Needs root rights and the GPIO_BASE must be correct!
-  // var mmio = MMIO(GPIO_BASE, BLOCK_SIZE);
-
-  var mmio = MMIO.advanced(0, BLOCK_SIZE, '/dev/gpiomem');
+  // Needs root rights and the gpioBase must be correct!
+  // var mmio = MMIO(gpioBase, blockSize);
+  var mmio = MMIO.advanced(0, blockSize, '/dev/gpiomem');
   var gpio = MemMappedGPIO(mmio);
   try {
     print(mmio.getMMIOinfo());
