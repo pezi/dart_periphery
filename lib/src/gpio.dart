@@ -91,7 +91,7 @@ enum GPIObias {
   gpioBiasPullDown,
 
   /// Disable line bias
-  gpioBiasDiasbale,
+  gpioBiasDisabale,
 }
 
 /// [GPIO] drive

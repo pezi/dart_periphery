@@ -13,7 +13,7 @@ NativeCall uname = nativeAddLib
 
 // https://en.wikipedia.org/wiki/Uname
 
-/// Class
+/// CPU architecture
 class CpuArch {
   static CpuArch? _cpuArch;
   String machine;
@@ -77,7 +77,7 @@ Uname nativeUname() {
       throw Exception('Calling uname() failed.');
     }
 
-    // calculate _UTSNAME_LENGTH ;
+    // calculate _UTSNAME_LENGTH
     var utslen = 0;
     label:
     for (int i = 0; i < len; ++i) {
