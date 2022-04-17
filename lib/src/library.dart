@@ -139,21 +139,33 @@ typedef _GetpId = int Function();
 
 bool _isFlutterPi = Platform.resolvedExecutable.endsWith('flutter-pi');
 
+/// Returns true for a flutter-pi environment.
 bool isFlutterPiEnv() {
   return _isFlutterPi;
 }
 
 var _flutterPiArgs = <String>[];
 
+/// Returns the PID of the running flutter-pi program, -1 for all other platforms.
+int getPID() {
+  if (!isFlutterPiEnv()) {
+    return -1;
+  }
+  final dylib = DynamicLibrary.open('libc.so.6');
+  var getpid =
+      dylib.lookup<NativeFunction<_getpId>>('getpid').asFunction<_GetpId>();
+  return getpid();
+}
+
+/// Returns the argument list of the running flutter-pi program by
+/// reading the /proc/PID/cmdline data. For a non flutter-pi environment
+/// an empty list will be returned.
 List<String> getFlutterPiArgs() {
   if (!isFlutterPiEnv()) {
     return const <String>[];
   }
   if (_flutterPiArgs.isEmpty) {
-    final dylib = DynamicLibrary.open('libc.so.6');
-    var getpid =
-        dylib.lookup<NativeFunction<_getpId>>('getpid').asFunction<_GetpId>();
-    var cmd = File('/proc/${getpid()}/cmdline').readAsBytesSync();
+    var cmd = File('/proc/${getPID()}/cmdline').readAsBytesSync();
     var index = 0;
     for (var i = 0; i < cmd.length; ++i) {
       if (cmd[i] == 0) {

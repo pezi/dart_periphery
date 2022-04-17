@@ -3,7 +3,7 @@ import 'package:ffi/ffi.dart';
 
 typedef NativeCall = int Function(Pointer<Int8>);
 
-/// Supported CPU architecture
+/// Supported CPU architectures
 enum CPU_ARCHITECTURE { x86, x86_64, arm, arm64, notSupported, undefinded }
 
 final DynamicLibrary nativeAddLib = DynamicLibrary.open("libc.so.6");
@@ -13,7 +13,7 @@ NativeCall uname = nativeAddLib
 
 // https://en.wikipedia.org/wiki/Uname
 
-/// CPU architecture
+/// Class which holds the CPU architecture of the SoC.
 class CpuArch {
   static CpuArch? _cpuArch;
   String machine;
@@ -65,9 +65,9 @@ class Uname {
 
 /// Calls the native uname() function.
 Uname nativeUname() {
-  // allocate a memory buffer for  struct utsname - size value derived from this source
+  // allocate a memory buffer for struct utsname - size value derived from this source
   // https://man7.org/linux/man-pages/man2/uname.2.html
-  const len = 6 * 257;
+  const len = 6 * 257; // maxium size
   const enumElements = 5;
 
   Pointer<Int8> data = calloc<Int8>(len);

@@ -728,7 +728,7 @@ class GPIO {
     _checkError(_nativeGPIOsetInverted(_gpioHandle, inverted == true ? 1 : 0));
   }
 
-  /// Returns the line the GPIO handle was opened with.
+  /// Returns the line of the GPIO handle was opened with.
   int getLine() {
     _checkStatus();
     return _nativeGPIOline(_gpioHandle);

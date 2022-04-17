@@ -126,7 +126,7 @@
 #define	EREMOTEIO	121	/* Remote I/O error */
 */
 
-/// Dart enum representation of the Linux errno.h defintions.
+/// Dart enum representation of the Linux errno.h definitions.
 enum ERRNO {
   // ignore: unused_field
   _dummy,

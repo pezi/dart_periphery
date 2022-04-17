@@ -10,7 +10,8 @@ export 'src/library.dart'
         setCustomLibrary,
         useLocalLibrary,
         getFlutterPiArgs,
-        isFlutterPiEnv;
+        isFlutterPiEnv,
+        getPID;
 export 'src/led.dart' show Led, LedException, LedErrorCode;
 export 'src/pwm.dart' show PWM, PWMexception, Polarity, PWMerrorCode;
 export 'src/gpio.dart'
