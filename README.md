@@ -143,7 +143,6 @@ void main() {
     print(sht31.getStatus());
     print('Serial number ${sht31.getSerialNumber()}');
     print('Sensor heater active: ${sht31.isHeaterOn()}');
-
     var r = sht31.getValues();
     print('SHT31 [t°] ${r.temperature.toStringAsFixed(2)}');
     print('SHT31 [%°] ${r.humidity.toStringAsFixed(2)}');
@@ -433,7 +432,7 @@ Currently **dart_periphery** ships with four prebuild native c-periphery librari
 Following methods can be used to overwrite the auto loading of the prebuild library. But be aware, any of these methods to disable the auto detection must be called before any **dart_periphery** interface is used!
 
 ``` dart
-// enum CPU_ARCHITECTURE { X86, X86_64, ARM, ARM64 }
+// enum CPU_ARCHITECTURE { x86, x86_64, arm, arm64 }
 void setCPUarchitecture(CPU_ARCHITECTURE arch)
 ```
 
@@ -467,7 +466,7 @@ dart compile exe i2c_example.dart
 call
 
 ``` dart
-// optional parameter enum CPU_ARCHITECTURE { X86, X86_64, ARM, ARM64 }
+// optional parameter enum CPU_ARCHITECTURE { x86, x86_64, arm, arm64 }
 // to skip auto detection
 void useLocalLibrary([CPU_ARCHITECTURE arch])
 ```
@@ -476,7 +475,7 @@ The appropriate [library](https://github.com/pezi/dart_periphery/blob/main/lib/s
 
 ## flutter-pi
 
-**dart_periphery** works with flutter-pi, a light-weight [Flutter Engine Embedder](https://github.com/ardera/flutter-pi) for Raspberry Pi. For flutter-pi the appropriate library must be copied inside the flutter asset directory.
+**dart_periphery** works with flutter-pi, a light-weight [Flutter Engine Embedder](https://github.com/ardera/flutter-pi) for Raspberry Pi. For **flutter-pi** the appropriate library must be copied inside the flutter asset directory.
 
 * In most cases the ARMv7 library: [libperiphery_arm.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm.so) for Raspberry Pi OS 32-bit
 * ARMv8 [libperiphery_aarch64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_aarch64.so) for Raspberry Pi OS 64-bit
@@ -484,7 +483,7 @@ The appropriate [library](https://github.com/pezi/dart_periphery/blob/main/lib/s
 The appropriate library is loaded by auto detection of the CPU architecture. If this way fails, the auto detection can be overruled by following two methods:
 
 ``` dart
-// enum CPU_ARCHITECTURE { X86, X86_64, ARM, ARM64 }
+// enum CPU_ARCHITECTURE { x86, x86_64, arm, arm64 }
 void setCPUarchitecture(CPU_ARCHITECTURE arch)
 void setCustomLibrary(String absolutePath)
 ```
