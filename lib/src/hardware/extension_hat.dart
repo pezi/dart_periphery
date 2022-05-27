@@ -264,8 +264,6 @@ class ArduinoBasedHat {
 }
 
 /// Extension hat from [FriendlyARM](http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
-///
-/// See
 class NanoHatHub extends ArduinoBasedHat {
   int i2cBus;
   NanoHatHub([this.i2cBus = 0]) : super(I2C(i2cBus));
