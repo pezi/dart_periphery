@@ -1,3 +1,7 @@
+## 0.9.2 2022-08-15
+
+* Update the FFI package, see [issue](https://github.com/pezi/dart_periphery/issues/15) and the Dart version reference inside the readme.  
+
 ## 0.9.1 2022-04-17
 
 * Various small fixes: documentation, source code format, etc 

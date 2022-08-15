@@ -359,28 +359,28 @@ cd ~
 ### ARMv7
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.17.1/sdk/dartsdk-linux-arm-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.17.6/sdk/dartsdk-linux-arm-release.zip
 unzip dartsdk-linux-arm-release.zip
 ```
 
 ### ARMv8
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.17.1/sdk/dartsdk-linux-arm64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.17.6/sdk/dartsdk-linux-arm64-release.zip
 unzip dartsdk-linux-arm64-release.zip
 ```
 
 ### x86
 
 ``` bash
-https://storage.googleapis.com/dart-archive/channels/stable/release/2.17.1/sdk/dartsdk-linux-ia32-release.zip
+https://storage.googleapis.com/dart-archive/channels/stable/release/2.17.6/sdk/dartsdk-linux-ia32-release.zip
 unzip dartsdk-linux-ia32-release.zip
 ```
 
 ### x86_64
 
 ``` bash
-https://storage.googleapis.com/dart-archive/channels/stable/release/2.17.1/sdk/dartsdk-linux-x64-release.zip
+https://storage.googleapis.com/dart-archive/channels/stable/release/2.17.6/sdk/dartsdk-linux-x64-release.zip
 unzip dartsdk-linux-x64-release.zip
 ```
 
@@ -415,7 +415,7 @@ Test the installion
 
 ``` bash
 pi@raspberrypi:~ $ dart --version
-Dart SDK version: 2.16.1 (stable) (Tue Feb 8 12:02:33 2022 +0100) on "linux_arm64"
+Dart SDK version: 2.17.6 (stable) (Tue Jul 12 12:54:37 2022 +0200) on "linux_arm64"
 ```
 
 ## Native libraries
