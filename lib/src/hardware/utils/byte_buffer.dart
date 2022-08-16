@@ -1,10 +1,11 @@
-// Copyright (c) 2021, the Dart project authors.  Please see the AUTHORS file
+// Copyright (c) 2022, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
 /// Bit order of multiple byte data of [I2C] or [SPI] devices. This order
 /// is defined by manufacturer of the device.
 enum BitOrder { msbFirst, msbLast }
+
 enum ByteBufferSrc { i2c, spi, undefined }
 
 /// Helper class for reading 16/8-bit values from a byte array.
