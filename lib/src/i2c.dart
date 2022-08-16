@@ -225,7 +225,7 @@ final _nativeI2Cinfo = intVoidUtf8sizeTM('i2c_tostring');
 // int i2c_fd(i2c_t *i2c);
 final _nativeI2Cfd = intVoidM('i2c_fd');
 
-//  int i2c_transfer(i2c_t *i2c, struct i2c_msg *msgs, size_t count);
+// int i2c_transfer(i2c_t *i2c, struct i2c_msg *msgs, size_t count);
 // ignore: camel_case_types
 typedef _i2cTransfer = Int32 Function(
     Pointer<Void> handle, Pointer<NativeI2Cmsg> mgs, IntPtr count);
@@ -263,7 +263,7 @@ class I2C {
       : path = _i2cBasePath + busNum.toString(),
         _i2cHandle = _openI2C(_i2cBasePath + busNum.toString());
 
-  /// Duplicates an existing [I2C] from a JSON string. This special constustor
+  /// Duplicates an existing [I2C] from a JSON string. This special constructor
   /// is used to transfer an existing [I2C] to an other isolate.
   I2C.isolate(String json)
       : path = _jsonMap(json)['path'] as String,

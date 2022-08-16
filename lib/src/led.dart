@@ -117,12 +117,12 @@ class Led {
   }
 
   static Pointer<Void> _openLed(String name) {
-    var _ledHandle = _nativeLedNew();
-    if (_ledHandle == nullptr) {
+    var ledHandle = _nativeLedNew();
+    if (ledHandle == nullptr) {
       return throw LedException(LedErrorCode.ledErrorOpen, 'led_new() failed');
     }
-    _checkError(_nativeLedOpen(_ledHandle, name.toNativeUtf8()));
-    return _ledHandle;
+    _checkError(_nativeLedOpen(ledHandle, name.toNativeUtf8()));
+    return ledHandle;
   }
 
   /// Converts the native error code [value] to [LedErrorCode].

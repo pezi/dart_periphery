@@ -264,14 +264,14 @@ class SPI {
   }
 
   Pointer<Void> _spiOpen(String path, SPImode mode, int maxSpeed) {
-    var _spiHandle = _nativeSPInew();
-    if (_spiHandle == nullptr) {
+    var spiHandle = _nativeSPInew();
+    if (spiHandle == nullptr) {
       return throw SPIexception(
           SPIerrorCode.spiErrorOpen, 'Error opening SPI bus');
     }
     _checkError(
-        _nativeSPIopen(_spiHandle, path.toNativeUtf8(), mode.index, maxSpeed));
-    return _spiHandle;
+        _nativeSPIopen(spiHandle, path.toNativeUtf8(), mode.index, maxSpeed));
+    return spiHandle;
   }
 
   /// Opens the SPI device at the specified path ("/dev/spidev[bus].[chip]"), with the specified SPI mode,

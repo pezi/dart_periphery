@@ -561,13 +561,13 @@ class GPIO {
             Pointer<Void>.fromAddress(_jsonMap(json)['handle'] as int);
 
   static Pointer<Void> _openSysfsGPIO(int line, GPIOdirection direction) {
-    var _gpioHandle = _nativeGPIOnew();
-    if (_gpioHandle == nullptr) {
+    var gpioHandle = _nativeGPIOnew();
+    if (gpioHandle == nullptr) {
       return throw GPIOexception(
           GPIOerrorCode.gpioErrorOpen, 'Error opening GPIO interface');
     }
-    _checkError(_nativeGPIOopenSysfs(_gpioHandle, line, direction.index));
-    return _gpioHandle;
+    _checkError(_nativeGPIOopenSysfs(gpioHandle, line, direction.index));
+    return gpioHandle;
   }
 
   /// Polls multiple GPIOs for an edge event configured with [GPIO.setGPIOedge].

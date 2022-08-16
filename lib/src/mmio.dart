@@ -200,13 +200,13 @@ class MMIO {
         _mmioHandle = _mmioOpen(base, size);
 
   static Pointer<Void> _mmioOpen(int base, int size) {
-    var _mmioHandle = _nativeMMIOnew();
-    if (_mmioHandle == nullptr) {
+    var mmioHandle = _nativeMMIOnew();
+    if (mmioHandle == nullptr) {
       return throw MMIOexception(
           MMIOerrorCode.mmioErrorOpen, 'Error opening MMIO interface');
     }
-    _checkError(_nativeMMIOopen(_mmioHandle, base, size));
-    return _mmioHandle;
+    _checkError(_nativeMMIOopen(mmioHandle, base, size));
+    return mmioHandle;
   }
 
   /// Map the region of physical memory specified by the [base] physical address and [size] in bytes, using
