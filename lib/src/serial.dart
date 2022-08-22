@@ -9,6 +9,8 @@
 
 import 'dart:ffi';
 import 'dart:convert';
+
+import 'isolate_helper.dart';
 import 'library.dart';
 import 'package:ffi/ffi.dart';
 import 'signature.dart';
@@ -313,7 +315,7 @@ Map<String, dynamic> _jsonMap(String json) {
 /// Serial wrapper functions for Linux userspace termios tty devices.
 ///
 /// c-periphery [Serial](https://github.com/vsergeev/c-periphery/blob/master/docs/serial.md) documentation.
-class Serial {
+class Serial extends IsolateAPI {
   final String path;
   final Baudrate baudrate;
   final DataBits databits;
@@ -321,10 +323,11 @@ class Serial {
   final StopBits stopbits;
   final bool xonxoff;
   final bool rtsct;
-  final Pointer<Void> _serialHandle;
+  Pointer<Void> _serialHandle;
   bool _invalid = false;
 
   /// Converts a [Serial] to a JSON string. See constructor [isolate] for detials.
+  @override
   String toJson() {
     return '{"path":"$path","baudrate":${baudrate.index},"databits":${databits.index},"parity":${parity.index},"stopbits":${stopbits.index},"xonxoff":$xonxoff,"rtsct":$rtsct,"handle":${_serialHandle.address}}';
   }
@@ -381,14 +384,14 @@ class Serial {
         _serialHandle = _openSerial(path, baudrate);
 
   static Pointer<Void> _openSerial(String path, Baudrate baudrate) {
-    var _serialHandle = _nativeSerialNew();
-    if (_serialHandle == nullptr) {
+    var serialHandle = _nativeSerialNew();
+    if (serialHandle == nullptr) {
       return throw SerialException(
           SerialErrorCode.serialErrorOpen, 'Error opening serial interface');
     }
     _checkError(_nativeSerialOpen(
-        _serialHandle, path.toNativeUtf8(), baudrate2Int(baudrate)));
-    return _serialHandle;
+        serialHandle, path.toNativeUtf8(), baudrate2Int(baudrate)));
+    return serialHandle;
   }
 
   /// Opens the <tt>tty</tt> device at the specified [path] (e.g. "/dev/ttyUSB0"), with the specified [baudrate], [databits],
@@ -422,13 +425,13 @@ class Serial {
       StopBits stopbits,
       bool xonxoff,
       bool rtsct) {
-    var _serialHandle = _nativeSerialNew();
-    if (_serialHandle == nullptr) {
+    var serialHandle = _nativeSerialNew();
+    if (serialHandle == nullptr) {
       return throw SerialException(
           SerialErrorCode.serialErrorOpen, 'Error opening serial interface');
     }
     _checkError(_nativeOpenAdvanced(
-        _serialHandle,
+        serialHandle,
         path.toNativeUtf8(),
         baudrate2Int(baudrate),
         databits2Int(databits),
@@ -436,7 +439,7 @@ class Serial {
         stopbits2Int(stopbits),
         xonxoff ? 1 : 0,
         rtsct ? 1 : 0));
-    return _serialHandle;
+    return serialHandle;
   }
 
   /// Polls for data available for reading from the serial port.
@@ -560,8 +563,15 @@ class Serial {
   }
 
   /// Returns the address of the internal handle.
+  @override
   int getHandle() {
     return _serialHandle.address;
+  }
+
+  /// Set the address of the internal handle.
+  @override
+  void setHandle(int handle) {
+    _serialHandle = Pointer<Void>.fromAddress(handle);
   }
 
   /// Returns the baudrate.
@@ -783,5 +793,10 @@ class Serial {
     } finally {
       malloc.free(data);
     }
+  }
+
+  @override
+  IsolateAPI fromJson(String json) {
+    return Serial.isolate(json);
   }
 }

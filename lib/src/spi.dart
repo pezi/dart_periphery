@@ -303,14 +303,14 @@ class SPI {
 
   Pointer<Void> _spiOpenAdvanced(String path, SPImode mode, int maxSpeed,
       BitOrder bitOrder, int bitsPerWord, int extraFlags) {
-    var _spiHandle = _nativeSPInew();
-    if (_spiHandle == nullptr) {
+    var spiHandle = _nativeSPInew();
+    if (spiHandle == nullptr) {
       return throw SPIexception(
           SPIerrorCode.spiErrorOpen, 'Error opening SPI bus');
     }
-    _checkError(_nativeSPIopenAdvanced(_spiHandle, path.toNativeUtf8(),
+    _checkError(_nativeSPIopenAdvanced(spiHandle, path.toNativeUtf8(),
         mode.index, maxSpeed, bitOrder.index, bitsPerWord, extraFlags));
-    return _spiHandle;
+    return spiHandle;
   }
 
   /// Opens the SPI device at the specified [path], with the specified SPI mode,
@@ -329,14 +329,14 @@ class SPI {
 
   Pointer<Void> _spiOpenAdvanced2(String path, SPImode mode, int maxSpeed,
       BitOrder bitOrder, int bitsPerWord, int extraFlags) {
-    var _spiHandle = _nativeSPInew();
-    if (_spiHandle == nullptr) {
+    var spiHandle = _nativeSPInew();
+    if (spiHandle == nullptr) {
       return throw SPIexception(
           SPIerrorCode.spiErrorOpen, 'Error opening SPI bus');
     }
-    _checkError(_nativeSPIopenAdvanced2(_spiHandle, path.toNativeUtf8(),
+    _checkError(_nativeSPIopenAdvanced2(spiHandle, path.toNativeUtf8(),
         mode.index, maxSpeed, bitOrder.index, bitsPerWord, extraFlags));
-    return _spiHandle;
+    return spiHandle;
   }
 
   /// Converts the native error code [value] to [GPIOerrorCode].

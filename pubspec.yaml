@@ -16,6 +16,7 @@ dependencies:
   collection: ^1.16.0
   stack_trace: ^1.10.0
   meta: ^1.7.0
+  async: ^2.9.0
 
  
 dev_dependencies:

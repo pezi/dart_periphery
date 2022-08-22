@@ -358,11 +358,9 @@ class BME680result {
   /// [allVars] is false, true returns all variables. [fractionDigits] controls the number of fraction digits.
   String toJSON([int fractionDigits = 2, bool allVars = false]) {
     if (allVars == false) {
-      return _toJSONbase(fractionDigits) + '}';
+      return '${_toJSONbase(fractionDigits)}}';
     } else {
-      return _toJSONbase(fractionDigits) +
-          ',"gasResistance":"${gasResistance.toStringAsFixed(fractionDigits)}","isHeaterTempStable":"$isHeaterTempStable",' +
-          '"gasResistance":"$gasResistance","isGasMeasurementValid":"$isGasMeasurementValid","gasMeasurementIndex":"$gasMeasurementIndex","measureIndex":"$measureIndex"}';
+      return '${_toJSONbase(fractionDigits)},"gasResistance":"${gasResistance.toStringAsFixed(fractionDigits)}","isHeaterTempStable":"$isHeaterTempStable","gasResistance":"$gasResistance","isGasMeasurementValid":"$isGasMeasurementValid","gasMeasurementIndex":"$gasMeasurementIndex","measureIndex":"$measureIndex"}';
     }
   }
 }

@@ -12,7 +12,7 @@ void main() {
   print('Serial test - COZIR CO2 Sensor');
   var s = Serial('/dev/serial0', Baudrate.b9600);
   try {
-    print('Serial interface info: ' + s.getSerialInfo());
+    print('Serial interface info: ${s.getSerialInfo()}');
 
     // Return firmware version and sensor serial number - two lines
     s.writeString('Y\r\n');

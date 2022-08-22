@@ -12,7 +12,7 @@ void main() {
   // 1 for Raspbery Pi, 0 for NanoPi
   var spi = SPI(0, 0, SPImode.mode0, 500000);
   try {
-    print('SPI info:' + spi.getSPIinfo());
+    print('SPI info:${spi.getSPIinfo()}');
     var data = <int>[for (int i = 0; i < 10; ++i) i];
     var result = spi.transfer(data, false);
     var index = 0;

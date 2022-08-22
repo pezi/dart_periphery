@@ -8,6 +8,8 @@
 // https://github.com/dart-lang/samples/tree/master/ffi
 
 import 'dart:ffi';
+import 'package:dart_periphery/src/isolate_helper.dart';
+
 import 'library.dart';
 import 'package:ffi/ffi.dart';
 import 'signature.dart';
@@ -251,9 +253,9 @@ Map<String, dynamic> _jsonMap(String json) {
 /// I2C wrapper functions for Linux userspace i2c-dev devices.
 ///
 /// c-periphery [I2C](https://github.com/vsergeev/c-periphery/blob/master/docs/i2c.md) documentation.
-class I2C {
+class I2C extends IsolateAPI {
   static const String _i2cBasePath = '/dev/i2c-';
-  final Pointer<Void> _i2cHandle;
+  Pointer<Void> _i2cHandle;
   final String path;
   final int busNum;
   bool _invalid = false;
@@ -271,6 +273,7 @@ class I2C {
         _i2cHandle = Pointer<Void>.fromAddress(_jsonMap(json)['handle'] as int);
 
   /// Converts a [I2C] to a JSON string. See constructor [isolate] for detials.
+  @override
   String toJson() {
     return '{"path":"$path","bus":$busNum,"handle":${_i2cHandle.address}}';
   }
@@ -283,13 +286,13 @@ class I2C {
   }
 
   static Pointer<Void> _openI2C(String path) {
-    var _i2cHandle = _nativeI2Cnew();
-    if (_i2cHandle == nullptr) {
+    var i2cHandle = _nativeI2Cnew();
+    if (i2cHandle == nullptr) {
       return throw I2Cexception(
           I2CerrorCode.i2cErrorOpen, 'Error opening I2C bus');
     }
-    _checkError(_nativeI2Copen(_i2cHandle, path.toNativeUtf8()));
-    return _i2cHandle;
+    _checkError(_nativeI2Copen(i2cHandle, path.toNativeUtf8()));
+    return i2cHandle;
   }
 
   /// Converts the native error code [value] to [I2CerrorCode].
@@ -542,6 +545,7 @@ class I2C {
   }
 
   /// Returns the address of the internal handle.
+  @override
   int getHandle() {
     return _i2cHandle.address;
   }
@@ -550,6 +554,12 @@ class I2C {
   int getI2Cfd() {
     _checkStatus();
     return _nativeI2Cfd(_i2cHandle);
+  }
+
+  /// Set the address of the internal handle.
+  @override
+  void setHandle(int handle) {
+    _i2cHandle = Pointer<Void>.fromAddress(handle);
   }
 
   /// Returns a string representation of the I2C handle.
@@ -568,5 +578,10 @@ class I2C {
   int getErrno() {
     _checkStatus();
     return _nativeI2Cerrno(_i2cHandle);
+  }
+
+  @override
+  IsolateAPI fromJson(String json) {
+    return I2C.isolate(json);
   }
 }

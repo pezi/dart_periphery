@@ -10,7 +10,7 @@ import 'package:dart_periphery/dart_periphery.dart';
 void main() {
   var spi = SPI(0, 0, SPImode.mode0, 1000000);
   try {
-    print('SPI info:' + spi.getSPIinfo());
+    print('SPI info:${spi.getSPIinfo()}');
     var bme280 = BME280.spi(spi);
     var r = bme280.getValues();
     print('Temperature [°] ${r.temperature.toStringAsFixed(1)}');

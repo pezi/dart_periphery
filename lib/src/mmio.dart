@@ -218,14 +218,14 @@ class MMIO {
       : _mmioHandle = _mmioOpenAdvanced(base, size, path);
 
   static Pointer<Void> _mmioOpenAdvanced(int base, int size, String path) {
-    var _mmioHandle = _nativeMMIOnew();
-    if (_mmioHandle == nullptr) {
+    var mmioHandle = _nativeMMIOnew();
+    if (mmioHandle == nullptr) {
       return throw MMIOexception(
           MMIOerrorCode.mmioErrorOpen, 'Error opening MMIO interface');
     }
     _checkError(
-        _nativeMMIOopenAdvanced(_mmioHandle, base, size, path.toNativeUtf8()));
-    return _mmioHandle;
+        _nativeMMIOopenAdvanced(mmioHandle, base, size, path.toNativeUtf8()));
+    return mmioHandle;
   }
 
   /// Converts the native error code [value] to [MMIOerrorCode].

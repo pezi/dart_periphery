@@ -104,4 +104,4 @@ export 'src/hardware/bme680.dart'
         sensorReadRetryCounter;
 export 'src/errno.dart' show ERRNO, Errno, ErrnoNotFound;
 export 'src/cpu_architecture.dart'
-    show Uname, CPU_ARCHITECTURE, CpuArch, nativeUname;
+    show Uname, CpuArchitecture, CpuArch, nativeUname;

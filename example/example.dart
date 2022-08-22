@@ -19,7 +19,7 @@ void main() {
 
   var gpio3 = GPIO.advanced(5, config);
 
-  print('GPIO info: ' + gpio.getGPIOinfo());
+  print('GPIO info: ${gpio.getGPIOinfo()}');
 
   print('GPIO native file handle: ${gpio.getGPIOfd()}');
   print('GPIO chip name: ${gpio.getGPIOchipName()}');

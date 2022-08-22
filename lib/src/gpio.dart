@@ -471,13 +471,13 @@ class GPIO {
 
   static Pointer<Void> _openGPIO(
       String path, int line, GPIOdirection direction) {
-    var _gpioHandle = _nativeGPIOnew();
-    if (_gpioHandle == nullptr) {
+    var gpioHandle = _nativeGPIOnew();
+    if (gpioHandle == nullptr) {
       return throw GPIOexception(GPIOerrorCode.gpioErrorOpen, openError);
     }
     _checkError(_nativeGPIOopen(
-        _gpioHandle, path.toNativeUtf8(), line, direction.index));
-    return _gpioHandle;
+        gpioHandle, path.toNativeUtf8(), line, direction.index));
+    return gpioHandle;
   }
 
   /// Opens the character device GPIO with the specified GPIO [name] and [direction] at the default character
@@ -491,13 +491,13 @@ class GPIO {
 
   static Pointer<Void> _openNameGPIO(
       String path, String name, GPIOdirection direction) {
-    var _gpioHandle = _nativeGPIOnew();
-    if (_gpioHandle == nullptr) {
+    var gpioHandle = _nativeGPIOnew();
+    if (gpioHandle == nullptr) {
       return throw GPIOexception(GPIOerrorCode.gpioErrorOpen, openError);
     }
-    _checkError(_nativeGPIOopenName(_gpioHandle, path.toNativeUtf8(),
-        name.toNativeUtf8(), direction.index));
-    return _gpioHandle;
+    _checkError(_nativeGPIOopenName(
+        gpioHandle, path.toNativeUtf8(), name.toNativeUtf8(), direction.index));
+    return gpioHandle;
   }
 
   /// Opens the character device GPIO with the specified GPIO [line] and configuration [config] at the default character
@@ -512,13 +512,13 @@ class GPIO {
 
   static Pointer<Void> _openAdvancedGPIO(
       String path, int line, GPIOconfig config) {
-    var _gpioHandle = _nativeGPIOnew();
-    if (_gpioHandle == nullptr) {
+    var gpioHandle = _nativeGPIOnew();
+    if (gpioHandle == nullptr) {
       return throw GPIOexception(GPIOerrorCode.gpioErrorOpen, openError);
     }
     _checkError(_nativeGPIOopenAdvanced(
-        _gpioHandle, path.toNativeUtf8(), line, config.toNative()));
-    return _gpioHandle;
+        gpioHandle, path.toNativeUtf8(), line, config.toNative()));
+    return gpioHandle;
   }
 
   /// Opens the character device GPIO with the specified GPIO [name] and the configuration [config] at the default character
@@ -533,13 +533,13 @@ class GPIO {
 
   static Pointer<Void> _openNameAdvancedGPIO(
       String path, String name, GPIOconfig config) {
-    var _gpioHandle = _nativeGPIOnew();
-    if (_gpioHandle == nullptr) {
+    var gpioHandle = _nativeGPIOnew();
+    if (gpioHandle == nullptr) {
       return throw GPIOexception(GPIOerrorCode.gpioErrorOpen, openError);
     }
-    _checkError(_nativeGPIOopenNameAdvanced(_gpioHandle, path.toNativeUtf8(),
+    _checkError(_nativeGPIOopenNameAdvanced(gpioHandle, path.toNativeUtf8(),
         name.toNativeUtf8(), config.toNative()));
-    return _gpioHandle;
+    return gpioHandle;
   }
 
   /// Opens the sysfs GPIO with the specified [line] and [direction].
