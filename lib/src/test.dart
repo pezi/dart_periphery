@@ -1,4 +1,8 @@
+import 'dart:io';
+import 'dart:isolate';
 import 'dart:mirrors';
+
+import 'package:dart_periphery/src/test2.dart';
 
 class SomeAnnotation {
   const SomeAnnotation(this.someField);
@@ -17,18 +21,33 @@ class ExitJob {}
 
 class SomeClass {
   @InitJob()
-  static void init() {}
+  static void initJob() {
+    print("-->init job");
+  }
+
   @MainJob()
-  static void main() {}
+  static void mainJob() {
+    print("-->main job");
+  }
+
   void method() {}
 }
 
+void dowork(var msg) {
+  // print('execution from sayhii ... the message is :${msg}');
+  callStaticMethodOnClass('SomeClass', 'initJob');
+  // InstanceMirror im = reflect(SomeClass());
+  // ClassMirror classMirror = im.type;
+  // getDataMembers(classMirror);
+}
+
 void main() {
-  InstanceMirror im = reflect(new SomeClass());
-
-  ClassMirror classMirror = im.type;
-
-  getDataMembers(classMirror);
+  // InstanceMirror im = reflect(new SomeClass());
+  // ClassMirror classMirror = im.type;
+  // getDataMembers(classMirror);
+  // Isolate.spawn(dowork, 'Hello!!');
+  startIso();
+  sleep(Duration(seconds: 2));
 }
 
 void getDataMembers(ClassMirror classMirror) {
@@ -51,7 +70,9 @@ void getDataMembers(ClassMirror classMirror) {
       print('extension: ${v.isExtensionMember}');
     } else if (v is MethodMirror) {
       for (var m in v.metadata) {
-        print(m);
+        if (m.reflectee is MainJob) {
+          classMirror.invoke(Symbol(name), []);
+        }
       }
       print('Method: $name');
 
