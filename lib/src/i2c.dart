@@ -8,7 +8,7 @@
 // https://github.com/dart-lang/samples/tree/master/ffi
 
 import 'dart:ffi';
-import 'package:dart_periphery/src/isolate_helper.dart';
+import 'package:dart_periphery/src/isolate_api.dart';
 
 import 'library.dart';
 import 'package:ffi/ffi.dart';
@@ -241,13 +241,19 @@ String _getErrmsg(Pointer<Void> handle) {
   return _nativeI2CerrnMsg(handle).toDartString();
 }
 
-final Map<String, dynamic> _map = {};
+// to improve performance, cache json/maps
+final Map<int, Map<String, dynamic>> _jsonCache = {};
 
 Map<String, dynamic> _jsonMap(String json) {
-  if (_map.isEmpty) {
-    _map.addAll(jsonDecode(json) as Map<String, dynamic>);
+  Map<String, dynamic>? map = _jsonCache[json.hashCode];
+  if (map == null) {
+    map = {};
+    _jsonCache[json.hashCode] = map;
   }
-  return _map;
+  if (map.isEmpty) {
+    map.addAll(jsonDecode(json) as Map<String, dynamic>);
+  }
+  return map;
 }
 
 /// I2C wrapper functions for Linux userspace i2c-dev devices.
@@ -255,7 +261,7 @@ Map<String, dynamic> _jsonMap(String json) {
 /// c-periphery [I2C](https://github.com/vsergeev/c-periphery/blob/master/docs/i2c.md) documentation.
 class I2C extends IsolateAPI {
   static const String _i2cBasePath = '/dev/i2c-';
-  Pointer<Void> _i2cHandle;
+  late Pointer<Void> _i2cHandle;
   final String path;
   final int busNum;
   bool _invalid = false;
@@ -275,7 +281,7 @@ class I2C extends IsolateAPI {
   /// Converts a [I2C] to a JSON string. See constructor [isolate] for detials.
   @override
   String toJson() {
-    return '{"path":"$path","bus":$busNum,"handle":${_i2cHandle.address}}';
+    return '{"class":"I2C","path":"$path","bus":$busNum,"handle":${_i2cHandle.address}}';
   }
 
   void _checkStatus() {

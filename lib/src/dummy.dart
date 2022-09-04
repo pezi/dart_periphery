@@ -2,13 +2,31 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:dart_periphery/src/isolate_helper.dart';
+import 'dart:convert';
+
+import 'package:dart_periphery/src/isolate_api.dart';
 import 'dart:ffi';
 
-class DummyDev implements IsolateAPI {
-  Pointer<Void> _dummyHandler;
+// to improve performance, cache json/maps
+final Map<int, Map<String, dynamic>> _jsonCache = {};
 
-  DummyDev() : _dummyHandler = Pointer.fromAddress(42);
+Map<String, dynamic> _jsonMap(String json) {
+  Map<String, dynamic>? map = _jsonCache[json.hashCode];
+  if (map == null) {
+    map = {};
+    _jsonCache[json.hashCode] = map;
+  }
+  if (map.isEmpty) {
+    map.addAll(jsonDecode(json) as Map<String, dynamic>);
+  }
+  return map;
+}
+
+class DummyDev implements IsolateAPI {
+  Pointer<Void> _dummyHandle;
+
+  // address which stands for all answers of the universe
+  DummyDev() : _dummyHandle = Pointer.fromAddress(42);
 
   @override
   IsolateAPI fromJson(String json) {
@@ -17,16 +35,20 @@ class DummyDev implements IsolateAPI {
 
   @override
   int getHandle() {
-    return _dummyHandler.address;
+    return _dummyHandle.address;
   }
 
   @override
   void setHandle(int handle) {
-    _dummyHandler = Pointer<Void>.fromAddress(handle);
+    _dummyHandle = Pointer<Void>.fromAddress(handle);
   }
 
   @override
   String toJson() {
-    return "Dummy Dev";
+    return '{"class":"DummyDev","handle":${_dummyHandle.address}}';
   }
+
+  DummyDev.isolate(String json)
+      : _dummyHandle =
+            Pointer<Void>.fromAddress(_jsonMap(json)['handle'] as int);
 }

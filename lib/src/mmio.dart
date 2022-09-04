@@ -7,10 +7,28 @@
 // https://github.com/vsergeev/c-periphery/blob/master/src/i2c.h
 // https://github.com/dart-lang/samples/tree/master/ffi
 
+import 'dart:convert';
 import 'dart:ffi';
+import 'package:dart_periphery/src/isolate_api.dart';
+
 import 'library.dart';
 import 'package:ffi/ffi.dart';
 import 'signature.dart';
+
+// cache json data
+final Map<int, Map<String, dynamic>> _jsonCache = {};
+
+Map<String, dynamic> _jsonMap(String json) {
+  Map<String, dynamic>? map = _jsonCache[json.hashCode];
+  if (map == null) {
+    map = {};
+    _jsonCache[json.hashCode] = map;
+  }
+  if (map.isEmpty) {
+    map.addAll(jsonDecode(json) as Map<String, dynamic>);
+  }
+  return map;
+}
 
 /// [MMIO] error code
 enum MMIOerrorCode {
@@ -184,8 +202,8 @@ class MMIOexception implements Exception {
 /// MMIO wrapper functions for the Linux userspace <tt>/dev/mem</tt> device.
 ///
 /// c-periphery [MMIO](https://github.com/vsergeev/c-periphery/blob/master/docs/mmio.md) documentation.
-class MMIO {
-  final Pointer<Void> _mmioHandle;
+class MMIO extends IsolateAPI {
+  late final Pointer<Void> _mmioHandle;
   bool _invalid = false;
   final int base;
   final int size;
@@ -198,6 +216,15 @@ class MMIO {
   MMIO(this.base, this.size)
       : path = '',
         _mmioHandle = _mmioOpen(base, size);
+
+  /// Duplicates an existing [MMIO] from a JSON string. This special constructor
+  /// is used to transfer an existing [MMIO] to an other isolate.
+  MMIO.isolate(String json)
+      : base = _jsonMap(json)['base'] as int,
+        size = _jsonMap(json)['size'] as int,
+        path = _jsonMap(json)['path'] as String,
+        _mmioHandle =
+            Pointer<Void>.fromAddress(_jsonMap(json)['handle'] as int);
 
   static Pointer<Void> _mmioOpen(int base, int size) {
     var mmioHandle = _nativeMMIOnew();
@@ -365,5 +392,25 @@ class MMIO {
     } finally {
       malloc.free(data);
     }
+  }
+
+  @override
+  IsolateAPI fromJson(String json) {
+    return MMIO.isolate(json);
+  }
+
+  @override
+  int getHandle() {
+    return _mmioHandle.address;
+  }
+
+  @override
+  void setHandle(int handle) {
+    _mmioHandle = Pointer<Void>.fromAddress(handle);
+  }
+
+  @override
+  String toJson() {
+    return '{"class":"MMIO","base":"$base","size":$size,"path":"$path","handle":${_mmioHandle.address}}';
   }
 }

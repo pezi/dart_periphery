@@ -8,6 +8,7 @@
 // https://github.com/dart-lang/samples/tree/master/ffi
 
 import 'dart:ffi';
+import 'isolate_api.dart';
 import 'library.dart';
 import 'package:ffi/ffi.dart';
 import 'signature.dart';
@@ -195,19 +196,25 @@ int _checkError(int value) {
   return value;
 }
 
-final Map<String, dynamic> _map = {};
+// cache json/maps pairs
+final Map<int, Map<String, dynamic>> _jsonCache = {};
 
 Map<String, dynamic> _jsonMap(String json) {
-  if (_map.isEmpty) {
-    _map.addAll(jsonDecode(json) as Map<String, dynamic>);
+  Map<String, dynamic>? map = _jsonCache[json.hashCode];
+  if (map == null) {
+    map = {};
+    _jsonCache[json.hashCode] = map;
   }
-  return _map;
+  if (map.isEmpty) {
+    map.addAll(jsonDecode(json) as Map<String, dynamic>);
+  }
+  return map;
 }
 
 /// SPI wrapper functions for Linux userspace <tt>spidev</tt> devices.
 ///
 /// c-periphery [SPI](https://github.com/vsergeev/c-periphery/blob/master/docs/spi.md) documentation.
-class SPI {
+class SPI extends IsolateAPI {
   /// SPI bus number:  /dev/spidev[bus].[chip]
   final int bus;
 
@@ -245,8 +252,9 @@ class SPI {
   }
 
   /// Converts a [SPI] to a JSON string. See constructor [isolate] for detials.
+  @override
   String toJson() {
-    return '{"bus":$bus,"chip":$chip,"path":"$path","bitOrder":${bitOrder.index},"mode":${mode.index},"speed":$maxSpeed,"bits":$bitsPerWord,"flags":$extraFlags,"handle":${_spiHandle.address}}';
+    return '{"class":"SPI","bus":$bus,"chip":$chip,"path":"$path","bitOrder":${bitOrder.index},"mode":${mode.index},"speed":$maxSpeed,"bits":$bitsPerWord,"flags":$extraFlags,"handle":${_spiHandle.address}}';
   }
 
   /// Opens the SPI device at the  path ("/dev/spidev[bus].[chip]"), with the specified
@@ -554,7 +562,18 @@ class SPI {
   }
 
   /// Returns the address of the internal handle.
+  @override
   int getHandle() {
     return _spiHandle.address;
+  }
+
+  @override
+  IsolateAPI fromJson(String json) {
+    return SPI.isolate(json);
+  }
+
+  @override
+  void setHandle(int handle) {
+    _spiHandle = Pointer<Void>.fromAddress(handle);
   }
 }

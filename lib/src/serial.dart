@@ -10,7 +10,7 @@
 import 'dart:ffi';
 import 'dart:convert';
 
-import 'isolate_helper.dart';
+import 'isolate_api.dart';
 import 'library.dart';
 import 'package:ffi/ffi.dart';
 import 'signature.dart';
@@ -303,13 +303,19 @@ int _checkError(int value) {
   return value;
 }
 
-final Map<String, dynamic> _map = {};
+// cache json data
+final Map<int, Map<String, dynamic>> _jsonCache = {};
 
 Map<String, dynamic> _jsonMap(String json) {
-  if (_map.isEmpty) {
-    _map.addAll(jsonDecode(json) as Map<String, dynamic>);
+  Map<String, dynamic>? map = _jsonCache[json.hashCode];
+  if (map == null) {
+    map = {};
+    _jsonCache[json.hashCode] = map;
   }
-  return _map;
+  if (map.isEmpty) {
+    map.addAll(jsonDecode(json) as Map<String, dynamic>);
+  }
+  return map;
 }
 
 /// Serial wrapper functions for Linux userspace termios tty devices.
@@ -323,13 +329,13 @@ class Serial extends IsolateAPI {
   final StopBits stopbits;
   final bool xonxoff;
   final bool rtsct;
-  Pointer<Void> _serialHandle;
+  late Pointer<Void> _serialHandle;
   bool _invalid = false;
 
   /// Converts a [Serial] to a JSON string. See constructor [isolate] for detials.
   @override
   String toJson() {
-    return '{"path":"$path","baudrate":${baudrate.index},"databits":${databits.index},"parity":${parity.index},"stopbits":${stopbits.index},"xonxoff":$xonxoff,"rtsct":$rtsct,"handle":${_serialHandle.address}}';
+    return '{"class":"Serial","path":"$path","baudrate":${baudrate.index},"databits":${databits.index},"parity":${parity.index},"stopbits":${stopbits.index},"xonxoff":$xonxoff,"rtsct":$rtsct,"handle":${_serialHandle.address}}';
   }
 
   void _checkStatus() {
@@ -405,7 +411,7 @@ class Serial extends IsolateAPI {
             path, baudrate, databits, parity, stopbits, xonxoff, rtsct);
 
   /// Duplicates an existing [Serial] from a JSON string. This special constructor
-  /// is used to transfer an existing [GPIO] to an other isolate.
+  /// is used to transfer an existing [Serial] to an other isolate.
   Serial.isolate(String json)
       : path = _jsonMap(json)['path'] as String,
         baudrate = Baudrate.values[_jsonMap(json)['baudrate'] as int],

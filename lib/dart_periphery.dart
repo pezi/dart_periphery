@@ -105,3 +105,15 @@ export 'src/hardware/bme680.dart'
 export 'src/errno.dart' show ERRNO, Errno, ErrnoNotFound;
 export 'src/cpu_architecture.dart'
     show Uname, CpuArchitecture, CpuArch, nativeUname;
+export 'src/isolate_helper.dart'
+    show
+        IsolateHelper,
+        InitJob,
+        ExitJob,
+        MainJob,
+        JobMethod,
+        JobIteration,
+        InitJobResult,
+        ExitJobResult,
+        MainJobResult;
+export 'src/dummy.dart' show DummyDev;

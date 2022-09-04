@@ -8,6 +8,7 @@
 // https://github.com/dart-lang/samples/tree/master/ffi
 
 import 'dart:ffi';
+import 'isolate_api.dart';
 import 'library.dart';
 import 'package:ffi/ffi.dart';
 import 'signature.dart';
@@ -399,7 +400,7 @@ Map<String, dynamic> _jsonMap(String json) {
 /// sysfs GPIOs will be supported.
 ///
 /// c-periphery [GPIO](https://github.com/vsergeev/c-periphery/blob/master/docs/gpio.md) documentation.
-class GPIO {
+class GPIO extends IsolateAPI {
   static String _gpioBasePath = '/dev/gpiochip';
 
   /// GPIO chip device path e.g. /dev/gpiochip0
@@ -416,12 +417,13 @@ class GPIO {
 
   /// GPIO name, is empty if [GPIO.line] is used
   final String name;
-  final Pointer<Void> _gpioHandle;
+  late Pointer<Void> _gpioHandle;
   bool _invalid = false;
 
   /// Converts a [GPIO] to a JSON string. See constructor [isolate] for detials.
+  @override
   String toJson() {
-    return '{"path":"$path","chip":$chip,"line":$line,"direction":${direction.index},"name":"$name","handle":${_gpioHandle.address}}';
+    return '{"class":GPIO","path":"$path","chip":$chip,"line":$line,"direction":${direction.index},"name":"$name","handle":${_gpioHandle.address}}';
   }
 
   /// Sets an alternative [chipBasePath], default value is '/dev/gpiochip'
@@ -639,6 +641,7 @@ class GPIO {
   }
 
   /// Returns the address of the internal handle.
+  @override
   int getHandle() {
     return _gpioHandle.address;
   }
@@ -783,5 +786,15 @@ class GPIO {
   /// Returns a string representation of the native GPIO handle.
   String getGPIOinfo() {
     return _getString(_nativeGPIOinfo);
+  }
+
+  @override
+  IsolateAPI fromJson(String json) {
+    throw GPIO.isolate(json);
+  }
+
+  @override
+  void setHandle(int handle) {
+    _gpioHandle = Pointer<Void>.fromAddress(handle);
   }
 }
