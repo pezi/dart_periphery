@@ -7,8 +7,9 @@
 // https://github.com/vsergeev/c-periphery/blob/master/src/serial.h
 // https://github.com/dart-lang/samples/tree/master/ffi
 
-import 'dart:ffi';
 import 'dart:convert';
+import 'dart:ffi';
+import 'json.dart';
 
 import 'isolate_api.dart';
 import 'library.dart';
@@ -303,21 +304,6 @@ int _checkError(int value) {
   return value;
 }
 
-// cache json data
-final Map<int, Map<String, dynamic>> _jsonCache = {};
-
-Map<String, dynamic> _jsonMap(String json) {
-  Map<String, dynamic>? map = _jsonCache[json.hashCode];
-  if (map == null) {
-    map = {};
-    _jsonCache[json.hashCode] = map;
-  }
-  if (map.isEmpty) {
-    map.addAll(jsonDecode(json) as Map<String, dynamic>);
-  }
-  return map;
-}
-
 /// Serial wrapper functions for Linux userspace termios tty devices.
 ///
 /// c-periphery [Serial](https://github.com/vsergeev/c-periphery/blob/master/docs/serial.md) documentation.
@@ -413,15 +399,15 @@ class Serial extends IsolateAPI {
   /// Duplicates an existing [Serial] from a JSON string. This special constructor
   /// is used to transfer an existing [Serial] to an other isolate.
   Serial.isolate(String json)
-      : path = _jsonMap(json)['path'] as String,
-        baudrate = Baudrate.values[_jsonMap(json)['baudrate'] as int],
-        databits = DataBits.values[_jsonMap(json)['databits'] as int],
-        stopbits = StopBits.values[_jsonMap(json)['stopbits'] as int],
-        parity = Parity.values[_jsonMap(json)['parity'] as int],
-        rtsct = _jsonMap(json)['rtsct'] as bool,
-        xonxoff = _jsonMap(json)['xonxoff'] as bool,
+      : path = jsonMap(json)['path'] as String,
+        baudrate = Baudrate.values[jsonMap(json)['baudrate'] as int],
+        databits = DataBits.values[jsonMap(json)['databits'] as int],
+        stopbits = StopBits.values[jsonMap(json)['stopbits'] as int],
+        parity = Parity.values[jsonMap(json)['parity'] as int],
+        rtsct = jsonMap(json)['rtsct'] as bool,
+        xonxoff = jsonMap(json)['xonxoff'] as bool,
         _serialHandle =
-            Pointer<Void>.fromAddress(_jsonMap(json)['handle'] as int);
+            Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int);
 
   static Pointer<Void> _openSerialAdvanced(
       String path,

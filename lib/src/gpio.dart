@@ -12,7 +12,7 @@ import 'isolate_api.dart';
 import 'library.dart';
 import 'package:ffi/ffi.dart';
 import 'signature.dart';
-import 'dart:convert';
+import 'json.dart';
 
 /// Result codes of the [GPIO.poll].
 enum GPIOpolling { success, timeout }
@@ -384,15 +384,6 @@ int _checkError(int value) {
   return value;
 }
 
-final Map<String, dynamic> _map = {};
-
-Map<String, dynamic> _jsonMap(String json) {
-  if (_map.isEmpty) {
-    _map.addAll(jsonDecode(json) as Map<String, dynamic>);
-  }
-  return _map;
-}
-
 /// GPIO wrapper functions for Linux userspace character device gpio-cdev and sysfs GPIOs.
 ///
 /// Character device GPIOs were introduced in Linux kernel version 4.8. If the toolchain used to compiled
@@ -554,13 +545,12 @@ class GPIO extends IsolateAPI {
   /// Duplicates an existing [GPIO] from a JSON string. This special constructor
   /// is used to transfer an existing [GPIO] to an other isolate.
   GPIO.isolate(String json)
-      : chip = _jsonMap(json)['chip'] as int,
-        line = _jsonMap(json)['line'] as int,
-        name = _jsonMap(json)['name'] as String,
-        path = _jsonMap(json)['path'] as String,
-        direction = GPIOdirection.values[_jsonMap(json)['direction'] as int],
-        _gpioHandle =
-            Pointer<Void>.fromAddress(_jsonMap(json)['handle'] as int);
+      : chip = jsonMap(json)['chip'] as int,
+        line = jsonMap(json)['line'] as int,
+        name = jsonMap(json)['name'] as String,
+        path = jsonMap(json)['path'] as String,
+        direction = GPIOdirection.values[jsonMap(json)['direction'] as int],
+        _gpioHandle = Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int);
 
   static Pointer<Void> _openSysfsGPIO(int line, GPIOdirection direction) {
     var gpioHandle = _nativeGPIOnew();

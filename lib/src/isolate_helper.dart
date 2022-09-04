@@ -3,7 +3,7 @@ import 'dart:mirrors';
 import 'dart:async';
 import 'package:async/async.dart';
 
-/// Class to annotate the init method
+/// Annotation class for the init method
 class InitJob {
   const InitJob();
 }
@@ -14,13 +14,16 @@ abstract class JobResult {
   JobResult(this.error, [this.data]);
 }
 
+/// Result for the init job method
 class InitJobResult extends JobResult {
   String json;
+
+  /// Result of an init job method, [error] signals an error, [json]
   InitJobResult(bool error, this.json, [Map<String, dynamic>? data])
       : super(error, data);
 }
 
-/// Class to annotate the main method
+/// Annotate class for the main method
 class MainJob {
   const MainJob();
 }
@@ -31,11 +34,12 @@ class MainJobResult extends JobResult {
       : super(error, data);
 }
 
-/// Class to annotate the exit method
+/// Annotation for the exit method
 class ExitJob {
   const ExitJob();
 }
 
+//
 class ExitJobResult extends JobResult {
   ExitJobResult(bool error, [Map<String, dynamic>? data]) : super(error, data);
 }
@@ -83,8 +87,9 @@ class IsolateHelper {
       Symbol initSym = Symbol('InitJobResult');
       Symbol mainSym = Symbol('MainJobResult');
       Symbol exitSym = Symbol('ExitJobResult');
-
       Symbol strSym = Symbol('String');
+
+      // check method signature
       if (v is MethodMirror) {
         for (var m in v.metadata) {
           if (m.reflectee is InitJob && v.isStatic) {
@@ -92,7 +97,6 @@ class IsolateHelper {
               throw Exception(
                   '@InitJob annotated method has wrong parameter signature: InitJobResult initJob()');
             }
-            ;
             if (v.returnType.simpleName != initSym) {
               throw Exception(
                   '@InitJob annotated method has wrong return type: InitJobResult initJob()');

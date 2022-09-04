@@ -2,31 +2,17 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:convert';
+import 'json.dart';
 
 import 'package:dart_periphery/src/isolate_api.dart';
 import 'dart:ffi';
 
-// to improve performance, cache json/maps
-final Map<int, Map<String, dynamic>> _jsonCache = {};
-
-Map<String, dynamic> _jsonMap(String json) {
-  Map<String, dynamic>? map = _jsonCache[json.hashCode];
-  if (map == null) {
-    map = {};
-    _jsonCache[json.hashCode] = map;
-  }
-  if (map.isEmpty) {
-    map.addAll(jsonDecode(json) as Map<String, dynamic>);
-  }
-  return map;
-}
-
 class DummyDev implements IsolateAPI {
+  static int handleCounter = 1;
   Pointer<Void> _dummyHandle;
 
   // address which stands for all answers of the universe
-  DummyDev() : _dummyHandle = Pointer.fromAddress(42);
+  DummyDev() : _dummyHandle = Pointer.fromAddress(handleCounter++);
 
   @override
   IsolateAPI fromJson(String json) {
@@ -48,7 +34,13 @@ class DummyDev implements IsolateAPI {
     return '{"class":"DummyDev","handle":${_dummyHandle.address}}';
   }
 
+  int add(int a, int b) {
+    return a + b;
+  }
+
   DummyDev.isolate(String json)
       : _dummyHandle =
-            Pointer<Void>.fromAddress(_jsonMap(json)['handle'] as int);
+            Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int);
+
+  void dispose() {}
 }

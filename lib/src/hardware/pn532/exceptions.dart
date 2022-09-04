@@ -10,7 +10,7 @@ abstract class PN532Exception implements Exception {
 
   @override
   String toString() {
-    return super.toString() + '\nAdditional info:\n$information';
+    return '${super.toString()}\nAdditional info:\n$information';
   }
 }
 

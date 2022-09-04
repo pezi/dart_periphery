@@ -7,28 +7,13 @@
 // https://github.com/vsergeev/c-periphery/blob/master/src/i2c.h
 // https://github.com/dart-lang/samples/tree/master/ffi
 
-import 'dart:convert';
 import 'dart:ffi';
 import 'package:dart_periphery/src/isolate_api.dart';
 
 import 'library.dart';
+import 'json.dart';
 import 'package:ffi/ffi.dart';
 import 'signature.dart';
-
-// cache json data
-final Map<int, Map<String, dynamic>> _jsonCache = {};
-
-Map<String, dynamic> _jsonMap(String json) {
-  Map<String, dynamic>? map = _jsonCache[json.hashCode];
-  if (map == null) {
-    map = {};
-    _jsonCache[json.hashCode] = map;
-  }
-  if (map.isEmpty) {
-    map.addAll(jsonDecode(json) as Map<String, dynamic>);
-  }
-  return map;
-}
 
 /// [MMIO] error code
 enum MMIOerrorCode {
@@ -220,11 +205,10 @@ class MMIO extends IsolateAPI {
   /// Duplicates an existing [MMIO] from a JSON string. This special constructor
   /// is used to transfer an existing [MMIO] to an other isolate.
   MMIO.isolate(String json)
-      : base = _jsonMap(json)['base'] as int,
-        size = _jsonMap(json)['size'] as int,
-        path = _jsonMap(json)['path'] as String,
-        _mmioHandle =
-            Pointer<Void>.fromAddress(_jsonMap(json)['handle'] as int);
+      : base = jsonMap(json)['base'] as int,
+        size = jsonMap(json)['size'] as int,
+        path = jsonMap(json)['path'] as String,
+        _mmioHandle = Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int);
 
   static Pointer<Void> _mmioOpen(int base, int size) {
     var mmioHandle = _nativeMMIOnew();

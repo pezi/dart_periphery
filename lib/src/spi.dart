@@ -13,7 +13,7 @@ import 'library.dart';
 import 'package:ffi/ffi.dart';
 import 'signature.dart';
 import 'hardware/utils/byte_buffer.dart';
-import 'dart:convert';
+import 'json.dart';
 
 /// Mapped native [SPI] error codes with the same index, but different leading sign.
 enum SPIerrorCode {
@@ -196,21 +196,6 @@ int _checkError(int value) {
   return value;
 }
 
-// cache json/maps pairs
-final Map<int, Map<String, dynamic>> _jsonCache = {};
-
-Map<String, dynamic> _jsonMap(String json) {
-  Map<String, dynamic>? map = _jsonCache[json.hashCode];
-  if (map == null) {
-    map = {};
-    _jsonCache[json.hashCode] = map;
-  }
-  if (map.isEmpty) {
-    map.addAll(jsonDecode(json) as Map<String, dynamic>);
-  }
-  return map;
-}
-
 /// SPI wrapper functions for Linux userspace <tt>spidev</tt> devices.
 ///
 /// c-periphery [SPI](https://github.com/vsergeev/c-periphery/blob/master/docs/spi.md) documentation.
@@ -299,15 +284,15 @@ class SPI extends IsolateAPI {
   /// Duplicates an existing [SPI] from a JSON string. This special constructor
   /// is used to transfer an existing [SPI] to an other isolate.
   SPI.isolate(String json)
-      : path = _jsonMap(json)['path'] as String,
-        chip = _jsonMap(json)['chip'] as int,
-        maxSpeed = _jsonMap(json)['speed'] as int,
-        bus = _jsonMap(json)['bus'] as int,
-        bitsPerWord = _jsonMap(json)['bits'] as int,
-        extraFlags = _jsonMap(json)['flags'] as int,
-        bitOrder = BitOrder.values[_jsonMap(json)['bitOrder'] as int],
-        mode = SPImode.values[_jsonMap(json)['mode'] as int],
-        _spiHandle = Pointer<Void>.fromAddress(_jsonMap(json)['handle'] as int);
+      : path = jsonMap(json)['path'] as String,
+        chip = jsonMap(json)['chip'] as int,
+        maxSpeed = jsonMap(json)['speed'] as int,
+        bus = jsonMap(json)['bus'] as int,
+        bitsPerWord = jsonMap(json)['bits'] as int,
+        extraFlags = jsonMap(json)['flags'] as int,
+        bitOrder = BitOrder.values[jsonMap(json)['bitOrder'] as int],
+        mode = SPImode.values[jsonMap(json)['mode'] as int],
+        _spiHandle = Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int);
 
   Pointer<Void> _spiOpenAdvanced(String path, SPImode mode, int maxSpeed,
       BitOrder bitOrder, int bitsPerWord, int extraFlags) {
