@@ -427,7 +427,7 @@ Currently **dart_periphery** ships with four prebuild native c-periphery librari
 * X86 - [libperiphery_x86.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86.so)
 * X86_64 - [libperiphery_x86_64.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86_64.so)
 
-**dart_periphery** calls uname() function to detect the CPU architecture for loading the appropriate libray. This auto detection mechanism can fail. Internally the logic tries to match the `uname -m` value to predefined string values.
+**dart_periphery** calls uname() function to detect the CPU architecture for loading the appropriate library. This auto detection mechanism can fail. Internally the logic tries to match the `uname -m` value to predefined string values.
 
 Following methods can be used to overwrite the auto loading of the prebuild library. But be aware, any of these methods to disable the auto detection must be called before any **dart_periphery** interface is used!
 
