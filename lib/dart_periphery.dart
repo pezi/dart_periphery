@@ -108,12 +108,11 @@ export 'src/cpu_architecture.dart'
 export 'src/isolate_helper.dart'
     show
         IsolateHelper,
-        InitJob,
-        ExitJob,
-        MainJob,
-        JobMethod,
-        JobIteration,
-        InitJobResult,
-        ExitJobResult,
-        MainJobResult;
+        InitTask,
+        ExitTask,
+        MainTask,
+        TaskIteration,
+        InitTaskResult,
+        ExitTaskResult,
+        MainTaskResult;
 export 'src/dummy.dart' show DummyDev;

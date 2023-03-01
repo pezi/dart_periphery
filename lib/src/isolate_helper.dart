@@ -4,175 +4,188 @@ import 'dart:async';
 import 'package:async/async.dart';
 
 /// Annotation class for the init method
-class InitJob {
-  const InitJob();
+class InitTask {
+  const InitTask();
 }
 
-abstract class JobResult {
+abstract class TaskResult {
   bool error;
   Map<String, dynamic>? data;
-  JobResult(this.error, [this.data]);
+  TaskResult(this.error, [this.data]);
 }
 
-/// Result for the init job method
-class InitJobResult extends JobResult {
+/// Result of the init task
+class InitTaskResult extends TaskResult {
   String json;
 
-  /// Result of an init job method, [error] signals an error, [json]
-  InitJobResult(bool error, this.json, [Map<String, dynamic>? data])
+  /// Return value of the init task, [error] signals an error, [json] represents the device configuration and the optional user [data].
+  InitTaskResult(bool error, this.json, [Map<String, dynamic>? data])
       : super(error, data);
 }
 
-/// Annotate class for the main method
-class MainJob {
-  const MainJob();
+/// Annotation for the main task
+class MainTask {
+  const MainTask();
 }
 
-class MainJobResult extends JobResult {
+/// Result of the main task method
+class MainTaskResult extends TaskResult {
   bool exit;
-  MainJobResult(bool error, this.exit, [Map<String, dynamic>? data])
+
+  /// Return value of a main task, [error] signals an error, [exit] to quit the main loop and the optional user [data].
+  MainTaskResult(bool error, this.exit, [Map<String, dynamic>? data])
       : super(error, data);
 }
 
-/// Annotation for the exit method
-class ExitJob {
-  const ExitJob();
+/// Annotation for the exit task
+class ExitTask {
+  const ExitTask();
 }
 
-//
-class ExitJobResult extends JobResult {
-  ExitJobResult(bool error, [Map<String, dynamic>? data]) : super(error, data);
+/// Result of the exit task method
+class ExitTaskResult extends TaskResult {
+  /// Return value of the exit task, [error] signals an error and the optional user [data].
+  ExitTaskResult(bool error, [Map<String, dynamic>? data]) : super(error, data);
 }
 
-class JobIteration {
-  int iteration;
-  JobIteration(this.iteration);
-  JobIteration.endless() : iteration = -1;
+/// Number of iterations invoking the main sub task.
+class TaskIteration {
+  int iterations;
+
+  /// Number of [iterations], value <0 sets an infinite loop.
+  TaskIteration(this.iterations);
+  TaskIteration.infinite() : iterations = -1;
 }
 
-var mirrorCache = <String, ClassMirror>{};
+var _mirrorCache = <String, ClassMirror>{};
 
-InstanceMirror callStaticMethodOnClass(String className, String methodName,
+InstanceMirror _callStaticMethodOnClass(String className, String methodName,
     [String json = '']) {
   final classSymbol = Symbol(className);
   final methodSymbol = Symbol(methodName);
 
-  var cm = mirrorCache[className];
+  var cm = _mirrorCache[className];
   if (cm == null) {
     cm = currentMirrorSystem().isolate.rootLibrary.declarations[classSymbol]
         as ClassMirror;
-    mirrorCache[className] = cm;
+    _mirrorCache[className] = cm;
   }
   return cm.invoke(methodSymbol, json.isEmpty ? <dynamic>[] : <dynamic>[json]);
 }
 
-enum JobMethod { init, main, exit }
+/// Enum which descibres the sub tasks
+enum TaskMethod { init, main, exit }
+
+final Symbol _initSym = Symbol((InitTaskResult).toString());
+final Symbol _mainSym = Symbol((MainTaskResult).toString());
+final Symbol _exitSym = Symbol((ExitTaskResult).toString());
+final Symbol _strSym = Symbol((String).toString());
 
 class IsolateHelper {
   Object clazz;
-  JobIteration iterationJob;
+  TaskIteration iterationTask;
   late ClassMirror classMirror;
   Isolate? isolate;
   String? json;
   ReceivePort? receivePort;
 
-  var mMap = <JobMethod, String>{};
+  var mMap = <TaskMethod, String>{};
 
-  IsolateHelper(this.clazz, this.iterationJob) {
+  IsolateHelper(this.clazz, this.iterationTask) {
     InstanceMirror im = reflect(clazz);
     classMirror = im.type;
 
     for (var v in classMirror.declarations.values) {
       var name = MirrorSystem.getName(v.simpleName);
-      Symbol initSym = Symbol('InitJobResult');
-      Symbol mainSym = Symbol('MainJobResult');
-      Symbol exitSym = Symbol('ExitJobResult');
-      Symbol strSym = Symbol('String');
 
       // check method signature
       if (v is MethodMirror) {
         for (var m in v.metadata) {
-          if (m.reflectee is InitJob && v.isStatic) {
+          if (m.reflectee is InitTask && v.isStatic) {
             if (v.parameters.isNotEmpty) {
               throw Exception(
-                  '@InitJob annotated method has wrong parameter signature: InitJobResult initJob()');
+                  '@InitTask annotated method has wrong parameter signature: InitTaskResult initTask()');
             }
-            if (v.returnType.simpleName != initSym) {
+            if (v.returnType.simpleName != _initSym) {
               throw Exception(
-                  '@InitJob annotated method has wrong return type: InitJobResult initJob()');
+                  '@InitTask annotated method has wrong return type: InitTaskResult initTask()');
             }
-            mMap[JobMethod.init] = name;
-          } else if (m.reflectee is MainJob && v.isStatic) {
+            mMap[TaskMethod.init] = name;
+          } else if (m.reflectee is MainTask && v.isStatic) {
             if (v.parameters.length != 1 ||
-                v.parameters[0].type.simpleName != strSym) {
+                v.parameters[0].type.simpleName != _strSym) {
               throw Exception(
-                  '@MainJob annotated method has wrong parameter signature: MainJobResult mainJob(String json)');
+                  '@MainTask annotated method has wrong parameter signature: MainTaskResult mainTask(String json)');
             }
-            if (v.returnType.simpleName != mainSym) {
+            if (v.returnType.simpleName != _mainSym) {
               throw Exception(
-                  '@MainJob annotated method has wrong return type: MainJobResult mainJob()');
+                  '@MainTask annotated method has wrong return type: MainTaskResult mainTask()');
             }
-            mMap[JobMethod.main] = name;
-          } else if (m.reflectee is ExitJob && v.isStatic) {
+            mMap[TaskMethod.main] = name;
+          } else if (m.reflectee is ExitTask && v.isStatic) {
             if (v.parameters.length != 1 ||
-                v.parameters[0].type.simpleName != strSym) {
+                v.parameters[0].type.simpleName != _strSym) {
               throw Exception(
-                  '@ExitJob annotated method has wrong paramter signature: ExitJobResult exitJob(String json)');
+                  '@ExitTask annotated method has wrong paramter signature: ExitTaskResult exitTask(String json)');
             }
-            if (v.returnType.simpleName != exitSym) {
+            if (v.returnType.simpleName != _exitSym) {
               throw Exception(
-                  '@ExitJob annotated method has wrong return type: ExitJobResult exitJob()');
+                  '@ExitTask annotated method has wrong return type: ExitTaskResult exitTask()');
             }
-            mMap[JobMethod.exit] = name;
+            mMap[TaskMethod.exit] = name;
           }
         }
       }
     }
-    for (var m in JobMethod.values) {
+    for (var m in TaskMethod.values) {
       if (!mMap.containsKey(m)) {
         throw Exception(
-            "Missing static annotated method  @${m.name.split('.').last}Job inside class $im");
+            "Missing static annotated method  @${m.name.split('.').last}Task inside class $im");
       }
     }
   }
 
+  /// Kills a running isolate.
   void killIsolate() {
     receivePort!.close();
     isolate!.kill(priority: Isolate.immediate);
   }
 
-  Stream<JobResult> run() async* {
+  Stream<TaskResult> run() async* {
     receivePort = ReceivePort();
     isolate = await Isolate.spawn<SendPort>(_isolate, receivePort!.sendPort);
 
     final events = StreamQueue<dynamic>(receivePort!);
 
-    // send class info and counter as  mao
+    // send class info and counter as map
     SendPort sendPort = await events.next;
     var classInfo = <String, String>{};
     classInfo['class'] = clazz.runtimeType.toString();
-    for (var m in JobMethod.values) {
+    for (var m in TaskMethod.values) {
       classInfo[m.name.split('.').last] = mMap[m] as String;
     }
-    classInfo['counter'] = iterationJob.iteration.toString();
+    classInfo['counter'] = iterationTask.iterations.toString();
     sendPort.send(classInfo);
 
-    // wait for init map
+    // wait for init map response
     var initMap = await events.next;
     json = initMap['_json'];
 
-    yield InitJobResult(
+    // send init data
+    yield InitTaskResult(
         initMap['_error'] as bool, initMap['_json'] as String, initMap);
+
+    // if no error occures, start looping
     if (!(initMap['_error'] as bool)) {
       var loop = true;
 
       while (loop) {
         var result = await events.next;
-        if (result['_job'] == JobMethod.exit) {
-          yield ExitJobResult(initMap['_error'] as bool, result);
+        if (result['_task'] == TaskMethod.exit) {
+          yield ExitTaskResult(initMap['_error'] as bool, result);
           loop = false;
         } else {
-          yield MainJobResult(
+          yield MainTaskResult(
               result['_error'] as bool, result['_exit'] as bool, result);
         }
       }
@@ -188,13 +201,13 @@ class IsolateHelper {
     var classInfo = <String, String>{};
     classInfo = await commandPort.first;
 
-    // init job
-    InstanceMirror mr = callStaticMethodOnClass(
+    // init task
+    InstanceMirror mr = _callStaticMethodOnClass(
         classInfo['class'] as String, classInfo['init'] as String);
-    var initResult = mr.reflectee as InitJobResult;
+    var initResult = mr.reflectee as InitTaskResult;
     var initMap = initResult.data;
     initMap = initMap ?? <String, dynamic>{};
-    initMap['_job'] = JobMethod.init;
+    initMap['_task'] = TaskMethod.init;
     initMap['_error'] = initResult.error;
     initMap['_json'] = initResult.json;
     sendPort.send(initMap);
@@ -203,25 +216,25 @@ class IsolateHelper {
       Isolate.exit();
     }
 
-    // loop main job
+    // loop main task
     int counter = int.parse(classInfo['counter'] as String);
-    bool endless = false;
-    if (counter < 0) {
-      endless = true;
+    bool infinite = false;
+    if (counter <= 0) {
+      infinite = true;
     }
     int index = 0;
     while (true) {
-      if (!endless) {
+      if (!infinite) {
         if (index == counter) {
           break;
         }
       }
-      InstanceMirror mr = callStaticMethodOnClass(classInfo['class'] as String,
+      InstanceMirror mr = _callStaticMethodOnClass(classInfo['class'] as String,
           classInfo['main'] as String, initResult.json);
-      var mainResult = mr.reflectee as MainJobResult;
+      var mainResult = mr.reflectee as MainTaskResult;
       var mainMap = mainResult.data;
       mainMap = mainMap ?? <String, dynamic>{};
-      mainMap['_job'] = JobMethod.main;
+      mainMap['_task'] = TaskMethod.main;
       mainMap['_error'] = mainResult.error;
       mainMap['_exit'] = mainResult.exit;
       sendPort.send(mainMap);
@@ -231,14 +244,14 @@ class IsolateHelper {
       ++index;
     }
 
-    // exit job
-    mr = callStaticMethodOnClass(classInfo['class'] as String,
+    // exit task
+    mr = _callStaticMethodOnClass(classInfo['class'] as String,
         classInfo['exit'] as String, initResult.json);
-    var exitResult = mr.reflectee as ExitJobResult;
+    var exitResult = mr.reflectee as ExitTaskResult;
     var exitMap = exitResult.data;
     exitMap = exitMap ?? <String, dynamic>{};
 
-    exitMap['_job'] = JobMethod.exit;
+    exitMap['_task'] = TaskMethod.exit;
     exitMap['_error'] = exitResult.error;
     sendPort.send(exitMap);
     Isolate.exit();

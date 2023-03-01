@@ -1,3 +1,7 @@
+## 0.9.3 2022-09-16
+
+* Add support for generic streams based on isolates for [issue](https://github.com/pezi/dart_periphery/issues/14)
+
 ## 0.9.3 2022-08-16
 
 * Fix [issue](https://github.com/pezi/dart_periphery/issues/15#issuecomment-1215737582) 

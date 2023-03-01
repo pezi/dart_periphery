@@ -7,43 +7,43 @@ import 'package:dart_periphery/dart_periphery.dart';
 class SomeClass {
   static int counter = 0;
 
-  @InitJob()
-  static InitJobResult initJob() {
+  @InitTask()
+  static InitTaskResult initJob() {
     var dev = DummyDev();
-    return InitJobResult(false, dev.toJson());
+    return InitTaskResult(false, dev.toJson());
   }
 
-  @MainJob()
-  static MainJobResult mainJob(String json) {
+  @MainTask()
+  static MainTaskResult mainJob(String json) {
     var dev = DummyDev.isolate(json);
     var m = <String, dynamic>{};
     m['result'] = '${dev.add(counter, counter)}';
     ++counter;
-    return MainJobResult(false, false, m);
+    return MainTaskResult(false, false, m);
   }
 
-  @ExitJob()
-  static ExitJobResult exitJob(String json) {
+  @ExitTask()
+  static ExitTaskResult exitJob(String json) {
     var dev = DummyDev.isolate(json);
     dev.dispose();
     var m = <String, dynamic>{};
-    return ExitJobResult(false, m);
+    return ExitTaskResult(false, m);
   }
 }
 
 void main() async {
   SomeClass c = SomeClass();
-  IsolateHelper h = IsolateHelper(c, JobIteration(3));
+  IsolateHelper h = IsolateHelper(c, TaskIteration(3));
   await for (var s in h.run()) {
-    if (s is MainJobResult) {
+    if (s is MainTaskResult) {
       print(s.data!['result']);
     }
   }
 
-  h = IsolateHelper(c, JobIteration.endless());
+  h = IsolateHelper(c, TaskIteration.infinite());
   int index = 0;
   await for (var s in h.run()) {
-    if (s is MainJobResult) {
+    if (s is MainTaskResult) {
       print(s.data!['result']);
       if (index == 3) {
         break;

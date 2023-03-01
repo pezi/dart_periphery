@@ -6,8 +6,8 @@ import 'package:dart_periphery/dart_periphery.dart';
 import 'dart:io';
 
 class SerialIsolateExample {
-  @InitJob()
-  static InitJobResult initJob() {
+  @InitTask()
+  static InitTaskResult initJob() {
     var data = <String, dynamic>{};
     try {
       var s = Serial('/dev/serial0', Baudrate.b9600);
@@ -23,16 +23,16 @@ class SerialIsolateExample {
       // consume any response
       event = s.read(256, 1000);
 
-      return InitJobResult(false, s.toJson(), data);
+      return InitTaskResult(false, s.toJson(), data);
     } catch (e, s) {
       data['exception'] = e.toString();
       data['stacktrace'] = s.toString();
-      return InitJobResult(true, '', data);
+      return InitTaskResult(true, '', data);
     }
   }
 
-  @MainJob()
-  static MainJobResult mainJob(String json) {
+  @MainTask()
+  static MainTaskResult mainJob(String json) {
     var data = <String, dynamic>{};
     try {
       var s = Serial.isolate(json);
@@ -41,21 +41,21 @@ class SerialIsolateExample {
       data['result'] = event.toString();
       sleep(Duration(seconds: 5));
       // indicate no error, continue main loop, pass user data
-      return MainJobResult(false, false, data);
+      return MainTaskResult(false, false, data);
     } catch (e, s) {
       data['exception'] = e.toString();
       data['stacktrace'] = s.toString();
       // indicate an error and terminate main loop
-      return MainJobResult(true, true, data);
+      return MainTaskResult(true, true, data);
     }
   }
 
-  @ExitJob()
-  static ExitJobResult exitJob(String json) {
+  @ExitTask()
+  static ExitTaskResult exitJob(String json) {
     var s = Serial.isolate(json);
     s.dispose();
     var m = <String, dynamic>{};
-    return ExitJobResult(false, m);
+    return ExitTaskResult(false, m);
   }
 }
 
@@ -64,9 +64,9 @@ class SerialIsolateExample {
 ///
 void main() async {
   SerialIsolateExample c = SerialIsolateExample();
-  IsolateHelper h = IsolateHelper(c, JobIteration(3));
+  IsolateHelper h = IsolateHelper(c, TaskIteration(3));
   await for (var s in h.run()) {
-    if (s is InitJobResult) {
+    if (s is InitTaskResult) {
       print('Init job');
       if (s.error) {
         print('An error occured');
@@ -75,7 +75,7 @@ void main() async {
       } else {
         print("Serial number: ${s.data!['serial']}");
       }
-    } else if (s is MainJobResult) {
+    } else if (s is MainTaskResult) {
       print('Main job');
       if (s.error) {
         print('An error occured');
