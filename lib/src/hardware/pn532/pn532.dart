@@ -139,7 +139,7 @@ class PN532 {
               "The first byte should be '$pn532ErrorNone' but it was '${readBlockResponse.first}'");
     }
 
-    return readBlockResponse.sublist(1, mifareBlockLength);
+    return readBlockResponse.sublist(1, mifareBlockLength + 1);
   }
 
   /// Write a block of data to the card.  Block number should be the block
