@@ -11,7 +11,7 @@ environment:
 
 dependencies:
   ffi: ^2.0.1
-  path: ^1.8.1nan
+  path: ^1.8.1
   process: ^4.2.4
   collection: ^1.16.0
   stack_trace: ^1.10.0
