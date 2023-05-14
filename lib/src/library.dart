@@ -150,7 +150,8 @@ List<String> getFlutterPiArgs() {
   return List.unmodifiable(_flutterPiArgs);
 }
 
-DynamicLibrary getPeripheryLib() {
+/// Loads the Linux/CPU specific periphery library as a DynamicLibrary.
+DynamicLibrary loadPeripheryLib() {
   if (isPeripheryLibLoaded) {
     return _peripheryLib;
   }
@@ -160,6 +161,7 @@ DynamicLibrary getPeripheryLib() {
 
   String path = '';
   if (isFlutterPiEnv() && _peripheryLibPath.isEmpty) {
+    // load the library from the asset directory
     var args = getFlutterPiArgs();
     var index = 1;
     for (var i = 1; i < args.length; ++i) {
@@ -187,7 +189,7 @@ DynamicLibrary getPeripheryLib() {
     }
     path = dir + library;
   } else {
-    String libName = _autoDetectCPUarch();
+    // store the appropriate in the system temp directory
 
     String base64EncodedLib = '';
     CpuArch arch = CpuArch();
@@ -206,19 +208,20 @@ DynamicLibrary getPeripheryLib() {
         break;
       default:
         throw LibraryException(LibraryErrorCode.invalidParameter,
-            "Not supported Cpu architecture");
+            "Not supported CPU architecture");
     }
+
+    String libName = _autoDetectCPUarch();
 
     var systemTempDir = Directory.systemTemp;
     path = systemTempDir.path + Platform.pathSeparator + libName;
     final file = File(path);
-
-    file.createSync(recursive: true);
+    file.createSync(recursive: false);
     final decodedBytes = base64Decode(base64EncodedLib);
     file.writeAsBytesSync(decodedBytes);
   }
-  _peripheryLib = DynamicLibrary.open(path);
 
+  _peripheryLib = DynamicLibrary.open(path);
   isPeripheryLibLoaded = true;
   return _peripheryLib;
 }

@@ -139,7 +139,7 @@ enum Parity {
   parityEven,
 }
 
-final DynamicLibrary _peripheryLib = getPeripheryLib();
+final DynamicLibrary _peripheryLib = loadPeripheryLib();
 
 // serial_t *serial_new(void);
 final _nativeSerialNew = voidPtrVOIDM('serial_new');

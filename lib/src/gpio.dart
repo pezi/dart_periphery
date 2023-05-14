@@ -220,7 +220,7 @@ class GPIOexception implements Exception {
   String toString() => errorMsg;
 }
 
-final DynamicLibrary _peripheryLib = getPeripheryLib();
+final DynamicLibrary _peripheryLib = loadPeripheryLib();
 
 // gpio_t *gpio_new(void);
 final _nativeGPIOnew = voidPtrVOIDM('gpio_new');

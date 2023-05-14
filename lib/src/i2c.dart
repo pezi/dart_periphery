@@ -201,7 +201,7 @@ class I2Cexception implements Exception {
   String toString() => errorMsg;
 }
 
-final DynamicLibrary _peripheryLib = getPeripheryLib();
+final DynamicLibrary _peripheryLib = loadPeripheryLib();
 
 // i2c_t *i2c_new(void);
 final _nativeI2Cnew = voidPtrVOIDM('i2c_new');

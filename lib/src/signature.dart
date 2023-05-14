@@ -7,9 +7,10 @@
 import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
+
 import 'library.dart';
 
-final DynamicLibrary _peripheryLib = getPeripheryLib();
+final DynamicLibrary _peripheryLib = loadPeripheryLib();
 
 // ignore: camel_case_types
 typedef intVoidS = Int32 Function(Pointer<Void> handle);

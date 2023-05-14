@@ -7,7 +7,9 @@ base64 -i libperiphery_arm64.so | tr -d \\n > libperiphery_arm64.so.base64
 base64 -i libperiphery_x86.so | tr -d \\n > libperiphery_x86.so.base64
 base64 -i libperiphery_x86_64.so | tr -d \\n > libperiphery_x86_64.so.base64
 
-echo "String arm ='\c" > lib.dart
+echo "// created by create_libbase64.sh" > lib.dart
+
+echo "String arm ='\c" >> lib.dart
 cat libperiphery_arm.so.base64 >> lib.dart
 echo "';" >> lib.dart
 

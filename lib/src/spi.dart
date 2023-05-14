@@ -58,7 +58,7 @@ class SPIexception implements Exception {
   String toString() => errorMsg;
 }
 
-final DynamicLibrary _peripheryLib = getPeripheryLib();
+final DynamicLibrary _peripheryLib = loadPeripheryLib();
 
 // spi_t *spi_new(void);
 final _nativeSPInew = voidPtrVOIDM('spi_new');

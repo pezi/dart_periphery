@@ -29,7 +29,7 @@ enum MMIOerrorCode {
   mmioErrorClose
 }
 
-final DynamicLibrary _peripheryLib = getPeripheryLib();
+final DynamicLibrary _peripheryLib = loadPeripheryLib();
 
 // mmio_t mmio_new(void);
 final _nativeMMIOnew = voidPtrVOIDM('mmio_new');
