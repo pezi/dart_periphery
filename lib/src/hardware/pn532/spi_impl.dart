@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dart_periphery/dart_periphery.dart';
-
 import 'package:dart_periphery/src/hardware/pn532/constants.dart';
 
 class PN532SpiImpl extends PN532BaseProtocol {
@@ -62,13 +61,13 @@ class PN532SpiImpl extends PN532BaseProtocol {
     // reverse bytes (since MSB and LSB differences)
     final List<int> reversedMessage = reverseUint8List(message);
 
-    // transfer the message and read euqally big response
+    // transfer the message and read equally big response
     final List<int> reversedResponse = spi.transfer(reversedMessage, false);
 
     // get the actual response data
     final List<int> response = reverseUint8List(reversedResponse);
 
-    // pull the chipSelect high to stop communicaiton
+    // pull the chipSelect high to stop communication
     if (chipSelectGpio != null) {
       chipSelectGpio!.write(true);
       sleep(const Duration(microseconds: 1));

@@ -2,15 +2,17 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'dart:convert';
 // https://github.com/vsergeev/c-periphery/blob/master/docs/serial.md
 // https://github.com/vsergeev/c-periphery/blob/master/src/serial.c
 // https://github.com/vsergeev/c-periphery/blob/master/src/serial.h
 // https://github.com/dart-lang/samples/tree/master/ffi
 
 import 'dart:ffi';
-import 'dart:convert';
-import 'library.dart';
+
 import 'package:ffi/ffi.dart';
+
+import 'library.dart';
 import 'signature.dart';
 
 /// Result of a [Serial.read] operation.
@@ -381,14 +383,14 @@ class Serial {
         _serialHandle = _openSerial(path, baudrate);
 
   static Pointer<Void> _openSerial(String path, Baudrate baudrate) {
-    var _serialHandle = _nativeSerialNew();
-    if (_serialHandle == nullptr) {
+    var serialHandle = _nativeSerialNew();
+    if (serialHandle == nullptr) {
       return throw SerialException(
           SerialErrorCode.serialErrorOpen, 'Error opening serial interface');
     }
     _checkError(_nativeSerialOpen(
-        _serialHandle, path.toNativeUtf8(), baudrate2Int(baudrate)));
-    return _serialHandle;
+        serialHandle, path.toNativeUtf8(), baudrate2Int(baudrate)));
+    return serialHandle;
   }
 
   /// Opens the <tt>tty</tt> device at the specified [path] (e.g. "/dev/ttyUSB0"), with the specified [baudrate], [databits],
@@ -422,13 +424,13 @@ class Serial {
       StopBits stopbits,
       bool xonxoff,
       bool rtsct) {
-    var _serialHandle = _nativeSerialNew();
-    if (_serialHandle == nullptr) {
+    var serialHandle = _nativeSerialNew();
+    if (serialHandle == nullptr) {
       return throw SerialException(
           SerialErrorCode.serialErrorOpen, 'Error opening serial interface');
     }
     _checkError(_nativeOpenAdvanced(
-        _serialHandle,
+        serialHandle,
         path.toNativeUtf8(),
         baudrate2Int(baudrate),
         databits2Int(databits),
@@ -436,7 +438,7 @@ class Serial {
         stopbits2Int(stopbits),
         xonxoff ? 1 : 0,
         rtsct ? 1 : 0));
-    return _serialHandle;
+    return serialHandle;
   }
 
   /// Polls for data available for reading from the serial port.

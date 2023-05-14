@@ -2,16 +2,18 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'dart:convert';
 // https://github.com/vsergeev/c-periphery/blob/master/docs/gpio.md
 // https://github.com/vsergeev/c-periphery/blob/master/src/gpio.c
 // https://github.com/vsergeev/c-periphery/blob/master/src/gpio.h
 // https://github.com/dart-lang/samples/tree/master/ffi
 
 import 'dart:ffi';
-import 'library.dart';
+
 import 'package:ffi/ffi.dart';
+
+import 'library.dart';
 import 'signature.dart';
-import 'dart:convert';
 
 /// Result codes of the [GPIO.poll].
 enum GPIOpolling { success, timeout }
@@ -91,7 +93,7 @@ enum GPIObias {
   gpioBiasPullDown,
 
   /// Disable line bias
-  gpioBiasDisabale,
+  gpioBiasDisable,
 }
 
 /// [GPIO] drive
@@ -194,7 +196,7 @@ class GPIOconfig {
         drive = GPIOdrive.gpioDriveDefault,
         inverted = false,
         label = '';
-  Pointer<_GPIOconfig> toNative() {
+  Pointer<_GPIOconfig> _toNative() {
     var cfg = malloc<_GPIOconfig>(1);
     cfg.ref.direction = direction.index;
     cfg.ref.edge = edge.index;
@@ -471,13 +473,13 @@ class GPIO {
 
   static Pointer<Void> _openGPIO(
       String path, int line, GPIOdirection direction) {
-    var _gpioHandle = _nativeGPIOnew();
-    if (_gpioHandle == nullptr) {
+    var gpioHandle = _nativeGPIOnew();
+    if (gpioHandle == nullptr) {
       return throw GPIOexception(GPIOerrorCode.gpioErrorOpen, openError);
     }
     _checkError(_nativeGPIOopen(
-        _gpioHandle, path.toNativeUtf8(), line, direction.index));
-    return _gpioHandle;
+        gpioHandle, path.toNativeUtf8(), line, direction.index));
+    return gpioHandle;
   }
 
   /// Opens the character device GPIO with the specified GPIO [name] and [direction] at the default character
@@ -491,13 +493,13 @@ class GPIO {
 
   static Pointer<Void> _openNameGPIO(
       String path, String name, GPIOdirection direction) {
-    var _gpioHandle = _nativeGPIOnew();
-    if (_gpioHandle == nullptr) {
+    var gpioHandle = _nativeGPIOnew();
+    if (gpioHandle == nullptr) {
       return throw GPIOexception(GPIOerrorCode.gpioErrorOpen, openError);
     }
-    _checkError(_nativeGPIOopenName(_gpioHandle, path.toNativeUtf8(),
-        name.toNativeUtf8(), direction.index));
-    return _gpioHandle;
+    _checkError(_nativeGPIOopenName(
+        gpioHandle, path.toNativeUtf8(), name.toNativeUtf8(), direction.index));
+    return gpioHandle;
   }
 
   /// Opens the character device GPIO with the specified GPIO [line] and configuration [config] at the default character
@@ -512,13 +514,13 @@ class GPIO {
 
   static Pointer<Void> _openAdvancedGPIO(
       String path, int line, GPIOconfig config) {
-    var _gpioHandle = _nativeGPIOnew();
-    if (_gpioHandle == nullptr) {
+    var gpioHandle = _nativeGPIOnew();
+    if (gpioHandle == nullptr) {
       return throw GPIOexception(GPIOerrorCode.gpioErrorOpen, openError);
     }
     _checkError(_nativeGPIOopenAdvanced(
-        _gpioHandle, path.toNativeUtf8(), line, config.toNative()));
-    return _gpioHandle;
+        gpioHandle, path.toNativeUtf8(), line, config._toNative()));
+    return gpioHandle;
   }
 
   /// Opens the character device GPIO with the specified GPIO [name] and the configuration [config] at the default character
@@ -533,13 +535,13 @@ class GPIO {
 
   static Pointer<Void> _openNameAdvancedGPIO(
       String path, String name, GPIOconfig config) {
-    var _gpioHandle = _nativeGPIOnew();
-    if (_gpioHandle == nullptr) {
+    var gpioHandle = _nativeGPIOnew();
+    if (gpioHandle == nullptr) {
       return throw GPIOexception(GPIOerrorCode.gpioErrorOpen, openError);
     }
-    _checkError(_nativeGPIOopenNameAdvanced(_gpioHandle, path.toNativeUtf8(),
-        name.toNativeUtf8(), config.toNative()));
-    return _gpioHandle;
+    _checkError(_nativeGPIOopenNameAdvanced(gpioHandle, path.toNativeUtf8(),
+        name.toNativeUtf8(), config._toNative()));
+    return gpioHandle;
   }
 
   /// Opens the sysfs GPIO with the specified [line] and [direction].
@@ -561,13 +563,13 @@ class GPIO {
             Pointer<Void>.fromAddress(_jsonMap(json)['handle'] as int);
 
   static Pointer<Void> _openSysfsGPIO(int line, GPIOdirection direction) {
-    var _gpioHandle = _nativeGPIOnew();
-    if (_gpioHandle == nullptr) {
+    var gpioHandle = _nativeGPIOnew();
+    if (gpioHandle == nullptr) {
       return throw GPIOexception(
           GPIOerrorCode.gpioErrorOpen, 'Error opening GPIO interface');
     }
-    _checkError(_nativeGPIOopenSysfs(_gpioHandle, line, direction.index));
-    return _gpioHandle;
+    _checkError(_nativeGPIOopenSysfs(gpioHandle, line, direction.index));
+    return gpioHandle;
   }
 
   /// Polls multiple GPIOs for an edge event configured with [GPIO.setGPIOedge].

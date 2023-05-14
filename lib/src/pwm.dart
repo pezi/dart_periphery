@@ -8,7 +8,9 @@
 // https://github.com/dart-lang/samples/tree/master/ffi
 
 import 'dart:ffi';
+
 import 'package:ffi/ffi.dart';
+
 import 'signature.dart';
 
 /// [PWM] error code
@@ -157,14 +159,14 @@ class PWM {
   }
 
   static Pointer<Void> _openPWM(int chip, int channel) {
-    var _pwmHandle = _nativePWMnew();
-    if (_pwmHandle == nullptr) {
+    var pwmHandle = _nativePWMnew();
+    if (pwmHandle == nullptr) {
       return throw PWMexception(
           PWMerrorCode.pwmErrorOpen, 'Error opening PWM chip/channel');
     }
-    _checkError(_nativePWMopen(_pwmHandle, chip, channel));
+    _checkError(_nativePWMopen(pwmHandle, chip, channel));
 
-    return _pwmHandle;
+    return pwmHandle;
   }
 
   /// Converts the native error code [value] to [PWMerrorCode].

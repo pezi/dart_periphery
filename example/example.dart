@@ -2,11 +2,12 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:dart_periphery/dart_periphery.dart';
 import 'dart:io';
 
+import 'package:dart_periphery/dart_periphery.dart';
+
 void main() {
-  // to disable CPU autodection
+  // to disable CPU autodetection
   // see https://pub.dev/packages/dart_periphery#native-libraries for details
   // setCPUarchitecture(CPU_ARCHITECTURE.ARM);
 
@@ -19,7 +20,7 @@ void main() {
 
   var gpio3 = GPIO.advanced(5, config);
 
-  print('GPIO info: ' + gpio.getGPIOinfo());
+  print('GPIO info: ${gpio.getGPIOinfo()}');
 
   print('GPIO native file handle: ${gpio.getGPIOfd()}');
   print('GPIO chip name: ${gpio.getGPIOchipName()}');

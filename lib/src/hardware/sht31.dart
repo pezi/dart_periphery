@@ -1,10 +1,10 @@
 // Copyright (c) 2022, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
+import 'dart:io';
+
 import 'package:dart_periphery/dart_periphery.dart';
 import 'package:dart_periphery/src/hardware/utils/byte_buffer.dart';
-
-import 'dart:io';
 
 // https://wiki.seeedstudio.com/Grove-TempAndHumi_Sensor-SHT31/
 // https://github.com/Seeed-Studio/Grove_SHT31_Temp_Humi_Sensor/blob/master/SHT31.h
@@ -52,7 +52,7 @@ class SHT31result {
   }
 }
 
-/// Sensirion SHT31 temperatur and humidity sensor with a high accuracy.
+/// Sensirion SHT31 temperature and humidity sensor with a high accuracy.
 ///
 /// See for more
 /// * [SHT31 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht31.dart)

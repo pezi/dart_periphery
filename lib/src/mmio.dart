@@ -8,8 +8,10 @@
 // https://github.com/dart-lang/samples/tree/master/ffi
 
 import 'dart:ffi';
-import 'library.dart';
+
 import 'package:ffi/ffi.dart';
+
+import 'library.dart';
 import 'signature.dart';
 
 /// [MMIO] error code
@@ -200,13 +202,13 @@ class MMIO {
         _mmioHandle = _mmioOpen(base, size);
 
   static Pointer<Void> _mmioOpen(int base, int size) {
-    var _mmioHandle = _nativeMMIOnew();
-    if (_mmioHandle == nullptr) {
+    var mmioHandle = _nativeMMIOnew();
+    if (mmioHandle == nullptr) {
       return throw MMIOexception(
           MMIOerrorCode.mmioErrorOpen, 'Error opening MMIO interface');
     }
-    _checkError(_nativeMMIOopen(_mmioHandle, base, size));
-    return _mmioHandle;
+    _checkError(_nativeMMIOopen(mmioHandle, base, size));
+    return mmioHandle;
   }
 
   /// Map the region of physical memory specified by the [base] physical address and [size] in bytes, using
@@ -218,14 +220,14 @@ class MMIO {
       : _mmioHandle = _mmioOpenAdvanced(base, size, path);
 
   static Pointer<Void> _mmioOpenAdvanced(int base, int size, String path) {
-    var _mmioHandle = _nativeMMIOnew();
-    if (_mmioHandle == nullptr) {
+    var mmioHandle = _nativeMMIOnew();
+    if (mmioHandle == nullptr) {
       return throw MMIOexception(
           MMIOerrorCode.mmioErrorOpen, 'Error opening MMIO interface');
     }
     _checkError(
-        _nativeMMIOopenAdvanced(_mmioHandle, base, size, path.toNativeUtf8()));
-    return _mmioHandle;
+        _nativeMMIOopenAdvanced(mmioHandle, base, size, path.toNativeUtf8()));
+    return mmioHandle;
   }
 
   /// Converts the native error code [value] to [MMIOerrorCode].

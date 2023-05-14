@@ -3,13 +3,14 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:io';
+
 import '../i2c.dart';
 import '../spi.dart';
-import 'utils/byte_buffer.dart';
 import 'bosch.dart';
+import 'utils/byte_buffer.dart';
 
 // Bosch BMx280 pressure and temperature sensor. The BME280 includes an additional humidity sensor.
-// Different constructors suppor access via I2C or SPI
+// Different constructors support access via I2C or SPI
 // Datasheet: https://cdn-shop.adafruit.com/datasheets/BST-BME280_DS001-10.pdf
 //
 // This code bases on the diozero project - Thanks to Matthew Lewis!
@@ -80,7 +81,7 @@ enum StandbyDuration {
 }
 
 /// [BME280] IIR Filter coefficient
-enum FilterCoefficient { filterOff, filter2, filiter4, filter8, filter16 }
+enum FilterCoefficient { filterOff, filter2, filter4, filter8, filter16 }
 
 // filter
 const int filterOff = 0;

@@ -3,7 +3,7 @@
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
 
-[![pub package](https://img.shields.io/badge/pub-v0.9.3-orange)](https://pub.dartlang.org/packages/dart_periphery)
+[![pub package](https://img.shields.io/badge/pub-v0.9.4-orange)](https://pub.dartlang.org/packages/dart_periphery)
 
 ## Important hint
 
@@ -354,33 +354,33 @@ void main() {
 cd ~
 ```
 
-2.) Download the last stable Dart SDK form [archiv](https://dart.dev/tools/sdk/archive) for your CPU architecture/OS.
+2.) Download the last stable Dart SDK form [archive](https://dart.dev/tools/sdk/archive) for your CPU architecture/OS.
 
 ### ARMv7
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.17.6/sdk/dartsdk-linux-arm-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.0.0/sdk/dartsdk-linux-arm-release.zip
 unzip dartsdk-linux-arm-release.zip
 ```
 
 ### ARMv8
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/2.17.6/sdk/dartsdk-linux-arm64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.0.0/sdk/dartsdk-linux-arm64-release.zip
 unzip dartsdk-linux-arm64-release.zip
 ```
 
 ### x86
 
 ``` bash
-https://storage.googleapis.com/dart-archive/channels/stable/release/2.17.6/sdk/dartsdk-linux-ia32-release.zip
+https://storage.googleapis.com/dart-archive/channels/stable/release/3.0.0/sdk/dartsdk-linux-ia32-release.zip
 unzip dartsdk-linux-ia32-release.zip
 ```
 
 ### x86_64
 
 ``` bash
-https://storage.googleapis.com/dart-archive/channels/stable/release/2.17.6/sdk/dartsdk-linux-x64-release.zip
+https://storage.googleapis.com/dart-archive/channels/stable/release/3.0.0/sdk/dartsdk-linux-x64-release.zip
 unzip dartsdk-linux-x64-release.zip
 ```
 
@@ -411,7 +411,7 @@ source ~/.profile
 
 to apply the changes.
 
-Test the installion
+Test the installation
 
 ``` bash
 pi@raspberrypi:~ $ dart --version
@@ -427,9 +427,9 @@ Currently **dart_periphery** ships with four prebuild native c-periphery librari
 * X86 - [libperiphery_x86.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86.so)
 * X86_64 - [libperiphery_x86_64.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86_64.so)
 
-**dart_periphery** calls uname() function to detect the CPU architecture for loading the appropriate libray. This auto detection mechanism can fail. Internally the logic tries to match the `uname -m` value to predefined string values.
+**dart_periphery** calls uname() function to detect the CPU architecture for loading the appropriate library. This auto detection mechanism can fail. Internally the logic tries to match the `uname -m` value to predefined string values.
 
-Following methods can be used to overwrite the auto loading of the prebuild library. But be aware, any of these methods to disable the auto detection must be called before any **dart_periphery** interface is used!
+Following methods can be used to overwrite the auto loading of the prebuilt library. But be aware, any of these methods to disable the auto detection must be called before any **dart_periphery** interface is used!
 
 ``` dart
 // enum CPU_ARCHITECTURE { x86, x86_64, arm, arm64 }
@@ -530,12 +530,12 @@ returns the command line parameter list of the `flutter-pi` command. The last pa
 
 [Test suite](https://github.com/pezi/dart_periphery/tree/main/test)
 
-| Architecture  | GPIO  |GPIO<sub>sysfs</sub>   | I2C   | SPI   | Serial| MMIO¹  | PWM   | LED   |
-| ------------- |:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|------:|
-| **ARM** ²     |&#9989;|&#9989;|&#9989;|&#9989;|&#9989;|&#9744;|&#9989;|&#9989;|
-| **AARCH64** ³ |&#10060;⁴|&#9989;|&#9989;|&#9989;|&#9989;|&#9744;|&#9989;|&#9989;|
-| **X86** ⁵     |&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|
-| **X86_64** ⁵  |&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|&#9744;|
+| Architecture  |   GPIO    | GPIO<sub>sysfs</sub> |   I2C   |   SPI   | Serial  |  MMIO¹  |   PWM   |     LED |
+|---------------|:---------:|:--------------------:|:-------:|:-------:|:-------:|:-------:|:-------:|--------:|
+| **ARM** ²     |  &#9989;  |       &#9989;        | &#9989; | &#9989; | &#9989; | &#9744; | &#9989; | &#9989; |
+| **AARCH64** ³ | &#10060;⁴ |       &#9989;        | &#9989; | &#9989; | &#9989; | &#9744; | &#9989; | &#9989; |
+| **X86** ⁵     |  &#9744;  |       &#9744;        | &#9744; | &#9744; | &#9744; | &#9744; | &#9744; | &#9744; |
+| **X86_64** ⁵  |  &#9744;  |       &#9744;        | &#9744; | &#9744; | &#9744; | &#9744; | &#9744; | &#9744; |
 
 &#9744; missing test | &#9989; test passed | &#10060; test failed
 

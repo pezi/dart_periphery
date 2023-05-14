@@ -2,12 +2,13 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:io';
-import '../i2c.dart';
 import 'dart:collection';
-import 'utils/byte_buffer.dart';
+import 'dart:io';
 import 'dart:math';
+
+import '../i2c.dart';
 import 'bosch.dart';
+import 'utils/byte_buffer.dart';
 
 // BME680 sensor for temperature, humidity, pressure and gas sensor
 //
@@ -358,11 +359,9 @@ class BME680result {
   /// [allVars] is false, true returns all variables. [fractionDigits] controls the number of fraction digits.
   String toJSON([int fractionDigits = 2, bool allVars = false]) {
     if (allVars == false) {
-      return _toJSONbase(fractionDigits) + '}';
+      return '${_toJSONbase(fractionDigits)}}';
     } else {
-      return _toJSONbase(fractionDigits) +
-          ',"gasResistance":"${gasResistance.toStringAsFixed(fractionDigits)}","isHeaterTempStable":"$isHeaterTempStable",' +
-          '"gasResistance":"$gasResistance","isGasMeasurementValid":"$isGasMeasurementValid","gasMeasurementIndex":"$gasMeasurementIndex","measureIndex":"$measureIndex"}';
+      return '${_toJSONbase(fractionDigits)},"gasResistance":"${gasResistance.toStringAsFixed(fractionDigits)}","isHeaterTempStable":"$isHeaterTempStable","gasResistance":"$gasResistance","isGasMeasurementValid":"$isGasMeasurementValid","gasMeasurementIndex":"$gasMeasurementIndex","measureIndex":"$measureIndex"}';
     }
   }
 }
@@ -1026,7 +1025,7 @@ class BME680 {
     tphDuration += (477 * 4); // TPH switching duration
     tphDuration += (477 * 5); // Gas measurement duration
     tphDuration += 500; // Get it to the closest whole number
-    tphDuration ~/= 1000; // Convert to milisecond [ms]
+    tphDuration ~/= 1000; // Convert to millisecond [ms]
 
     tphDuration += 1; // Wake up duration of 1ms
 
@@ -1047,7 +1046,7 @@ class BME680 {
         (477 * 4); // Temperature, pressure and humidity switching duration
     duration += (477 * 5); // Gas measurement duration
     duration += 500; // Get it to the closest whole number
-    duration ~/= 1000; // Convert to milisecond [ms]
+    duration ~/= 1000; // Convert to millisecond [ms]
 
     duration += 1; // Wake up duration of 1ms
 

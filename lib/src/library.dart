@@ -2,12 +2,14 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
-import 'dart:convert';
-import 'package:dart_periphery/src/cpu_architecture.dart';
-import 'package:path/path.dart';
 import 'dart:typed_data';
+
+import 'package:dart_periphery/src/cpu_architecture.dart';
+
+import 'native/lib_base64.dart';
 
 const pkgName = 'dart_periphery';
 
@@ -17,48 +19,11 @@ final String sharedLib = 'libperiphery.so';
 
 String library = "";
 
+String test = "///";
+
 late DynamicLibrary _peripheryLib;
 bool isPeripheryLibLoaded = false;
 String _peripheryLibPath = '';
-
-/// Build a file path.
-String toFilePath(String parent, String path, {bool windows = false}) {
-  var uri = Uri.parse(path);
-  path = uri.toFilePath(windows: windows);
-  if (isRelative(path)) {
-    return normalize(join(parent, path));
-  }
-  return normalize(path);
-}
-
-/// Find our package path in the current project
-String findPackagePath(String currentPath, {bool windows = false}) {
-  String findPath(File file) {
-    var lines = LineSplitter.split(file.readAsStringSync());
-    for (var line in lines) {
-      var parts = line.split(':');
-      if (parts.length > 1) {
-        if (parts[0] == pkgName) {
-          var location = parts.sublist(1).join(':');
-          return absolute(normalize(
-              toFilePath(dirname(file.path), location, windows: windows)));
-        }
-      }
-    }
-    return '';
-  }
-
-  var file = File(join(currentPath, '.packages'));
-  if (file.existsSync()) {
-    return findPath(file);
-  } else {
-    var parent = dirname(currentPath);
-    if (parent == currentPath) {
-      return '';
-    }
-    return findPackagePath(parent);
-  }
-}
 
 class PlatformException implements Exception {
   final String error;
@@ -67,9 +32,16 @@ class PlatformException implements Exception {
   String toString() => error;
 }
 
+// Fix typo
+// https://github.com/pezi/dart_periphery/pull/20
+@Deprecated("Fix typo in method name")
+void useSharedLibray() {
+  _peripheryLibPath = sharedLib;
+}
+
 /// dart_periphery loads the shared library.
 /// See [native-libraries](https://pub.dev/packages/dart_periphery#native-libraries) for details.
-void useSharedLibray() {
+void useSharedLibrary() {
   _peripheryLibPath = sharedLib;
 }
 
@@ -79,10 +51,10 @@ void setCustomLibrary(String absolutePath) {
   _peripheryLibPath = absolutePath;
 }
 
-/// Bypasses the autodection of the CPU architecture.
-void setCPUarchitecture(CPU_ARCHITECTURE arch) {
-  if (arch == CPU_ARCHITECTURE.notSupported ||
-      arch == CPU_ARCHITECTURE.undefinded) {
+/// Bypasses the autodetection of the CPU architecture.
+void setCPUarchitecture(CpuArchitecture arch) {
+  if (arch == CpuArchitecture.notSupported ||
+      arch == CpuArchitecture.undefined) {
     throw LibraryException(
         LibraryErrorCode.invalidParameter, "Invalid parameter");
   }
@@ -93,7 +65,7 @@ void setCPUarchitecture(CPU_ARCHITECTURE arch) {
 
 String _autoDetectCPUarch() {
   CpuArch arch = CpuArch();
-  if (arch.cpuArch == CPU_ARCHITECTURE.notSupported) {
+  if (arch.cpuArch == CpuArchitecture.notSupported) {
     throw LibraryException(LibraryErrorCode.cpuArchDetectionFailed,
         "Unable to detect CPU architecture, found '${arch.machine}' . Use 'setCustomLibrary(String absolutePath)' - see documentation https://github.com/pezi/dart_periphery, or create an issue https://github.com/pezi/dart_periphery/issues");
   }
@@ -104,11 +76,11 @@ String _autoDetectCPUarch() {
 
 /// dart_periphery loads the library from the actual directory.
 /// See [native-libraries](https://pub.dev/packages/dart_periphery#native-libraries) for details.
-void useLocalLibrary([CPU_ARCHITECTURE arch = CPU_ARCHITECTURE.undefinded]) {
-  if (arch == CPU_ARCHITECTURE.undefinded) {
-    _peripheryLibPath = './' + _autoDetectCPUarch();
+void useLocalLibrary([CpuArchitecture arch = CpuArchitecture.undefined]) {
+  if (arch == CpuArchitecture.undefined) {
+    _peripheryLibPath = './${_autoDetectCPUarch()}';
   } else {
-    if (arch == CPU_ARCHITECTURE.notSupported) {
+    if (arch == CpuArchitecture.notSupported) {
       throw LibraryException(
           LibraryErrorCode.invalidParameter, "Invalid parameter");
     }
@@ -186,7 +158,7 @@ DynamicLibrary getPeripheryLib() {
     throw PlatformException('dart_periphery is only supported for Linux!');
   }
 
-  String path;
+  String path = '';
   if (isFlutterPiEnv() && _peripheryLibPath.isEmpty) {
     var args = getFlutterPiArgs();
     var index = 1;
@@ -194,7 +166,7 @@ DynamicLibrary getPeripheryLib() {
       // skip --release
       if (args[i].startsWith('--release')) {
         ++index;
-        // skip optione like -r, --rotation <degrees>
+        // skip options like -r, --rotation <degrees>
       } else if (args[i].startsWith('-')) {
         index += 2;
       } else {
@@ -214,27 +186,37 @@ DynamicLibrary getPeripheryLib() {
       library = _autoDetectCPUarch();
     }
     path = dir + library;
-  } else if (_peripheryLibPath.isNotEmpty) {
-    path = _peripheryLibPath;
   } else {
-    if (library.isEmpty) {
-      library = _autoDetectCPUarch();
-    }
-    var location = findPackagePath(Directory.current.path);
-    if (location.isEmpty) {
-      throw LibraryException(LibraryErrorCode.libraryNotFound,
-          "Unable to find native lib '$library'. Use 'setCustomLibrary(String absolutePath)' - see documentation https://github.com/pezi/dart_periphery, or create an issue https://github.com/pezi/dart_periphery/issues");
-    }
-    path = normalize(join(location, 'src', 'native', library));
-  }
+    String libName = _autoDetectCPUarch();
 
-  if (path != 'libperiphery.so') {
-    if (FileSystemEntity.typeSync(path) == FileSystemEntityType.notFound) {
-      throw LibraryException(LibraryErrorCode.libraryNotFound,
-          "Unable to find native lib '$path'");
+    String base64EncodedLib = '';
+    CpuArch arch = CpuArch();
+    switch (arch.cpuArch) {
+      case CpuArchitecture.arm:
+        base64EncodedLib = arm;
+        break;
+      case CpuArchitecture.arm64:
+        base64EncodedLib = arm64;
+        break;
+      case CpuArchitecture.x86:
+        base64EncodedLib = x86;
+        break;
+      case CpuArchitecture.x86_64:
+        base64EncodedLib = x86_64;
+        break;
+      default:
+        throw LibraryException(LibraryErrorCode.invalidParameter,
+            "Not supported Cpu architecture");
     }
-  }
 
+    var systemTempDir = Directory.systemTemp;
+    path = systemTempDir.path + Platform.pathSeparator + libName;
+    final file = File(path);
+
+    file.createSync(recursive: true);
+    final decodedBytes = base64Decode(base64EncodedLib);
+    file.writeAsBytesSync(decodedBytes);
+  }
   _peripheryLib = DynamicLibrary.open(path);
 
   isPeripheryLibLoaded = true;

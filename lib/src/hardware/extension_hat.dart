@@ -3,6 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:io';
+
 import '../i2c.dart';
 
 const int digitalReadCmd = 1;
@@ -56,7 +57,7 @@ const int hatRegister = 1;
 
 const int delay = 50;
 
-// The orginal C code for the GrovePi Plus uses retries due a hardware problem :(!
+// The original C code for the GrovePi Plus uses retries due a hardware problem :(!
 // NanoHat Hub has no problems, seems to be the better hardware!
 int retry = 3;
 
@@ -288,12 +289,12 @@ class NanoHatHub extends ArduinoBasedHat {
     _sendCmd(ledbarReleaseCmd, pin);
   }
 
-  /// Attachs the servo to [pin].
+  /// Attaches the servo to [pin].
   void servoAttach(int pin) {
     _sendCmd(servoAttachCmd, pin);
   }
 
-  /// Detatchs the servo from [pin].
+  /// Detaches the servo from [pin].
   ///
   /// http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_Servo
   void servoDetach(int pin) {
@@ -301,7 +302,7 @@ class NanoHatHub extends ArduinoBasedHat {
   }
 
   /// Steers the position of the servo at [pin] to [position].
-  /// For detials see  http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_Servo
+  /// For details see  http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_Servo
   void servoWrite(int pin, int position) {
     _sendCmd(servoWriteCmd, pin, position);
   }
@@ -402,7 +403,7 @@ class GroveBaseHat {
       case rpiZeroHatPid:
         return 'Grove Base Hat RPi Zero';
     }
-    return 'Unkown Hat model';
+    return 'Unknown Hat model';
   }
 
   void _checkChannel(int channel) {

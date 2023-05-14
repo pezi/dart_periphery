@@ -9,7 +9,7 @@ import 'dart:io';
 // Datasheet: https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/
 void main() {
   // Select the right I2C bus number /dev/i2c-?
-  // 1 for Raspbery Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
+  // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
   var i2c = I2C(1);
   try {
     var mpu = MPU6050(i2c);

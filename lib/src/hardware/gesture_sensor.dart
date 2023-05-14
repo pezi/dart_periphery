@@ -7,6 +7,7 @@
 // https://github.com/DexterInd/GrovePi/blob/master/Software/Python/grove_gesture_sensor/grove_gesture_sensor.py
 
 import 'dart:io';
+
 import '../i2c.dart';
 
 const int _gestureReactionTime = 500;
@@ -72,7 +73,7 @@ const int gesRightFlag = 1 << 0;
 const int gesLeftFlag = 1 << 1;
 const int gesUpFLag = 1 << 2;
 const int gesDownFlag = 1 << 3;
-const int gesForwadFlag = 1 << 4;
+const int gesForwardFlag = 1 << 4;
 const int gesBackwardFlag = 1 << 5;
 const int gesClockwiseFlag = 1 << 6;
 const int gesCountClockwiseFlag = 1 << 7;
@@ -349,7 +350,7 @@ class GestureSensor {
       this.gestureQuitTime = _gestureQuitTime]) {
     var data0 = 0;
 
-    // At the first access Raspbery PI 3 runs into a timeout - sensor is still sleeping
+    // At the first access Raspberry PI 3 runs into a timeout - sensor is still sleeping
     try {
       data0 = i2c.readByteReg(paj7620Id, 0);
     } on I2Cexception catch (e) {
@@ -392,7 +393,7 @@ class GestureSensor {
         var data = i2c.readByteReg(paj7620Id, 0x43);
         if (data == gesLeftFlag) {
           gesture = Gesture.rightLeft;
-        } else if (data == gesForwadFlag) {
+        } else if (data == gesForwardFlag) {
           sleep(Duration(milliseconds: gestureQuitTime));
           gesture = Gesture.forward;
         } else if (data == gesBackwardFlag) {
@@ -407,7 +408,7 @@ class GestureSensor {
         var data = i2c.readByteReg(paj7620Id, 0x43);
         if (data == gesRightFlag) {
           gesture = Gesture.leftRight;
-        } else if (data == gesForwadFlag) {
+        } else if (data == gesForwardFlag) {
           sleep(Duration(milliseconds: gestureQuitTime));
           gesture = Gesture.forward;
         } else if (data == gesBackwardFlag) {
@@ -422,7 +423,7 @@ class GestureSensor {
         var data = i2c.readByteReg(paj7620Id, 0x43);
         if (data == gesDownFlag) {
           gesture = Gesture.upDown;
-        } else if (data == gesForwadFlag) {
+        } else if (data == gesForwardFlag) {
           sleep(Duration(milliseconds: gestureQuitTime));
           gesture = Gesture.forward;
         } else if (data == gesBackwardFlag) {
@@ -437,7 +438,7 @@ class GestureSensor {
         var data = i2c.readByteReg(paj7620Id, 0x43);
         if (data == gesUpFLag) {
           gesture = Gesture.downUp;
-        } else if (data == gesForwadFlag) {
+        } else if (data == gesForwardFlag) {
           sleep(Duration(milliseconds: gestureQuitTime));
           gesture = Gesture.forward;
         } else if (data == gesBackwardFlag) {
@@ -447,7 +448,7 @@ class GestureSensor {
           gesture = Gesture.down;
         }
         return gesture;
-      case gesForwadFlag:
+      case gesForwardFlag:
         sleep(Duration(milliseconds: gestureReactionTime));
         var data = i2c.readByteReg(paj7620Id, 0x43);
         if (data == gesBackwardFlag) {
@@ -460,7 +461,7 @@ class GestureSensor {
       case gesBackwardFlag:
         sleep(Duration(milliseconds: gestureReactionTime));
         var data = i2c.readByteReg(paj7620Id, 0x43);
-        if (data == gesForwadFlag) {
+        if (data == gesForwardFlag) {
           gesture = Gesture.backwardForward;
         } else {
           gesture = Gesture.backward;

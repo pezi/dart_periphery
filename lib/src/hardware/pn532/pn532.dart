@@ -1,7 +1,5 @@
 import 'package:collection/collection.dart';
-
 import 'package:dart_periphery/src/hardware/pn532/base_protocol.dart';
-
 import 'package:dart_periphery/src/hardware/pn532/constants.dart';
 import 'package:dart_periphery/src/hardware/pn532/exceptions.dart';
 import 'package:dart_periphery/src/hardware/utils/uint.dart';
@@ -245,7 +243,7 @@ class PN532 {
     // read acknowledgement
     _readAck();
 
-    // wait for a response or return if no response is excpected
+    // wait for a response or return if no response is expected
     if (responseLength == 0) {
       return [];
     }
@@ -283,7 +281,7 @@ class PN532 {
     List<int> finalCommandsList = [];
     Uint8 checksum = Uint8.zero();
 
-    // Adding all the neccessary padding commands and add some of them to the
+    // Adding all the necessary padding commands and add some of them to the
     // checksum (I actually don't really know why some of same aren't taken
     // into account when we calculate the checksum)
     finalCommandsList.add(pn532Preamble);
@@ -340,7 +338,7 @@ class PN532 {
       throw PN532BadResponseException(
           response: rawResponse,
           additionalInformation:
-              "The frame length and frame length checksum don't macht.");
+              "The frame length and frame length checksum don't mach.");
     }
 
     // new offset without the length and length checksum

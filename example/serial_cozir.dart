@@ -2,8 +2,9 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:dart_periphery/dart_periphery.dart';
 import 'dart:io';
+
+import 'package:dart_periphery/dart_periphery.dart';
 
 ///
 /// [COZIR CO2 Sensor](https://co2meters.com/Documentation/Manuals/Manual_GC_0024_0025_0026_Revised8.pdf)
@@ -12,7 +13,7 @@ void main() {
   print('Serial test - COZIR CO2 Sensor');
   var s = Serial('/dev/serial0', Baudrate.b9600);
   try {
-    print('Serial interface info: ' + s.getSerialInfo());
+    print('Serial interface info: ${s.getSerialInfo()}');
 
     // Return firmware version and sensor serial number - two lines
     s.writeString('Y\r\n');

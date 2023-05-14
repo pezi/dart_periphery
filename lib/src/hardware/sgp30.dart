@@ -9,6 +9,7 @@
 // https://github.com/Sensirion/embedded-sgp/tree/master/sgp30
 
 import 'dart:io';
+
 import '../i2c.dart';
 import 'utils/byte_buffer.dart';
 
@@ -68,8 +69,8 @@ const int cmdSetTVOCbaseline = 0x2077;
 const int cmdSetTVOCbaselineDelayMs = 10;
 
 /// [SGP30] exception
-class SGP30excpetion implements Exception {
-  SGP30excpetion(this.errorMsg);
+class SGP30exception implements Exception {
+  SGP30exception(this.errorMsg);
   final String errorMsg;
   @override
   String toString() => errorMsg;
@@ -168,7 +169,7 @@ class SGP30 {
     var read = i2c.readBytes(i2cAddress, 3 * responseLength);
 
     if (!checkCRC(read)) {
-      throw SGP30excpetion('CRC8 mismatch!');
+      throw SGP30exception('CRC8 mismatch!');
     }
 
     var result = <int>[];
@@ -247,7 +248,7 @@ class SGP30 {
   /// Performs an internal test. DO NOT call this method after
   /// [SGP30.iaqInit] because this test resets the sensor initialization!
   ///
-  /// To use this method create [SGP30] with the optional paramter
+  /// To use this method create [SGP30] with the optional parameter
   /// init = false
   void measureTest() {
     var data = _command(

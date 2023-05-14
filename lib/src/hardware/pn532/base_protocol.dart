@@ -1,9 +1,8 @@
 import 'dart:io';
 
-import 'package:meta/meta.dart';
 import 'package:dart_periphery/dart_periphery.dart';
-
 import 'package:dart_periphery/src/hardware/pn532/constants.dart';
+import 'package:meta/meta.dart';
 
 typedef PN532ReadyFunction = bool Function(int attemptCount);
 
@@ -56,7 +55,7 @@ abstract class PN532BaseProtocol {
 
       final int timeDelta = DateTime.now().millisecondsSinceEpoch - timeStart;
       if (timeDelta >= timeout) {
-        throw PN532TimeoutExcepiton(timeout: timeout);
+        throw PN532TimeoutException(timeout: timeout);
       }
 
       attemptCount++;

@@ -2,17 +2,19 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'dart:convert';
 // https://github.com/vsergeev/c-periphery/blob/master/docs/i2c.md
 // https://github.com/vsergeev/c-periphery/blob/master/src/i2c.c
 // https://github.com/vsergeev/c-periphery/blob/master/src/i2c.h
 // https://github.com/dart-lang/samples/tree/master/ffi
 
 import 'dart:ffi';
-import 'library.dart';
+
 import 'package:ffi/ffi.dart';
-import 'signature.dart';
+
 import 'hardware/utils/byte_buffer.dart';
-import 'dart:convert';
+import 'library.dart';
+import 'signature.dart';
 
 /*
     #define I2C_M_TEN		0x0010
@@ -283,13 +285,13 @@ class I2C {
   }
 
   static Pointer<Void> _openI2C(String path) {
-    var _i2cHandle = _nativeI2Cnew();
-    if (_i2cHandle == nullptr) {
+    var i2cHandle = _nativeI2Cnew();
+    if (i2cHandle == nullptr) {
       return throw I2Cexception(
           I2CerrorCode.i2cErrorOpen, 'Error opening I2C bus');
     }
-    _checkError(_nativeI2Copen(_i2cHandle, path.toNativeUtf8()));
-    return _i2cHandle;
+    _checkError(_nativeI2Copen(i2cHandle, path.toNativeUtf8()));
+    return i2cHandle;
   }
 
   /// Converts the native error code [value] to [I2CerrorCode].
@@ -348,7 +350,7 @@ class I2C {
 
   /// Writes a [byteValue] to the I2C device with the [address].
   ///
-  /// Some I2C devices can directly be written without an explizit register.
+  /// Some I2C devices can directly be written without an explicit register.
   void writeByte(int address, int byteValue) {
     var data = <I2Cmsg>[];
     data.add(I2Cmsg.buffer(address, [], [byteValue]));
@@ -377,7 +379,7 @@ class I2C {
 
   /// Writes [byteData] to the I2C device with the [address].
   ///
-  /// Some I2C devices can directly be written without an explizit register.
+  /// Some I2C devices can directly be written without an explicit register.
   void writeBytes(int address, List<int> byteData) {
     var data = <I2Cmsg>[];
     data.add(I2Cmsg.buffer(address, [], byteData));
@@ -387,7 +389,7 @@ class I2C {
 
   /// Writes a [wordValue] to the I2C device with the [address] and the bit [order].
   ///
-  /// Some I2C devices can directly be written without an explizit register.
+  /// Some I2C devices can directly be written without an explicit register.
   void writeWord(int address, int wordValue,
       [BitOrder order = BitOrder.msbLast]) {
     var data = <I2Cmsg>[];
@@ -424,7 +426,7 @@ class I2C {
 
   /// Reads a word from the I2C device with the [address] and the bit [order]].
   ///
-  /// Some I2C devices can directly be written without an explizit register. The bit order depends on the I2C device.
+  /// Some I2C devices can directly be written without an explicit register. The bit order depends on the I2C device.
   int readWord(int address, [BitOrder order = BitOrder.msbLast]) {
     var data = <I2Cmsg>[];
     data.add(I2Cmsg(address, [I2CmsgFlags.i2c_m_rd], 2));
@@ -460,7 +462,7 @@ class I2C {
 
   /// Reads a byte from the I2C device with the [address].
   ///
-  /// Some I2C devices can directly be read without explizit register.
+  /// Some I2C devices can directly be read without explicit register.
   int readByte(int address) {
     var data = <I2Cmsg>[];
     data.add(I2Cmsg(address, [I2CmsgFlags.i2c_m_rd], 1));
@@ -491,7 +493,7 @@ class I2C {
 
   /// Reads [len] bytes from [register] of the I2C device with the [address].
   ///
-  /// Some I2C devices can directly be read without explizit register.
+  /// Some I2C devices can directly be read without explicit register.
   List<int> readBytesReg(int address, int register, int len) {
     var data = <I2Cmsg>[];
     data.add(I2Cmsg.buffer(address, [], [register]));
@@ -533,7 +535,7 @@ class I2C {
     }
   }
 
-  /// Releases all interal native resoures.
+  /// Releases all internal native resources.
   void dispose() {
     _checkStatus();
     _invalid = true;

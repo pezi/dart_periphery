@@ -1,10 +1,11 @@
 import 'dart:ffi'; // For FFI
+
 import 'package:ffi/ffi.dart';
 
 typedef NativeCall = int Function(Pointer<Int8>);
 
 /// Supported CPU architectures
-enum CPU_ARCHITECTURE { x86, x86_64, arm, arm64, notSupported, undefinded }
+enum CpuArchitecture { x86, x86_64, arm, arm64, notSupported, undefined }
 
 final DynamicLibrary nativeAddLib = DynamicLibrary.open("libc.so.6");
 NativeCall uname = nativeAddLib
@@ -17,7 +18,7 @@ NativeCall uname = nativeAddLib
 class CpuArch {
   static CpuArch? _cpuArch;
   String machine;
-  CPU_ARCHITECTURE cpuArch;
+  CpuArchitecture cpuArch;
 
   factory CpuArch() {
     _cpuArch ??= CpuArch._internal();
@@ -26,28 +27,28 @@ class CpuArch {
 
   CpuArch._internal()
       : machine = "",
-        cpuArch = CPU_ARCHITECTURE.notSupported {
+        cpuArch = CpuArchitecture.notSupported {
     Uname uname = nativeUname();
     machine = uname.machine;
     switch (uname.machine) {
       case 'i686':
       case 'i386':
-        cpuArch = CPU_ARCHITECTURE.x86;
+        cpuArch = CpuArchitecture.x86;
         break;
       case 'x86_64':
-        cpuArch = CPU_ARCHITECTURE.x86_64;
+        cpuArch = CpuArchitecture.x86_64;
         break;
       case 'aarch64':
       case 'aarch64_be':
       case 'arm64':
       case 'armv8b':
       case 'armv8l':
-        cpuArch = CPU_ARCHITECTURE.arm64;
+        cpuArch = CpuArchitecture.arm64;
         break;
       case 'armv':
       case 'armv6l':
       case 'armv7l':
-        cpuArch = CPU_ARCHITECTURE.arm;
+        cpuArch = CpuArchitecture.arm;
         break;
     }
   }

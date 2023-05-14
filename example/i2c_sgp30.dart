@@ -9,7 +9,7 @@ import 'dart:io';
 // The Grove-VOC and eCO2 Gas Sensor(SGP30) is an air quality detection sensor based on the SGP30 chip.
 void main() {
   // Select the right I2C bus number /dev/i2c-?
-  // 1 for Raspbery Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
+  // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
   var s = SGP30(I2C(1));
   print('Serial number: ${s.getSerialId()}');
   print(s.getFeatureSetVersion());

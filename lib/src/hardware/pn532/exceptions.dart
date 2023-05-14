@@ -10,14 +10,14 @@ abstract class PN532Exception implements Exception {
 
   @override
   String toString() {
-    return super.toString() + "\nAdditional info:\n$information";
+    return "${super.toString()}\nAdditional info:\n$information";
   }
 }
 
-class PN532TimeoutExcepiton extends PN532Exception {
+class PN532TimeoutException extends PN532Exception {
   final int timeout;
 
-  PN532TimeoutExcepiton({
+  PN532TimeoutException({
     required this.timeout,
     String? additionalInfo,
   }) : super(
@@ -49,7 +49,7 @@ class PN532MoreThenOneTagsFoundException extends PN532Exception {
   PN532MoreThenOneTagsFoundException()
       : super(
             information:
-                "When reading the passiv target more than one UUID was found");
+                "When reading the passive target more than one UUID was found");
 }
 
 class PN532WrongResponseException extends PN532Exception {
@@ -84,5 +84,5 @@ class PN532NotToHostResponse extends PN532Exception {
 
 class PN532NotReadyException extends PN532Exception {
   PN532NotReadyException()
-      : super(information: "The first read byte didn't macht $pn532I2CReady");
+      : super(information: "The first read byte didn't mach $pn532I2CReady");
 }

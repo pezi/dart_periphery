@@ -4,6 +4,7 @@
 
 import 'dart:io';
 import 'dart:math';
+
 import 'package:dart_periphery/dart_periphery.dart';
 
 import '../i2c.dart';
@@ -293,7 +294,7 @@ class MPU6050 {
     return _dlpfCfg;
   }
 
-  // Callibrates the accelerometer and gyroscope sensors.
+  // Calibrates the accelerometer and gyroscope sensors.
   void _calibrateSensors() {
     var nbReadings = 50;
 

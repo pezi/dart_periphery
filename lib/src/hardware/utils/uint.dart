@@ -1,19 +1,17 @@
 import 'dart:typed_data';
 
 abstract class Uint<T extends Uint<T>> {
-
   final int numberOfBytesRequired;
   final T Function(int) constructorCallback;
 
   final ByteData _value;
   late final int negationMask;
 
-  Uint({
-    required this.numberOfBytesRequired, 
-    required this.constructorCallback,
-    required int value
-  }) : _value = ByteData(numberOfBytesRequired)
-  {
+  Uint(
+      {required this.numberOfBytesRequired,
+      required this.constructorCallback,
+      required int value})
+      : _value = ByteData(numberOfBytesRequired) {
     // calculate the negation mask once
     const int baseMask = 0xff;
     int tmpMask = 0xff;
@@ -33,10 +31,10 @@ abstract class Uint<T extends Uint<T>> {
   T reverseBytes() {
     T result = constructorCallback(0);
     T tmpValue = constructorCallback(value);
-    final T one = constructorCallback(1);  
+    final T one = constructorCallback(1);
 
-    for (int i=0; i < numberOfBytesRequired * 8; i++) {
-      // first shift is useless but otherwhise this loop would shift the last
+    for (int i = 0; i < numberOfBytesRequired * 8; i++) {
+      // first shift is useless but otherwise this loop would shift the last
       // bit of result out (when i = 7) - off by one bit error
       result <<= 1;
       result |= tmpValue & one;
@@ -59,13 +57,13 @@ abstract class Uint<T extends Uint<T>> {
   T operator >>(int other) => constructorCallback(value >> other);
   T operator <<(int other) => constructorCallback(value << other);
   T operator ~() {
-    // we need to hack a little bit here since a normal 
+    // we need to hack a little bit here since a normal
     //int inverted is not equal to inverting a 8 bit int!
 
     final int value = this.value;
 
-    // The in the compiler generated mask (negationMask) 
-    //with all 1 except e.g the 8 lsb 
+    // The in the compiler generated mask (negationMask)
+    //with all 1 except e.g the 8 lsb
     // Example Bit view: 1 1 1 .... 1 1 1 0 0 0 0 0 0 0 0
 
     // or the mask and value to get some thing like the following
@@ -86,13 +84,12 @@ abstract class Uint<T extends Uint<T>> {
   int get hashCode => _value.hashCode;
 }
 
-
 class Uint8 extends Uint<Uint8> {
-  Uint8(int value) : super(
-    numberOfBytesRequired: 1, 
-    constructorCallback: Uint8.new, 
-    value: value
-  );
+  Uint8(int value)
+      : super(
+            numberOfBytesRequired: 1,
+            constructorCallback: Uint8.new,
+            value: value);
   Uint8.zero() : this(0);
 
   @override
@@ -102,13 +99,12 @@ class Uint8 extends Uint<Uint8> {
   set value(int value) => _value.setUint8(0, value);
 }
 
-
 class Uint16 extends Uint<Uint16> {
-  Uint16(int value) : super(
-    numberOfBytesRequired: 2, 
-    constructorCallback: Uint16.new, 
-    value: value
-  );
+  Uint16(int value)
+      : super(
+            numberOfBytesRequired: 2,
+            constructorCallback: Uint16.new,
+            value: value);
   Uint16.zero() : this(0);
 
   @override
@@ -118,13 +114,12 @@ class Uint16 extends Uint<Uint16> {
   set value(int value) => _value.setUint16(0, value);
 }
 
-
 class Uint32 extends Uint<Uint32> {
-  Uint32(int value) : super(
-    numberOfBytesRequired: 4, 
-    constructorCallback: Uint32.new, 
-    value: value
-  );
+  Uint32(int value)
+      : super(
+            numberOfBytesRequired: 4,
+            constructorCallback: Uint32.new,
+            value: value);
   Uint32.zero() : this(0);
 
   @override

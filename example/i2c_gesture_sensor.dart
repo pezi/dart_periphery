@@ -8,7 +8,7 @@ import 'package:dart_periphery/dart_periphery.dart';
 // Grove Gesture sensor
 void main() {
   // Select the right I2C bus number /dev/i2c-?
-  // 1 for Raspbery Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
+  // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
   var i2c = I2C(1);
   try {
     var gesture = GestureSensor(i2c);

@@ -1,3 +1,10 @@
+## 0.9.4 2023-05-15
+
+* [pull request](https://github.com/pezi/dart_periphery/pull/20)
+* Update Dart version reference inside the readme to 3.0.0.
+* Fix typos inside the README.md
+* [pull request](https://github.com/pezi/dart_periphery/pull/20)
+
 ## 0.9.3 2022-08-16
 
 * Fix [issue](https://github.com/pezi/dart_periphery/issues/15#issuecomment-1215737582) 

@@ -9,7 +9,7 @@ import 'dart:io';
 // Grove-Temperature&Humidity&Pressure&Gas Sensor (BME680)
 void main() {
   // Select the right I2C bus number /dev/i2c-?
-  // 1 for Raspbery Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
+  // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
   var i2c = I2C(1);
   var bme680 = BME680(i2c);
 
