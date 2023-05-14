@@ -432,16 +432,16 @@ Currently **dart_periphery** ships with four prebuild native c-periphery librari
 Following methods can be used to overwrite the auto loading of the prebuilt library. But be aware, any of these methods to disable the auto detection must be called before any **dart_periphery** interface is used!
 
 ``` dart
-// enum CPU_ARCHITECTURE { x86, x86_64, arm, arm64 }
-void setCPUarchitecture(CPU_ARCHITECTURE arch)
+// enum CpuArchitecture { x86, x86_64, arm, arm64 }
+void setCPUarchitecture(CpuArchitecture arch)
 ```
 
 sets explicit the CPU architecture, which loads a library according following mapping
 
-* CPU_ARCHITECTURE.ARM → [libperiphery_arm.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm.so)
-* CPU_ARCHITECTURE.ARM64 → [libperiphery_arm64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm64.so)
-* CPU_ARCHITECTURE.X86 → [libperiphery_x86.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86.so)
-* CPU_ARCHITECTURE.X86_64 → [libperiphery_x86_64.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86_64.so)
+* CpuArchitecture.ARM → [libperiphery_arm.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm.so)
+* CpuArchitecture.ARM64 → [libperiphery_arm64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm64.so)
+* CpuArchitecture.X86 → [libperiphery_x86.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86.so)
+* CpuArchitecture.X86_64 → [libperiphery_x86_64.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86_64.so)
 
 ``` dart
 useSharedLibray();
@@ -466,9 +466,9 @@ dart compile exe i2c_example.dart
 call
 
 ``` dart
-// optional parameter enum CPU_ARCHITECTURE { x86, x86_64, arm, arm64 }
+// optional parameter enum CpuArchitecture { x86, x86_64, arm, arm64 }
 // to skip auto detection
-void useLocalLibrary([CPU_ARCHITECTURE arch])
+void useLocalLibrary([CpuArchitecture arch])
 ```
 
 The appropriate [library](https://github.com/pezi/dart_periphery/blob/main/lib/src/native) should be in same directory as the exe.
@@ -483,8 +483,8 @@ The appropriate [library](https://github.com/pezi/dart_periphery/blob/main/lib/s
 The appropriate library is loaded by auto detection of the CPU architecture. If this way fails, the auto detection can be overruled by following two methods:
 
 ``` dart
-// enum CPU_ARCHITECTURE { x86, x86_64, arm, arm64 }
-void setCPUarchitecture(CPU_ARCHITECTURE arch)
+// enum CpuArchitecture { x86, x86_64, arm, arm64 }
+void setCPUarchitecture(CpuArchitecture arch)
 void setCustomLibrary(String absolutePath)
 ```
 
