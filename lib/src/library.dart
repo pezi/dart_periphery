@@ -7,8 +7,6 @@ import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:dart_periphery/src/cpu_architecture.dart';
-
 import 'native/lib_base64.dart';
 
 const pkgName = 'dart_periphery';
@@ -51,43 +49,42 @@ void setCustomLibrary(String absolutePath) {
   _peripheryLibPath = absolutePath;
 }
 
+const libraryNameForAbi = {
+  Abi.linuxIA32: 'libperiphery_x86.so',
+  Abi.linuxX64: 'libperiphery_x86_64.so',
+  Abi.linuxArm: 'libperiphery_arm.so',
+  Abi.linuxArm64: 'libperiphery_arm64.so',
+};
+
+bool _abiSupported(Abi abi) {
+  return libraryNameForAbi.containsKey(abi);
+}
+
 /// Bypasses the autodetection of the CPU architecture.
-void setCPUarchitecture(CpuArchitecture arch) {
-  if (arch == CpuArchitecture.notSupported ||
-      arch == CpuArchitecture.undefined) {
+void setCPUarchitecture(Abi abi) {
+  if (_abiSupported(abi)) {
     throw LibraryException(
         LibraryErrorCode.invalidParameter, "Invalid parameter");
   }
-  var cpu = arch.toString();
-  cpu = cpu.substring(cpu.indexOf(".") + 1).toLowerCase();
-  library = 'libperiphery_$cpu.so';
+
+  library = libraryNameForAbi[abi]!;
 }
 
-String _autoDetectCPUarch() {
-  CpuArch arch = CpuArch();
-  if (arch.cpuArch == CpuArchitecture.notSupported) {
+String _autoDetectCPUarch([Abi? abi]) {
+  abi ??= Abi.current();
+
+  if (_abiSupported(abi)) {
     throw LibraryException(LibraryErrorCode.cpuArchDetectionFailed,
-        "Unable to detect CPU architecture, found '${arch.machine}' . Use 'setCustomLibrary(String absolutePath)' - see documentation https://github.com/pezi/dart_periphery, or create an issue https://github.com/pezi/dart_periphery/issues");
+        "Unable to detect CPU architecture, found '$abi' . Use 'setCustomLibrary(String absolutePath)' - see documentation https://github.com/pezi/dart_periphery, or create an issue https://github.com/pezi/dart_periphery/issues");
   }
-  var cpu = arch.cpuArch.toString();
-  cpu = cpu.substring(cpu.indexOf(".") + 1).toLowerCase();
-  return 'libperiphery_$cpu.so';
+
+  return libraryNameForAbi[abi]!;
 }
 
 /// dart_periphery loads the library from the actual directory.
 /// See [native-libraries](https://pub.dev/packages/dart_periphery#native-libraries) for details.
-void useLocalLibrary([CpuArchitecture arch = CpuArchitecture.undefined]) {
-  if (arch == CpuArchitecture.undefined) {
-    _peripheryLibPath = './${_autoDetectCPUarch()}';
-  } else {
-    if (arch == CpuArchitecture.notSupported) {
-      throw LibraryException(
-          LibraryErrorCode.invalidParameter, "Invalid parameter");
-    }
-    var cpu = arch.toString();
-    cpu = cpu.substring(cpu.indexOf(".") + 1).toLowerCase();
-    _peripheryLibPath = './libperiphery_$cpu.so';
-  }
+void useLocalLibrary([Abi? abi]) {
+  _peripheryLibPath = './${_autoDetectCPUarch(abi)}';
 }
 
 enum LibraryErrorCode {
@@ -192,18 +189,18 @@ DynamicLibrary loadPeripheryLib() {
     // store the appropriate in the system temp directory
 
     String base64EncodedLib = '';
-    CpuArch arch = CpuArch();
-    switch (arch.cpuArch) {
-      case CpuArchitecture.arm:
+    final abi = Abi.current();
+    switch (abi) {
+      case Abi.linuxArm:
         base64EncodedLib = arm;
         break;
-      case CpuArchitecture.arm64:
+      case Abi.linuxArm64:
         base64EncodedLib = arm64;
         break;
-      case CpuArchitecture.x86:
+      case Abi.linuxIA32:
         base64EncodedLib = x86;
         break;
-      case CpuArchitecture.x86_64:
+      case Abi.linuxX64:
         base64EncodedLib = x86_64;
         break;
       default:
