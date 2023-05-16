@@ -1,58 +1,5 @@
-import 'dart:ffi'; // For FFI
-
-import 'package:ffi/ffi.dart';
-
-typedef NativeCall = int Function(Pointer<Int8>);
-
-/// Supported CPU architectures
-enum CpuArchitecture { x86, x86_64, arm, arm64, notSupported, undefined }
-
-final DynamicLibrary nativeAddLib = DynamicLibrary.open("libc.so.6");
-NativeCall uname = nativeAddLib
-    .lookup<NativeFunction<Int32 Function(Pointer<Int8>)>>("uname")
-    .asFunction();
-
-// https://en.wikipedia.org/wiki/Uname
-
-/// Class which holds the CPU architecture of the SoC.
-class CpuArch {
-  static CpuArch? _cpuArch;
-  String machine;
-  CpuArchitecture cpuArch;
-
-  factory CpuArch() {
-    _cpuArch ??= CpuArch._internal();
-    return _cpuArch as CpuArch;
-  }
-
-  CpuArch._internal()
-      : machine = "",
-        cpuArch = CpuArchitecture.notSupported {
-    Uname uname = nativeUname();
-    machine = uname.machine;
-    switch (uname.machine) {
-      case 'i686':
-      case 'i386':
-        cpuArch = CpuArchitecture.x86;
-        break;
-      case 'x86_64':
-        cpuArch = CpuArchitecture.x86_64;
-        break;
-      case 'aarch64':
-      case 'aarch64_be':
-      case 'arm64':
-      case 'armv8b':
-      case 'armv8l':
-        cpuArch = CpuArchitecture.arm64;
-        break;
-      case 'armv':
-      case 'armv6l':
-      case 'armv7l':
-        cpuArch = CpuArchitecture.arm;
-        break;
-    }
-  }
-}
+import 'dart:ffi';
+import 'dart:io';
 
 /// Uname class, container for the Linux uname struct values.
 class Uname {
@@ -66,54 +13,45 @@ class Uname {
 
 /// Calls the native uname() function.
 Uname nativeUname() {
-  // allocate a memory buffer for struct utsname - size value derived from this source
-  // https://man7.org/linux/man-pages/man2/uname.2.html
-  const len = 6 * 257; // maxium size
-  const enumElements = 5;
+  final ostype = File('/proc/sys/kernel/ostype').readAsStringSync();
+  final hostname = File('/proc/sys/kernel/hostname').readAsStringSync();
+  final osrelease = File('/proc/sys/kernel/osrelease').readAsStringSync();
+  final version = File('/proc/sys/kernel/version').readAsStringSync();
 
-  Pointer<Int8> data = calloc<Int8>(len);
+  // Kernels since 6.1 also have `/proc/sys/kernel/arch`.
+  final machine = (Process.runSync('uname', ['-m']).stdout as String).trim();
 
-  try {
-    if (uname(data) != 0) {
-      throw Exception('Calling uname() failed.');
+  return Uname(ostype, hostname, osrelease, version, machine);
+}
+
+enum CpuArchitecture { x86, x86_64, arm, arm64, notSupported, undefined }
+
+class CpuArch {
+  static CpuArch? _cpuArch;
+  String machine;
+  CpuArchitecture cpuArch;
+
+  factory CpuArch() {
+    _cpuArch ??= CpuArch._internal();
+    return _cpuArch as CpuArch;
+  }
+
+  CpuArch._internal()
+      : machine = "",
+        cpuArch = CpuArchitecture.notSupported {
+    switch (Abi.current()) {
+      case Abi.linuxIA32:
+        cpuArch = CpuArchitecture.x86;
+        break;
+      case Abi.linuxX64:
+        cpuArch = CpuArchitecture.x86_64;
+        break;
+      case Abi.linuxArm64:
+        cpuArch = CpuArchitecture.arm64;
+        break;
+      case Abi.linuxArm:
+        cpuArch = CpuArchitecture.arm;
+        break;
     }
-
-    // calculate _UTSNAME_LENGTH
-    var utslen = 0;
-    label:
-    for (int i = 0; i < len; ++i) {
-      if (data[i] == 0) {
-        for (int j = i + 1; j < len; ++j) {
-          if (data[j] != 0) {
-            utslen = j;
-            break label;
-          }
-        }
-      }
-    }
-
-    var values = <String>[];
-
-    // extract these 5 strings from the memory
-    //
-    // char sysname[];    /* Operating system name (e.g., "Linux") */
-    // char nodename[];   /* Name within "some implementation-defined network" */
-    // char release[];    /* Operating system release (e.g., "2.6.28") */
-    // char version[];    /* Operating system version */
-    // char machine[];    /* Hardware identifier */
-    for (int i = 0; i < enumElements; ++i) {
-      var start = utslen * i;
-      StringBuffer buf = StringBuffer();
-      for (int i = start; i < len; ++i) {
-        if (data[i] == 0) {
-          break;
-        }
-        buf.write(String.fromCharCode(data[i]));
-      }
-      values.add(buf.toString());
-    }
-    return Uname(values[0], values[1], values[2], values[3], values[4]);
-  } finally {
-    malloc.free(data);
   }
 }
