@@ -43,7 +43,7 @@ abstract class PN532BaseProtocol {
 
     bool pn532IsReady = pn532ReadyFunction(attemptCount);
     while (!pn532IsReady) {
-      // this sleep is extremly important! (when we don't use the irqPin)
+      // this sleep is extremely important! (when we don't use the irqPin)
       // without you read the pn532 to often which curses to many interrupts
       // on the pn532 board which results in to little execution time for the
       // actual command/firmware on the pn532 which ends up in only getting
@@ -71,10 +71,10 @@ abstract class PN532BaseProtocol {
 
   /// The implementation is protocol based. Just check if the PN532 is ready
   /// based on the used protocol (if an `irqPin`) was specified
-  /// the `PN532BaseProtocol` will use the `irqPin` instead of this funciton!
+  /// the `PN532BaseProtocol` will use the `irqPin` instead of this function!
   ///
-  /// The parameter `attemptCount` will provide you with a count that refelcts
-  /// how often this function was already called in this `waitReady` cyclus.
+  /// The parameter `attemptCount` will provide you with a count that reflects
+  /// how often this function was already called in this `waitReady` cycle.
   /// Starting with 0!
   bool isReady(int attemptCount);
 

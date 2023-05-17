@@ -1,9 +1,13 @@
+## 0.9.5 2023-05-17
+
+* Rework library loading API and fix some problems.
+
 ## 0.9.4 2023-05-15
 
 * [pull request](https://github.com/pezi/dart_periphery/pull/20)
 * Update Dart version reference inside the readme to 3.0.0.
-* Fix typos inside the README.md
-* [pull request](https://github.com/pezi/dart_periphery/pull/20)
+* Fix typos in README.md
+* [issue](https://github.com/pezi/dart_periphery/issues/18)
 
 ## 0.9.3 2022-08-16
 
@@ -71,7 +75,7 @@
 
 ## 0.8.19-beta 2021-03-19
 
-* Rework Dart doucmentation/API-documentation
+* Rework Dart documentation/API-documentation
 * Switch to Dart 2.12.2
 
 ## 0.8.18-beta 2021-03-18

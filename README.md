@@ -3,14 +3,9 @@
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
 
-[![pub package](https://img.shields.io/badge/pub-v0.9.4-orange)](https://pub.dartlang.org/packages/dart_periphery)
+[![pub package](https://img.shields.io/badge/pub-v0.9.5-orange)](https://pub.dartlang.org/packages/dart_periphery)
 
 ## Important hint
-
-**v0.9.x** is an API change release, which fixes all the camel case warnings of the source code. When starting this project enums and variables from existing C und Java code were not converted to camel case.
-
-e.g. `GPIOdirection.GPIO_DIR_OUT` changed to `GPIOdirection.gpioDirOut`
-
 
 ## Introduction
 
@@ -42,7 +37,7 @@ The number of GPIO libraries/interfaces is becoming increasingly smaller.
 * The famous wiringpi library is [deprecated](https://hackaday.com/2019/09/18/wiringpi-library-to-be-deprecated).
 * GPIO sysfs is [deprecated](https://www.raspberrypi.org/forums/viewtopic.php?t=274416).
 
-**dart_periphery** - all interfaces are ported:
+**dart_periphery**
 
 * [GPIO](#gpio) example / [API](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/GPIO-class.html)
 * [I2C](#i2c) example / [API](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/I2C-class.html)
@@ -420,12 +415,27 @@ Dart SDK version: 2.17.6 (stable) (Tue Jul 12 12:54:37 2022 +0200) on "linux_arm
 
 ## Native libraries
 
-Currently **dart_periphery** ships with four prebuild native c-periphery libraries for
+Currently **dart_periphery** ships with four prebuilt native c-periphery libraries for
+
+
 
 * ARMv7 - [libperiphery_arm.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm.so)
 * ARMv8 - [libperiphery_arm64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm64.so)
 * X86 - [libperiphery_x86.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86.so)
 * X86_64 - [libperiphery_x86_64.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86_64.so)
+
+Since version 9.0.4 **dart_periphery** writes the appropriate library to the system tmp directory. 
+For versions below 9.0.4 **dart_periphery** tries to load the library from the pub cache. But this hacky code is broken with newer dart versions.
+
+Following methods can be used to control the tmp directory handling.
+
+``` dart
+/// Sets the tmp directory for the extraction of the libperiphery.so file.
+void setTempDirectory(String tmpDir)
+
+/// Allows to load an existing libperiphery.so file from tmp directory. 
+void reuseTmpFileLibrary(bool reuse)
+```
 
 **dart_periphery** calls uname() function to detect the CPU architecture for loading the appropriate library. This auto detection mechanism can fail. Internally the logic tries to match the `uname -m` value to predefined string values.
 
@@ -449,36 +459,36 @@ useSharedLibray();
 
 If this method is called, **dart_periphery** loads the shared library. For this case c-periphery must be installed as a shared library. See for [section Shared Library](https://github.com/vsergeev/c-periphery#shared-library) for details.
 
-To load a custom library call
+To load a custom library call following method
 
 ``` dart
 void setCustomLibrary(String absolutePath)
 ```
-
 This method can also be helpful for a currently not supported platform.
 
-For a dart native binary, which can be deployed
-
-``` bash
-dart compile exe i2c_example.dart
-```
-
-call
+If you want to load the library from the current directory call
 
 ``` dart
 // optional parameter enum CpuArchitecture { x86, x86_64, arm, arm64 }
 // to skip auto detection
 void useLocalLibrary([CpuArchitecture arch])
 ```
+The appropriate library can be found [here](https://github.com/pezi/dart_periphery/blob/main/lib/src/native) .
 
-The appropriate [library](https://github.com/pezi/dart_periphery/blob/main/lib/src/native) should be in same directory as the exe.
 
 ## flutter-pi
 
-**dart_periphery** works with flutter-pi, a light-weight [Flutter Engine Embedder](https://github.com/ardera/flutter-pi) for Raspberry Pi. For **flutter-pi** the appropriate library must be copied inside the flutter asset directory.
+**dart_periphery** works with flutter-pi, a light-weight [Flutter Engine Embedder](https://github.com/ardera/flutter-pi) for Raspberry Pi. Following method loads
 
-* In most cases the ARMv7 library: [libperiphery_arm.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm.so) for Raspberry Pi OS 32-bit
-* ARMv8 [libperiphery_aarch64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_aarch64.so) for Raspberry Pi OS 64-bit
+``` dart
+// Loads the libraray form the flutter-pi asset directory.
+void loadLibFromFlutterAssetDir(bool load) 
+```
+
+the appropriate library from the flutter asset directory. This overwrites the library self-extraction mechanism.
+
+* In most cases the ARMv7 library: [libperiphery_arm.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_arm.so) for Raspberry Pi OS 32-bit
+* ARMv8 [libperiphery_aarch64.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86_64.so) for Raspberry Pi OS 64-bit
 
 The appropriate library is loaded by auto detection of the CPU architecture. If this way fails, the auto detection can be overruled by following two methods:
 

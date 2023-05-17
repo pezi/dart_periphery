@@ -17,13 +17,13 @@ const String version = '1.0.0';
 
 final String sharedLib = 'libperiphery.so';
 
-String library = "";
-
-String test = "///";
-
 late DynamicLibrary _peripheryLib;
-bool isPeripheryLibLoaded = false;
+bool _isPeripheryLibLoaded = false;
 String _peripheryLibPath = '';
+String _tmpDirectory = Directory.systemTemp.path;
+String _libraryFileName = '';
+bool _reuseTmpFileLibrary = false;
+bool _useFlutterPiAssetDir = false;
 
 class PlatformException implements Exception {
   final String error;
@@ -60,7 +60,22 @@ void setCPUarchitecture(CpuArchitecture arch) {
   }
   var cpu = arch.toString();
   cpu = cpu.substring(cpu.indexOf(".") + 1).toLowerCase();
-  library = 'libperiphery_$cpu.so';
+  _libraryFileName = 'libperiphery_$cpu.so';
+}
+
+/// Sets the tmp directory for the extraction of the libperiphery.so file.
+void setTempDirectory(String tmpDir) {
+  _tmpDirectory = tmpDir;
+}
+
+/// Allows to load an existing libperiphery.so file from tmp directory.
+void reuseTmpFileLibrary(bool reuse) {
+  _reuseTmpFileLibrary = reuse;
+}
+
+/// Loads the library form the flutter-pi asset directory.
+void loadLibFromFlutterAssetDir(bool use) {
+  _useFlutterPiAssetDir = use;
 }
 
 String _autoDetectCPUarch() {
@@ -93,7 +108,8 @@ void useLocalLibrary([CpuArchitecture arch = CpuArchitecture.undefined]) {
 enum LibraryErrorCode {
   libraryNotFound,
   cpuArchDetectionFailed,
-  invalidParameter
+  invalidParameter,
+  invalidTmpDirectory
 }
 
 /// Library exception
@@ -152,76 +168,96 @@ List<String> getFlutterPiArgs() {
 
 /// Loads the Linux/CPU specific periphery library as a DynamicLibrary.
 DynamicLibrary loadPeripheryLib() {
-  if (isPeripheryLibLoaded) {
+  if (_isPeripheryLibLoaded) {
     return _peripheryLib;
   }
   if (!Platform.isLinux) {
     throw PlatformException('dart_periphery is only supported for Linux!');
   }
 
-  String path = '';
-  if (isFlutterPiEnv() && _peripheryLibPath.isEmpty) {
-    // load the library from the asset directory
-    var args = getFlutterPiArgs();
-    var index = 1;
-    for (var i = 1; i < args.length; ++i) {
-      // skip --release
-      if (args[i].startsWith('--release')) {
-        ++index;
-        // skip options like -r, --rotation <degrees>
-      } else if (args[i].startsWith('-')) {
-        index += 2;
-      } else {
-        break;
+  if (_peripheryLibPath.isEmpty) {
+    if (isFlutterPiEnv() && _useFlutterPiAssetDir) {
+      // load the library from the asset directory
+      var args = getFlutterPiArgs();
+      var index = 1;
+      for (var i = 1; i < args.length; ++i) {
+        // skip --release
+        if (args[i].startsWith('--release')) {
+          ++index;
+          // skip options like -r, --rotation <degrees>
+        } else if (args[i].startsWith('-')) {
+          index += 2;
+        } else {
+          break;
+        }
       }
-    }
-    var assetDir = args[index];
-    var separator = '';
-    if (!assetDir.startsWith('/')) {
-      separator = '/';
-    }
-    var dir = Directory.current.path + separator + assetDir;
-    if (!dir.endsWith('/')) {
-      dir += '/';
-    }
-    if (library.isEmpty) {
-      library = _autoDetectCPUarch();
-    }
-    path = dir + library;
-  } else {
-    // store the appropriate in the system temp directory
+      var assetDir = args[index];
+      var separator = '';
+      if (!assetDir.startsWith('/')) {
+        separator = '/';
+      }
+      var dir = Directory.current.path + separator + assetDir;
+      if (!dir.endsWith('/')) {
+        dir += '/';
+      }
+      if (_libraryFileName.isEmpty) {
+        _libraryFileName = _autoDetectCPUarch();
+      }
+      _peripheryLibPath = dir + _libraryFileName;
+    } else {
+      // store the appropriate in the system temp directory
 
-    String base64EncodedLib = '';
-    CpuArch arch = CpuArch();
-    switch (arch.cpuArch) {
-      case CpuArchitecture.arm:
-        base64EncodedLib = arm;
-        break;
-      case CpuArchitecture.arm64:
-        base64EncodedLib = arm64;
-        break;
-      case CpuArchitecture.x86:
-        base64EncodedLib = x86;
-        break;
-      case CpuArchitecture.x86_64:
-        base64EncodedLib = x86_64;
-        break;
-      default:
-        throw LibraryException(LibraryErrorCode.invalidParameter,
-            "Not supported CPU architecture");
+      String base64EncodedLib = '';
+      CpuArch arch = CpuArch();
+      switch (arch.cpuArch) {
+        case CpuArchitecture.arm:
+          base64EncodedLib = arm;
+          break;
+        case CpuArchitecture.arm64:
+          base64EncodedLib = arm64;
+          break;
+        case CpuArchitecture.x86:
+          base64EncodedLib = x86;
+          break;
+        case CpuArchitecture.x86_64:
+          base64EncodedLib = x86_64;
+          break;
+        default:
+          throw LibraryException(LibraryErrorCode.invalidParameter,
+              "Not supported CPU architecture");
+      }
+
+      if (_libraryFileName.isEmpty) {
+        _libraryFileName = _autoDetectCPUarch();
+      }
+
+      if (_tmpDirectory.isEmpty) {
+        throw LibraryException(
+            LibraryErrorCode.invalidTmpDirectory, "Temp directory is empty");
+      }
+      if (!Directory(_tmpDirectory).existsSync()) {
+        throw LibraryException(LibraryErrorCode.invalidTmpDirectory,
+            "Temp directory does not exist");
+      }
+
+      String path = _tmpDirectory + Platform.pathSeparator + _libraryFileName;
+      final file = File(path);
+      if (!file.existsSync() || !_reuseTmpFileLibrary) {
+        file.createSync(recursive: false);
+        final decodedBytes = base64Decode(base64EncodedLib);
+        file.writeAsBytesSync(decodedBytes);
+      }
+
+      _peripheryLibPath = path;
     }
-
-    String libName = _autoDetectCPUarch();
-
-    var systemTempDir = Directory.systemTemp;
-    path = systemTempDir.path + Platform.pathSeparator + libName;
-    final file = File(path);
-    file.createSync(recursive: false);
-    final decodedBytes = base64Decode(base64EncodedLib);
-    file.writeAsBytesSync(decodedBytes);
   }
 
-  _peripheryLib = DynamicLibrary.open(path);
-  isPeripheryLibLoaded = true;
+  _peripheryLib = DynamicLibrary.open(_peripheryLibPath);
+  _isPeripheryLibLoaded = true;
   return _peripheryLib;
+}
+
+/// Returns the path of the periphery library. Empty string if the library is not loaded.
+String getPeripheryLibPath() {
+  return _peripheryLibPath;
 }

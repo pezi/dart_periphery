@@ -91,7 +91,11 @@ export 'src/library.dart'
         useLocalLibrary,
         getFlutterPiArgs,
         isFlutterPiEnv,
-        getPID;
+        getPID,
+        setTempDirectory,
+        reuseTmpFileLibrary,
+        loadLibFromFlutterAssetDir,
+        getPeripheryLibPath;
 export 'src/mmio.dart' show MMIO, MMIOexception, MMIOerrorCode;
 export 'src/pwm.dart' show PWM, PWMexception, Polarity, PWMerrorCode;
 export 'src/serial.dart'
