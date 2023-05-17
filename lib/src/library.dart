@@ -62,7 +62,7 @@ bool _abiSupported(Abi abi) {
 
 /// Bypasses the autodetection of the CPU architecture.
 void setCPUarchitecture(Abi abi) {
-  if (_abiSupported(abi)) {
+  if (!_abiSupported(abi)) {
     throw LibraryException(
         LibraryErrorCode.invalidParameter, "Invalid parameter");
   }
@@ -73,7 +73,7 @@ void setCPUarchitecture(Abi abi) {
 String _autoDetectCPUarch([Abi? abi]) {
   abi ??= Abi.current();
 
-  if (_abiSupported(abi)) {
+  if (!_abiSupported(abi)) {
     throw LibraryException(LibraryErrorCode.cpuArchDetectionFailed,
         "Unable to detect CPU architecture, found '$abi' . Use 'setCustomLibrary(String absolutePath)' - see documentation https://github.com/pezi/dart_periphery, or create an issue https://github.com/pezi/dart_periphery/issues");
   }
