@@ -410,7 +410,7 @@ Test the installation
 
 ``` bash
 pi@raspberrypi:~ $ dart --version
-Dart SDK version: 2.17.6 (stable) (Tue Jul 12 12:54:37 2022 +0200) on "linux_arm64"
+Dart SDK version: 3.0.0 (stable) (Thu May 4 01:11:00 2023 -0700) on "linux_arm"
 ```
 
 ## Native libraries
