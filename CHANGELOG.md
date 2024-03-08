@@ -1,3 +1,6 @@
+## 0.9.6
+* Update Dart version reference inside the readme to 3.3.0.
+
 ## 0.9.5 2023-05-17
 
 * Rework library loading API and fix some problems.

@@ -2,7 +2,6 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:convert';
 // https://github.com/vsergeev/c-periphery/blob/master/docs/i2c.md
 // https://github.com/vsergeev/c-periphery/blob/master/src/i2c.c
 // https://github.com/vsergeev/c-periphery/blob/master/src/i2c.h
@@ -11,10 +10,11 @@ import 'dart:convert';
 import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
-
+import 'isolate_api.dart';
 import 'hardware/utils/byte_buffer.dart';
 import 'library.dart';
 import 'signature.dart';
+import 'json.dart';
 
 /*
     #define I2C_M_TEN		0x0010
@@ -241,21 +241,12 @@ String _getErrmsg(Pointer<Void> handle) {
   return _nativeI2CerrnMsg(handle).toDartString();
 }
 
-final Map<String, dynamic> _map = {};
-
-Map<String, dynamic> _jsonMap(String json) {
-  if (_map.isEmpty) {
-    _map.addAll(jsonDecode(json) as Map<String, dynamic>);
-  }
-  return _map;
-}
-
 /// I2C wrapper functions for Linux userspace i2c-dev devices.
 ///
 /// c-periphery [I2C](https://github.com/vsergeev/c-periphery/blob/master/docs/i2c.md) documentation.
-class I2C {
+class I2C extends IsolateAPI {
   static const String _i2cBasePath = '/dev/i2c-';
-  final Pointer<Void> _i2cHandle;
+  late Pointer<Void> _i2cHandle;
   final String path;
   final int busNum;
   bool _invalid = false;
@@ -268,13 +259,14 @@ class I2C {
   /// Duplicates an existing [I2C] from a JSON string. This special constustor
   /// is used to transfer an existing [I2C] to an other isolate.
   I2C.isolate(String json)
-      : path = _jsonMap(json)['path'] as String,
-        busNum = _jsonMap(json)['bus'] as int,
-        _i2cHandle = Pointer<Void>.fromAddress(_jsonMap(json)['handle'] as int);
+      : path = jsonMap(json)['path'] as String,
+        busNum = jsonMap(json)['bus'] as int,
+        _i2cHandle = Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int);
 
   /// Converts a [I2C] to a JSON string. See constructor [isolate] for detials.
+  @override
   String toJson() {
-    return '{"path":"$path","bus":$busNum,"handle":${_i2cHandle.address}}';
+    return '{"class":"I2C","path":"$path","bus":$busNum,"handle":${_i2cHandle.address}}';
   }
 
   void _checkStatus() {
@@ -544,6 +536,7 @@ class I2C {
   }
 
   /// Returns the address of the internal handle.
+  @override
   int getHandle() {
     return _i2cHandle.address;
   }
@@ -570,5 +563,16 @@ class I2C {
   int getErrno() {
     _checkStatus();
     return _nativeI2Cerrno(_i2cHandle);
+  }
+
+  @override
+  IsolateAPI fromJson(String json) {
+    return I2C.isolate(json);
+  }
+
+  /// Set the address of the internal handle.
+  @override
+  void setHandle(int handle) {
+    _i2cHandle = Pointer<Void>.fromAddress(handle);
   }
 }

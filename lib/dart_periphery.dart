@@ -110,3 +110,12 @@ export 'src/serial.dart'
         Serial;
 export 'src/spi.dart' show SPI, SPImode, SPIexception;
 export 'src/version.dart' show getCperipheryVersion, dartPeripheryVersion;
+
+export 'src/isolate_helper.dart'
+    show
+        IsolateHelper,
+        TaskIteration,
+        InitTaskResult,
+        ExitTaskResult,
+        MainTaskResult;
+export 'src/dummy.dart' show DummyDev;

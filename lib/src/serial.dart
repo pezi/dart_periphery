@@ -14,6 +14,8 @@ import 'package:ffi/ffi.dart';
 
 import 'library.dart';
 import 'signature.dart';
+import 'isolate_api.dart';
+import 'json.dart';
 
 /// Result of a [Serial.read] operation.
 class SerialReadEvent {
@@ -303,19 +305,10 @@ int _checkError(int value) {
   return value;
 }
 
-final Map<String, dynamic> _map = {};
-
-Map<String, dynamic> _jsonMap(String json) {
-  if (_map.isEmpty) {
-    _map.addAll(jsonDecode(json) as Map<String, dynamic>);
-  }
-  return _map;
-}
-
 /// Serial wrapper functions for Linux userspace termios tty devices.
 ///
 /// c-periphery [Serial](https://github.com/vsergeev/c-periphery/blob/master/docs/serial.md) documentation.
-class Serial {
+class Serial extends IsolateAPI {
   final String path;
   final Baudrate baudrate;
   final DataBits databits;
@@ -323,12 +316,13 @@ class Serial {
   final StopBits stopbits;
   final bool xonxoff;
   final bool rtsct;
-  final Pointer<Void> _serialHandle;
+  late Pointer<Void> _serialHandle;
   bool _invalid = false;
 
   /// Converts a [Serial] to a JSON string. See constructor [isolate] for detials.
+  @override
   String toJson() {
-    return '{"path":"$path","baudrate":${baudrate.index},"databits":${databits.index},"parity":${parity.index},"stopbits":${stopbits.index},"xonxoff":$xonxoff,"rtsct":$rtsct,"handle":${_serialHandle.address}}';
+    return '{"class":"Serial","path":"$path","baudrate":${baudrate.index},"databits":${databits.index},"parity":${parity.index},"stopbits":${stopbits.index},"xonxoff":$xonxoff,"rtsct":$rtsct,"handle":${_serialHandle.address}}';
   }
 
   void _checkStatus() {
@@ -406,15 +400,15 @@ class Serial {
   /// Duplicates an existing [Serial] from a JSON string. This special constructor
   /// is used to transfer an existing [GPIO] to an other isolate.
   Serial.isolate(String json)
-      : path = _jsonMap(json)['path'] as String,
-        baudrate = Baudrate.values[_jsonMap(json)['baudrate'] as int],
-        databits = DataBits.values[_jsonMap(json)['databits'] as int],
-        stopbits = StopBits.values[_jsonMap(json)['stopbits'] as int],
-        parity = Parity.values[_jsonMap(json)['parity'] as int],
-        rtsct = _jsonMap(json)['rtsct'] as bool,
-        xonxoff = _jsonMap(json)['xonxoff'] as bool,
+      : path = jsonMap(json)['path'] as String,
+        baudrate = Baudrate.values[jsonMap(json)['baudrate'] as int],
+        databits = DataBits.values[jsonMap(json)['databits'] as int],
+        stopbits = StopBits.values[jsonMap(json)['stopbits'] as int],
+        parity = Parity.values[jsonMap(json)['parity'] as int],
+        rtsct = jsonMap(json)['rtsct'] as bool,
+        xonxoff = jsonMap(json)['xonxoff'] as bool,
         _serialHandle =
-            Pointer<Void>.fromAddress(_jsonMap(json)['handle'] as int);
+            Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int);
 
   static Pointer<Void> _openSerialAdvanced(
       String path,
@@ -785,5 +779,16 @@ class Serial {
     } finally {
       malloc.free(data);
     }
+  }
+
+  @override
+  IsolateAPI fromJson(String json) {
+    return Serial.isolate(json);
+  }
+
+  /// Set the address of the internal handle.
+  @override
+  void setHandle(int handle) {
+    _serialHandle = Pointer<Void>.fromAddress(handle);
   }
 }
