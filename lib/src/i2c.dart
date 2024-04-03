@@ -10,11 +10,12 @@
 import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
-import 'isolate_api.dart';
+
 import 'hardware/utils/byte_buffer.dart';
+import 'isolate_api.dart';
+import 'json.dart';
 import 'library.dart';
 import 'signature.dart';
-import 'json.dart';
 
 /*
     #define I2C_M_TEN		0x0010
@@ -49,7 +50,7 @@ enum I2CmsgFlags {
 }
 
 /// Helper class mapped to the C struct i2c_msg
-class NativeI2Cmsg extends Struct {
+base class NativeI2Cmsg extends Struct {
   @Int16()
   external int addr;
   @Int16()

@@ -4,8 +4,9 @@
 
 // https://github.com/vsergeev/c-periphery/blob/master/tests/test_mmio.c
 
-import 'package:dart_periphery/dart_periphery.dart';
 import 'dart:ffi';
+
+import 'package:dart_periphery/dart_periphery.dart';
 
 const int bcm2708PeriBase = 0x3F000000; // Raspberry Pi 3
 const int gpioBase = bcm2708PeriBase + 0x200000;
@@ -13,7 +14,7 @@ const int blockSize = 4 * 1024;
 
 void testArguments() {}
 
-class Error extends Struct {
+base class Error extends Struct {
   @Int32()
   external int cErrno;
   //   char errmsg[96];
@@ -21,7 +22,7 @@ class Error extends Struct {
   //  external Array<Uint8> inlineArray;
 }
 
-class MmioHandle extends Struct {
+base class MmioHandle extends Struct {
   @IntPtr()
   external int base;
   @IntPtr()

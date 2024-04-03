@@ -12,10 +12,10 @@ import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
 
-import 'library.dart';
-import 'signature.dart';
 import 'isolate_api.dart';
 import 'json.dart';
+import 'library.dart';
+import 'signature.dart';
 
 /// Result of a [Serial.read] operation.
 class SerialReadEvent {
@@ -556,6 +556,7 @@ class Serial extends IsolateAPI {
   }
 
   /// Returns the address of the internal handle.
+  @override
   int getHandle() {
     return _serialHandle.address;
   }

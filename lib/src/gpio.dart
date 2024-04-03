@@ -9,11 +9,13 @@ import 'dart:convert';
 // https://github.com/dart-lang/samples/tree/master/ffi
 
 import 'dart:ffi';
+
 import 'package:ffi/ffi.dart';
-import 'library.dart';
-import 'signature.dart';
+
 import 'isolate_api.dart';
 import 'json.dart';
+import 'library.dart';
+import 'signature.dart';
 
 /// Result codes of the [GPIO.poll].
 enum GPIOpolling { success, timeout }
@@ -164,7 +166,7 @@ typedef struct gpio_config {
 } gpio_config_t;
 */
 
-class _GPIOconfig extends Struct {
+final class _GPIOconfig extends Struct {
   @Int32()
   external int direction;
   @Int32()

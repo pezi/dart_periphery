@@ -111,7 +111,7 @@ const int configODRfilterAddress = 0x75;
 
 // field_x related defines
 const int field0Address = 0x1d;
-const int fieldLenth = 15;
+const int fieldLength = 15;
 const int fieldAddressOffset = 17;
 
 // Heater settings
@@ -122,8 +122,8 @@ const int gasWait0Address = 0x64;
 const int softResetCommand = 0xb6;
 
 // BME680 coefficients related defines
-const int coeffizientAddress1Len = 25;
-const int coeffizientAddress2Len = 16;
+const int coefficientAddress1Len = 25;
+const int coefficientAddress2Len = 16;
 
 // Coefficient's address
 const int coeffizientAddress1 = 0x89;
@@ -673,9 +673,9 @@ class BME680 {
   List<int> _readCalibrationData() {
     return <int>[
       ...i2c.readBytesReg(
-          i2cAddress, coeffizientAddress1, coeffizientAddress1Len),
+          i2cAddress, coeffizientAddress1, coefficientAddress1Len),
       ...i2c.readBytesReg(
-          i2cAddress, coeffizientAddress2, coeffizientAddress2Len)
+          i2cAddress, coeffizientAddress2, coefficientAddress2Len)
     ];
   }
 
@@ -700,7 +700,7 @@ class BME680 {
     setPowerMode(PowerMode.forced);
     var retries = sensorReadRetryCounter;
     do {
-      var buffer = i2c.readBytesReg(i2cAddress, field0Address, fieldLenth);
+      var buffer = i2c.readBytesReg(i2cAddress, field0Address, fieldLength);
 
       // Set to 1 during measurements, goes to 0 when measurements are completed
       var newData = (buffer[0] & newDataMask) == 0 ? true : false;

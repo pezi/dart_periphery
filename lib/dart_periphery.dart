@@ -4,6 +4,7 @@
 
 export 'src/cpu_architecture.dart'
     show Uname, CpuArchitecture, CpuArch, nativeUname;
+export 'src/dummy.dart' show DummyDev;
 export 'src/errno.dart' show ERRNO, Errno, ErrnoNotFound;
 export 'src/gpio.dart'
     show
@@ -18,6 +19,7 @@ export 'src/gpio.dart'
         PollMultipleEvent,
         GPIOconfig,
         GPIOexception;
+export 'src/hardware/air_quality.dart';
 export 'src/hardware/bme280.dart'
     show
         BME280result,
@@ -81,6 +83,16 @@ export 'src/i2c.dart'
         I2CerrorCode,
         I2Cexception,
         I2C;
+/*
+export 'src/isolate_helper.dart'
+    show
+        IsolateHelper,
+        TaskIteration,
+        InitTaskResult,
+        ExitTaskResult,
+        MainTaskResult;
+
+ */
 export 'src/led.dart' show Led, LedException, LedErrorCode;
 export 'src/library.dart'
     show
@@ -110,12 +122,3 @@ export 'src/serial.dart'
         Serial;
 export 'src/spi.dart' show SPI, SPImode, SPIexception;
 export 'src/version.dart' show getCperipheryVersion, dartPeripheryVersion;
-
-export 'src/isolate_helper.dart'
-    show
-        IsolateHelper,
-        TaskIteration,
-        InitTaskResult,
-        ExitTaskResult,
-        MainTaskResult;
-export 'src/dummy.dart' show DummyDev;

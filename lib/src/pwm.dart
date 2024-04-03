@@ -138,8 +138,6 @@ class PWMexception implements Exception {
   String toString() => errorMsg;
 }
 
-// final DynamicLibrary _peripheryLib = getPeripheryLib();
-
 /// PWM wrapper functions for Linux userspace sysfs PWMs.
 ///
 /// c-periphery [PCM](https://github.com/vsergeev/c-periphery/blob/master/docs/pwm.md) documentation.
