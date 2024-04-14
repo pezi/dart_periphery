@@ -439,7 +439,7 @@ class BME680 {
     // osrs_p<2:0> in one write command (see Section 3.3).
     setHumidityOversample(OversamplingMultiplier.x2); // 0x72
     setTemperatureOversample(OversamplingMultiplier.x4); // 0x74
-    setPressureOversample(OversamplingMultiplier.x8); // 0x74
+    setPressureOversampling(OversamplingMultiplier.x8); // 0x74
 
     setFilter(FilterSize.size3);
 
@@ -498,7 +498,7 @@ class BME680 {
   /// sensor readings, with less noise and jitter.
   /// However each step of oversampling adds about 2ms to the latency,
   /// causing a slower response time to fast transients.
-  void setPressureOversample(final OversamplingMultiplier value) {
+  void setPressureOversampling(final OversamplingMultiplier value) {
     _setRegByte(configT_PmodeAddress, oversamplingPressureMask,
         oversamplingPressurePosition, value.index);
 
@@ -506,7 +506,7 @@ class BME680 {
   }
 
   /// Returns the pressure oversampling.
-  OversamplingMultiplier getPressureOversample() {
+  OversamplingMultiplier getPressureOversampling() {
     return OversamplingMultiplier.values[
         (i2c.readByteReg(i2cAddress, configT_PmodeAddress) &
                 oversamplingPressureMask) >>

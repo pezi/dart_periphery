@@ -1,5 +1,6 @@
-import 'dart:isolate';
 import 'dart:async';
+import 'dart:isolate';
+
 import 'package:async/async.dart';
 
 import 'isolate_test.dart';
@@ -68,9 +69,10 @@ abstract class IsolateWrapper {
   InitTaskResult init();
   MainTaskResult main(String json);
   ExitTaskResult exit(String json);
+  void processData(Object data);
 }
 
-/// Run an [IsolateWrapper] basesd class as an isolate
+/// Run an [IsolateWrapper] based class as an isolate
 class IsolateHelper {
   IsolateWrapper className;
   TaskIteration iterationTask;
@@ -78,6 +80,7 @@ class IsolateHelper {
   Isolate? isolate;
   String? json;
   ReceivePort? receivePort;
+  SendPort? sendPort;
 
   IsolateHelper(this.className, this.iterationTask);
 
@@ -95,12 +98,12 @@ class IsolateHelper {
     final events = StreamQueue<dynamic>(receivePort!);
 
     // send class info and counter as map
-    SendPort sendPort = await events.next;
+    sendPort = await events.next;
     var classInfo = <String, String>{};
 
     classInfo['counter'] = iterationTask.iterations.toString();
     classInfo['className'] = className.runtimeType.toString();
-    sendPort.send(classInfo);
+    sendPort?.send(classInfo);
 
     // wait for init map response
     var initMap = await events.next;
@@ -110,7 +113,7 @@ class IsolateHelper {
     yield InitTaskResult(
         initMap['_error'] as bool, initMap['_json'] as String, initMap);
 
-    // if no error occures, start looping
+    // if no error occurs, start looping
     if (!(initMap['_error'] as bool)) {
       var loop = true;
 
@@ -126,68 +129,83 @@ class IsolateHelper {
       }
     }
 
-    sendPort.send(null);
+    sendPort?.send(null);
     await events.cancel();
   }
 
-  // Starts the isolate servicing the [IsolateWrapper] API: init, main, exit
-  // Hint: according documentation this method must be static
+  /// Starts the isolate servicing the [IsolateWrapper] API: init, main, exit
+  /// Hint: according documentation this method must be static
   static Future<void> _isolate(SendPort sendPort) async {
     final commandPort = ReceivePort();
     sendPort.send(commandPort.sendPort);
     var classInfo = <String, String>{};
-    classInfo = await commandPort.first;
 
-    IsolateWrapper clazz = ClassFactory.createInstance(classInfo['className']!);
+    late IsolateWrapper clazz;
 
-    // init task
-    var initResult = clazz.init();
-    var initMap = initResult.data;
-    initMap = initMap ?? <String, dynamic>{};
-    initMap['_task'] = TaskMethod.init;
-    initMap['_error'] = initResult.error;
-    initMap['_json'] = initResult.json;
-    sendPort.send(initMap);
-    if (initResult.error) {
-      commandPort.close();
-      Isolate.exit();
-    }
+    bool mainLoopRunning = false;
 
-    // loop main task
-    int counter = int.parse(classInfo['counter'] as String);
-    bool infinite = false;
-    if (counter <= 0) {
-      infinite = true;
-    }
-    int index = 0;
-    while (true) {
-      if (!infinite) {
-        if (index == counter) {
+    commandPort.listen((message) async {
+      if (mainLoopRunning) {
+        clazz.processData(message);
+        return;
+      }
+
+      mainLoopRunning = true;
+
+      classInfo = message;
+      clazz = ClassFactory.createInstance(classInfo['className']!);
+      // init task
+      var initResult = clazz.init();
+      var initMap = initResult.data;
+      initMap = initMap ?? <String, dynamic>{};
+      initMap['_task'] = TaskMethod.init;
+      initMap['_error'] = initResult.error;
+      initMap['_json'] = initResult.json;
+      sendPort.send(initMap);
+      if (initResult.error) {
+        commandPort.close();
+        Isolate.exit();
+      }
+
+      // loop main task
+      int counter = int.parse(classInfo['counter'] as String);
+      bool infinite = false;
+      if (counter <= 0) {
+        infinite = true;
+      }
+      int index = 0;
+      while (true) {
+        if (!infinite) {
+          if (index == counter) {
+            break;
+          }
+        }
+
+        var mainResult = clazz.main(initResult.json);
+        var mainMap = mainResult.data;
+        mainMap = mainMap ?? <String, dynamic>{};
+        mainMap['_task'] = TaskMethod.main;
+        mainMap['_error'] = mainResult.error;
+        mainMap['_exit'] = mainResult.exit;
+        sendPort.send(mainMap);
+        if (mainResult.exit) {
           break;
         }
+        // https://stackoverflow.com/questions/61127575/how-to-compare-the-type-variable-in-is-operator-in-dart
+        // this line does the trick to enable the listener to receive the next event!
+        await Future.delayed(Duration.zero);
+        ++index;
       }
 
-      var mainResult = clazz.main(initResult.json);
-      var mainMap = mainResult.data;
-      mainMap = mainMap ?? <String, dynamic>{};
-      mainMap['_task'] = TaskMethod.main;
-      mainMap['_error'] = mainResult.error;
-      mainMap['_exit'] = mainResult.exit;
-      sendPort.send(mainMap);
-      if (mainResult.exit) {
-        break;
-      }
-      ++index;
-    }
+      // exit task - if the main loop is finite
+      var exitResult = clazz.exit(initResult.json);
+      var exitMap = exitResult.data;
+      exitMap = exitMap ?? <String, dynamic>{};
 
-    // exit task - if the main loop is finite
-    var exitResult = clazz.exit(initResult.json);
-    var exitMap = exitResult.data;
-    exitMap = exitMap ?? <String, dynamic>{};
-
-    exitMap['_task'] = TaskMethod.exit;
-    exitMap['_error'] = exitResult.error;
-    sendPort.send(exitMap);
-    Isolate.exit();
+      exitMap['_task'] = TaskMethod.exit;
+      exitMap['_error'] = exitResult.error;
+      sendPort.send(exitMap);
+      Isolate.exit();
+    });
   }
 }

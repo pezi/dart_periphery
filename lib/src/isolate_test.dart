@@ -1,7 +1,8 @@
-import 'isolate_helper.dart';
-import 'dummy.dart';
-import 'dart:io';
 import 'dart:async';
+import 'dart:io';
+
+import 'dummy.dart';
+import 'isolate_helper.dart';
 
 class SomeClass extends IsolateWrapper {
   int counter = 0;
@@ -37,6 +38,11 @@ class SomeClass extends IsolateWrapper {
     var m = <String, dynamic>{};
     return ExitTaskResult(false, m);
   }
+
+  @override
+  void processData(Object data) {
+    print('*$data*');
+  }
 }
 
 void main() async {
@@ -58,6 +64,7 @@ void main() async {
       if (task is InitTaskResult) {
       } else {
         print('Received number: ${task.data!['result']}');
+        h.sendPort?.send("test");
       }
     },
     onDone: () {
