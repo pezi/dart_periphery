@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-// Improve performance inside the isolate(String json) construcor, cache JSON maps
+// Improve performance inside the isolate(String json) constructor, cache JSON maps
 final Map<int, Map<String, dynamic>> _jsonCache = {};
 
 Map<String, dynamic> jsonMap(String json) {

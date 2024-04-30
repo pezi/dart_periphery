@@ -146,6 +146,7 @@ class IsolateHelper {
 
     commandPort.listen((message) async {
       if (mainLoopRunning) {
+        print("waiting");
         clazz.processData(message);
         return;
       }

@@ -71,7 +71,7 @@ class SerialException implements Exception {
   String toString() => errorMsg;
 }
 
-/// [Serial] baudrate
+/// [Serial] baud rate
 enum Baudrate {
   b50,
   b75,
@@ -319,7 +319,7 @@ class Serial extends IsolateAPI {
   late Pointer<Void> _serialHandle;
   bool _invalid = false;
 
-  /// Converts a [Serial] to a JSON string. See constructor [isolate] for detials.
+  /// Converts a [Serial] to a JSON string. See constructor [isolate] for details.
   @override
   String toJson() {
     return '{"class":"Serial","path":"$path","baudrate":${baudrate.index},"databits":${databits.index},"parity":${parity.index},"stopbits":${stopbits.index},"xonxoff":$xonxoff,"rtsct":$rtsct,"handle":${_serialHandle.address}}';
@@ -536,7 +536,7 @@ class Serial extends IsolateAPI {
   }
 
   /// Writes a string as list of UTF8 aware bytes to the serial port.
-  /// Returns the number of bytes written on succes
+  /// Returns the number of bytes written on success
   int writeString(String data) {
     return write(utf8.encode(data));
   }
@@ -561,7 +561,7 @@ class Serial extends IsolateAPI {
     return _serialHandle.address;
   }
 
-  /// Returns the baudrate.
+  /// Returns the baud rate.
   /// See [baudrate2Int] for converting the result to an integer.
   Baudrate getBaudrate() {
     _checkStatus();
@@ -623,8 +623,8 @@ class Serial extends IsolateAPI {
       case 4000000:
         return Baudrate.b4000000;
     }
-    throw SerialException(
-        SerialErrorCode.errorCodeNotMappable, 'Unable to map baudrate to enum');
+    throw SerialException(SerialErrorCode.errorCodeNotMappable,
+        'Unable to map baud rate to enum');
   }
 
   /// Sets the [baudrate].
@@ -787,7 +787,7 @@ class Serial extends IsolateAPI {
     return Serial.isolate(json);
   }
 
-  /// Set the address of the internal handle.
+  /// Sets the address of the internal handle.
   @override
   void setHandle(int handle) {
     _serialHandle = Pointer<Void>.fromAddress(handle);

@@ -73,7 +73,7 @@ class NativeI2CmsgHelper {
   Pointer<NativeI2Cmsg> getMessages() {
     if (_isFreed) {
       throw I2Cexception(I2CerrorCode.i2cErrorClose,
-          "Not allowed acccess to a 'dispose()'ed memory structure.");
+          "Not allowed access to a 'dispose()'ed memory structure.");
     }
     return _messages;
   }
@@ -257,14 +257,14 @@ class I2C extends IsolateAPI {
       : path = _i2cBasePath + busNum.toString(),
         _i2cHandle = _openI2C(_i2cBasePath + busNum.toString());
 
-  /// Duplicates an existing [I2C] from a JSON string. This special constustor
+  /// Duplicates an existing [I2C] from a JSON string. This special constructor
   /// is used to transfer an existing [I2C] to an other isolate.
   I2C.isolate(String json)
       : path = jsonMap(json)['path'] as String,
         busNum = jsonMap(json)['bus'] as int,
         _i2cHandle = Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int);
 
-  /// Converts a [I2C] to a JSON string. See constructor [isolate] for detials.
+  /// Converts a [I2C] to a JSON string. See constructor [isolate] for details.
   @override
   String toJson() {
     return '{"class":"I2C","path":"$path","bus":$busNum,"handle":${_i2cHandle.address}}';

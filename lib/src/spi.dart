@@ -13,10 +13,10 @@ import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 
 import 'hardware/utils/byte_buffer.dart';
+import 'isolate_api.dart';
+import 'json.dart';
 import 'library.dart';
 import 'signature.dart';
-import 'json.dart';
-import 'isolate_api.dart';
 
 /// Mapped native [SPI] error codes with the same index, but different leading sign.
 enum SPIerrorCode {
@@ -248,7 +248,7 @@ class SPI extends IsolateAPI {
     }
   }
 
-  /// Converts a [SPI] to a JSON string. See constructor [isolate] for detials.
+  /// Converts a [SPI] to a JSON string. See constructor [isolate] for details.
   @override
   String toJson() {
     return '{"class":"SPI","bus":$bus,"chip":$chip,"path":"$path","bitOrder":${bitOrder.index},"mode":${mode.index},"speed":$maxSpeed,"bits":$bitsPerWord,"flags":$extraFlags,"handle":${_spiHandle.address}}';
@@ -414,7 +414,7 @@ class SPI extends IsolateAPI {
     }
   }
 
-  /// Shifts out [len] word counts of the [data] budder, while shifting in the result buffer. If [reuseBuffer]
+  /// Shifts out [len] word counts of the [data] buffer, while shifting in the result buffer. If [reuseBuffer]
   /// is true, [data] will be used the result buffer, for false a new buffer
   /// will be created.
   ///
@@ -432,7 +432,7 @@ class SPI extends IsolateAPI {
     return outPtr;
   }
 
-  /// Releases all interal native resoures.
+  /// Releases all internal native resources.
   void dispose() {
     _checkStatus();
     _invalid = true;

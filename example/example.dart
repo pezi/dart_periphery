@@ -26,7 +26,7 @@ void main() {
   print('GPIO chip name: ${gpio.getGPIOchipName()}');
   print('GPIO chip label: ${gpio.getGPIOchipLabel()}');
   print('GPIO chip name: ${gpio.getGPIOchipName()}');
-  print('CPIO chip label: ${gpio.getGPIOchipLabel()}');
+  print('GPIO chip label: ${gpio.getGPIOchipLabel()}');
 
   for (var i = 0; i < 10; ++i) {
     gpio.write(true);

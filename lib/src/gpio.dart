@@ -649,7 +649,7 @@ class GPIO extends IsolateAPI {
     return _gpioHandle.address;
   }
 
-  /// Releases all internal native resoures.
+  /// Releases all internal native resources.
   void dispose() {
     _checkStatus();
     _invalid = true;

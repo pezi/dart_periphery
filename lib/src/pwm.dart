@@ -183,7 +183,7 @@ class PWM {
     return PWMerrorCode.values[value];
   }
 
-  /// Releases all interal native resoures.
+  /// Releases all internal native resources.
   void dispose() {
     _checkStatus();
     _invalid = true;

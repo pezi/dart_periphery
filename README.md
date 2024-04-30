@@ -10,11 +10,11 @@
 ## Introduction
 
 **dart_periphery** is a Dart port of the native [c-periphery library](https://github.com/vsergeev/c-periphery)
-  for Linux Peripheral I/O (GPIO, LED, PWM, SPI, I2C, MMIO and Serial peripheral I/O). This package is specially intended for SoCs like Raspberry Pi, NanoPi, Banana Pi et al.
+  for Linux Peripheral I/O (GPIO, LED, PWM, SPI, I2C, MMIO and Serial peripheral I/O). This package s designed for System on Chips (SoCs) such as Raspberry Pi, NanoPi, Banana Pi, and others.
 
 ### What is c-periphery?
 
-Abstract from the project web site:
+Extracted from the project web site:
 
 >c-periphery is a small C library for
 >
@@ -32,9 +32,9 @@ Abstract from the project web site:
 
 ## Why c-periphery?
 
-The number of GPIO libraries/interfaces is becoming increasingly smaller.
+The number of GPIO libraries/interfaces is is shrinking:
 
-* The famous wiringpi library is [deprecated](https://hackaday.com/2019/09/18/wiringpi-library-to-be-deprecated).
+* The widely used wiringpi library is [deprecated](https://hackaday.com/2019/09/18/wiringpi-library-to-be-deprecated).
 * GPIO sysfs is [deprecated](https://www.raspberrypi.org/forums/viewtopic.php?t=274416).
 
 **dart_periphery**
@@ -343,50 +343,50 @@ void main() {
 
 ## Install Dart on Raspian and Armbian
 
-1.) Go to the home directory
+1.) Navigate to the home directory:
 
 ``` bash
 cd ~
 ```
 
-2.) Download the last stable Dart SDK form [archive](https://dart.dev/tools/sdk/archive) for your CPU architecture/OS.
+2.) Download the last stable Dart SDK form [archive](https://dart.dev/tools/sdk/archive) for your CPU architecture/OS and unzip it.
 
 ### ARMv7
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.3.3/sdk/dartsdk-linux-arm-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.3.4/sdk/dartsdk-linux-arm-release.zip
 unzip dartsdk-linux-arm-release.zip
 ```
 
 ### ARMv8
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.3.3/sdk/dartsdk-linux-arm64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.3.4/sdk/dartsdk-linux-arm64-release.zip
 unzip dartsdk-linux-arm64-release.zip
 ```
 
 ### x86
 
 ``` bash
-https://storage.googleapis.com/dart-archive/channels/stable/release/3.3.3/sdk/dartsdk-linux-ia32-release.zip
+https://storage.googleapis.com/dart-archive/channels/stable/release/3.3.4/sdk/dartsdk-linux-ia32-release.zip
 unzip dartsdk-linux-ia32-release.zip
 ```
 
 ### x86_64
 
 ``` bash
-https://storage.googleapis.com/dart-archive/channels/stable/release/3.3.3/sdk/dartsdk-linux-x64-release.zip
+https://storage.googleapis.com/dart-archive/channels/stable/release/3.3.4/sdk/dartsdk-linux-x64-release.zip
 unzip dartsdk-linux-x64-release.zip
 ```
 
-3.) Unpack and install SDK
+3.) Move and grant the appropriate permissions to the SDK:
 
 ``` bash
 sudo mv dart-sdk /opt/
 sudo chmod -R +rx /opt/dart-sdk
 ```
 
-4.) Add the Dart SDK to the path
+4.) Add Dart SDK to the path by editing `~/.profile` and then apply the changes:
 
 ``` bash
 nano ~/.profile
@@ -404,7 +404,7 @@ at the end of the file and call
 source ~/.profile
 ```
 
-to apply the changes.
+after editing to apply the changes.
 
 Test the installation
 
@@ -413,12 +413,13 @@ pi@raspberrypi:~$ dart --version
 Dart SDK version: 3.3.3 (stable) (Tue Mar 26 14:21:33 2024 +0000) on "linux_arm64"
 ```
 
-## Text example
+## Text examples
+
 
 
 ## Native libraries
 
-Currently **dart_periphery** ships with four prebuilt native c-periphery libraries for
+**dart_periphery** includes prebuilt native c-periphery libraries for
 
 
 
@@ -427,8 +428,6 @@ Currently **dart_periphery** ships with four prebuilt native c-periphery librari
 * X86 - [libperiphery_x86.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86.so)
 * X86_64 - [libperiphery_x86_64.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86_64.so)
 
-Since version 9.0.4 **dart_periphery** writes the appropriate library to the system tmp directory. 
-For versions below 9.0.4 **dart_periphery** tries to load the library from the pub cache. But this hacky code is broken with newer dart versions.
 
 Following methods can be used to control the tmp directory handling.
 
@@ -510,6 +509,22 @@ List<String> getFlutterPiArgs();
 ```
 
 returns the command line parameter list of the `flutter-pi` command. The last parameter contains the asset directory.
+
+## flutter-pi-sensor-tester
+
+This subproject implements an isolate/stream architecture designed to transfer sensor data from an isolate to the Flutter UI:
+
+**Isolate Interface**: This consists of the steps InitTask, MainTask, and ExitTask, along with a limited back channel for controlling the isolate. This setup is typically used for sensor measurements:
+* `InitTask`: Initializes the sensor.
+* `MainTask`: Collects sensor data and passes it to a stream.
+* `ExitTask`: Disposes of the sensor.
+
+**Listening Mode**: Features `InitTask` and user-defined handling for other isolate events. This variant remains on standby for data; once data is processed, the result is passed to the stream and subsequently to the Flutter UI. This model is used for actuator control, such as operating an LED.
+
+**Support for Multiple Streams**: Enables handling of multiple data streams simultaneously.
+
+The project is currently in its early stages, and development is ongoing.
+
 
 ## Tested SoC hardware
 

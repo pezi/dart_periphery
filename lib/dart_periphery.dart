@@ -83,16 +83,6 @@ export 'src/i2c.dart'
         I2CerrorCode,
         I2Cexception,
         I2C;
-/*
-export 'src/isolate_helper.dart'
-    show
-        IsolateHelper,
-        TaskIteration,
-        InitTaskResult,
-        ExitTaskResult,
-        MainTaskResult;
-
- */
 export 'src/led.dart' show Led, LedException, LedErrorCode;
 export 'src/library.dart'
     show
