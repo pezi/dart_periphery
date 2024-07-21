@@ -388,9 +388,9 @@ class I2C extends IsolateAPI {
     var data = <I2Cmsg>[];
     var array = <int>[];
     if (order == BitOrder.msbLast) {
-      array = [wordValue | 0xff, wordValue >> 8];
+      array = [wordValue & 0xff, wordValue >> 8];
     } else {
-      array = [wordValue >> 8, wordValue | 0xff];
+      array = [wordValue >> 8, wordValue & 0xff];
     }
     data.add(I2Cmsg.buffer(address, [], array));
     var result = transfer(data);
@@ -406,11 +406,11 @@ class I2C extends IsolateAPI {
     var array = <int>[];
     array.add(register);
     if (order == BitOrder.msbLast) {
-      array.add(wordValue | 0xff);
+      array.add(wordValue & 0xff);
       array.add(wordValue >> 8);
     } else {
       array.add(wordValue >> 8);
-      array.add(wordValue | 0xff);
+      array.add(wordValue & 0xff);
     }
     data.add(I2Cmsg.buffer(address, [], array));
     var result = transfer(data);

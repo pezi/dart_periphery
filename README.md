@@ -409,8 +409,8 @@ after editing to apply the changes.
 Test the installation
 
 ``` bash
-pi@raspberrypi:~$ dart --version
-Dart SDK version: 3.4.1 (stable) (Tue Mar 26 14:21:33 2024 +0000) on "linux_arm64"
+dart --version
+Dart SDK version: 3.4.4 (stable) (Wed Jun 12 15:54:31 2024 +0000) on "linux_arm64"
 ```
 
 ## Text examples
