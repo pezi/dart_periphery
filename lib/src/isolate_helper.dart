@@ -49,7 +49,7 @@ class MainTaskResult extends TaskResult {
 /// Result of the exit task method
 class ExitTaskResult extends TaskResult {
   /// Return value of the exit task, [error] signals an error and the optional user [data].
-  ExitTaskResult(bool error, [Map<String, dynamic>? data]) : super(error, data);
+  ExitTaskResult(super.error, [super.data]);
 }
 
 /// Number of iterations invoking the main sub task.
