@@ -192,7 +192,7 @@ class SGP30 {
   FeatureSetVersion getFeatureSetVersion() {
     var result = _command(
         cmdGetFeatureSet, cmdGetFeatureSetWords, cmdGetFeatureSetDelayMs);
-    return FeatureSetVersion(result[0], result[1]);
+    return FeatureSetVersion(result[0], result[0]);
   }
 
   /// Initializes the sensor for measurement.
