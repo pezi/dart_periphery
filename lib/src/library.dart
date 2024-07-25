@@ -140,9 +140,9 @@ int getPID() {
     return -1;
   }
   final dylib = DynamicLibrary.open('libc.so.6');
-  var getpid =
+  var getPid =
       dylib.lookup<NativeFunction<_getpId>>('getpid').asFunction<_GetpId>();
-  return getpid();
+  return getPid();
 }
 
 /// Returns the argument list of the running flutter-pi program by
@@ -168,9 +168,11 @@ List<String> getFlutterPiArgs() {
 
 /// Loads the Linux/CPU specific periphery library as a DynamicLibrary.
 DynamicLibrary loadPeripheryLib() {
+
   if (_isPeripheryLibLoaded) {
     return _peripheryLib;
   }
+
   if (!Platform.isLinux) {
     throw PlatformException('dart_periphery is only supported for Linux!');
   }
@@ -253,6 +255,7 @@ DynamicLibrary loadPeripheryLib() {
   }
 
   _peripheryLib = DynamicLibrary.open(_peripheryLibPath);
+
   _isPeripheryLibLoaded = true;
   return _peripheryLib;
 }

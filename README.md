@@ -413,10 +413,6 @@ dart --version
 Dart SDK version: 3.4.4 (stable) (Wed Jun 12 15:54:31 2024 +0000) on "linux_arm64"
 ```
 
-## Text examples
-
-
-
 ## Native libraries
 
 **dart_periphery** includes prebuilt native c-periphery libraries for
@@ -482,6 +478,8 @@ The appropriate library can be found [here](https://github.com/pezi/dart_periphe
 
 **dart_periphery** works with flutter-pi, a light-weight [Flutter Engine Embedder](https://github.com/ardera/flutter-pi) for Raspberry Pi. Following method loads
 
+## flutter-pi-tester
+
 ``` dart
 // Loads the libraray form the flutter-pi asset directory.
 void loadLibFromFlutterAssetDir(bool load) 
@@ -512,19 +510,25 @@ returns the command line parameter list of the `flutter-pi` command. The last pa
 
 ## flutter-pi-sensor-tester
 
-This subproject implements an isolate/stream architecture designed to transfer sensor data from an isolate to the Flutter UI:
+![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/flutter_sensor_tester.gif "Flutter Sensor Tester")
 
-**Isolate Interface**: This consists of the steps InitTask, MainTask, and ExitTask, along with a limited back channel for controlling the isolate. This setup is typically used for sensor measurements:
+This [subproject](https://github.com/pezi/dart_periphery), based on 
+[flutter-pi](https://github.com/ardera/flutter-pi), implements an 
+isolate/stream architecture designed to transfer sensor data from an isolate to the Flutter UI:
+
+**Isolate Interface**: This consists of the steps InitTask, MainTask, and ExitTask, along with a 
+limited back channel for controlling the isolate. This setup is typically used for sensor measurements:
 * `InitTask`: Initializes the sensor.
 * `MainTask`: Collects sensor data and passes it to a stream.
 * `ExitTask`: Disposes of the sensor.
 
-**Listening Mode**: Features `InitTask` and user-defined handling for other isolate events. This variant remains on standby for data; once data is processed, the result is passed to the stream and subsequently to the Flutter UI. This model is used for actuator control, such as operating an LED.
+**Listening Mode**: Supports user-defined handling for isolate events. 
+This variant remains on standby for data; once data is processed, the result is passed to the stream 
+and subsequently to the Flutter UI. This model is used for actuator control, such as operating an LED.
 
 **Support for Multiple Streams**: Enables handling of multiple data streams simultaneously.
 
-The project is currently in its early stages, and development is ongoing.
-
+The project is currently still beta, and development is ongoing.
 
 ## Tested SoC hardware
 

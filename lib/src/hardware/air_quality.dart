@@ -5,7 +5,7 @@
 /// IAQ (Index of Air Quality) based ob following source
 /// https://community.bosch-sensortec.com/t5/MEMS-sensors-forum/BME680-688-IAQ-meaning/td-p/45196
 /// converted to a Dart representation.
-
+library;
 
 /// helper for lower/uppercase checking
 extension CharacterCase on String {
