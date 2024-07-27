@@ -13,6 +13,8 @@ import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 
 import 'hardware/utils/byte_buffer.dart';
+import 'isolate_api.dart';
+import 'json.dart';
 import 'library.dart';
 import 'signature.dart';
 
@@ -209,7 +211,7 @@ Map<String, dynamic> _jsonMap(String json) {
 /// SPI wrapper functions for Linux userspace <tt>spidev</tt> devices.
 ///
 /// c-periphery [SPI](https://github.com/vsergeev/c-periphery/blob/master/docs/spi.md) documentation.
-class SPI {
+class SPI extends IsolateAPI {
   /// SPI bus number:  /dev/spidev[bus].[chip]
   final int bus;
 
@@ -246,9 +248,10 @@ class SPI {
     }
   }
 
-  /// Converts a [SPI] to a JSON string. See constructor [isolate] for detials.
+  /// Converts a [SPI] to a JSON string. See constructor [isolate] for details.
+  @override
   String toJson() {
-    return '{"bus":$bus,"chip":$chip,"path":"$path","bitOrder":${bitOrder.index},"mode":${mode.index},"speed":$maxSpeed,"bits":$bitsPerWord,"flags":$extraFlags,"handle":${_spiHandle.address}}';
+    return '{"class":"SPI","bus":$bus,"chip":$chip,"path":"$path","bitOrder":${bitOrder.index},"mode":${mode.index},"speed":$maxSpeed,"bits":$bitsPerWord,"flags":$extraFlags,"handle":${_spiHandle.address}}';
   }
 
   /// Opens the SPI device at the  path ("/dev/spidev[bus].[chip]"), with the specified
@@ -293,15 +296,15 @@ class SPI {
   /// Duplicates an existing [SPI] from a JSON string. This special constructor
   /// is used to transfer an existing [SPI] to an other isolate.
   SPI.isolate(String json)
-      : path = _jsonMap(json)['path'] as String,
-        chip = _jsonMap(json)['chip'] as int,
-        maxSpeed = _jsonMap(json)['speed'] as int,
-        bus = _jsonMap(json)['bus'] as int,
-        bitsPerWord = _jsonMap(json)['bits'] as int,
-        extraFlags = _jsonMap(json)['flags'] as int,
+      : path = jsonMap(json)['path'] as String,
+        chip = jsonMap(json)['chip'] as int,
+        maxSpeed = jsonMap(json)['speed'] as int,
+        bus = jsonMap(json)['bus'] as int,
+        bitsPerWord = jsonMap(json)['bits'] as int,
+        extraFlags = jsonMap(json)['flags'] as int,
         bitOrder = BitOrder.values[_jsonMap(json)['bitOrder'] as int],
         mode = SPImode.values[_jsonMap(json)['mode'] as int],
-        _spiHandle = Pointer<Void>.fromAddress(_jsonMap(json)['handle'] as int);
+        _spiHandle = Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int);
 
   Pointer<Void> _spiOpenAdvanced(String path, SPImode mode, int maxSpeed,
       BitOrder bitOrder, int bitsPerWord, int extraFlags) {
@@ -411,7 +414,7 @@ class SPI {
     }
   }
 
-  /// Shifts out [len] word counts of the [data] budder, while shifting in the result buffer. If [reuseBuffer]
+  /// Shifts out [len] word counts of the [data] buffer, while shifting in the result buffer. If [reuseBuffer]
   /// is true, [data] will be used the result buffer, for false a new buffer
   /// will be created.
   ///
@@ -429,7 +432,7 @@ class SPI {
     return outPtr;
   }
 
-  /// Releases all interal native resoures.
+  /// Releases all internal native resources.
   void dispose() {
     _checkStatus();
     _invalid = true;
@@ -556,7 +559,18 @@ class SPI {
   }
 
   /// Returns the address of the internal handle.
+  @override
   int getHandle() {
     return _spiHandle.address;
+  }
+
+  @override
+  IsolateAPI fromJson(String json) {
+    return SPI.isolate(json);
+  }
+
+  @override
+  void setHandle(int handle) {
+    _spiHandle = Pointer<Void>.fromAddress(handle);
   }
 }

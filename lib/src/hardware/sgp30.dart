@@ -21,7 +21,7 @@ const int cmdGetSerialId = 0x3682;
 const int cmdGetSerialIdWords = 3;
 const int cmdGetSerialDelayMs = 1;
 
-// command and constants for reading the featureset version
+// command and constants for reading the feature set version
 const int cmdGetFeatureSet = 0x202f;
 const int cmdGetFeatureSetWords = 1;
 const int cmdGetFeatureSetDelayMs = 10;
@@ -192,7 +192,7 @@ class SGP30 {
   FeatureSetVersion getFeatureSetVersion() {
     var result = _command(
         cmdGetFeatureSet, cmdGetFeatureSetWords, cmdGetFeatureSetDelayMs);
-    return FeatureSetVersion(result[0], result[1]);
+    return FeatureSetVersion(result[0], result[0]);
   }
 
   /// Initializes the sensor for measurement.

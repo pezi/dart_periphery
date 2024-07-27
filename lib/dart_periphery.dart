@@ -4,6 +4,7 @@
 
 export 'src/cpu_architecture.dart'
     show Uname, CpuArchitecture, CpuArch, nativeUname;
+export 'src/dummy.dart' show DummyDev;
 export 'src/errno.dart' show ERRNO, Errno, ErrnoNotFound;
 export 'src/gpio.dart'
     show
@@ -18,6 +19,7 @@ export 'src/gpio.dart'
         PollMultipleEvent,
         GPIOconfig,
         GPIOexception;
+export 'src/hardware/air_quality.dart';
 export 'src/hardware/bme280.dart'
     show
         BME280result,

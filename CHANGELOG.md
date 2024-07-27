@@ -1,3 +1,8 @@
+## 0.9.6 2024-07-27
+* Update Dart version reference inside the readme to 3.4.4.
+* [Fix I2C error](https://github.com/pezi/dart_periphery/issues/25)
+* Add subproject [flutter-sensor-tester](https://github.com/pezi/flutter-pi-sensor-tester) to the README.md
+
 ## 0.9.5 2023-05-17
 
 * Rework library loading API and fix some problems.

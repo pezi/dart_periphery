@@ -3,18 +3,18 @@
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
 
-[![pub package](https://img.shields.io/badge/pub-v0.9.5-orange)](https://pub.dartlang.org/packages/dart_periphery)
+[![pub package](https://img.shields.io/badge/pub-v0.9.6-orange)](https://pub.dartlang.org/packages/dart_periphery)
 
 ## Important hint
 
 ## Introduction
 
 **dart_periphery** is a Dart port of the native [c-periphery library](https://github.com/vsergeev/c-periphery)
-  for Linux Peripheral I/O (GPIO, LED, PWM, SPI, I2C, MMIO and Serial peripheral I/O). This package is specially intended for SoCs like Raspberry Pi, NanoPi, Banana Pi et al.
+  for Linux Peripheral I/O (GPIO, LED, PWM, SPI, I2C, MMIO and Serial peripheral I/O). This package s designed for System on Chips (SoCs) such as Raspberry Pi, NanoPi, Banana Pi, and others.
 
 ### What is c-periphery?
 
-Abstract from the project web site:
+Extracted from the project web site:
 
 >c-periphery is a small C library for
 >
@@ -32,9 +32,9 @@ Abstract from the project web site:
 
 ## Why c-periphery?
 
-The number of GPIO libraries/interfaces is becoming increasingly smaller.
+The number of GPIO libraries/interfaces is is shrinking:
 
-* The famous wiringpi library is [deprecated](https://hackaday.com/2019/09/18/wiringpi-library-to-be-deprecated).
+* The widely used wiringpi library is [deprecated](https://hackaday.com/2019/09/18/wiringpi-library-to-be-deprecated).
 * GPIO sysfs is [deprecated](https://www.raspberrypi.org/forums/viewtopic.php?t=274416).
 
 **dart_periphery**
@@ -343,50 +343,50 @@ void main() {
 
 ## Install Dart on Raspian and Armbian
 
-1.) Go to the home directory
+1.) Navigate to the home directory:
 
 ``` bash
 cd ~
 ```
 
-2.) Download the last stable Dart SDK form [archive](https://dart.dev/tools/sdk/archive) for your CPU architecture/OS.
+2.) Download the last stable Dart SDK form [archive](https://dart.dev/tools/sdk/archive) for your CPU architecture/OS and unzip it.
 
 ### ARMv7
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.0.0/sdk/dartsdk-linux-arm-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.4.4/sdk/dartsdk-linux-arm-release.zip
 unzip dartsdk-linux-arm-release.zip
 ```
 
 ### ARMv8
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.0.0/sdk/dartsdk-linux-arm64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.4.4/sdk/dartsdk-linux-arm64-release.zip
 unzip dartsdk-linux-arm64-release.zip
 ```
 
 ### x86
 
 ``` bash
-https://storage.googleapis.com/dart-archive/channels/stable/release/3.0.0/sdk/dartsdk-linux-ia32-release.zip
+https://storage.googleapis.com/dart-archive/channels/stable/release/3.4.4/sdk/dartsdk-linux-ia32-release.zip
 unzip dartsdk-linux-ia32-release.zip
 ```
 
 ### x86_64
 
 ``` bash
-https://storage.googleapis.com/dart-archive/channels/stable/release/3.0.0/sdk/dartsdk-linux-x64-release.zip
+https://storage.googleapis.com/dart-archive/channels/stable/release/3.4.4/sdk/dartsdk-linux-x64-release.zip
 unzip dartsdk-linux-x64-release.zip
 ```
 
-3.) Unpack and install SDK
+3.) Move and grant the appropriate permissions to the SDK:
 
 ``` bash
 sudo mv dart-sdk /opt/
 sudo chmod -R +rx /opt/dart-sdk
 ```
 
-4.) Add the Dart SDK to the path
+4.) Add Dart SDK to the path by editing `~/.profile` and then apply the changes:
 
 ``` bash
 nano ~/.profile
@@ -404,18 +404,18 @@ at the end of the file and call
 source ~/.profile
 ```
 
-to apply the changes.
+after editing to apply the changes.
 
 Test the installation
 
 ``` bash
-pi@raspberrypi:~ $ dart --version
-Dart SDK version: 2.17.6 (stable) (Tue Jul 12 12:54:37 2022 +0200) on "linux_arm64"
+dart --version
+Dart SDK version: 3.4.4 (stable) (Wed Jun 12 15:54:31 2024 +0000) on "linux_arm64"
 ```
 
 ## Native libraries
 
-Currently **dart_periphery** ships with four prebuilt native c-periphery libraries for
+**dart_periphery** includes prebuilt native c-periphery libraries for
 
 
 
@@ -424,8 +424,6 @@ Currently **dart_periphery** ships with four prebuilt native c-periphery librari
 * X86 - [libperiphery_x86.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86.so)
 * X86_64 - [libperiphery_x86_64.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86_64.so)
 
-Since version 9.0.4 **dart_periphery** writes the appropriate library to the system tmp directory. 
-For versions below 9.0.4 **dart_periphery** tries to load the library from the pub cache. But this hacky code is broken with newer dart versions.
 
 Following methods can be used to control the tmp directory handling.
 
@@ -480,6 +478,8 @@ The appropriate library can be found [here](https://github.com/pezi/dart_periphe
 
 **dart_periphery** works with flutter-pi, a light-weight [Flutter Engine Embedder](https://github.com/ardera/flutter-pi) for Raspberry Pi. Following method loads
 
+## flutter-pi-tester
+
 ``` dart
 // Loads the libraray form the flutter-pi asset directory.
 void loadLibFromFlutterAssetDir(bool load) 
@@ -508,6 +508,28 @@ List<String> getFlutterPiArgs();
 
 returns the command line parameter list of the `flutter-pi` command. The last parameter contains the asset directory.
 
+## flutter-pi-sensor-tester
+
+![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/flutter_sensor_tester.gif "Flutter Sensor Tester")
+
+This [subproject](https://github.com/pezi/flutter-pi-sensor-tester) bases on 
+[flutter-pi](https://github.com/ardera/flutter-pi) and implements a simple
+isolate/stream architecture designed to transfer sensor data from an isolate to the Flutter UI:
+
+**Isolate Interface**: This consists of the steps InitTask, MainTask, and ExitTask, along with a 
+limited back channel for controlling the isolate. This setup is typically used for sensor measurements:
+* `InitTask`: Initializes the sensor.
+* `MainTask`: Collects sensor data and passes it to a stream.
+* `ExitTask`: Disposes of the sensor.
+
+**Listening Mode**: Supports user-defined handling for isolate events. 
+This variant remains on standby for data; once data is processed, the result is passed to the stream 
+and subsequently to the Flutter UI. This model is used for actuator control, such as operating an LED.
+
+**Support for Multiple Streams**: Enables handling of multiple data streams simultaneously.
+
+The project is currently still beta and development is ongoing.
+
 ## Tested SoC hardware
 
 * [Raspberry Pi 3 Model B](https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/), OS: Raspberry Pi OS
@@ -522,7 +544,7 @@ returns the command line parameter list of the `flutter-pi` command. The last pa
 * [SGP30](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sgp30.dart): tVOC and eCO2 Gas Sensor
 * [BME280](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme280.dart): Temperature, humidity and pressure sensor.
 * [BME680](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme680.dart): Temperature, humidity pressure and gas (Indoor Airy Quality) sensor.
-* [SHT31](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht31.dart): Temperature and humidity sensor.
+* [SHT31](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht31.dart): Temperature and humidity sensor. 
 * [CozIR](https://github.com/pezi/dart_periphery/blob/main/example/serial_cozir.dart): CO₂, temperature and humidity sensor.
 * [Grove Gesture](https://github.com/pezi/dart_periphery/blob/main/example/i2c_gesture_sensor.dart) can recognize 9 basic gestures.
 * [MPU-6050 Six-Axis](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mpu6050.dart) (Gyro + Accelerometer) sensor.

@@ -11,8 +11,10 @@ import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
 
+import 'isolate_api.dart';
 import 'library.dart';
 import 'signature.dart';
+import 'json.dart';
 
 /// [MMIO] error code
 enum MMIOerrorCode {
@@ -186,8 +188,8 @@ class MMIOexception implements Exception {
 /// MMIO wrapper functions for the Linux userspace <tt>/dev/mem</tt> device.
 ///
 /// c-periphery [MMIO](https://github.com/vsergeev/c-periphery/blob/master/docs/mmio.md) documentation.
-class MMIO {
-  final Pointer<Void> _mmioHandle;
+class MMIO extends IsolateAPI {
+  late Pointer<Void> _mmioHandle;
   bool _invalid = false;
   final int base;
   final int size;
@@ -200,6 +202,14 @@ class MMIO {
   MMIO(this.base, this.size)
       : path = '',
         _mmioHandle = _mmioOpen(base, size);
+
+  /// Duplicates an existing [MMIO] from a JSON string. This special constructor
+  /// is used to transfer an existing [MMIO] to an other isolate.
+  MMIO.isolate(String json)
+      : base = jsonMap(json)['base'] as int,
+        size = jsonMap(json)['size'] as int,
+        path = jsonMap(json)['path'] as String,
+        _mmioHandle = Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int);
 
   static Pointer<Void> _mmioOpen(int base, int size) {
     var mmioHandle = _nativeMMIOnew();
@@ -367,5 +377,25 @@ class MMIO {
     } finally {
       malloc.free(data);
     }
+  }
+
+  @override
+  IsolateAPI fromJson(String json) {
+    return MMIO.isolate(json);
+  }
+
+  @override
+  int getHandle() {
+    return _mmioHandle.address;
+  }
+
+  @override
+  void setHandle(int handle) {
+    _mmioHandle = Pointer<Void>.fromAddress(handle);
+  }
+
+  @override
+  String toJson() {
+    return '{"class":"MMIO","base":"$base","size":$size,"path":"$path","handle":${_mmioHandle.address}}';
   }
 }

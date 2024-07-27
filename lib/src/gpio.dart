@@ -12,6 +12,8 @@ import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
 
+import 'isolate_api.dart';
+import 'json.dart';
 import 'library.dart';
 import 'signature.dart';
 
@@ -164,7 +166,7 @@ typedef struct gpio_config {
 } gpio_config_t;
 */
 
-class _GPIOconfig extends Struct {
+final class _GPIOconfig extends Struct {
   @Int32()
   external int direction;
   @Int32()
@@ -401,7 +403,7 @@ Map<String, dynamic> _jsonMap(String json) {
 /// sysfs GPIOs will be supported.
 ///
 /// c-periphery [GPIO](https://github.com/vsergeev/c-periphery/blob/master/docs/gpio.md) documentation.
-class GPIO {
+class GPIO extends IsolateAPI {
   static String _gpioBasePath = '/dev/gpiochip';
 
   /// GPIO chip device path e.g. /dev/gpiochip0
@@ -418,12 +420,13 @@ class GPIO {
 
   /// GPIO name, is empty if [GPIO.line] is used
   final String name;
-  final Pointer<Void> _gpioHandle;
+  late Pointer<Void> _gpioHandle;
   bool _invalid = false;
 
   /// Converts a [GPIO] to a JSON string. See constructor [isolate] for detials.
+  @override
   String toJson() {
-    return '{"path":"$path","chip":$chip,"line":$line,"direction":${direction.index},"name":"$name","handle":${_gpioHandle.address}}';
+    return '{"class":GPIO","path":"$path","chip":$chip,"line":$line,"direction":${direction.index},"name":"$name","handle":${_gpioHandle.address}}';
   }
 
   /// Sets an alternative [chipBasePath], default value is '/dev/gpiochip'
@@ -554,10 +557,10 @@ class GPIO {
   /// Duplicates an existing [GPIO] from a JSON string. This special constructor
   /// is used to transfer an existing [GPIO] to an other isolate.
   GPIO.isolate(String json)
-      : chip = _jsonMap(json)['chip'] as int,
-        line = _jsonMap(json)['line'] as int,
-        name = _jsonMap(json)['name'] as String,
-        path = _jsonMap(json)['path'] as String,
+      : chip = jsonMap(json)['chip'] as int,
+        line = jsonMap(json)['line'] as int,
+        name = jsonMap(json)['name'] as String,
+        path = jsonMap(json)['path'] as String,
         direction = GPIOdirection.values[_jsonMap(json)['direction'] as int],
         _gpioHandle =
             Pointer<Void>.fromAddress(_jsonMap(json)['handle'] as int);
@@ -641,11 +644,12 @@ class GPIO {
   }
 
   /// Returns the address of the internal handle.
+  @override
   int getHandle() {
     return _gpioHandle.address;
   }
 
-  /// Releases all internal native resoures.
+  /// Releases all internal native resources.
   void dispose() {
     _checkStatus();
     _invalid = true;
@@ -785,5 +789,15 @@ class GPIO {
   /// Returns a string representation of the native GPIO handle.
   String getGPIOinfo() {
     return _getString(_nativeGPIOinfo);
+  }
+
+  @override
+  IsolateAPI fromJson(String json) {
+    return GPIO.isolate(json);
+  }
+
+  @override
+  void setHandle(int handle) {
+    _gpioHandle = Pointer<Void>.fromAddress(handle);
   }
 }

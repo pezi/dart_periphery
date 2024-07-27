@@ -2,8 +2,9 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'package:dart_periphery/dart_periphery.dart';
 import 'dart:io';
+
+import 'package:dart_periphery/dart_periphery.dart';
 
 // https://wiki.seeedstudio.com/Grove-VOC_and_eCO2_Gas_Sensor-SGP30/
 // The Grove-VOC and eCO2 Gas Sensor(SGP30) is an air quality detection sensor based on the SGP30 chip.
@@ -16,7 +17,7 @@ void main() {
   sleep(Duration(milliseconds: 1000));
   var count = 0;
   while (true) {
-    s.measureIaq();
+    print(s.measureIaq());
     print(s.measureRaw());
     sleep(Duration(milliseconds: 1000));
     ++count;
