@@ -528,7 +528,7 @@ and subsequently to the Flutter UI. This model is used for actuator control, suc
 
 **Support for Multiple Streams**: Enables handling of multiple data streams simultaneously.
 
-The project is currently still beta, and development is ongoing.
+The project is currently still beta and development is ongoing.
 
 ## Tested SoC hardware
 
