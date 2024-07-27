@@ -478,8 +478,6 @@ The appropriate library can be found [here](https://github.com/pezi/dart_periphe
 
 **dart_periphery** works with flutter-pi, a light-weight [Flutter Engine Embedder](https://github.com/ardera/flutter-pi) for Raspberry Pi. Following method loads
 
-## flutter-pi-tester
-
 ``` dart
 // Loads the libraray form the flutter-pi asset directory.
 void loadLibFromFlutterAssetDir(bool load) 
