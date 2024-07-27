@@ -10,11 +10,11 @@
 ## Introduction
 
 **dart_periphery** is a Dart port of the native [c-periphery library](https://github.com/vsergeev/c-periphery)
-  for Linux Peripheral I/O (GPIO, LED, PWM, SPI, I2C, MMIO and Serial peripheral I/O). This package s designed for System on Chips (SoCs) such as Raspberry Pi, NanoPi, Banana Pi, and others.
+  for Linux Peripheral I/O (GPIO, LED, PWM, SPI, I2C, MMIO and Serial peripheral I/O). This package is designed for System on Chips (SoCs) such as Raspberry Pi, NanoPi, Banana Pi, and others.
 
 ### What is c-periphery?
 
-Extracted from the project web site:
+Abstract from the project web site:
 
 >c-periphery is a small C library for
 >
