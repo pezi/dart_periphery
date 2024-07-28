@@ -333,7 +333,7 @@ class PWM {
       case 1:
         return Polarity.pwmPolarityInversed;
       default:
-        throw PWMexception(PWMerrorCode.pwmErrorQuery, 'Unkown polarity');
+        throw PWMexception(PWMerrorCode.pwmErrorQuery, 'Unknown polarity');
     }
   }
 
