@@ -1,3 +1,7 @@
+## 0.9.7 2024
+* library loader: use dart:ffi Abi instead of uname() for architecture detection
+* 
+
 ## 0.9.6 2024-07-27
 * Add isolate support
 * Update Dart version reference inside the readme to 3.4.4.
