@@ -29,8 +29,8 @@ const int sh31HeaterDisable = 0x3066;
 const int sh31ReadSerialNumber = 0x3780;
 
 /// [SHT31] exception
-class SHT31excpetion implements Exception {
-  SHT31excpetion(this.errorMsg);
+class SHT31exception implements Exception {
+  SHT31exception(this.errorMsg);
   final String errorMsg;
   @override
   String toString() => errorMsg;
@@ -102,7 +102,7 @@ class SHT31 {
     sleep(Duration(milliseconds: 5));
     var data = i2c.readBytesReg(i2cAddress, 0, 6);
     if (!checkCRC(data)) {
-      throw SHT31excpetion('CRC8 error');
+      throw SHT31exception('CRC8 error');
     }
     return (data[0] & 0xff) << 24 |
         (data[1] & 0xff) << 16 |
@@ -122,7 +122,7 @@ class SHT31 {
 
     var data = i2c.readBytesReg(i2cAddress, 0, 6);
     if (!checkCRC(data)) {
-      throw SHT31excpetion('CRC8 error');
+      throw SHT31exception('CRC8 error');
     }
 
     // convert the data

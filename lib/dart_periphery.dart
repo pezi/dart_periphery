@@ -69,7 +69,7 @@ export 'src/hardware/sht31.dart'
     show
         SHT31,
         SHT31result,
-        SHT31excpetion,
+        SHT31exception,
         sht31AlternativeI2Caddress,
         sht31DefaultI2Caddress;
 export 'src/hardware/utils/byte_buffer.dart' show BitOrder;
