@@ -4,9 +4,10 @@
 
 import 'dart:convert';
 
-// Improve performance inside the isolate(String json) constructor, cache JSON maps
 final Map<int, Map<String, dynamic>> _jsonCache = {};
 
+/// Converts a [json] string to a [Map] caching the result.
+/// Caching improves performance inside the isolate(String json) constructor.
 Map<String, dynamic> jsonMap(String json) {
   Map<String, dynamic>? map = _jsonCache[json.hashCode];
   if (map == null) {

@@ -7,6 +7,7 @@ import 'json.dart';
 import 'package:dart_periphery/src/isolate_api.dart';
 import 'dart:ffi';
 
+/// Dummy sensor for development.
 class DummyDev implements IsolateAPI {
   static int handleCounter = 1;
   Pointer<Void> _dummyHandle;

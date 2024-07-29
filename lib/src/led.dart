@@ -50,7 +50,7 @@ final _nativeLedFree = voidVoidM('led_free');
 final _nativeLedErrno = intVoidM('led_errno');
 
 // const char *led_errmsg(led_t *led);
-final _nativeLedErrnMsg = utf8VoidM('led_errmsg');
+final _nativeLedErrMsg = utf8VoidM('led_errmsg');
 
 // int led_write(led_t *led, bool value);
 final _nativeLedWrite = intVoidBoolM('led_write');
@@ -83,8 +83,8 @@ int _checkError(int value) {
   return value;
 }
 
-String _getErrmsg(Pointer<Void> handle) {
-  return _nativeLedErrnMsg(handle).toDartString();
+String _getErrMsg(Pointer<Void> handle) {
+  return _nativeLedErrMsg(handle).toDartString();
 }
 
 /// [Led] exception
@@ -94,7 +94,7 @@ class LedException implements Exception {
   LedException(this.errorCode, this.errorMsg);
   LedException.errorCode(int code, Pointer<Void> handle)
       : errorCode = Led.getLedErrorCode(code),
-        errorMsg = _getErrmsg(handle);
+        errorMsg = _getErrMsg(handle);
   @override
   String toString() => errorMsg;
 }
