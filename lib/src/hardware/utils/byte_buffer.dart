@@ -87,10 +87,17 @@ bool checkCRC(List<int> data) {
   return true;
 }
 
-int bin2int(String s) {
-  var pos = s.indexOf('b');
-  if (pos > 0) {
-    s = s.substring(pos + 1);
+/// Converter for string with bin value to int
+extension BinConverter on String {
+  /// Coverts string containing a binary sequence with a leading b to a an int.
+  /// '0b10000000'
+  int bin() {
+    var s = this;
+    // skip the optional b
+    var pos = s.indexOf('b');
+    if (pos > 0) {
+      s = s.substring(pos + 1);
+    }
+    return int.parse(s, radix: 2);
   }
-  return int.parse(s, radix: 2);
 }
