@@ -249,7 +249,7 @@ void main() {
 
 ### PWM
 
-Ensure that PWM is correct enabled. e.g. see the following [documentation](https://jumpnowtek.com/rpi/Using-the-Raspberry-Pi-Hardware-PWM-timers.html) for the Raspberry Pi.
+Ensure that PWM is correct enabled. e.g. see the following [documentation](https://github.com/dotnet/iot/blob/main/Documentation/raspi-pwm.md) for the Raspberry Pi.
 
 ``` dart
 import 'package:dart_periphery/dart_periphery.dart';
@@ -354,28 +354,28 @@ cd ~
 ### ARMv7
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.4.4/sdk/dartsdk-linux-arm-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.5.3/sdk/dartsdk-linux-arm-release.zip
 unzip dartsdk-linux-arm-release.zip
 ```
 
 ### ARMv8
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.4.4/sdk/dartsdk-linux-arm64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.5.3/sdk/dartsdk-linux-arm64-release.zip
 unzip dartsdk-linux-arm64-release.zip
 ```
 
 ### x86
 
 ``` bash
-https://storage.googleapis.com/dart-archive/channels/stable/release/3.4.4/sdk/dartsdk-linux-ia32-release.zip
+https://storage.googleapis.com/dart-archive/channels/stable/release/3.5.3/sdk/dartsdk-linux-ia32-release.zip
 unzip dartsdk-linux-ia32-release.zip
 ```
 
 ### x86_64
 
 ``` bash
-https://storage.googleapis.com/dart-archive/channels/stable/release/3.4.4/sdk/dartsdk-linux-x64-release.zip
+https://storage.googleapis.com/dart-archive/channels/stable/release/3.5.3/sdk/dartsdk-linux-x64-release.zip
 unzip dartsdk-linux-x64-release.zip
 ```
 
@@ -410,7 +410,7 @@ Test the installation
 
 ``` bash
 dart --version
-Dart SDK version: 3.4.4 (stable) (Wed Jun 12 15:54:31 2024 +0000) on "linux_arm64"
+Dart SDK version: 3.5.3 (stable) (Wed Sep 11 16:22:47 2024 +0000) on "linux_arm"
 ```
 
 ## Native libraries
