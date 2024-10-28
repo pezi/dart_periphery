@@ -34,10 +34,10 @@ class PlatformException implements Exception {
 
 // Fix typo
 // https://github.com/pezi/dart_periphery/pull/20
-@Deprecated("Fix typo in method name")
-void useSharedLibray() {
-  _peripheryLibPath = sharedLib;
-}
+//@Deprecated("Fix typo in method name")
+//void useSharedLibray() {
+//  _peripheryLibPath = sharedLib;
+//}
 
 /// dart_periphery loads the shared library.
 /// See [native-libraries](https://pub.dev/packages/dart_periphery#native-libraries) for details.
@@ -109,7 +109,8 @@ enum LibraryErrorCode {
   libraryNotFound,
   cpuArchDetectionFailed,
   invalidParameter,
-  invalidTmpDirectory
+  invalidTmpDirectory,
+  errorWritingLib
 }
 
 /// Library exception
@@ -166,9 +167,21 @@ List<String> getFlutterPiArgs() {
   return List.unmodifiable(_flutterPiArgs);
 }
 
+void saveLibrary(File file, String base64EncodedLib) {
+  try {
+    file.createSync(recursive: false);
+    final decodedBytes = base64Decode(base64EncodedLib);
+
+    file.writeAsBytesSync(decodedBytes);
+  } on Error catch (e) {
+    throw LibraryException(LibraryErrorCode.errorWritingLib, e.toString());
+  } on Exception catch (e) {
+    throw LibraryException(LibraryErrorCode.errorWritingLib, e.toString());
+  }
+}
+
 /// Loads the Linux/CPU specific periphery library as a DynamicLibrary.
 DynamicLibrary loadPeripheryLib() {
-
   if (_isPeripheryLibLoaded) {
     return _peripheryLib;
   }
@@ -210,18 +223,18 @@ DynamicLibrary loadPeripheryLib() {
       // store the appropriate in the system temp directory
 
       String base64EncodedLib = '';
-      CpuArch arch = CpuArch();
-      switch (arch.cpuArch) {
-        case CpuArchitecture.arm:
+
+      switch (Abi.current()) {
+        case Abi.linuxArm:
           base64EncodedLib = arm;
           break;
-        case CpuArchitecture.arm64:
+        case Abi.linuxArm64:
           base64EncodedLib = arm64;
           break;
-        case CpuArchitecture.x86:
+        case Abi.linuxIA32:
           base64EncodedLib = x86;
           break;
-        case CpuArchitecture.x86_64:
+        case Abi.linuxX64:
           base64EncodedLib = x86_64;
           break;
         default:
@@ -242,15 +255,24 @@ DynamicLibrary loadPeripheryLib() {
             "Temp directory does not exist");
       }
 
-      String path = _tmpDirectory + Platform.pathSeparator + _libraryFileName;
-      final file = File(path);
-      if (!file.existsSync() || !_reuseTmpFileLibrary) {
-        file.createSync(recursive: false);
-        final decodedBytes = base64Decode(base64EncodedLib);
-        file.writeAsBytesSync(decodedBytes);
+      if (_reuseTmpFileLibrary) {
+        String path = _tmpDirectory + Platform.pathSeparator + _libraryFileName;
+        final file = File(path);
+        if (!file.existsSync()) {
+          saveLibrary(file, base64EncodedLib);
+        }
+        _peripheryLibPath = path;
+      } else {
+        // fix https://github.com/pezi/flutter-pi-sensor-tester/issues/1
+        String path =
+            'pid$_tmpDirectory${Platform.pathSeparator}${getPID()}_$_libraryFileName';
+        final file = File(path);
+        // avoid crash writing this file again from an other isolate
+        if (!file.existsSync()) {
+          saveLibrary(file, base64EncodedLib);
+        }
+        _peripheryLibPath = path;
       }
-
-      _peripheryLibPath = path;
     }
   }
 
@@ -260,7 +282,8 @@ DynamicLibrary loadPeripheryLib() {
   return _peripheryLib;
 }
 
-/// Returns the path of the periphery library. Empty string if the library is not loaded.
+/// Returns the path of the periphery library. Empty string. if the
+/// library is not loaded.
 String getPeripheryLibPath() {
   return _peripheryLibPath;
 }

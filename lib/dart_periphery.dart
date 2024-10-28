@@ -87,7 +87,6 @@ export 'src/led.dart' show Led, LedException, LedErrorCode;
 export 'src/library.dart'
     show
         setCPUarchitecture,
-        useSharedLibray,
         useSharedLibrary,
         setCustomLibrary,
         useLocalLibrary,
@@ -97,6 +96,7 @@ export 'src/library.dart'
         setTempDirectory,
         reuseTmpFileLibrary,
         loadLibFromFlutterAssetDir,
+        loadPeripheryLib,
         getPeripheryLibPath;
 export 'src/mmio.dart' show MMIO, MMIOexception, MMIOerrorCode;
 export 'src/pwm.dart' show PWM, PWMexception, Polarity, PWMerrorCode;
