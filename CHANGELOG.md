@@ -1,6 +1,8 @@
-## 0.9.7 2024
+## 0.9.7 2024-10-30
 * library loader: use dart:ffi Abi instead of uname() for architecture detection
-* 
+* Fix issue https://github.com/pezi/flutter-pi-sensor-tester/issues/1
+* Remove depreacted method: useSharedLibray (typo) -> useSharedLibrary 
+* Update Dart version reference inside the readme to 3.4.5.
 
 ## 0.9.6 2024-07-27
 * Add isolate support
