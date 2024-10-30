@@ -435,8 +435,6 @@ void setTempDirectory(String tmpDir)
 void reuseTmpFileLibrary(bool reuse)
 ```
 
-**dart_periphery** calls uname() function to detect the CPU architecture for loading the appropriate library. This auto detection mechanism can fail. Internally the logic tries to match the `uname -m` value to predefined string values.
-
 Following methods can be used to overwrite the auto loading of the prebuilt library. But be aware, any of these methods to disable the auto detection must be called before any **dart_periphery** interface is used!
 
 ``` dart
@@ -473,6 +471,7 @@ void useLocalLibrary([CpuArchitecture arch])
 ```
 The appropriate library can be found [here](https://github.com/pezi/dart_periphery/blob/main/lib/src/native) .
 
+Flutter isolates: Note that when using Flutter isolates with Dart periphery, all library-related methods must be called separately within each isolate.
 
 ## flutter-pi
 
