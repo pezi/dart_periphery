@@ -5,7 +5,15 @@ import 'package:ffi/ffi.dart';
 typedef NativeCall = int Function(Pointer<Int8>);
 
 /// Supported CPU architectures
-enum CpuArchitecture { x86, x86_64, arm, arm64, notSupported, undefined }
+enum CpuArchitecture {
+  x86,
+  x86_64,
+  arm,
+  arm64,
+  riscv64,
+  notSupported,
+  undefined
+}
 
 final DynamicLibrary nativeAddLib = DynamicLibrary.open("libc.so.6");
 NativeCall uname = nativeAddLib

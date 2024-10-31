@@ -13,8 +13,6 @@ import 'native/lib_base64.dart';
 
 const pkgName = 'dart_periphery';
 
-const String version = '1.0.0';
-
 final String sharedLib = 'libperiphery.so';
 
 late DynamicLibrary _peripheryLib;
@@ -135,9 +133,9 @@ bool isFlutterPiEnv() {
 
 var _flutterPiArgs = <String>[];
 
-/// Returns the PID of the running flutter-pi program, -1 for all other platforms.
+/// Returns the PID of the running program for linux, -1 for all other platforms.
 int getPID() {
-  if (!isFlutterPiEnv()) {
+  if (!Platform.isLinux) {
     return -1;
   }
   final dylib = DynamicLibrary.open('libc.so.6');
@@ -171,7 +169,7 @@ void saveLibrary(File file, String base64EncodedLib) {
   try {
     file.createSync(recursive: false);
     final decodedBytes = base64Decode(base64EncodedLib);
-
+    // hint: a crash occures, if an used lib is written again
     file.writeAsBytesSync(decodedBytes);
   } on Error catch (e) {
     throw LibraryException(LibraryErrorCode.errorWritingLib, e.toString());
@@ -237,6 +235,8 @@ DynamicLibrary loadPeripheryLib() {
         case Abi.linuxX64:
           base64EncodedLib = x86_64;
           break;
+        // case Abi.linuxRiscv64:
+
         default:
           throw LibraryException(LibraryErrorCode.invalidParameter,
               "Not supported CPU architecture");
