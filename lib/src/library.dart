@@ -265,7 +265,7 @@ DynamicLibrary loadPeripheryLib() {
       } else {
         // fix https://github.com/pezi/flutter-pi-sensor-tester/issues/1
         String path =
-            'pid$_tmpDirectory${Platform.pathSeparator}${getPID()}_$_libraryFileName';
+            '$_tmpDirectory${Platform.pathSeparator}pid_${getPID()}_$_libraryFileName';
         final file = File(path);
         // avoid crash writing this file again from an other isolate
         if (!file.existsSync()) {
