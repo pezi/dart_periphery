@@ -9,7 +9,7 @@
 
 ## Introduction
 
-**dart_periphery** is a Dart port of the native [c-periphery library](https://github.com/vsergeev/c-periphery)
+**dart_periphery** is a Dart port of the native [c-periphery library](https://github.com/vsergeev/c-periphery) (v2.4.2)
   for Linux Peripheral I/O (GPIO, LED, PWM, SPI, I2C, MMIO and Serial peripheral I/O). This package is designed for System on Chips (SoCs) such as Raspberry Pi, NanoPi, Banana Pi, and others.
 
 ### What is c-periphery?
@@ -470,9 +470,9 @@ void useLocalLibrary([CpuArchitecture arch])
 ```
 The appropriate library can be found [here](https://github.com/pezi/dart_periphery/blob/main/lib/src/native) .
 
-##Dart isolates 
+## Dart isolates 
 
-Starting from version 0.9.7, the default library handling mechanism creates a temporary library file, named in the format `pid_1456_libperiphery_arm.so`. The unique process ID for each isolate prevents repeated creation of the temporary library, avoiding crashes caused by overwriting an actively used library.
+Starting from version *0.9.7*, the default library handling mechanism creates a temporary library file, named in the format `pid_1456_libperiphery_arm.so`. The unique process ID for each isolate prevents repeated creation of the temporary library, avoiding crashes caused by overwriting an actively used library.
 
 Library setup override methods, such as: 
 
@@ -483,7 +483,7 @@ void useLocalLibrary([CpuArchitecture arch])
 void setTempDirectory(String tmpDir)
 ```
 
-mmust be called separately within each isolate. This is necessary because each isolate initializes Dart Periphery independently.
+must be called separately within each isolate. This is necessary because each isolate initializes Dart Periphery independently.
 
 
 ## flutter-pi
