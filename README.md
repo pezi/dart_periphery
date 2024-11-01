@@ -469,7 +469,7 @@ void useLocalLibrary([CpuArchitecture arch])
 ```
 The appropriate library can be found [here](https://github.com/pezi/dart_periphery/blob/main/lib/src/native) .
 
-**Dart isolates:** 
+##Dart isolates 
 
 Starting from version 0.9.7, the default library handling mechanism creates a temporary library file, named in the format `pid_1456_libperiphery_arm.so`. The unique process ID for each isolate prevents repeated creation of the temporary library, avoiding crashes caused by overwriting an actively used library.
 
