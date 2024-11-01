@@ -76,6 +76,7 @@ void loadLibFromFlutterAssetDir(bool use) {
   _useFlutterPiAssetDir = use;
 }
 
+
 String _autoDetectCPUarch() {
   CpuArch arch = CpuArch();
   if (arch.cpuArch == CpuArchitecture.notSupported) {
@@ -89,7 +90,7 @@ String _autoDetectCPUarch() {
 
 /// dart_periphery loads the library from the actual directory.
 /// See [native-libraries](https://pub.dev/packages/dart_periphery#native-libraries) for details.
-void useLocalLibrary([CpuArchitecture arch = CpuArchitecture.undefined]) {
+void useLocalLibrary() {
   if (arch == CpuArchitecture.undefined) {
     _peripheryLibPath = './${_autoDetectCPUarch()}';
   } else {

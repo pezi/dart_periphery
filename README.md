@@ -422,6 +422,8 @@ Dart SDK version: 3.5.4 (stable) (Wed Oct 16 16:18:51 2024 +0000) on "linux_arm6
 * X86 - [libperiphery_x86.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86.so)
 * X86_64 - [libperiphery_x86_64.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86_64.so)
 
+Dart periphery provides an mechanism to 
+
 
 Following methods can be used to control the tmp directory handling.
 
