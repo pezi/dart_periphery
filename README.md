@@ -469,9 +469,11 @@ void useLocalLibrary([CpuArchitecture arch])
 ```
 The appropriate library can be found [here](https://github.com/pezi/dart_periphery/blob/main/lib/src/native) .
 
-**Flutter isolates:** 
+**Dart isolates:** 
 
-When using Flutter isolates with Dart Periphery, each isolate requires separate calls to all library overwriting setup methods. This is necessary because each isolate initializes Dart Periphery independently.
+Starting from version 0.9.7, the default library handling mechanism creates a temporary library file, named in the format `pid_1456_libperiphery_arm.so`. The unique process ID for each isolate prevents repeated creation of the temporary library, avoiding crashes caused by overwriting an actively used library.
+
+Library setup override methods, such as: 
 
 ```
 void setCPUarchitecture(CpuArchitecture arch)
@@ -480,7 +482,8 @@ void useLocalLibrary([CpuArchitecture arch])
 void setTempDirectory(String tmpDir)
 ```
 
-Starting from version 0.9.7, the default library handling mechanism creates a temporary library file, named in the format `pid_1456_libperiphery_arm.so`. The unique process ID for each isolate prevents repeated creation of the temporary library, avoiding crashes caused by overwriting an actively used library.
+mmust be called separately within each isolate. This is necessary because each isolate initializes Dart Periphery independently.
+
 
 ## flutter-pi
 
