@@ -90,7 +90,7 @@ String _autoDetectCPUarch() {
 
 /// dart_periphery loads the library from the actual directory.
 /// See [native-libraries](https://pub.dev/packages/dart_periphery#native-libraries) for details.
-void useLocalLibrary() {
+void useLocalLibrary([CpuArchitecture arch = CpuArchitecture.undefined]) {
   if (arch == CpuArchitecture.undefined) {
     _peripheryLibPath = './${_autoDetectCPUarch()}';
   } else {
