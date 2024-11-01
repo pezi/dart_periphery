@@ -417,8 +417,6 @@ Dart SDK version: 3.5.4 (stable) (Wed Oct 16 16:18:51 2024 +0000) on "linux_arm6
 
 **dart_periphery** includes prebuilt native c-periphery libraries for
 
-
-
 * ARMv7 - [libperiphery_arm.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm.so)
 * ARMv8 - [libperiphery_arm64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm64.so)
 * X86 - [libperiphery_x86.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86.so)
@@ -471,7 +469,18 @@ void useLocalLibrary([CpuArchitecture arch])
 ```
 The appropriate library can be found [here](https://github.com/pezi/dart_periphery/blob/main/lib/src/native) .
 
-Flutter isolates: Note that when using Flutter isolates with Dart periphery, all library-related methods must be called separately within each isolate.
+**Flutter isolates:** 
+
+When using Flutter isolates with Dart Periphery, each isolate requires separate calls to all library overwriting setup methods. This is necessary because each isolate initializes Dart Periphery independently.
+
+```
+void setCPUarchitecture(CpuArchitecture arch)
+void setCustomLibrary(String absolutePath)
+void useLocalLibrary([CpuArchitecture arch])
+void setTempDirectory(String tmpDir)
+```
+
+Starting from version 0.9.7, the default library handling mechanism creates a temporary library file, named in the format `pid_1456_libperiphery_arm.so`. The unique process ID for each isolate prevents repeated creation of the temporary library, avoiding crashes caused by overwriting an actively used library.
 
 ## flutter-pi
 
@@ -493,6 +502,7 @@ The appropriate library is loaded by auto detection of the CPU architecture. If 
 // enum CpuArchitecture { x86, x86_64, arm, arm64 }
 void setCPUarchitecture(CpuArchitecture arch)
 void setCustomLibrary(String absolutePath)
+void reuseTmpFileLibrary(bool reuse)
 ```
 
 These methods must be called before any **dart_periphery** interface is used! See last section, [native libraries](https://pub.dev/packages/dart_periphery#native-libraries) for details.
