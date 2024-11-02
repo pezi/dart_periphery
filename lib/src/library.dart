@@ -20,9 +20,9 @@ extension ABIParsing on Abi {
       throw LibraryException(
           LibraryErrorCode.invalidParameter, "Not supported CPU architecture");
     }
-    return arch.substring(5).toLowerCase();
+    // e.g. linux_arm
+    return arch.substring(6).toLowerCase();
   }
-// ···
 }
 
 late DynamicLibrary _peripheryLib;

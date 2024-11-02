@@ -441,7 +441,7 @@ void reuseTmpFileLibrary(bool reuse)
 
 ``` dart
 /// loads the shared library.
-useSharedLibray();
+useSharedLibrary();
 ```
 If this method is called, **dart_periphery** loads the shared library. For this case c-periphery must be installed as a shared library. See for [section Shared Library](https://github.com/vsergeev/c-periphery#shared-library) for details.
 
