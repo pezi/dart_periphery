@@ -5,9 +5,11 @@
 
 [![pub package](https://img.shields.io/badge/pub-v0.9.7-orange)](https://pub.dartlang.org/packages/dart_periphery)
 
-## Important hint
-This version changes the CPU detection from uname() to the build in Dart [Abi class](https://api.flutter.dev/flutter/dart-ffi/Abi-class.html), 
-including CPU architecture name changes. Thanks to [Hanns Winkler](https://github.com/pezi/dart_periphery/pulls)
+## Important hints
+
+This version updates CPU detection by switching from uname() to Dart’s built-in [Abi class](https://api.flutter.dev/flutter/dart-ffi/Abi-class.html). Special thanks to [Hanns Winkler](https://github.com/pezi/dart_periphery/pulls) for his contribution!
+
+Added RISC-V support, thanks to https://10xEngineers.ai for providing remote access to a Banana Pi BPI-F3 16GB, which enabled building the RISC-V variant of the c-periphery library.
 
 
 ## Introduction
@@ -440,8 +442,9 @@ void reuseTmpFileLibrary(bool reuse)
 ```
 
 ``` dart
-/// loads the shared library.
-useSharedLibrary();
+/// loads the shared library 
+/// export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+useSharedLibrary(); 
 ```
 If this method is called, **dart_periphery** loads the shared library. For this case c-periphery must be installed as a shared library. See for [section Shared Library](https://github.com/vsergeev/c-periphery#shared-library) for details.
 
@@ -486,14 +489,16 @@ void loadLibFromFlutterAssetDir(bool load)
 
 the appropriate library from the flutter asset directory. This overwrites the library self-extraction mechanism.
 
-* In most cases the ARMv7 library: [libperiphery_arm.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_arm.so) for Raspberry Pi OS 32-bit
-* ARMv8 [libperiphery_arm64.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_arm64.so) for Raspberry Pi OS 64-bit
+* In most cases the ARMv7 library: [libperiphery_arm.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm.so) for Raspberry Pi OS 32-bit
+* ARMv8 [libperiphery_arm64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm64.so) for Raspberry Pi OS 64-bit
 
-The appropriate library is loaded by auto detection of the CPU architecture. If this way fails, the auto detection can be overruled by following two methods:
+If this way fails, the auto detection can be overruled by following methods:
 
 ``` dart
+void useSharedLibray();
 void setCustomLibrary(String absolutePath)
-void reuseTmpFileLibrary(bool reuse)
+void useLocalLibrary()
+void setTempDirectory(String tmpDir)
 ```
 
 These methods must be called before any **dart_periphery** interface is used! See last section, [native libraries](https://pub.dev/packages/dart_periphery#native-libraries) for details.
