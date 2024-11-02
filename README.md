@@ -6,6 +6,9 @@
 [![pub package](https://img.shields.io/badge/pub-v0.9.7-orange)](https://pub.dartlang.org/packages/dart_periphery)
 
 ## Important hint
+This version changes the CPU detection from uname() to the build in Dart [Abi class](https://api.flutter.dev/flutter/dart-ffi/Abi-class.html), 
+including CPU architecture name changes. Thanks to [Hanns Winkler](https://github.com/pezi/dart_periphery/pulls)
+
 
 ## Introduction
 
@@ -417,14 +420,16 @@ Dart SDK version: 3.5.4 (stable) (Wed Oct 16 16:18:51 2024 +0000) on "linux_arm6
 
 **dart_periphery** includes prebuilt native c-periphery libraries for
 
-* ARMv7 - [libperiphery_arm.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm.so)
-* ARMv8 - [libperiphery_arm64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm64.so)
-* X86 - [libperiphery_x86.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86.so)
-* X86_64 - [libperiphery_x86_64.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86_64.so)
+* [Abi.linuxArm](https://api.flutter.dev/flutter/dart-ffi/Abi/linuxArm-constant.html) - [libperiphery_arm.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm.so)
+* [Abi.linuxArm64](https://api.flutter.dev/flutter/dart-ffi/Abi/linuxArm64-constant.html) - [libperiphery_arm64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm64.so)
+* [Abi.linuxIA32](https://api.flutter.dev/flutter/dart-ffi/Abi/linuxIA32-constant.html) - [libperiphery_ia32.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_ia32.so)
+* [Abi.linuxX64](https://api.flutter.dev/flutter/dart-ffi/Abi/linuxX64-constant.html) - [libperiphery_x64.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x64.so)
 
 **Important hint:** Dart Periphery includes an automatic mechanism to load the correct library. The additional methods described here can be used to override this default mechanism if needed.
 
-Following methods can be used to control the tmp directory handling.
+Following methods can be used to overwrite the auto loading of the prebuilt library. But be aware, 
+any of these methods to disable or change the behaviour the auto detection must be 
+called before any **dart_periphery** interface is used!
 
 ``` dart
 /// Sets the tmp directory for the extraction of the libperiphery.so file.
@@ -434,24 +439,10 @@ void setTempDirectory(String tmpDir)
 void reuseTmpFileLibrary(bool reuse)
 ```
 
-Following methods can be used to overwrite the auto loading of the prebuilt library. But be aware, any of these methods to disable the auto detection must be called before any **dart_periphery** interface is used!
-
 ``` dart
-// enum CpuArchitecture { x86, x86_64, arm, arm64 }
-void setCPUarchitecture(CpuArchitecture arch)
-```
-
-sets explicit the CPU architecture, which loads a library according following mapping
-
-* CpuArchitecture.ARM → [libperiphery_arm.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm.so)
-* CpuArchitecture.ARM64 → [libperiphery_arm64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm64.so)
-* CpuArchitecture.X86 → [libperiphery_x86.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86.so)
-* CpuArchitecture.X86_64 → [libperiphery_x86_64.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86_64.so)
-
-``` dart
+/// loads the shared library.
 useSharedLibray();
 ```
-
 If this method is called, **dart_periphery** loads the shared library. For this case c-periphery must be installed as a shared library. See for [section Shared Library](https://github.com/vsergeev/c-periphery#shared-library) for details.
 
 To load a custom library call following method
@@ -464,9 +455,7 @@ This method can also be helpful for a currently not supported platform.
 If you want to load the library from the current directory call
 
 ``` dart
-// optional parameter enum CpuArchitecture { x86, x86_64, arm, arm64 }
-// to skip auto detection
-void useLocalLibrary([CpuArchitecture arch])
+void useLocalLibrary()
 ```
 The appropriate library can be found [here](https://github.com/pezi/dart_periphery/blob/main/lib/src/native) .
 
@@ -477,9 +466,9 @@ Starting from version *0.9.7*, the default library handling mechanism creates a 
 Library setup override methods, such as: 
 
 ```
-void setCPUarchitecture(CpuArchitecture arch)
+void useSharedLibray();
 void setCustomLibrary(String absolutePath)
-void useLocalLibrary([CpuArchitecture arch])
+void useLocalLibrary()
 void setTempDirectory(String tmpDir)
 ```
 
@@ -498,13 +487,11 @@ void loadLibFromFlutterAssetDir(bool load)
 the appropriate library from the flutter asset directory. This overwrites the library self-extraction mechanism.
 
 * In most cases the ARMv7 library: [libperiphery_arm.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_arm.so) for Raspberry Pi OS 32-bit
-* ARMv8 [libperiphery_aarch64.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x86_64.so) for Raspberry Pi OS 64-bit
+* ARMv8 [libperiphery_arm64.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_arm64.so) for Raspberry Pi OS 64-bit
 
 The appropriate library is loaded by auto detection of the CPU architecture. If this way fails, the auto detection can be overruled by following two methods:
 
 ``` dart
-// enum CpuArchitecture { x86, x86_64, arm, arm64 }
-void setCPUarchitecture(CpuArchitecture arch)
 void setCustomLibrary(String absolutePath)
 void reuseTmpFileLibrary(bool reuse)
 ```

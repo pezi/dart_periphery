@@ -2,8 +2,6 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-export 'src/cpu_architecture.dart'
-    show Uname, CpuArchitecture, CpuArch, nativeUname;
 export 'src/dummy.dart' show DummyDev;
 export 'src/errno.dart' show ERRNO, Errno, ErrnoNotFound;
 export 'src/gpio.dart'
@@ -86,7 +84,6 @@ export 'src/i2c.dart'
 export 'src/led.dart' show Led, LedException, LedErrorCode;
 export 'src/library.dart'
     show
-        setCPUarchitecture,
         useSharedLibrary,
         setCustomLibrary,
         useLocalLibrary,
