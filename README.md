@@ -356,31 +356,38 @@ cd ~
 
 2.) Download the last stable Dart SDK form [archive](https://dart.dev/tools/sdk/archive) for your CPU architecture/OS and unzip it.
 
-### ARMv7
+### arm
 
 ``` bash
 wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.5.4/sdk/dartsdk-linux-arm-release.zip
 unzip dartsdk-linux-arm-release.zip
 ```
 
-### ARMv8
+### arm64
 
 ``` bash
 wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.5.4/sdk/dartsdk-linux-arm64-release.zip
 unzip dartsdk-linux-arm64-release.zip
 ```
 
-### x86
+### IA32
 
 ``` bash
 https://storage.googleapis.com/dart-archive/channels/stable/release/3.5.4/sdk/dartsdk-linux-ia32-release.zip
 unzip dartsdk-linux-ia32-release.zip
 ```
 
-### x86_64
+### X64
 
 ``` bash
 https://storage.googleapis.com/dart-archive/channels/stable/release/3.5.4/sdk/dartsdk-linux-x64-release.zip
+unzip dartsdk-linux-x64-release.zip
+```
+
+### RISC-V (RV64GC)
+
+``` bash
+https://storage.googleapis.com/dart-archive/channels/stable/release/3.5.4/sdk/dartsdk-linux-riscv64-release.zip
 unzip dartsdk-linux-x64-release.zip
 ```
 
@@ -424,10 +431,13 @@ Dart SDK version: 3.5.4 (stable) (Wed Oct 16 16:18:51 2024 +0000) on "linux_arm6
 
 * [Abi.linuxArm](https://api.flutter.dev/flutter/dart-ffi/Abi/linuxArm-constant.html) - [libperiphery_arm.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm.so)
 * [Abi.linuxArm64](https://api.flutter.dev/flutter/dart-ffi/Abi/linuxArm64-constant.html) - [libperiphery_arm64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm64.so)
-* [Abi.linuxIA32](https://api.flutter.dev/flutter/dart-ffi/Abi/linuxIA32-constant.html) - [libperiphery_ia32.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_ia32.so)
-* [Abi.linuxX64](https://api.flutter.dev/flutter/dart-ffi/Abi/linuxX64-constant.html) - [libperiphery_x64.so](https://github.com/pezi/dart_periphery/blob/main/lib/src/native/libperiphery_x64.so)
+* [Abi.linuxIA32](https://api.flutter.dev/flutter/dart-ffi/Abi/linuxIA32-constant.html) - [libperiphery_ia32.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_ia32.so)
+* [Abi.linuxX64](https://api.flutter.dev/flutter/dart-ffi/Abi/linuxX64-constant.html) - [libperiphery_x64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_x64.so)
+* [Abi.linuxRiscv64](https://api.flutter.dev/flutter/dart-ffi/Abi/linuxRiscv64-constant.html)  - [libperiphery_x64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_riscv64.so)
 
 **Important hint:** Dart Periphery includes an automatic mechanism to load the correct library. 
+
+
 The additional methods described here can be used to override this default mechanism if needed.
 But be aware, any of these methods to disable or change the behaviour the auto detection must be 
 called before any **dart_periphery** interface is used!
@@ -469,9 +479,7 @@ Library setup override methods, such as:
 
 ```
 void useSharedLibray();
-void setCustomLibrary(String absolutePath)
-void useLocalLibrary()
-void setTempDirectory(String tmpDir)
+void setCustomLibrary(String absolutePath);
 ```
 
 must be called separately within each isolate. This is necessary because each isolate initializes Dart Periphery independently.
@@ -526,7 +534,7 @@ limited back channel for controlling the isolate. This setup is typically used f
 
 **Listening Mode**: Supports user-defined handling for isolate events. 
 This variant remains on standby for data; once data is processed, the result is passed to the stream 
-and subsequently to the Flutter UI. This model is used for actuator control, such as operating an LED.
+and subsequently to the Flutter UI. This model is used for actuator control, such as operating a LED.
 
 **Support for Multiple Streams**: Enables handling of multiple data streams simultaneously.
 
