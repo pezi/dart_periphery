@@ -17,6 +17,8 @@ import 'json.dart';
 import 'library.dart';
 import 'signature.dart';
 
+enum RegisterWidth { bits8, bits16 }
+
 /*
     #define I2C_M_TEN		0x0010
     #define I2C_M_RD		0x0001
@@ -125,16 +127,18 @@ class I2Cmsg {
   /// [flags] list and a transfer buffer with size [len]. An empty
   /// [flags] list results [NativeI2Cmsg.flags] = 0.
   ///
-  /// The message flags specify whether the message is a read (I2C_M_RD) or write (0) transaction, as well
-  /// as additional options selected by the bitwise OR of their bitmasks.
+  /// The message flags specify whether the message is a read (I2C_M_RD) or
+  /// write (0) transaction, as well as additional options selected by the
+  /// bitwise OR of their bitmasks.
   I2Cmsg(this.addr, this.flags, this.len) : predefined = const [];
 
   /// Constructs an I2C message with the I2C device address [addr],
   /// [flags] list and a [predefined] transfer buffer. An empty
   /// [flags] list results [NativeI2Cmsg.flags] = 0.
   ///
-  /// The message flags specify whether the message is a read (I2C_M_RD) or write (0) transaction, as well
-  /// as additional options selected by the bitwise OR of their bitmasks.
+  /// The message flags specify whether the message is a read (I2C_M_RD) or
+  /// write (0) transaction, as well as additional options selected by the
+  /// bitwise OR of their bitmasks.
   I2Cmsg.buffer(this.addr, this.flags, this.predefined)
       : len = predefined.length;
 
@@ -163,7 +167,6 @@ class I2Cmsg {
           msg.buf[i] = 0;
         }
       }
-      print(msg.toString());
     }
 
     return ptr;
@@ -345,12 +348,16 @@ class I2C extends IsolateAPI {
 
   /// Transfers a list of [I2Cmsg].
   ///
-  /// Each I2C message structure  specifies the transfer of a consecutive number of bytes to a slave address.
-  /// The slave address, message flags, buffer length, and pointer to a byte buffer should be specified in each message.
-  /// The message flags specify whether the message is a read (I2C_M_RD) or write (0) transaction, as well
-  ///  as additional options selected by the bitwise OR of their bitmasks.
+  /// Each I2C message structure  specifies the transfer of a consecutive
+  ///  number of bytes to a slave address.
+  /// The slave address, message flags, buffer length, and pointer to a byte
+  ///  buffer should be specified in each message.
+  /// The message flags specify whether the message is a read (I2C_M_RD) or
+  /// write (0) transaction, as well as additional options selected by the
+  /// bitwise OR of their bitmasks.
   ///
-  /// Returns a [NativeI2CmsgHelper] which contains  the [NativeI2Cmsg] list. To free the allocated memory
+  /// Returns a [NativeI2CmsgHelper] which contains  the [NativeI2Cmsg] list.
+  /// To free the allocated memory
   /// resources [NativeI2CmsgHelper.dispose] must be called by the user.
   NativeI2CmsgHelper transfer(List<I2Cmsg> data) {
     _checkStatus();
@@ -369,19 +376,40 @@ class I2C extends IsolateAPI {
     result.dispose();
   }
 
+  List<int> addRegister(int register, BitOrder order, RegisterWidth width) {
+    if (width == RegisterWidth.bits8) {
+      return [register];
+    }
+    if (order == BitOrder.msbLast) {
+      return [
+        register & 0xFF,
+        register >> 8,
+      ];
+    }
+    return [
+      register >> 8,
+      register & 0xFF,
+    ];
+  }
+
   /// Writes a [byteValue] to the [register] of the I2C device with the [address].
-  void writeByteReg(int address, int register, int byteValue) {
+  void writeByteReg(int address, int register, int byteValue,
+      [BitOrder order = BitOrder.msbLast,
+      RegisterWidth width = RegisterWidth.bits8]) {
     var data = <I2Cmsg>[];
-    data.add(I2Cmsg.buffer(address, [], [register, byteValue]));
+    data.add(I2Cmsg.buffer(
+        address, [], [...addRegister(register, order, width), byteValue]));
     var result = transfer(data);
     result.dispose();
   }
 
   /// Writes [byteData] to the [register] of the I2C device with the [address].
-  void writeBytesReg(int address, int register, List<int> byteData) {
+  void writeBytesReg(int address, int register, List<int> byteData,
+      [BitOrder order = BitOrder.msbLast,
+      RegisterWidth width = RegisterWidth.bits8]) {
     var data = <I2Cmsg>[];
     var bData = <int>[];
-    bData.add(register);
+    bData.addAll(addRegister(register, order, width));
     bData.addAll(byteData);
     data.add(I2Cmsg.buffer(address, [], bData));
     var result = transfer(data);
@@ -415,14 +443,16 @@ class I2C extends IsolateAPI {
     result.dispose();
   }
 
-  /// Writes a [wordValue] to the [register] of the I2C device with the [address] and the bit [order].
+  /// Writes a [wordValue] to the [register] of the I2C device with
+  /// the [address] and the bit [order].
   ///
   /// The bit order depends on the I2C device.
   void writeWordReg(int address, int register, int wordValue,
-      [BitOrder order = BitOrder.msbLast]) {
+      [BitOrder order = BitOrder.msbLast,
+      RegisterWidth width = RegisterWidth.bits8]) {
     var data = <I2Cmsg>[];
     var array = <int>[];
-    array.add(register);
+    array.addAll(addRegister(register, order, width));
     if (order == BitOrder.msbLast) {
       array.add(wordValue & 0xff);
       array.add(wordValue >> 8);
@@ -437,8 +467,11 @@ class I2C extends IsolateAPI {
 
   /// Reads a word from the I2C device with the [address] and the bit [order]].
   ///
-  /// Some I2C devices can directly be written without an explicit register. The bit order depends on the I2C device.
-  int readWord(int address, [BitOrder order = BitOrder.msbLast]) {
+  /// Some I2C devices can directly be written without an explicit register.
+  /// The bit order depends on the I2C device.
+  int readWord(int address,
+      [BitOrder order = BitOrder.msbLast,
+      RegisterWidth width = RegisterWidth.bits8]) {
     var data = <I2Cmsg>[];
     data.add(I2Cmsg(address, [I2CmsgFlags.i2c_m_rd], 2));
     var result = transfer(data);
@@ -460,12 +493,11 @@ class I2C extends IsolateAPI {
   ///
   /// The bit order depends on the I2C device.
   int readWordReg(int address, int register,
-      [BitOrder order = BitOrder.msbLast]) {
+      [BitOrder order = BitOrder.msbLast,
+      RegisterWidth width = RegisterWidth.bits8]) {
     var data = <I2Cmsg>[];
-    if (order == BitOrder.msbFirst) {
-      // register = swapBytes16(register);
-    }
-    data.add(I2Cmsg.buffer(address, [], [register]));
+    data.add(
+        I2Cmsg.buffer(address, [], [...addRegister(register, order, width)]));
     data.add(I2Cmsg(address, [I2CmsgFlags.i2c_m_rd], 2));
     var result = transfer(data);
     print(result._messages[1].toString());
@@ -496,9 +528,12 @@ class I2C extends IsolateAPI {
   }
 
   /// Reads a byte from [register] of the I2C device with the [address].
-  int readByteReg(int address, int register) {
+  int readByteReg(int address, int register,
+      [BitOrder order = BitOrder.msbLast,
+      RegisterWidth width = RegisterWidth.bits8]) {
     var data = <I2Cmsg>[];
-    data.add(I2Cmsg.buffer(address, [], [register]));
+    data.add(
+        I2Cmsg.buffer(address, [], [...addRegister(register, order, width)]));
     data.add(I2Cmsg(address, [I2CmsgFlags.i2c_m_rd], 1));
     var result = transfer(data);
     try {
@@ -513,9 +548,12 @@ class I2C extends IsolateAPI {
   /// Reads [len] bytes from [register] of the I2C device with the [address].
   ///
   /// Some I2C devices can directly be read without explicit register.
-  List<int> readBytesReg(int address, int register, int len) {
+  List<int> readBytesReg(int address, int register, int len,
+      [BitOrder order = BitOrder.msbLast,
+      RegisterWidth width = RegisterWidth.bits8]) {
     var data = <I2Cmsg>[];
-    data.add(I2Cmsg.buffer(address, [], [register]));
+    data.add(
+        I2Cmsg.buffer(address, [], [...addRegister(register, order, width)]));
     data.add(I2Cmsg(address, [I2CmsgFlags.i2c_m_rd], len));
 
     var result = transfer(data);
