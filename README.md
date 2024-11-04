@@ -7,15 +7,18 @@
 
 ## Important hints
 
-This version updates CPU detection by switching from uname() to Dart’s built-in [Abi class](https://api.flutter.dev/flutter/dart-ffi/Abi-class.html). Special thanks to [Hanns Winkler](https://github.com/pezi/dart_periphery/pulls) for his contribution!
+This version updates CPU detection by switching from uname() to Dart’s built-in [Abi class](https://api.flutter.dev/flutter/dart-ffi/Abi-class.html). 
+Special thanks to [Hanns Winkler](https://github.com/pezi/dart_periphery/pulls) for his contribution!
 
-Added RISC-V support, thanks to https://10xEngineers.ai for providing remote access to a Banana Pi BPI-F3 16GB, which enabled building the RISC-V variant of the c-periphery library.
+Added RISC-V support, thanks to https://10xEngineers.ai for providing remote access to a Banana 
+Pi BPI-F3 16GB, which enabled building the RISC-V variant of the c-periphery library.
 
 
 ## Introduction
 
-**dart_periphery** is a Dart port of the native [c-periphery library](https://github.com/vsergeev/c-periphery) (v2.4.2)
-  for Linux Peripheral I/O (GPIO, LED, PWM, SPI, I2C, MMIO and Serial peripheral I/O). This package is designed for System on Chips (SoCs) such as Raspberry Pi, NanoPi, Banana Pi, and others.
+**dart_periphery** is a Dart port of the native [c-periphery library](https://github.com/vsergeev/c-periphery) (v2.4.2) 
+for Linux Peripheral I/O (GPIO, LED, PWM, SPI, I2C, MMIO and Serial peripheral I/O). This package 
+is designed for System on Chips (SoCs) such as Raspberry Pi, NanoPi, Banana Pi, and others.
 
 ### What is c-periphery?
 
@@ -33,7 +36,9 @@ Abstract from the project web site:
 >
 >interface access in userspace Linux. c-periphery simplifies and consolidates the native Linux APIs to these interfaces. c-periphery is useful in embedded Linux environments (including Raspberry Pi, BeagleBone, etc. platforms) for interfacing with external peripherals. c-periphery is re-entrant, has no dependencies outside the standard C library and Linux, compiles into a static library for easy integration with other projects, and is MIT licensed
 
-**dart_periphery** binds the c-periphery library with the help of the [dart:ffi](https://dart.dev/guides/libraries/c-interop) mechanism. Nevertheless, **dart_periphery** tries to be close as possible to the original library. See following [documentation](https://github.com/vsergeev/c-periphery/tree/master/docs). Thanks to **Vanya Sergeev** for his great job!
+**dart_periphery** binds the c-periphery library with the help of the [dart:ffi](https://dart.dev/guides/libraries/c-interop) mechanism. 
+Nevertheless, **dart_periphery** tries to be close as possible to the original library. 
+See following [documentation](https://github.com/vsergeev/c-periphery/tree/master/docs). Thanks to **Vanya Sergeev** for his great job!
 
 ## Why c-periphery?
 
@@ -279,7 +284,8 @@ void main() {
 
 ### MMIO
 
-**Memory Mapped I/O**: Turns on a led at pin 18 on a Raspberry Pi using MMIO. This direct register access example is derived from [elinux.org](https://elinux.org/RPi_GPIO_Code_Samples#Direct_register_access).
+**Memory Mapped I/O**: Turns on a led at pin 18 on a Raspberry Pi using MMIO. This direct register 
+access example is derived from [elinux.org](https://elinux.org/RPi_GPIO_Code_Samples#Direct_register_access).
 
 ``` dart
 import 'package:dart_periphery/dart_periphery.dart';
@@ -346,7 +352,7 @@ void main() {
 }
 ```
 
-## Install Dart on Raspian and Armbian
+## Install Dart on Raspbian and Armbian
 
 1.) Navigate to the home directory:
 
@@ -455,7 +461,8 @@ void reuseTmpFileLibrary(bool reuse)
 /// export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 useSharedLibrary(); 
 ```
-If this method is called, **dart_periphery** loads the shared library. For this case c-periphery must be installed as a shared library. See for [section Shared Library](https://github.com/vsergeev/c-periphery#shared-library) for details.
+If this method is called, **dart_periphery** loads the shared library. For this case c-periphery 
+must be installed as a shared library. See for [section Shared Library](https://github.com/vsergeev/c-periphery#shared-library) for details.
 
 To load a custom library call following method
 
@@ -473,7 +480,10 @@ The appropriate library can be found [here](https://github.com/pezi/dart_periphe
 
 ## Dart isolates 
 
-Starting from version *0.9.7*, the default library handling mechanism creates a temporary library file, named in the format `pid_1456_libperiphery_arm.so`. The unique process ID for each isolate prevents repeated creation of the temporary library, avoiding crashes caused by overwriting an actively used library.
+Starting from version *0.9.7*, the default library handling mechanism creates a temporary library 
+file, named in the format `pid_1456_libperiphery_arm.so`. The unique process ID for each isolate 
+prevents repeated creation of the temporary library, avoiding crashes caused by overwriting an 
+actively used library.
 
 Library setup override methods, such as: 
 
@@ -482,19 +492,22 @@ void useSharedLibray();
 void setCustomLibrary(String absolutePath);
 ```
 
-must be called separately within each isolate. This is necessary because each isolate initializes Dart Periphery independently.
+must be called separately within each isolate. This is necessary because each isolate initializes 
+Dart Periphery independently.
 
 
 ## flutter-pi
 
-**dart_periphery** works with flutter-pi, a light-weight [Flutter Engine Embedder](https://github.com/ardera/flutter-pi) for Raspberry Pi. Following method loads
+**dart_periphery** works with flutter-pi, a light-weight [Flutter Engine Embedder](https://github.com/ardera/flutter-pi) for 
+Raspberry Pi. Following method loads
 
 ``` dart
 // Loads the libraray form the flutter-pi asset directory.
 void loadLibFromFlutterAssetDir(bool load) 
 ```
 
-the appropriate library from the flutter asset directory. This overwrites the library self-extraction mechanism.
+the appropriate library from the flutter asset directory. This overwrites the library 
+self-extraction mechanism.
 
 * In most cases the ARMv7 library: [libperiphery_arm.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm.so) for Raspberry Pi OS 32-bit
 * ARMv8 [libperiphery_arm64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm64.so) for Raspberry Pi OS 64-bit
@@ -508,7 +521,8 @@ void useLocalLibrary()
 void setTempDirectory(String tmpDir)
 ```
 
-These methods must be called before any **dart_periphery** interface is used! See last section, [native libraries](https://pub.dev/packages/dart_periphery#native-libraries) for details.
+These methods must be called before any **dart_periphery** interface is used! See last 
+section, [native libraries](https://pub.dev/packages/dart_periphery#native-libraries) for details.
 
 For flutter-pi the method
 
@@ -516,18 +530,20 @@ For flutter-pi the method
 List<String> getFlutterPiArgs();
 ```
 
-returns the command line parameter list of the `flutter-pi` command. The last parameter contains the asset directory.
+returns the command line parameter list of the `flutter-pi` command. The last parameter contains 
+the asset directory.
 
 ## flutter-pi-sensor-tester
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/flutter_sensor_tester.gif "Flutter Sensor Tester")
 
-This [subproject](https://github.com/pezi/flutter-pi-sensor-tester) bases on 
+This [subproject](https://github.com/pezi/flutter_pi_sensor_tester) bases on 
 [flutter-pi](https://github.com/ardera/flutter-pi) and implements a simple
 isolate/stream architecture designed to transfer sensor data from an isolate to the Flutter UI:
 
 **Isolate Interface**: This consists of the steps InitTask, MainTask, and ExitTask, along with a 
-limited back channel for controlling the isolate. This setup is typically used for sensor measurements:
+limited back channel for controlling the isolate. This setup is typically used for sensor 
+measurements:
 * `InitTask`: Initializes the sensor.
 * `MainTask`: Collects sensor data and passes it to a stream.
 * `ExitTask`: Disposes of the sensor.
@@ -543,7 +559,7 @@ The project is currently still beta and development is ongoing.
 ## Tested SoC hardware
 
 * [Raspberry Pi 3 Model B](https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/), OS: Raspberry Pi OS
-* [Raspberry Pi 3 Zero 2 W](https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/), OS: Raspberry Pi OS (32/64)
+* [Raspberry Pi Zero 2 W](https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/), OS: Raspberry Pi OS 
 * [NanoPi](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO) with a Allwinner H3, Quad-core 32-bit CPU, OS: [Armbian](https://www.armbian.com/nanopi-neo-core-2-lts/)
 * [NanoPi M1](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_M1) with a Allwinner H3, Quad-core 32-bit CPU: OS [Armbian](https://www.armbian.com/nanopi-m1/)
 * [NanoPi Neo2](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO2) with a Allwinner H5, Quad-core 64-bit CPU, OS: [Armbian](https://www.armbian.com/nanopi-neo-2/)
@@ -587,7 +603,8 @@ The project is currently still beta and development is ongoing.
 
 ³ [NanoPi Neo2](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO2) with a Allwinner H5, Quad-core 64-bit CPU
 
-⁴ Fails for NanoPi, NanoPi Neo2 and Banana Pi on Armbian- same behavior like the original c-periphery [test program](https://github.com/vsergeev/c-periphery/blob/master/tests/test_gpio.c). This is a point of deeper investigations
+⁴ Fails for NanoPi, NanoPi Neo2 and Banana Pi on Armbian- same behavior like the original 
+c-periphery [test program](https://github.com/vsergeev/c-periphery/blob/master/tests/test_gpio.c). This is a point of deeper investigations
 
 ⁵ no X86/X86_64 SoC for testing available
 
@@ -596,4 +613,5 @@ The project is currently still beta and development is ongoing.
 
 * Testing **dart_periphery** on different [SoC platforms](https://www.armbian.com/download/)
 * Documentation review - I am not a native speaker.
-* Code review - this is my first public Dart project. I am a Java developer and probably I tend to solve problems rather in the Java than in the Dart way.
+* Code review - this is my first public Dart project. I am a Java developer and probably I tend 
+to solve problems rather in the Java than in the Dart way.
