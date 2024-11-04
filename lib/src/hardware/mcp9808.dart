@@ -6,8 +6,10 @@ import 'dart:io';
 
 import '../../dart_periphery.dart';
 
-// https://github.com/Seeed-Studio/grove.py/blob/master/grove/temperature/temper.py
+// https://github.com/Seeed-Studio/grove.py/blob/master/grove/temperature/mcp9808.py
 // https://github.com/Seeed-Studio/Grove_Temperature_sensor_MCP9808/blob/master/Seeed_MCP9808.cpp
+// https://forum.digikey.com/t/reading-temperature-data-from-a-mcp9808-using-a-raspberry-pi/4962
+
 enum Resolution {
   celsius_0p5(0.5),
   celsius_0p25(0.25),
@@ -27,6 +29,7 @@ const ambientTemperatureAddress = 0x05;
 const setResolutionAddress = 0x08;
 
 const int mcp9808DefaultI2Caddress = 0x18;
+const SIGN_BIT = 0X10;
 
 // [MCP9808] exception
 class MCP9808exception implements Exception {
@@ -61,7 +64,7 @@ class MCP9808 {
   /// Creates a MCP9808 sensor instance that uses the [i2c] bus with
   /// the optional [i2cAddress].
   MCP9808(this.i2c, [this.i2cAddress = mcp9808DefaultI2Caddress]) {
-    setResolution(Resolution.celsius_0p0625);
+    // setResolution(Resolution.celsius_0p0625);
   }
 
   void setConfig(int config) {
@@ -82,14 +85,36 @@ class MCP9808 {
     i2c.writeByteReg(i2cAddress, setResolutionAddress, resolution.index);
   }
 
+  int swapBytes16(int value) {
+    return ((value & 0xFF) << 8) | ((value >> 8) & 0xFF);
+  }
+
   MCP9808result getValue() {
     int data = i2c.readWordReg(
         i2cAddress, ambientTemperatureAddress, BitOrder.msbFirst);
+    data = swapBytes16(data);
+    print(data);
     if (data & 0x1000 != 0) {
       data = -((data ^ 0x0FFF) + 1);
     } else {
       data = data & 0x0fff;
     }
-    return MCP9808result(data / 16.0);
+    return MCP9808result(data / 16);
+  }
+}
+
+void main() {
+  // Select the right I2C bus number /dev/i2c-?
+  // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
+  var i2c = I2C(1);
+  try {
+    var sensor = MCP9808(i2c);
+    sleep(Duration(milliseconds: 100));
+
+    var r = sensor.getValue();
+
+    print('MCP9808 [t°] ${r.temperature.toStringAsFixed(2)}');
+  } finally {
+    i2c.dispose();
   }
 }

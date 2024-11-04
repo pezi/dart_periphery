@@ -58,6 +58,18 @@ base class NativeI2Cmsg extends Struct {
   @Int16()
   external int len;
   external Pointer<Int8> buf;
+
+  @override
+  String toString() {
+    StringBuffer ret = StringBuffer();
+    ret.write(
+        "address: ${addr.toRadixString(16)} flags: $flags len: $len buf:");
+    for (int i = 0; i < len; ++i) {
+      ret.write(" ");
+      ret.write((buf[i] & 0xff).toRadixString(16));
+    }
+    return ret.toString();
+  }
 }
 
 /// Helper class which stores an array of native 'struct i2c_msg' messages.
@@ -146,8 +158,14 @@ class I2Cmsg {
         for (var value in data.predefined) {
           msg.buf[count++] = value;
         }
+      } else {
+        for (int i = 0; i < data.len; ++i) {
+          msg.buf[i] = 0;
+        }
       }
+      print(msg.toString());
     }
+
     return ptr;
   }
 }
@@ -434,17 +452,25 @@ class I2C extends IsolateAPI {
     }
   }
 
+  int swapBytes16(int value) {
+    return ((value & 0xFF) << 8) | ((value >> 8) & 0xFF);
+  }
+
   /// Reads a word from [register] of the I2C device with the [address] with the bit [order].
   ///
   /// The bit order depends on the I2C device.
   int readWordReg(int address, int register,
       [BitOrder order = BitOrder.msbLast]) {
     var data = <I2Cmsg>[];
+    if (order == BitOrder.msbFirst) {
+      // register = swapBytes16(register);
+    }
     data.add(I2Cmsg.buffer(address, [], [register]));
     data.add(I2Cmsg(address, [I2CmsgFlags.i2c_m_rd], 2));
     var result = transfer(data);
+    print(result._messages[1].toString());
     try {
-      var ptr = result._messages[0].buf;
+      var ptr = result._messages[1].buf;
       var value = (ptr[(order == BitOrder.msbLast ? 0 : 1)] & 0xff) |
           (ptr[(order == BitOrder.msbLast ? 1 : 0)] & 0xff) << 8;
       return value;
@@ -496,7 +522,6 @@ class I2C extends IsolateAPI {
     var msg2 = result._messages[1];
     try {
       var read = msg2.len;
-
       var ptr = msg2.buf;
       var list = <int>[];
       for (var i = 0; i < read; ++i) {
