@@ -48,7 +48,7 @@ class SHT31result {
 
   /// Returns a [SHT31result] as a JSON string. [fractionDigits] controls the number of fraction digits.
   String toJSON([int fractionDigits = 2]) {
-    return '{"temperature":"${temperature.toStringAsFixed(fractionDigits)}","humidity":"${humidity.toStringAsFixed(fractionDigits)}"';
+    return '{"temperature":"${temperature.toStringAsFixed(fractionDigits)}","humidity":"${humidity.toStringAsFixed(fractionDigits)}"}';
   }
 }
 

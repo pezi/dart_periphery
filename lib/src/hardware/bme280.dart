@@ -9,7 +9,8 @@ import '../spi.dart';
 import 'bosch.dart';
 import 'utils/byte_buffer.dart';
 
-// Bosch BMx280 pressure and temperature sensor. The BME280 includes an additional humidity sensor.
+// Bosch BMx280 pressure and temperature sensor. The BME280 includes an
+// additional humidity sensor.
 // Different constructors support access via I2C or SPI
 // Datasheet: https://cdn-shop.adafruit.com/datasheets/BST-BME280_DS001-10.pdf
 //
@@ -133,7 +134,7 @@ class BME280result {
 
   /// Returns a [BME280result] as a JSON string. [fractionDigits] controls the number fraction digits.
   String toJSON([int fractionDigits = 2]) {
-    return '{"temperature":"${temperature.toStringAsFixed(fractionDigits)}","pressure":"${pressure.toStringAsFixed(fractionDigits)}","humidity":"${humidity.toStringAsFixed(fractionDigits)}"';
+    return '{"temperature":"${temperature.toStringAsFixed(fractionDigits)}","pressure":"${pressure.toStringAsFixed(fractionDigits)}","humidity":"${humidity.toStringAsFixed(fractionDigits)}"}';
   }
 }
 
