@@ -6,8 +6,11 @@ import 'dart:io';
 
 import 'package:dart_periphery/dart_periphery.dart';
 
+// SGP30 - VOC and eCO2 gas sensor. This sensor is an air quality detection
+// sensor based on the SGP30 chip.
+//
 // https://wiki.seeedstudio.com/Grove-VOC_and_eCO2_Gas_Sensor-SGP30/
-// The Grove-VOC and eCO2 Gas Sensor(SGP30) is an air quality detection sensor based on the SGP30 chip.
+//
 void main() {
   // Select the right I2C bus number /dev/i2c-?
   // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)

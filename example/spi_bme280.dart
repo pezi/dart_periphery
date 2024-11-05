@@ -5,8 +5,9 @@
 import 'package:dart_periphery/dart_periphery.dart';
 
 /// https://wiki.seeedstudio.com/Grove-Barometer_Sensor-BME280/
-/// Grove - Temp&Humi&Barometer Sensor (BME280) is a breakout board for Bosch BMP280 high-precision,
-/// low-power combined humidity, pressure, and temperature sensor
+/// Grove - Temp&Humi&Barometer Sensor (BME280) is a breakout board for
+/// Bosch BMP280 high-precision,low-power combined humidity, pressure, and
+/// temperature sensor
 void main() {
   var spi = SPI(0, 0, SPImode.mode0, 1000000);
   try {

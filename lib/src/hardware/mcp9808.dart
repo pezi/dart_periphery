@@ -103,19 +103,3 @@ class MCP9808 {
     return MCP9808result(data / 16.0);
   }
 }
-
-void main() {
-  // Select the right I2C bus number /dev/i2c-?
-  // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
-  var i2c = I2C(1);
-  try {
-    var sensor = MCP9808(i2c);
-    sleep(Duration(milliseconds: 100));
-
-    var r = sensor.getValue();
-
-    print('MCP9808 [t°] ${r.temperature.toStringAsFixed(2)}');
-  } finally {
-    i2c.dispose();
-  }
-}

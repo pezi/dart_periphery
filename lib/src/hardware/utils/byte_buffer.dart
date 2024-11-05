@@ -75,7 +75,8 @@ int crc8(List<int> data) {
   return crc & 0xff;
 }
 
-/// Checks the CRC of byte buffer with following order: [byte<sub>1</sub>,byte<sub>2</sub>,crc,...]
+/// Checks the CRC of byte buffer with following order:
+/// [byte<sub>1</sub>,byte<sub>2</sub>,crc,...]
 bool checkCRC(List<int> data) {
   if (data.length % 3 != 0) {
     return false;
