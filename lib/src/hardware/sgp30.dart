@@ -2,6 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Resources:
 // https://wiki.seeedstudio.com/Grove-VOC_and_eCO2_Gas_Sensor-SGP30/
 // https://github.com/mattjlewis/diozero/blob/master/diozero-core/src/main/java/com/diozero/devices/SGP30.java
 // https://github.com/adafruit/Adafruit_SGP30

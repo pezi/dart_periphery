@@ -10,6 +10,7 @@ import '../i2c.dart';
 import 'bosch.dart';
 import 'utils/byte_buffer.dart';
 
+// Resources:
 // BME680 sensor for temperature, humidity, pressure and gas sensor
 //
 // This code bases on the diozero project - Thanks to Matthew Lewis!

@@ -350,7 +350,7 @@ class GestureSensor {
       this.gestureQuitTime = _gestureQuitTime]) {
     var data0 = 0;
 
-    // At the first access Raspberry PI 3 runs into a timeout - sensor is 
+    // At the first access Raspberry PI 3 runs into a timeout - sensor is
     // still sleeping
     try {
       data0 = i2c.readByteReg(paj7620Id, 0);

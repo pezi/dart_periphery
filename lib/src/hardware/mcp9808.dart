@@ -6,9 +6,12 @@ import 'dart:io';
 
 import '../../dart_periphery.dart';
 
+// Resources:
+// https://www.seeedstudio.com/Grove-I2C-High-Accuracy-Temperature-Sensor-MCP9808.html
 // https://github.com/Seeed-Studio/grove.py/blob/master/grove/temperature/mcp9808.py
 // https://github.com/Seeed-Studio/Grove_Temperature_sensor_MCP9808/blob/master/Seeed_MCP9808.cpp
 // https://forum.digikey.com/t/reading-temperature-data-from-a-mcp9808-using-a-raspberry-pi/4962
+// https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/MCP9808-0.5C-Maximum-Accuracy-Digital-Temperature-Sensor-Data-Sheet-DS20005095B.pdf
 
 enum Resolution {
   celsius_0p5(0.5),
@@ -64,7 +67,7 @@ class MCP9808 {
   /// Creates a MCP9808 sensor instance that uses the [i2c] bus with
   /// the optional [i2cAddress].
   MCP9808(this.i2c, [this.i2cAddress = mcp9808DefaultI2Caddress]) {
-    // setResolution(Resolution.celsius_0p0625);
+    setResolution(Resolution.celsius_0p0625);
   }
 
   void setConfig(int config) {
