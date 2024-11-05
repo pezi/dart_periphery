@@ -522,7 +522,6 @@ class I2C extends IsolateAPI {
         address, [], [..._adjustRegister(register, order, width)]));
     data.add(I2Cmsg(address, [I2CmsgFlags.i2c_m_rd], 2));
     var result = transfer(data);
-    print(result._messages[1].toString());
     try {
       var ptr = result._messages[1].buf;
       var value = (ptr[(order == BitOrder.msbLast ? 0 : 1)] & 0xff) |

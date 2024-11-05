@@ -32,7 +32,6 @@ const ambientTemperatureAddress = 0x05;
 const setResolutionAddress = 0x08;
 
 const int mcp9808DefaultI2Caddress = 0x18;
-const SIGN_BIT = 0X10;
 
 // [MCP9808] exception
 class MCP9808exception implements Exception {
@@ -88,21 +87,20 @@ class MCP9808 {
     i2c.writeByteReg(i2cAddress, setResolutionAddress, resolution.index);
   }
 
-  int swapBytes16(int value) {
-    return ((value & 0xFF) << 8) | ((value >> 8) & 0xFF);
-  }
+  //int swapBytes16(int value) {
+  //  return ((value & 0xFF) << 8) | ((value >> 8) & 0xFF);
+  //}
 
   MCP9808result getValue() {
     int data = i2c.readWordReg(
         i2cAddress, ambientTemperatureAddress, BitOrder.msbFirst);
-    data = swapBytes16(data);
-    print(data);
+    // data = swapBytes16(data); - done by the BitOrder.msbFirst flag
     if (data & 0x1000 != 0) {
       data = -((data ^ 0x0FFF) + 1);
     } else {
       data = data & 0x0fff;
     }
-    return MCP9808result(data / 16);
+    return MCP9808result(data / 16.0);
   }
 }
 
