@@ -3,10 +3,11 @@
 * Fix issue https://github.com/pezi/flutter-pi-sensor-tester/issues/1
 * Remove deprecated method: useSharedLibray (typo) -> useSharedLibrary 
 * Update Dart version reference inside the readme to 3.4.5.
-* 
+* CPU detection - switched from uname() to Dart’s built-in [Abi class](https://api.flutter.dev/flutter/dart-ffi/Abi-class.html)
 * I2C: Fix broken int readWordReg(int address, int register,[BitOrder order = BitOrder.msbLast,RegisterWidth width = RegisterWidth.bits8]) method
-*      Add optional RegisterWidth.bits8/RegisterWidth.bits16 parameter to enable 16-bit I2C register
+*      Add optional RegisterWidth.bits8/RegisterWidth.bits16 parameter to enable 16-bit I2C register. 
 * Add MCP9808 temperature sensor     
+* Add MLX90615 temperature sensor
 
 ## 0.9.6 2024-07-27
 * Add isolate support

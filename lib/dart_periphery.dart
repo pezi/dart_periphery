@@ -70,6 +70,8 @@ export 'src/hardware/sht31.dart'
         SHT31exception,
         sht31AlternativeI2Caddress,
         sht31DefaultI2Caddress;
+export 'src/hardware/mlx90615.dart'
+    show MLX90615, MLX90615result, MLX90615exception, mlx90615DefaultI2Caddress;
 export 'src/hardware/mcp9808.dart'
     show MCP9808, MCP9808result, MCP9808exception, mcp9808DefaultI2Caddress;
 export 'src/hardware/utils/byte_buffer.dart' show BitOrder;

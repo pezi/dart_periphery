@@ -11,6 +11,7 @@ import '../../dart_periphery.dart';
 // https://wiki.seeedstudio.com/Grove-Digital_Infrared_Temperature_Sensor/
 // https://github.com/Seeed-Studio/Digital_Infrared_Temperature_Sensor_MLX90615
 // https://github.com/rcolistete/MicroPython_MLX90615_driver/blob/master/mlx90615_simple.py
+// https://acassis.wordpress.com/2018/10/27/checking-the-crc-8-pec-byte-of-mlx90614/
 
 const int eepromSa = 0x10;
 
@@ -26,7 +27,7 @@ const int sleep = 0xC6;
 
 // DEPRECATED! (just emissivity, not the whole EEPROM)
 const int defaultEmissivity = 0x4000;
-const int defaultAddr = 0x5B;
+const int mlx90615DefaultI2Caddress = 0x5B;
 
 const regIdLow = 0x1E;
 const regIdHigh = 0x1F;
@@ -63,14 +64,38 @@ class MLX90615 {
 
   /// Creates a MLX90615 sensor instance that uses the [i2c] bus with
   /// the optional [i2cAddress].
-  MLX90615(this.i2c, [this.i2cAddress = mcp9808DefaultI2Caddress]);
+  MLX90615(this.i2c, [this.i2cAddress = mlx90615DefaultI2Caddress]);
+
+  int _crc8(int icrc, int data) {
+    int crc = icrc ^ data;
+    for (int i = 0; i < 8; i++) {
+      crc <<= 1;
+      if (crc & 0x0100 != 0) {
+        crc ^= 0x07;
+      }
+      crc &= 0xFF;
+    }
+    return crc;
+  }
 
   int read16(int register, bool crcCheck) {
     var data = i2c.readBytesReg(i2cAddress, register, 3);
-    if (!checkCRC(data)) {
-      throw MLX90615exception('CRC error reading temperature data');
+    for (int i = 0; i < data.length; i++) {
+      data[i] = data[i] & 0xff;
     }
-    return (data[0] & 0xFF) | (data[1] & 0xFF) << 8;
+
+    if (crcCheck) {
+      var crc = 0;
+      crc = _crc8(crc, i2cAddress << 1);
+      crc = _crc8(crc, register);
+      crc = _crc8(crc, (i2cAddress << 1) + 1);
+      crc = _crc8(crc, data[0]);
+      crc = _crc8(crc, data[1]);
+      if (crc != data[2]) {
+        throw MLX90615exception('CRC error reading temperature data');
+      }
+    }
+    return data[0] | data[1] << 8;
   }
 
   double getAmbientTemperature([bool crcCheck = true]) {
@@ -78,7 +103,7 @@ class MLX90615 {
     if (value > 0x7FFF) {
       throw MLX90615exception('Invalid ambient temperature error.');
     }
-    return value * 2 - 27315;
+    return (value * 2 - 27315) / 100;
   }
 
   double getObjectTemperature([bool crcCheck = true]) {
@@ -86,7 +111,7 @@ class MLX90615 {
     if (value > 0x7FFF) {
       throw MCP9808exception('Invalid ambient temperature error.');
     }
-    return value * 2 - 27315;
+    return (value * 2 - 27315) / 100;
   }
 
   int getId([bool crcCheck = true]) {
@@ -99,5 +124,20 @@ class MLX90615 {
       eeprom.add(read16(addr, crcCheck));
     }
     return eeprom;
+  }
+}
+
+void main() {
+  // Select the right I2C bus number /dev/i2c-?
+  // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
+  var i2c = I2C(1);
+  try {
+    var s = MLX90615(i2c);
+    while (true) {
+      print(s.getAmbientTemperature());
+      print(s.getObjectTemperature());
+    }
+  } finally {
+    i2c.dispose();
   }
 }
