@@ -33,7 +33,7 @@ const setResolutionAddress = 0x08;
 
 const int mcp9808DefaultI2Caddress = 0x18;
 
-// [MCP9808] exception
+/// [MCP9808] exception
 class MCP9808exception implements Exception {
   final String errorMsg;
   @override
@@ -52,7 +52,7 @@ class MCP9808result {
   @override
   String toString() => 'MCP9808result [temperature=$temperature]';
 
-  /// Returns a [BME280result] as a JSON string. [fractionDigits] controls the
+  /// Returns a [MCP9808result] as a JSON string. [fractionDigits] controls the
   /// number fraction digits.
   String toJSON([int fractionDigits = 2]) {
     return '{"temperature":"${temperature.toStringAsFixed(fractionDigits)}"}';

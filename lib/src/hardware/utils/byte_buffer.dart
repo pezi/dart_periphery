@@ -15,8 +15,8 @@ class ByteBuffer {
   final ByteBufferSrc dataSource;
   int _index;
 
-  /// Creates a byte buffer with [data] and a default [bitOrder]. [dataSource] d
-  /// efines the source, a I2C or a SPI read operation.
+  /// Creates a byte buffer with [data] and a default [bitOrder]. [dataSource]
+  /// defines the source, a I2C or a SPI read operation.
   ///
   /// For [dataSource] = [ByteBufferSrc.spi] the internal buffer index starts with 1.
   ByteBuffer(this.data, this.dataSource, this.bitOrder)
