@@ -2,10 +2,6 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:io';
-
-import 'package:dart_periphery/src/hardware/utils/byte_buffer.dart';
-
 import '../../dart_periphery.dart';
 
 // https://wiki.seeedstudio.com/Grove-Digital_Infrared_Temperature_Sensor/
@@ -58,6 +54,14 @@ class MLX90615result {
   }
 }
 
+///  MLX90615 - digital infrared temperature sensor is a non-contact temperature measurement module.
+///
+/// See for more
+/// * [MLX90615 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mlx90615.dart)
+/// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/mlx90615.dart)
+/// * [Datasheet](https://files.seeedstudio.com/wiki/Grove-Digital_Infrared_Temperature_Sensor/res/MLX90615.pdf)
+/// * This implementation is derived from project [MicroPython_MLX90615_driver](https://github.com/rcolistete/MicroPython_MLX90615_driver/tree/master) including the method documentation.
+/// * Only read operations are implemented
 class MLX90615 {
   final I2C i2c;
   final int i2cAddress;
@@ -98,32 +102,47 @@ class MLX90615 {
     return data[0] | data[1] << 8;
   }
 
+  /// Reads the object temperature in the range [-40, 85] °C
   double getAmbientTemperature([bool crcCheck = true]) {
     var value = read16(ambientTemperature, crcCheck);
     if (value > 0x7FFF) {
-      throw MLX90615exception('Invalid ambient temperature error.');
+      throw MLX90615exception('Invalid ambient temperature error');
     }
     return (value * 2 - 27315) / 100;
   }
 
+  /// Reads the object temperature in the range [-40, 115] °C
   double getObjectTemperature([bool crcCheck = true]) {
     var value = read16(objectTemperature, crcCheck);
     if (value > 0x7FFF) {
-      throw MCP9808exception('Invalid ambient temperature error.');
+      throw MCP9808exception('Invalid object temperature error');
     }
-    return (value * 2 - 27315) / 100;
+    return (value * 2 - 27315) / 100.0;
   }
 
+  /// Reads the unique sensor Id, a 32 bits integer stored in EEPROM
   int getId([bool crcCheck = true]) {
     return read16(regIdLow, crcCheck) | read16(regIdHigh, crcCheck);
   }
 
+  // Reads the EEPROM returning a list of 16 values, each one a 16 bits integer.
+  // Very useful to save a backup of the EEPROM, including the factory
+  // calibration data. See the MLX90615 datasheet, section 8.3.3 and table 6.
   List<int> readEEPROM([bool crcCheck = true]) {
     var eeprom = <int>[];
     for (int addr = 0x10; addr < 0x20; ++addr) {
-      eeprom.add(read16(addr, crcCheck));
+      eeprom.add(read16(addr, crcCheck) & 0xFF);
     }
     return eeprom;
+  }
+
+  /// reads the emissivity stored in EEPROM, an integer from 5 to 100 corresponding to emissivity from 0.05 to 1.00.
+  int readEmissivity([bool crcCheck = true]) {
+    var d = read16(eepromEmissivity, crcCheck);
+    if (d >= 32768) {
+      d = 32768 - d;
+    }
+    return (100 * d / 0x4000).round();
   }
 }
 
