@@ -10,23 +10,17 @@ import '../../dart_periphery.dart';
 // https://acassis.wordpress.com/2018/10/27/checking-the-crc-8-pec-byte-of-mlx90614/
 
 const int eepromSa = 0x10;
-
 const int eepromPwmtRng = 0x11;
 const int eepromConfig = 0x12;
 const int eepromEmissivity = 0x13;
-
 const int rawIrData = 0x25;
 const int ambientTemperature = 0x26;
 const int objectTemperature = 0x27;
-
 const int sleep = 0xC6;
-
-// DEPRECATED! (just emissivity, not the whole EEPROM)
-const int defaultEmissivity = 0x4000;
-const int mlx90615DefaultI2Caddress = 0x5B;
-
 const regIdLow = 0x1E;
 const regIdHigh = 0x1F;
+
+const int mlx90615DefaultI2Caddress = 0x5B;
 
 /// [MLX90615] exception
 class MLX90615exception implements Exception {
@@ -54,7 +48,7 @@ class MLX90615result {
   }
 }
 
-///  MLX90615 - digital infrared temperature sensor is a non-contact temperature measurement module.
+///  MLX90615 - digital infrared non-contact temperature sensor
 ///
 /// See for more
 /// * [MLX90615 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mlx90615.dart)
@@ -125,38 +119,24 @@ class MLX90615 {
     return read16(regIdLow, crcCheck) | read16(regIdHigh, crcCheck);
   }
 
-  // Reads the EEPROM returning a list of 16 values, each one a 16 bits integer.
-  // Very useful to save a backup of the EEPROM, including the factory
-  // calibration data. See the MLX90615 datasheet, section 8.3.3 and table 6.
+  /// Reads the EEPROM returning a list of 16 values, each one a 16 bits integer.
+  /// Very useful to save a backup of the EEPROM, including the factory
+  /// calibration data. See the MLX90615 datasheet, section 8.3.3 and table 6.
   List<int> readEEPROM([bool crcCheck = true]) {
     var eeprom = <int>[];
-    for (int addr = 0x10; addr < 0x20; ++addr) {
-      eeprom.add(read16(addr, crcCheck) & 0xFF);
+    for (int addresss = 0x10; addresss < 0x20; ++addresss) {
+      eeprom.add(read16(addresss, crcCheck) & 0xFF);
     }
     return eeprom;
   }
 
-  /// reads the emissivity stored in EEPROM, an integer from 5 to 100 corresponding to emissivity from 0.05 to 1.00.
+  /// Reads the emissivity stored in EEPROM, an integer from 5 to 100
+  /// corresponding to emissivity from 0.05 to 1.00.
   int readEmissivity([bool crcCheck = true]) {
     var d = read16(eepromEmissivity, crcCheck);
     if (d >= 32768) {
       d = 32768 - d;
     }
     return (100 * d / 0x4000).round();
-  }
-}
-
-void main() {
-  // Select the right I2C bus number /dev/i2c-?
-  // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
-  var i2c = I2C(1);
-  try {
-    var s = MLX90615(i2c);
-    while (true) {
-      print(s.getAmbientTemperature());
-      print(s.getObjectTemperature());
-    }
-  } finally {
-    i2c.dispose();
   }
 }
