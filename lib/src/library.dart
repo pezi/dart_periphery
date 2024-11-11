@@ -214,7 +214,7 @@ DynamicLibrary loadPeripheryLib() {
             base64EncodedLib = x64;
             break;
           case Abi.linuxRiscv64:
-            // base64EncodedLib = riscv64;
+            base64EncodedLib = riscv64;
             break;
           default:
             throw LibraryException(LibraryErrorCode.invalidParameter,
