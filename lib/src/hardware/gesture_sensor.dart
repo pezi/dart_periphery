@@ -336,7 +336,7 @@ var initRegisterArray = <int>[
 /// See for more
 /// * [PAJ7620U2 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_gesture_sensor.dart)
 /// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/gesture_sensor.dart)
-/// * [Datasheet](file:///C:/Users/pezi/AppData/Local/Temp/PAJ7620U2_GDS-R1.0_29032016_41002AEN-1.pdf)
+/// * [Datasheet](https://www.waveshare.com/w/upload/1/15/PAJ7620U2_GDS-R1.0_29032016_41002AEN.pdf)
 /// * This code bases on [grove_gesture_sensor.py](https://github.com/Seeed-Studio/grove.py/blob/master/grove/grove_gesture_sensor.py)
 class GestureSensor {
   final I2C i2c;
@@ -350,7 +350,8 @@ class GestureSensor {
       this.gestureQuitTime = _gestureQuitTime]) {
     var data0 = 0;
 
-    // At the first access Raspberry PI 3 runs into a timeout - sensor is still sleeping
+    // At the first access Raspberry PI 3 runs into a timeout - sensor is
+    // still sleeping
     try {
       data0 = i2c.readByteReg(paj7620Id, 0);
     } on I2Cexception catch (e) {

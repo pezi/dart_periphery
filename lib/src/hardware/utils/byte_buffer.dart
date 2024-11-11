@@ -15,7 +15,8 @@ class ByteBuffer {
   final ByteBufferSrc dataSource;
   int _index;
 
-  /// Creates a byte buffer with [data] and a default [bitOrder]. [dataSource] defines the source, a I2C or a SPI read operation.
+  /// Creates a byte buffer with [data] and a default [bitOrder]. [dataSource]
+  /// defines the source, a I2C or a SPI read operation.
   ///
   /// For [dataSource] = [ByteBufferSrc.spi] the internal buffer index starts with 1.
   ByteBuffer(this.data, this.dataSource, this.bitOrder)
@@ -74,7 +75,8 @@ int crc8(List<int> data) {
   return crc & 0xff;
 }
 
-/// Checks the CRC of byte buffer with following order: [byte<sub>1</sub>,byte<sub>2</sub>,crc,...]
+/// Checks the CRC of byte buffer with following order:
+/// [byte<sub>1</sub>,byte<sub>2</sub>,crc,...]
 bool checkCRC(List<int> data) {
   if (data.length % 3 != 0) {
     return false;
@@ -87,10 +89,17 @@ bool checkCRC(List<int> data) {
   return true;
 }
 
-int bin2int(String s) {
-  var pos = s.indexOf('b');
-  if (pos > 0) {
-    s = s.substring(pos + 1);
+/// Converter for string with bin value to int
+extension BinConverter on String {
+  /// Coverts string containing a binary sequence with a leading b to a an int.
+  /// '0b10000000'
+  int bin() {
+    var s = this;
+    // skip the optional b
+    var pos = s.indexOf('b');
+    if (pos > 0) {
+      s = s.substring(pos + 1);
+    }
+    return int.parse(s, radix: 2);
   }
-  return int.parse(s, radix: 2);
 }

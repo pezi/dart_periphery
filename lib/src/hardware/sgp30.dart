@@ -2,6 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// Resources:
 // https://wiki.seeedstudio.com/Grove-VOC_and_eCO2_Gas_Sensor-SGP30/
 // https://github.com/mattjlewis/diozero/blob/master/diozero-core/src/main/java/com/diozero/devices/SGP30.java
 // https://github.com/adafruit/Adafruit_SGP30
@@ -108,9 +109,10 @@ class SGP30result {
   String toString() =>
       'SGP30result [CO2 Equivalent=$co2Equivalent, Total VOC=$totalVOC]';
 
-  /// Returns a [SGP30result] object as a JSON string. [fractionDigits] controls the number of fraction digits.
+  /// Returns a [SGP30result] object as a JSON string. [fractionDigits]
+  /// controls the number of fraction digits.
   String toJSON([int fractionDigits = 2]) {
-    return '{"co2Equivalent":"${co2Equivalent.toStringAsFixed(fractionDigits)}","totalVOC":"${totalVOC.toStringAsFixed(fractionDigits)}"';
+    return '{"co2Equivalent":"${co2Equivalent.toStringAsFixed(fractionDigits)}","totalVOC":"${totalVOC.toStringAsFixed(fractionDigits)}"}';
   }
 }
 

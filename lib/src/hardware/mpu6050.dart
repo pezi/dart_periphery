@@ -9,6 +9,7 @@ import 'package:dart_periphery/dart_periphery.dart';
 
 import '../i2c.dart';
 
+// Resources:
 // https://github.com/Raspoid/raspoid/blob/master/src/main/com/raspoid/I2CComponent.java
 // https://github.com/Raspoid/raspoid/blob/master/src/main/com/raspoid/additionalcomponents/MPU6050.java
 

@@ -15,6 +15,7 @@ enum LoadLib {
   sharedLibrary
 }
 
+// Test cases for the different c-periphery loading mechanism.
 void main() {
   LoadLib type = LoadLib.selfExtraction;
   switch (type) {

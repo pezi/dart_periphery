@@ -122,7 +122,7 @@ class GPIOreadEvent {
 
 /// Helper class for the static method [GPIO.pollMultiple].
 ///
-/// [PollMultipleEvent.eventOccured] will be populated with true for the
+/// [PollMultipleEvent.eventOccurred] will be populated with true for the
 /// corresponding GPIO in the gpios array if an edge event occurred, or false if none occurred.
 /// This class contains also the number [eventCounter] of GPIOs for which an edge event occurred.
 /// See for details [GPIO.pollMultiple]
@@ -134,10 +134,10 @@ class PollMultipleEvent {
   final int eventCounter;
 
   /// edge event result list
-  final List<bool> eventOccured;
-  PollMultipleEvent(this.gpios, this.eventCounter, this.eventOccured);
+  final List<bool> eventOccurred;
+  PollMultipleEvent(this.gpios, this.eventCounter, this.eventOccurred);
 
-  /// Checks if the timeout has beeen reached.
+  /// Checks if the timeout has been reached.
   bool isTimeoutReached() {
     return eventCounter == 0 ? true : false;
   }
@@ -147,7 +147,7 @@ class PollMultipleEvent {
     var index = 0;
     for (var g in gpios) {
       if (g._gpioHandle == gpio._gpioHandle) {
-        return eventOccured[index];
+        return eventOccurred[index];
       }
       ++index;
     }
@@ -415,7 +415,7 @@ class GPIO extends IsolateAPI {
   /// GPIO line number, is -1 if  [GPIO.name] is used
   final int line;
 
-  /// input/ouput GPIO direction
+  /// input/output GPIO direction
   final GPIOdirection direction;
 
   /// GPIO name, is empty if [GPIO.line] is used
@@ -423,7 +423,7 @@ class GPIO extends IsolateAPI {
   late Pointer<Void> _gpioHandle;
   bool _invalid = false;
 
-  /// Converts a [GPIO] to a JSON string. See constructor [isolate] for detials.
+  /// Converts a [GPIO] to a JSON string. See constructor [isolate] for details.
   @override
   String toJson() {
     return '{"class":GPIO","path":"$path","chip":$chip,"line":$line,"direction":${direction.index},"name":"$name","handle":${_gpioHandle.address}}';
@@ -506,7 +506,7 @@ class GPIO extends IsolateAPI {
   }
 
   /// Opens the character device GPIO with the specified GPIO [line] and configuration [config] at the default character
-  /// device GPIO with the [chip] number. The default chip numer is 0, with the path /dev/gpiochip0. Use [GPIO.setBaseGPIOpath]
+  /// device GPIO with the [chip] number. The default chip number is 0, with the path /dev/gpiochip0. Use [GPIO.setBaseGPIOpath]
   /// to change the default character device path.
   GPIO.advanced(this.line, GPIOconfig config, [this.chip = 0])
       : path = _gpioBasePath + chip.toString(),
@@ -526,9 +526,10 @@ class GPIO extends IsolateAPI {
     return gpioHandle;
   }
 
-  /// Opens the character device GPIO with the specified GPIO [name] and the configuration [config] at the default character
-  /// device GPIO with the [chip] number. The default chip numer is 0, with the path <tt>/dev/gpiochip0</tt>. Use [GPIO.setBaseGPIOpath]
-  /// to change the default character device path.
+  /// Opens the character device GPIO with the specified GPIO [name] and the
+  /// configuration [config] at the default character device GPIO with the [chip]
+  /// number. The default chip number is 0, with the path <tt>/dev/gpiochip0</tt>.
+  /// Use [GPIO.setBaseGPIOpath] to change the default character device path.
   GPIO.nameAdvanced(this.name, GPIOconfig config, [this.chip = 0])
       : path = _gpioBasePath + chip.toString(),
         line = -1,
@@ -555,7 +556,7 @@ class GPIO extends IsolateAPI {
         _gpioHandle = _openSysfsGPIO(line, direction);
 
   /// Duplicates an existing [GPIO] from a JSON string. This special constructor
-  /// is used to transfer an existing [GPIO] to an other isolate.
+  /// is used to transfer an existing [GPIO] to an isolate.
   GPIO.isolate(String json)
       : chip = jsonMap(json)['chip'] as int,
         line = jsonMap(json)['line'] as int,

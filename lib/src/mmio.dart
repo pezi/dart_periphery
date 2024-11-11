@@ -353,7 +353,7 @@ class MMIO extends IsolateAPI {
     }
   }
 
-  /// Releases all interal native resoures.
+  /// Releases all internal native resources.
   void dispose() {
     _checkStatus();
     _invalid = true;

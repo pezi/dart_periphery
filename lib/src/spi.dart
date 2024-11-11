@@ -18,7 +18,8 @@ import 'json.dart';
 import 'library.dart';
 import 'signature.dart';
 
-/// Mapped native [SPI] error codes with the same index, but different leading sign.
+/// Mapped native [SPI] error codes with the same index, but different leading
+/// sign.
 enum SPIerrorCode {
   /// Error code for not able to map the native C enum
   errorCodeNotMappable,
@@ -254,9 +255,9 @@ class SPI extends IsolateAPI {
     return '{"class":"SPI","bus":$bus,"chip":$chip,"path":"$path","bitOrder":${bitOrder.index},"mode":${mode.index},"speed":$maxSpeed,"bits":$bitsPerWord,"flags":$extraFlags,"handle":${_spiHandle.address}}';
   }
 
-  /// Opens the SPI device at the  path ("/dev/spidev[bus].[chip]"), with the specified
-  /// SPI [mode], specified [maxSpeed] in hertz, and the defaults of MSB_FIRST bit order,
-  /// and 8 bits per word.
+  /// Opens the SPI device at the  path ("/dev/spidev[bus].[chip]"), with the
+  /// specified SPI [mode], specified [maxSpeed] in hertz, and the defaults of
+  ///  MSB_FIRST bit order and 8 bits per word.
   ///
   /// SPI [mode] can be 0, 1, 2, or 3.
   SPI(this.bus, this.chip, this.mode, this.maxSpeed)
@@ -279,8 +280,9 @@ class SPI extends IsolateAPI {
     return spiHandle;
   }
 
-  /// Opens the SPI device at the specified path ("/dev/spidev[bus].[chip]"), with the specified SPI mode,
-  /// [maxSpeed] in hertz, [bitOrder], [bitsPerWord], and [extraFlags].
+  /// Opens the SPI device at the specified path ("/dev/spidev[bus].[chip]"),
+  /// with the specified SPI mode, [maxSpeed] in hertz, [bitOrder],
+  /// [bitsPerWord], and [extraFlags].
   ///
   /// SPI mode can be 0, 1, 2, or 3. [bitOrder] can be [BitOrder.msbFirst] or
   /// [BitOrder.msbLast], [bitsPerWord] specifies the transfer word size.
@@ -319,8 +321,9 @@ class SPI extends IsolateAPI {
   }
 
   /// Opens the SPI device at the specified [path], with the specified SPI mode,
-  /// [maxSpeed] in hertz, [bitOrder], [bitsPerWord], and [extraFlags]. This open function is the same as
-  /// [SPI.openAdvanced], except that extra_flags can be 32-bits.
+  /// [maxSpeed] in hertz, [bitOrder], [bitsPerWord], and [extraFlags].
+  /// This open function is the same as [SPI.openAdvanced], except that
+  /// extra_flags can be 32-bits.
   ///
   /// SPI mode can be 0, 1, 2, or 3. [bitOrder] can be [BitOrder.msbFirst] or
   /// [BitOrder.msbLast], [bitsPerWord] specifies the transfer word size.
@@ -367,9 +370,9 @@ class SPI extends IsolateAPI {
     }
   }
 
-  /// Shifts out [data], while shifting in the data to the result buffer. If [reuseBuffer]
-  /// is true, [data] will be used for the result buffer, for false a new buffer
-  /// will be created.
+  /// Shifts out [data], while shifting in the data to the result buffer.
+  /// If [reuseBuffer] is true, [data] will be used for the result buffer,
+  /// for false a new buffer will be created.
   ///
   /// Returns a 'List<int>' result buffer.
   List<int> transfer(List<int> data, bool reuseBuffer) {
@@ -414,11 +417,12 @@ class SPI extends IsolateAPI {
     }
   }
 
-  /// Shifts out [len] word counts of the [data] buffer, while shifting in the result buffer. If [reuseBuffer]
-  /// is true, [data] will be used the result buffer, for false a new buffer
-  /// will be created.
+  /// Shifts out [len] word counts of the [data] buffer, while shifting in the
+  /// result buffer. If [reuseBuffer] is true, [data] will be used the result
+  /// buffer, for false a new buffer will be created.
   ///
-  /// Returns a ' Pointer<Int8>' result buffer. Be aware to malloc.free the low level system memory buffers!
+  /// Returns a ' Pointer<Int8>' result buffer. Be aware to malloc.free the low
+  /// level system memory buffers!
   Pointer<Uint8> transferInt8(Pointer<Uint8> data, bool reuseBuffer, int len) {
     Pointer<Uint8> inPtr;
     Pointer<Uint8> outPtr = nullptr;
@@ -552,7 +556,8 @@ class SPI extends IsolateAPI {
     _checkError(_nativeSPIsetExtraFlags32(_spiHandle, value));
   }
 
-  /// Returns the file descriptor (for the underlying <tt>spidev</tt> device) of the SPI handle.
+  /// Returns the file descriptor (for the underlying <tt>spidev</tt> device)
+  /// of the SPI handle.
   int getSPIfd() {
     _checkStatus();
     return _checkError(_nativeSPIfd(_spiHandle));

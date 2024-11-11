@@ -56,9 +56,10 @@ enum AirQuality {
   }
 
   /// Constructs an [AirQuality] with the interval [lowerBound] - [upperBound]
-  /// and the color scheme according the original documentation - the signal [color]
-  /// represents a IAQ interval and the hint [isTextColorBlack]
-  /// indicates if an optional text uses black or white with [color] as background.
+  /// and the color scheme according the original documentation - the
+  /// signal [color] represents a IAQ interval and the hint [isTextColorBlack]
+  /// indicates if an optional text uses black or white with [color] as
+  /// background.
   const AirQuality(this.lowerBound, this.upperBound, this.color,
       [this.isTextColorBlack = true]);
   final int lowerBound;

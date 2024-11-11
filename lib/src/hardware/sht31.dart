@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:dart_periphery/dart_periphery.dart';
 import 'package:dart_periphery/src/hardware/utils/byte_buffer.dart';
 
+// Resources:
 // https://wiki.seeedstudio.com/Grove-TempAndHumi_Sensor-SHT31/
 // https://github.com/Seeed-Studio/Grove_SHT31_Temp_Humi_Sensor/blob/master/SHT31.h
 // https://github.com/Seeed-Studio/Grove_SHT31_Temp_Humi_Sensor/blob/master/SHT31.cpp
@@ -29,8 +30,8 @@ const int sh31HeaterDisable = 0x3066;
 const int sh31ReadSerialNumber = 0x3780;
 
 /// [SHT31] exception
-class SHT31excpetion implements Exception {
-  SHT31excpetion(this.errorMsg);
+class SHT31exception implements Exception {
+  SHT31exception(this.errorMsg);
   final String errorMsg;
   @override
   String toString() => errorMsg;
@@ -48,7 +49,7 @@ class SHT31result {
 
   /// Returns a [SHT31result] as a JSON string. [fractionDigits] controls the number of fraction digits.
   String toJSON([int fractionDigits = 2]) {
-    return '{"temperature":"${temperature.toStringAsFixed(fractionDigits)}","humidity":"${humidity.toStringAsFixed(fractionDigits)}"';
+    return '{"temperature":"${temperature.toStringAsFixed(fractionDigits)}","humidity":"${humidity.toStringAsFixed(fractionDigits)}"}';
   }
 }
 
@@ -102,7 +103,7 @@ class SHT31 {
     sleep(Duration(milliseconds: 5));
     var data = i2c.readBytesReg(i2cAddress, 0, 6);
     if (!checkCRC(data)) {
-      throw SHT31excpetion('CRC8 error');
+      throw SHT31exception('CRC8 error');
     }
     return (data[0] & 0xff) << 24 |
         (data[1] & 0xff) << 16 |
@@ -122,7 +123,7 @@ class SHT31 {
 
     var data = i2c.readBytesReg(i2cAddress, 0, 6);
     if (!checkCRC(data)) {
-      throw SHT31excpetion('CRC8 error');
+      throw SHT31exception('CRC8 error');
     }
 
     // convert the data

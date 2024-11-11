@@ -5,6 +5,7 @@
 import 'package:dart_periphery/dart_periphery.dart';
 import 'dart:io';
 
+// On-board led status change demo.
 void main() {
   /// Nano Pi power led - see 'ls /sys/class/leds/'
   var led = Led('nanopi:red:pwr');

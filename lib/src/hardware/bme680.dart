@@ -10,6 +10,7 @@ import '../i2c.dart';
 import 'bosch.dart';
 import 'utils/byte_buffer.dart';
 
+// Resources:
 // BME680 sensor for temperature, humidity, pressure and gas sensor
 //
 // This code bases on the diozero project - Thanks to Matthew Lewis!
@@ -137,26 +138,26 @@ const int sensorConfigStartAddress = 0x5A;
 const int gasConfigStartAddress = 0x64;
 
 // Mask definitions
-final int gasMeasureMask = bin2int('0b00110000');
-final int nbconversionMask = bin2int('0b00001111');
-final int filterMask = bin2int('0b00011100');
-final int oversamplingTemperatureMask = bin2int('0b11100000');
-final int oversamplingPressureMask = bin2int('0b00011100');
-final int oversamplingHumidityMask = bin2int('0b00000111');
-final int heaterControlMask = bin2int('0b00001000');
-final int runGasMask = bin2int('0b00010000');
-final int modeMask = bin2int('0b00000011');
-final int resistanceHeatRangeMask = bin2int('0b00110000');
-final int rangeSwitchingErrorMask = bin2int('0b11110000');
-final int newDataMask = bin2int('0b10000000');
-final int gasIndexMask = bin2int('0b00001111');
-final int gasRangeMask = bin2int('0b00001111');
-final int gasmValidMask = bin2int('0b00100000');
-final int heatStableMask = bin2int('0b00010000');
-final int memPageMask = bin2int('0b00010000');
-final int spiRDmask = bin2int('0b10000000');
-final int spiWRmask = bin2int('0b01111111');
-final int bitH1dataMask = bin2int('0b00001111');
+final int gasMeasureMask = '0b00110000'.bin();
+final int nbconversionMask = '0b00001111'.bin();
+final int filterMask = '0b00011100'.bin();
+final int oversamplingTemperatureMask = '0b11100000'.bin();
+final int oversamplingPressureMask = '0b00011100'.bin();
+final int oversamplingHumidityMask = '0b00000111'.bin();
+final int heaterControlMask = '0b00001000'.bin();
+final int runGasMask = '0b00010000'.bin();
+final int modeMask = '0b00000011'.bin();
+final int resistanceHeatRangeMask = '0b00110000'.bin();
+final int rangeSwitchingErrorMask = '0b11110000'.bin();
+final int newDataMask = '0b10000000'.bin();
+final int gasIndexMask = '0b00001111'.bin();
+final int gasRangeMask = '0b00001111'.bin();
+final int gasmValidMask = '0b00100000'.bin();
+final int heatStableMask = '0b00010000'.bin();
+final int memPageMask = '0b00010000'.bin();
+final int spiRDmask = '0b10000000'.bin();
+final int spiWRmask = '0b01111111'.bin();
+final int bitH1dataMask = '0b00001111'.bin();
 
 // Bit position definitions for sensor settings
 const int gasMeasurePosition = 4;
