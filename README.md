@@ -13,7 +13,6 @@ Special thanks to [Hanns Winkler](https://github.com/pezi/dart_periphery/pulls) 
 Added RISC-V support, thanks to https://10xEngineers.ai for providing remote access to a Banana 
 Pi BPI-F3 16GB, which enabled building the RISC-V variant of the c-periphery library.
 
-
 ## Introduction
 
 **dart_periphery** is a Dart port of the native [c-periphery library](https://github.com/vsergeev/c-periphery) (v2.4.2) 
@@ -394,7 +393,7 @@ unzip dartsdk-linux-x64-release.zip
 
 ``` bash
 https://storage.googleapis.com/dart-archive/channels/stable/release/3.5.4/sdk/dartsdk-linux-riscv64-release.zip
-unzip dartsdk-linux-x64-release.zip
+unzip dartsdk-linux-riscv64-release.zip
 ```
 
 3.) Move and grant the appropriate permissions to the SDK:
