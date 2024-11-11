@@ -494,11 +494,9 @@ void setCustomLibrary(String absolutePath);
 must be called separately within each isolate. This is necessary because each isolate initializes 
 Dart Periphery independently.
 
-
 ## flutter-pi
 
 **dart_periphery** works with flutter-pi, a light-weight [Flutter Engine Embedder](https://github.com/ardera/flutter-pi) for 
-Raspberry Pi. Following method loads
 
 ``` dart
 // Loads the libraray form the flutter-pi asset directory.
