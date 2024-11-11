@@ -1,3 +1,5 @@
+## 0.9.8 2024-10-30
+* Fix readme
 ## 0.9.7 2024-10-30
 * library loader: use dart:ffi Abi instead of uname() for architecture detection
 * Fix issue https://github.com/pezi/flutter-pi-sensor-tester/issues/1
