@@ -438,7 +438,7 @@ Dart SDK version: 3.5.4 (stable) (Wed Oct 16 16:18:51 2024 +0000) on "linux_arm6
 * [Abi.linuxArm64](https://api.flutter.dev/flutter/dart-ffi/Abi/linuxArm64-constant.html) - [libperiphery_arm64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm64.so)
 * [Abi.linuxIA32](https://api.flutter.dev/flutter/dart-ffi/Abi/linuxIA32-constant.html) - [libperiphery_ia32.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_ia32.so)
 * [Abi.linuxX64](https://api.flutter.dev/flutter/dart-ffi/Abi/linuxX64-constant.html) - [libperiphery_x64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_x64.so)
-* [Abi.linuxRiscv64](https://api.flutter.dev/flutter/dart-ffi/Abi/linuxRiscv64-constant.html)  - [libperiphery_riscv5.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_riscv64.so)
+* [Abi.linuxRiscv64](https://api.flutter.dev/flutter/dart-ffi/Abi/linuxRiscv64-constant.html)  - [libperiphery_riscv64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_riscv64.so)
 
 **Important hint:** Dart Periphery includes an automatic mechanism to load the correct library. 
 
