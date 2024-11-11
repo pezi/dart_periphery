@@ -10,8 +10,7 @@
 This version updates CPU detection by switching from uname() to Dart’s built-in [Abi class](https://api.flutter.dev/flutter/dart-ffi/Abi-class.html). 
 Special thanks to [Hanns Winkler](https://github.com/pezi/dart_periphery/pulls) for his contribution!
 
-Added RISC-V support, thanks to https://10xEngineers.ai for providing remote access to a Banana 
-Pi BPI-F3 16GB, which enabled building the RISC-V variant of the c-periphery library.
+Added RISC-V support, thanks to [Ali Tariq](https://github.com/alitariq4589) from [10xEngineers](https://10xEngineers.ai) for providing remote access to a Banana Pi BPI-F3 16GB on [Cloud-V](https://cloud-v.co), which enabled building the RISC-V variant of the c-periphery library.
 
 ## Introduction
 
@@ -612,7 +611,3 @@ c-periphery [test program](https://github.com/vsergeev/c-periphery/blob/master/t
 * Documentation review - I am not a native speaker.
 * Code review - this is my first public Dart project. I am a Java developer and probably I tend 
 to solve problems rather in the Java than in the Dart way.
-
-## Acknowledgements
-
-- Added RISC-V support. Thanks to [Ali Tariq](https://github.com/alitariq4589/alitariq4589) from https://10xEngineers.ai for providing remote access to a Banana Pi BPI-F3 16GB, which made it possible to build the RISC-V variant of the c-periphery library.
