@@ -146,7 +146,7 @@ void saveLibrary(File file, String base64EncodedLib) {
   try {
     file.createSync(recursive: false);
     final decodedBytes =
-        GZipDecoder().decodeBytes(base64Decode(base64EncodedLib));
+        XZDecoder().decodeBytes(base64Decode(base64EncodedLib));
     // hint: a crash occurs, if an used lib is written again
     file.writeAsBytesSync(decodedBytes);
   } on Error catch (e) {
