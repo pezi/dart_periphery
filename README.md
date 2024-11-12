@@ -3,7 +3,7 @@
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
 
-[![pub package](https://img.shields.io/badge/pub-v0.9.8-orange)](https://pub.dartlang.org/packages/dart_periphery)
+[![pub package](https://img.shields.io/badge/pub-v0.9.9-orange)](https://pub.dartlang.org/packages/dart_periphery)
 
 ## Important hints
 
@@ -560,6 +560,7 @@ The project is currently still beta and development is ongoing.
 * [NanoPi M1](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_M1) with a Allwinner H3, Quad-core 32-bit CPU: OS [Armbian](https://www.armbian.com/nanopi-m1/)
 * [NanoPi Neo2](https://wiki.friendlyarm.com/wiki/index.php/NanoPi_NEO2) with a Allwinner H5, Quad-core 64-bit CPU, OS: [Armbian](https://www.armbian.com/nanopi-neo-2/)
 * [Banana Pi BPI-M1](https://en.wikipedia.org/wiki/Banana_Pi#Banana_Pi_BPI-M1) with a Allwinner A20 Dual-core, OS: [Armbian](https://www.armbian.com/bananapi/)
+* [Banana Pi BPI-F3 16GB](https://wiki.banana-pi.org/Banana_Pi_BPI-F3) with a [SpacemiT K1 8 core RISC-V](https://docs.banana-pi.org/en/BPI-F3/SpacemiT_K1), OS: Ubuntu 23.04 (GNU/Linux 6.2.0-1010-starfive riscv64)
 
 ## Supported devices (sensors, actuators, expansion hats and displays)
 
@@ -570,6 +571,8 @@ The project is currently still beta and development is ongoing.
 * [CozIR](https://github.com/pezi/dart_periphery/blob/main/example/serial_cozir.dart): CO₂, temperature and humidity sensor.
 * [Grove Gesture](https://github.com/pezi/dart_periphery/blob/main/example/i2c_gesture_sensor.dart) can recognize 9 basic gestures.
 * [MPU-6050 Six-Axis](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mpu6050.dart) (Gyro + Accelerometer) sensor.
+* [MCP9808](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mcp9808.dart) high accuracy temperature sensor.
+* [MLX90615](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mlx90615.dart) digital infrared non-contact temperature sensor.
 * FriendlyARM [BakeBit Set](https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
 * [Grove Base Hat](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi/)/[GrovePi Plus](https://wiki.seeedstudio.com/GrovePi_Plus)
 * [PN532](https://github.com/pezi/dart_periphery/pull/6) NFC Reader Module, Thanks to UliPrantz!
