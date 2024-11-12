@@ -17,6 +17,7 @@ import 'json.dart';
 import 'library.dart';
 import 'signature.dart';
 
+/// I2C register width, 8 or 16 bits - I2C EEPROMs support 16-bit registers
 enum RegisterWidth { bits8, bits16 }
 
 /*
