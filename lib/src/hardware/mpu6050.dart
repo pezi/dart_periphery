@@ -25,24 +25,26 @@ enum DLPF {
   filter7
 }
 
-// Default address of the MPU6050 device.
+/// Default address of the MPU6050 device.
 const int defaultMPU6050address = 0x68;
 
-// Default value for the digital low pass filter (DLPF) setting for both gyroscope and accelerometer.
+/// Default value for the digital low pass filter (DLPF) setting for both
+/// gyroscope and accelerometer.
 const DLPF defaultDLPFcfg = DLPF.filter6;
 
-// Default value for the sample rate divider.
+/// Default value for the sample rate divider.
 const int defaultSmplrtDiv = 0x00;
 
-// Coefficient to convert an angle value from radians to degrees.
+/// Coefficient to convert an angle value from radians to degrees.
 const double radianToDegree = 180 / pi;
 
-// It is impossible to calculate an angle for the z axis from the accelerometer.
+/// It is impossible to calculate an angle for the z axis from the accelerometer.
 const double accelZangle = 0;
 
-// Sample Rate Divider
-// This register specifies the divider from the gyroscope output rate used to generate
-// the Sample Rate for the MPU-60X0
+/// Sample Rate Divider
+///
+/// This register specifies the divider from the gyroscope output rate used to
+/// generate the sample tate for the MPU-60X0
 const int mpu6050RegAddrSmprtDiv = 0x19; // 25
 
 // This register configures the external Frame Synchronization (FSYNC) pin sampling and

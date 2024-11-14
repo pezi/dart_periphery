@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-# script for macOS - BSD style of some commands
+# script for macOS - BSD style of some commands switches
 
 xz -v9 -z -k libperiphery_arm.so
 xz -v9 -z -k libperiphery_arm64.so

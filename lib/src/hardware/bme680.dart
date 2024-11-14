@@ -695,8 +695,9 @@ class BME680 {
     return sum;
   }
 
-  /// Returns a [BME680result] with temperature, pressure, humidity and IAQ or throws
-  /// an exception after [sensorReadRetryCounter] retries to read sensor data.
+  /// Returns a [BME680result] with temperature, pressure, humidity and IAQ or
+  /// throws an exception after [sensorReadRetryCounter] retries to read sensor
+  /// data.
   BME680result getValues() {
     setPowerMode(PowerMode.forced);
     var retries = sensorReadRetryCounter;
@@ -907,8 +908,8 @@ class BME680 {
     }
   }
 
-  /// Sets the temperature [profile], [heaterDuration] and the [heaterTemperature] of gas sensor.
-  /// [filterSize] sets IIR filter size
+  /// Sets the temperature [profile], [heaterDuration] and the
+  /// [heaterTemperature] of gas sensor. [filterSize] sets IIR filter size
   /// * Target heater profile, between  0 and 9
   /// * Target temperature in degrees celsius, between 200 and 400
   /// * Target duration in milliseconds, between 1 and 4032
@@ -926,7 +927,8 @@ class BME680 {
     // Selecting the runGas and NB conversion settings for the sensor
   }
 
-  /// Sets the temperature [profile], [heaterDuration] and the [heaterTemperature] of gas sensor.
+  /// Sets the temperature [profile], [heaterDuration] and the
+  /// [heaterTemperature] of gas sensor.
   ///
   /// * Target heater profile, between  0 and 9
   /// * Target temperature in degrees celsius, between 200 and 400
@@ -960,8 +962,8 @@ class BME680 {
             nbconversionMask];
   }
 
-  /// Sets the current gas sensor conversion [heaterProfile]. Select one of the 10
-  /// configured heating durations/set points.
+  /// Sets the current gas sensor conversion [heaterProfile]. Select one of
+  /// the 10 configured heating durations/set points.
   void setGasHeaterProfile(final HeaterProfile heaterProfile) {
     _setRegByte(configOdrRunGasNbcAddress, nbconversionMask,
         nbconversionPosition, heaterProfile.index);
