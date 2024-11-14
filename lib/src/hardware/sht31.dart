@@ -74,8 +74,9 @@ class SHT31 {
     return (getStatus() & 0x2000) != 0;
   }
 
-  /// Enables or disables the [heater] on the sensor to heat/evaporate any condensation.
-  /// This command can destroy the sensor, if the heater runs too long.
+  /// Enables or disables the [heater] on the sensor to heat/evaporate any
+  /// condensation. This command can destroy the sensor, if the heater runs
+  /// too long!
   void heater(bool heater) {
     if (heater) {
       _writeCommand(sht31HeaterEnable);
@@ -115,7 +116,8 @@ class SHT31 {
     i2c.writeBytes(i2cAddress, [cmd >> 8, cmd & 0xff]);
   }
 
-  // Reads a [SHT31result] from the sensor with a high accuracy in a period of 500 milliseconds.
+  /// Reads a [SHT31result] from the sensor with a high accuracy in a period of
+  /// 500 milliseconds.
   SHT31result getValues() {
     _writeCommand(sht31MeasHighrepStretch);
 

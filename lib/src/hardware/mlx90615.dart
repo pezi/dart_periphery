@@ -119,7 +119,9 @@ class MLX90615 {
     return read16(regIdLow, crcCheck) | read16(regIdHigh, crcCheck);
   }
 
-  /// Reads the EEPROM returning a list of 16 values, each one a 16 bits integer.
+  /// Reads the EEPROM returning a list of 16 values, each one a 16
+  /// bits integer.
+  ///
   /// Very useful to save a backup of the EEPROM, including the factory
   /// calibration data. See the MLX90615 datasheet, section 8.3.3 and table 6.
   List<int> readEEPROM([bool crcCheck = true]) {

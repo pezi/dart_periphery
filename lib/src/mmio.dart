@@ -221,10 +221,12 @@ class MMIO extends IsolateAPI {
     return mmioHandle;
   }
 
-  /// Map the region of physical memory specified by the [base] physical address and [size] in bytes, using
-  /// the specified memory character device [path].
+  /// Map the region of physical memory specified by the [base] physical
+  /// address and [size] in bytes, using the specified
+  /// memory character device [path].
   ///
-  /// This open function can be used with sandboxed memory character devices, e.g. <tt>/dev/gpiomem</tt>.
+  /// This open function can be used with sandboxed memory character
+  /// devices, e.g. <tt>/dev/gpiomem</tt>.
   /// Neither base nor size need be aligned to a page boundary.
   MMIO.advanced(this.base, this.size, this.path)
       : _mmioHandle = _mmioOpenAdvanced(base, size, path);
@@ -256,8 +258,8 @@ class MMIO extends IsolateAPI {
     return MMIOerrorCode.values[value];
   }
 
-  /// Reads 32-bits from mapped physical memory, starting at the specified byte offset, relative to the
-  /// base address the MMIO handle was opened with.
+  /// Reads 32-bits from mapped physical memory, starting at the specified byte
+  /// offset, relative to the base address the MMIO handle was opened with.
   int read32(int offset) {
     var data = malloc<Uint32>(1);
     try {
@@ -268,8 +270,8 @@ class MMIO extends IsolateAPI {
     }
   }
 
-  /// Reads 16-bits from mapped physical memory, starting at the specified byte offset, relative to the
-  /// base address the MMIO handle was opened with.
+  /// Reads 16-bits from mapped physical memory, starting at the specified byte
+  /// offset, relative to the base address the MMIO handle was opened with.
   int read16(int offset) {
     var data = malloc<Uint16>(1);
     try {
@@ -280,8 +282,8 @@ class MMIO extends IsolateAPI {
     }
   }
 
-  /// Reads 8-bits from mapped physical memory, starting at the specified byte offset, relative to the
-  /// base address the MMIO handle was opened with.
+  /// Reads 8-bits from mapped physical memory, starting at the specified byte
+  /// offset, relative to the base address the MMIO handle was opened with.
   int read8(int offset) {
     var data = malloc<Uint8>(1);
     try {
@@ -292,8 +294,8 @@ class MMIO extends IsolateAPI {
     }
   }
 
-  /// Reads an byte array from mapped physical memory, starting at the specified byte offset, relative to the
-  /// base address the MMIO handle was opened with.
+  /// Reads an byte array from mapped physical memory, starting at the specified
+  /// byte offset, relative to the base address the MMIO handle was opened with.
   List<int> read(int offset, int len) {
     var buf = malloc<Uint8>(len);
     try {
@@ -308,26 +310,27 @@ class MMIO extends IsolateAPI {
     }
   }
 
-  /// Writes 32-bits from mapped physical memory, starting at the specified byte offset, relative to the
-  /// base address the MMIO handle was opened with.
+  /// Writes 32-bits from mapped physical memory, starting at the specified
+  /// byte offset, relative to the base address the MMIO handle was opened with.
   void write32(int offset, int value) {
     _checkError(_nativeMMIOwrite32(_mmioHandle, offset, value));
   }
 
-  /// Writes 16-bits from mapped physical memory, starting at the specified byte offset, relative to the
-  /// base address the MMIO handle was opened with.
+  /// Writes 16-bits from mapped physical memory, starting at the specified
+  /// byte offset, relative to the base address the MMIO handle was opened with.
   void write16(int offset, int value) {
     _checkError(_nativeMMIOwrite16(_mmioHandle, offset, value));
   }
 
-  /// Writes 8-bits from mapped physical memory, starting at the specified byte offset, relative to the
-  /// base address the MMIO handle was opened with.
+  /// Writes 8-bits from mapped physical memory, starting at the specified
+  /// byte offset, relative to the base address the MMIO handle was opened with.
   void write8(int offset, int value) {
     _checkError(_nativeMMIOwrite8(_mmioHandle, offset, value));
   }
 
-  /// Writes an byte array from mapped physical memory, starting at the specified byte offset, relative to the
-  /// base address the MMIO handle was opened with.
+  /// Writes an byte array from mapped physical memory, starting at the
+  /// specified byte offset, relative to the base address
+  /// the MMIO handle was opened with.
   void write(int offset, List<int> data) {
     var buf = malloc<Uint8>(data.length);
     try {

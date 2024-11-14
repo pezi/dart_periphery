@@ -211,7 +211,8 @@ Map<String, dynamic> _jsonMap(String json) {
 
 /// SPI wrapper functions for Linux userspace <tt>spidev</tt> devices.
 ///
-/// c-periphery [SPI](https://github.com/vsergeev/c-periphery/blob/master/docs/spi.md) documentation.
+/// c-periphery [SPI](https://github.com/vsergeev/c-periphery/blob/master/docs/spi.md)
+/// documentation.
 class SPI extends IsolateAPI {
   /// SPI bus number:  /dev/spidev[bus].[chip]
   final int bus;

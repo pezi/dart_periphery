@@ -108,7 +108,8 @@ class Led {
   /// Open the sysfs LED with the specified name.
   ///
   /// 'ls /sys/class/leds/' to list all available leds.
-  /// c-periphery [Led](https://github.com/vsergeev/c-periphery/blob/master/docs/led.md) documentation.
+  /// c-periphery [Led](https://github.com/vsergeev/c-periphery/blob/master/docs/led.md)
+  /// documentation.
   Led(this.name) : _ledHandle = _openLed(name);
 
   void _checkStatus() {

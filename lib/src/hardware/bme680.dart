@@ -356,8 +356,10 @@ class BME680result {
     return '{"temperature":"${temperature.toStringAsFixed(fractionDigits)}","pressure":"${pressure.toStringAsFixed(fractionDigits)}","humidity":"${humidity.toStringAsFixed(fractionDigits)},"airQualityScore":${airQualityScore.toStringAsFixed(fractionDigits)}"';
   }
 
-  /// Returns a [BME680result] as a JSON string with only temperature, pressure, humidity and airQualityScore, if the optional parameter
-  /// [allVars] is false, true returns all variables. [fractionDigits] controls the number of fraction digits.
+  /// Returns a [BME680result] as a JSON string with only temperature, pressure,
+  /// humidity and airQualityScore, if the optional parameter [allVars] is
+  /// false, true returns all variables. [fractionDigits] controls the number
+  /// of fraction digits.
   String toJSON([int fractionDigits = 2, bool allVars = false]) {
     if (allVars == false) {
       return '${_toJSONbase(fractionDigits)}}';
@@ -367,10 +369,13 @@ class BME680result {
   }
 }
 
-/// Bosch BME680 sensor for temperature, humidity, pressure and gas sensor ([IAQ](https://en.wikipedia.org/wiki/Indoor_air_quality) Indoor air quality).
+/// Bosch BME680 sensor for temperature, humidity, pressure and gas sensor
+/// ([IAQ](https://en.wikipedia.org/wiki/Indoor_air_quality)
+///  Indoor air quality).
 ///
 /// IAQ is in an index that can have values between 0 and 500 with
-/// resolution of 1 to indicate or quantify the quality of the air available in the surrounding.
+/// resolution of 1 to indicate or quantify the quality of the air available
+/// in the surrounding.
 ///
 /// See for more
 /// * [BM680 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme680.dart)
@@ -436,8 +441,8 @@ class BME680 {
 
     _getCalibrationData();
 
-    // It is highly recommended to set first osrs_h<2:0> followed by osrs_t<2:0> and
-    // osrs_p<2:0> in one write command (see Section 3.3).
+    // It is highly recommended to set first osrs_h<2:0> followed by
+    // osrs_t<2:0> and osrs_p<2:0> in one write command (see Section 3.3).
     setHumidityOversample(OversamplingMultiplier.x2); // 0x72
     setTemperatureOversample(OversamplingMultiplier.x4); // 0x74
     setPressureOversampling(OversamplingMultiplier.x8); // 0x74

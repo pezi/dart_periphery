@@ -47,27 +47,31 @@ const double accelZangle = 0;
 /// generate the sample tate for the MPU-60X0
 const int mpu6050RegAddrSmprtDiv = 0x19; // 25
 
-// This register configures the external Frame Synchronization (FSYNC) pin sampling and
-// the Digital Low Pass Filter (DLPF) setting for both the gyroscopes and accelerometers.
+/// This register configures the external Frame Synchronization (FSYNC) pin
+/// sampling and the Digital Low Pass Filter (DLPF) setting for both the
+/// gyroscopes and accelerometers.
 const int mpu6050RegAddrConfig = 0x1A; // 26
 
-// This register is used to trigger gyroscope self-test and configure the gyroscopes’ full scale range
+/// This register is used to trigger gyroscope self-test and configure the
+/// gyroscopes’ full scale range
 const int mpu6050RegAddrGyroConfig = 0x1B; // 27
 
-// This register is used to trigger accelerometer self test and configure the accelerometer
-// full scale range. This register also configures the Digital High Pass Filter (DHPF).
+/// This register is used to trigger accelerometer self test and configure the
+/// accelerometer full scale range. This register also configures the
+/// Digital High Pass Filter (DHPF).
 const int mpu6050RegAddrAccelConfig = 0x1C; // 28
 
-// This register enables interrupt generation by interrupt sources.
+/// This register enables interrupt generation by interrupt sources.
 const int mpu6050RegAddrIntEnable = 0x1A; // 56
 
-// This register allows the user to configure the power mode and clock source. It also provides
-// a bit for resetting the entire device, and a bit for disabling the temperature sensor.
+/// This register allows the user to configure the power mode and clock source.
+/// It also provide a bit for resetting the entire device, and a bit for
+/// disabling the temperature sensor.
 const int mpu6050RegAddrPwrMgmt1 = 0x6B; // 107
 
-// This register allows the user to configure the frequency of wake-ups in Accelerometer Only Low
-// Power Mode. This register also allows the user to put individual axes of the accelerometer and
-// gyroscope into standby mode.
+/// This register allows the user to configure the frequency of wake-ups in
+/// Accelerometer Only Low Power Mode. This register also allows the user to
+/// put individual axes of the accelerometer and gyroscope into standby mode.
 const int mpu6050RegAddrPwrMgmt2 = 0x6C; // 108
 
 // This register store the most recent accelerometer measurements
@@ -139,10 +143,12 @@ class MPU6050 {
 
   final int i2cBus;
 
-  // Sensisitivty of the measures from the accelerometer. Used to convert accelerometer values.
+  /// Sensisitivty of the measures from the accelerometer. Used to convert a
+  //ccelerometer values.
   double _accelLSBSensitivity = 0;
 
-  /// Sensitivity of the measures from the gyroscope. Used to convert gyroscope values to degrees/sec.
+  /// Sensitivity of the measures from the gyroscope. Used to convert gyroscope
+  ///  values to degrees/sec.
   double _gyroLSBSensitivity = 0;
 
   // late Timer _updatingTimer;
@@ -151,13 +157,16 @@ class MPU6050 {
 
   // ACCELEROMETER
 
-  /// Last acceleration value, in g, retrieved from the accelerometer, for the x axis. - (using the updating thread)
+  /// Last acceleration value, in g, retrieved from the accelerometer, for
+  /// the x axis. - (using the updating thread)
   double _accelAccelerationX = 0;
 
-  /// Last acceleration value, in g, retrieved from the accelerometer, for the y axis. -(using the updating thread)
+  /// Last acceleration value, in g, retrieved from the accelerometer, for
+  /// the y axis. -(using the updating thread)
   double _accelAccelerationY = 0;
 
-  /// Last acceleration value, in g, retrieved from the accelerometer, for the z axis. - (using the updating thread)
+  /// Last acceleration value, in g, retrieved from the accelerometer, for
+  /// the z axis. - (using the updating thread)
   double _accelAccelerationZ = 0;
 
   /// Last angle value, in °, retrieved from the accelerometer, for the x axis.
@@ -174,16 +183,16 @@ class MPU6050 {
 
   // GYROSCOPE
 
-  /// Last angular speed value, in °/sec, retrieved from the gyroscope, for the x axis.
-  /// (using the updating thread)
+  /// Last angular speed value, in °/sec, retrieved from the gyroscope, for
+  /// the x axis. (using the updating thread)
   double _gyroAngularSpeedX = 0;
 
-  /// Last angular speed value, in °/sec, retrieved from the gyroscope, for the y axis.
-  /// (using the updating thread)
+  /// Last angular speed value, in °/sec, retrieved from the gyroscope, for
+  /// the y axis. (using the updating thread)
   double _gyroAngularSpeedY = 0;
 
-  /// Last angular speed value, in °/sec, retrieved from the gyroscope, for the z axis.
-  /// (using the updating thread)
+  /// Last angular speed value, in °/sec, retrieved from the gyroscope, for
+  /// the z axis. (using the updating thread)
   double _gyroAngularSpeedZ = 0;
 
   /// Last angle value, in °, calculated from the gyroscope, for the x axis.
@@ -198,27 +207,30 @@ class MPU6050 {
   /// (using the updating thread)
   double _gyroAngleZ = 0;
 
-  /// Calculated offset for the angular speed from the gyroscope, for the x axis.
+  /// Calculated offset for the angular speed from the gyroscope, for
+  /// the x axis.
   double _gyroAngularSpeedOffsetX = 0;
 
-  /// Calculated offset for the angular speed from the gyroscope, for the y axis.
+  /// Calculated offset for the angular speed from the gyroscope, for
+  /// the y axis.
   double _gyroAngularSpeedOffsetY = 0;
 
-  /// Calculated offset for the angular speed from the gyroscope, for the z axis.
+  /// Calculated offset for the angular speed from the gyroscope, for
+  /// the z axis.
   double _gyroAngularSpeedOffsetZ = 0;
 
   // FILTERED
 
-  /// Last angle value, in °, calculated from the accelerometer and the gyroscope,
-  /// for the x axis.
+  /// Last angle value, in °, calculated from the accelerometer and the
+  /// gyroscope, for the x axis.
   double _filteredAngleX = 0;
 
-  /// Last angle value, in °, calculated from the accelerometer and the gyroscope,
-  /// for the y axis.
+  /// Last angle value, in °, calculated from the accelerometer and the
+  /// gyroscope, for the y axis.
   double _filteredAngleY = 0;
 
-  /// Last angle value, in °, calculated from the accelerometer and the gyroscope,
-  /// for the z axis. (using the updating thread)
+  /// Last angle value, in °, calculated from the accelerometer and the
+  /// gyroscope, for the z axis. (using the updating thread)
   double _filteredAngleZ = 0;
 
   /// Opens a MPU6050 on the [i2c] with the optional default values
@@ -232,12 +244,15 @@ class MPU6050 {
     i2c.writeByteReg(i2cAddress, mpu6050RegAddrPwrMgmt1, 0x00);
 
     // 2. sample rate divider
-    // The sensor register output, FIFO output, and DMP sampling are all based on the Sample Rate.
-    // The Sample Rate is generated by dividing the gyroscope output rate by SMPLRT_DIV:
+    // The sensor register output, FIFO output, and DMP sampling are all based
+    // on the Sample Rate.
+    // The Sample Rate is generated by dividing the gyroscope output rate by
+    // SMPLRT_DIV:
     //      Sample Rate = Gyroscope Output Rate / (1 + SMPLRT_DIV)
-    // where Gyroscope Output Rate = 8kHz when the DLPF is disabled (DLPF_CFG = 0 or 7),
-    // and 1kHz when the DLPF is enabled (see register 26).
-    // SMPLRT_DIV set the rate to the default value : Sample Rate = Gyroscope Rate.
+    // where Gyroscope Output Rate = 8kHz when the DLPF is disabled
+    // (DLPF_CFG = 0 or 7), and 1kHz when the DLPF is enabled (see register 26).
+    // SMPLRT_DIV set the rate to the default value :
+    // Sample Rate = Gyroscope Rate.
     i2c.writeByteReg(i2cAddress, mpu6050RegAddrSmprtDiv, _smplrtDiv);
 
     // 3. This register configures the external Frame Synchronization (FSYNC)
@@ -271,12 +286,15 @@ class MPU6050 {
   /// The Sample Rate is generated by dividing the gyroscope output rate
   /// by SMPLRT_DIV:
   ///              Sample Rate = Gyroscope Output Rate / (1 + SMPLRT_DIV)
-  /// where Gyroscope Output Rate = 8kHz when the DLPF is disabled (DLPF_CFG = 0 or 7),
-  /// and 1kHz when the DLPF is enabled.
+  /// where Gyroscope Output Rate = 8kHz when the DLPF is disabled
+  /// (DLPF_CFG = 0 or 7), and 1kHz when the DLPF is enabled.
   ///
-  /// Note: The accelerometer output rate is 1kHz (accelerometer and not gyroscope !).
-  /// This means that for a Sample Rate greater than 1kHz, the same accelerometer
-  /// sample may be output to the FIFO, DMP, and sensor registers more than once.
+  /// Note: The accelerometer output rate is 1kHz (accelerometer and
+  /// not gyroscope!).
+  ///
+  /// This means that for a Sample Rate greater than 1kHz, the same
+  /// accelerometer sample may be output to the FIFO, DMP, and sensor registers
+  /// more than once.
   ///
   int getSampleRate() {
     var gyroscopeOutputRate =
@@ -405,7 +423,8 @@ class MPU6050 {
     return array;
   }
 
-  /// This method should be called repeatedly with a high frequency to get accurate values.
+  /// This method should be called repeatedly with a high frequency to get
+  ///  accurate values.
   void updateValues() {
     if (_lastUpdateTime == 0) {
       _lastUpdateTime = DateTime.now().millisecondsSinceEpoch;
@@ -450,37 +469,37 @@ class MPU6050 {
   }
 
   /// Gets the last acceleration values, in g, retrieved from the accelerometer,
-  /// for the x, y and z axis. Call [updateValues] repeatedly with a high frequency
-  /// to get accurate values.
+  /// for the x, y and z axis. Call [updateValues] repeatedly with a
+  /// high frequency to get accurate values.
   List<double> getAccelAccelerations() {
     return [_accelAccelerationX, _accelAccelerationY, _accelAccelerationZ];
   }
 
   /// Gets the last angle values, in °, retrieved from the accelerometer,
-  /// for the x, y and z axis. Call [updateValues] repeatedly with a high frequency
-  /// to get accurate values.
+  /// for the x, y and z axis. Call [updateValues] repeatedly with a
+  /// high frequency to get accurate values.
   List<double> getAccelAngles() {
     return [_accelAngleX, _accelAngleY, _accelAngleZ];
   }
 
-  /// Gets the last angular speed values, in °/sec, retrieved from the gyroscope,
-  /// for the x, y and z axis. Call [updateValues] repeatedly with a high frequency
-  /// to get accurate values.
+  /// Gets the last angular speed values, in °/sec, retrieved from the
+  /// gyroscope, for the x, y and z axis. Call [updateValues] repeatedly with a
+  /// high frequency to get accurate values.
   List<double> getGyroAngularSpeeds() {
     return [_gyroAngularSpeedX, _gyroAngularSpeedY, _gyroAngularSpeedZ];
   }
 
   /// Gets the last angles values, in °, retrieved from the gyroscope,
-  /// for the x, y and z axis. Call [updateValues] repeatedly with a high frequency
-  /// to get accurate values.
+  /// for the x, y and z axis. Call [updateValues] repeatedly with a
+  /// high frequency to get accurate values.
   List<double> getGyroAngles() {
     // _isTimerRunning();
     return [_gyroAngleX, _gyroAngleY, _gyroAngleZ];
   }
 
-  // Returns the calculated offsets for the angular speeds from the gyroscope,
-  // for the x, y and z axis. Call [updateValues] repeatedly with a high frequency
-  /// to get accurate values.
+  /// Returns the calculated offsets for the angular speeds from the
+  /// gyroscope, for the x, y and z axis. Call [updateValues] repeatedly with
+  /// a high frequency to get accurate values.
   List<double> getGyroAngularSpeedsOffsets() {
     return [
       _gyroAngularSpeedOffsetX,
@@ -489,9 +508,9 @@ class MPU6050 {
     ];
   }
 
-  /// Last angle value, in °, calculated from the accelerometer and the gyroscope,
-  /// for the x, y and z axis.  Call [updateValues] repeatedly with a high frequency
-  /// to get accurate values.
+  /// Last angle value, in °, calculated from the accelerometer and the
+  /// gyroscope, for the x, y and z axis.  Call [updateValues] repeatedly
+  ///  with a high frequency to get accurate values.
   List<double> getFilteredAngles() {
     return [_filteredAngleX, _filteredAngleY, _filteredAngleZ];
   }

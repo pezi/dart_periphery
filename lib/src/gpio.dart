@@ -20,7 +20,8 @@ import 'signature.dart';
 /// Result codes of the [GPIO.poll].
 enum GPIOpolling { success, timeout }
 
-/// Mapped native [GPIO] error codes with the same index, but different leading sign.
+/// Mapped native [GPIO] error codes with the same index, but different
+/// leading sign.
 enum GPIOerrorCode {
   /// Error code for not able to map the native C enum
   errorCodeNotMappable,
@@ -123,8 +124,9 @@ class GPIOreadEvent {
 /// Helper class for the static method [GPIO.pollMultiple].
 ///
 /// [PollMultipleEvent.eventOccurred] will be populated with true for the
-/// corresponding GPIO in the gpios array if an edge event occurred, or false if none occurred.
-/// This class contains also the number [eventCounter] of GPIOs for which an edge event occurred.
+/// corresponding GPIO in the gpios array if an edge event occurred, or false
+/// if none occurred. This class contains also the number [eventCounter] of
+/// GPIOs for which an edge event occurred.
 /// See for details [GPIO.pollMultiple]
 class PollMultipleEvent {
   /// GPIO list monitored for edge events
@@ -396,13 +398,16 @@ Map<String, dynamic> _jsonMap(String json) {
   return _map;
 }
 
-/// GPIO wrapper functions for Linux userspace character device gpio-cdev and sysfs GPIOs.
+/// GPIO wrapper functions for Linux userspace character device gpio-cdev
+/// and sysfs GPIOs.
 ///
-/// Character device GPIOs were introduced in Linux kernel version 4.8. If the toolchain used to compiled
-/// c-periphery contains Linux kernel headers older than 4.8 (i.e. linux/gpio.h is missing), then only legacy
+/// Character device GPIOs were introduced in Linux kernel version 4.8. If the
+/// toolchain used to compiled c-periphery contains Linux kernel headers
+/// older than 4.8 (i.e. linux/gpio.h is missing), then only legacy
 /// sysfs GPIOs will be supported.
 ///
-/// c-periphery [GPIO](https://github.com/vsergeev/c-periphery/blob/master/docs/gpio.md) documentation.
+/// c-periphery [GPIO](https://github.com/vsergeev/c-periphery/blob/master/docs/gpio.md)
+///  documentation.
 class GPIO extends IsolateAPI {
   static String _gpioBasePath = '/dev/gpiochip';
 
@@ -463,9 +468,9 @@ class GPIO extends IsolateAPI {
     return _nativeGPIOerrno(_gpioHandle);
   }
 
-  /// Opens the character device GPIO with the specified GPIO [line] and [direction] at
-  /// the default character device GPIO with the [chip] number. The default
-  /// chip number is 0, with the path /dev/gpiochip0.
+  /// Opens the character device GPIO with the specified GPIO [line] and
+  /// [direction] at the default character device GPIO with the [chip] number.
+  /// The default chip number is 0, with the path /dev/gpiochip0.
   ///
   /// Use [GPIO.setBaseGPIOpath] to change the default character device path.
   GPIO(this.line, this.direction, [this.chip = 0])
@@ -485,9 +490,11 @@ class GPIO extends IsolateAPI {
     return gpioHandle;
   }
 
-  /// Opens the character device GPIO with the specified GPIO [name] and [direction] at the default character
-  /// device GPIO with the [chip] number. The default chip number is 0, with the path /dev/gpiochip0. Use [GPIO.setBaseGPIOpath]
-  /// to change the default character device path.
+  /// Opens the character device GPIO with the specified GPIO [name] and
+  /// [direction] at the default character device GPIO with the [chip] number.
+  /// The default chip number is 0, with the path /dev/gpiochip0.
+  ///
+  /// Use [GPIO.setBaseGPIOpath] to change the default character device path.
   GPIO.name(this.name, this.direction, [this.chip = 0])
       : path = _gpioBasePath + chip.toString(),
         line = -1,
@@ -505,9 +512,12 @@ class GPIO extends IsolateAPI {
     return gpioHandle;
   }
 
-  /// Opens the character device GPIO with the specified GPIO [line] and configuration [config] at the default character
-  /// device GPIO with the [chip] number. The default chip number is 0, with the path /dev/gpiochip0. Use [GPIO.setBaseGPIOpath]
-  /// to change the default character device path.
+  /// Opens the character device GPIO with the specified GPIO [line] and
+  /// configuration [config] at the default character device GPIO with
+  /// the [chip] number. The default chip number is 0, with the
+  /// path /dev/gpiochip0.
+  ///
+  /// Use [GPIO.setBaseGPIOpath] to change the default character device path.
   GPIO.advanced(this.line, GPIOconfig config, [this.chip = 0])
       : path = _gpioBasePath + chip.toString(),
         name = '',
@@ -527,8 +537,10 @@ class GPIO extends IsolateAPI {
   }
 
   /// Opens the character device GPIO with the specified GPIO [name] and the
-  /// configuration [config] at the default character device GPIO with the [chip]
-  /// number. The default chip number is 0, with the path <tt>/dev/gpiochip0</tt>.
+  /// configuration [config] at the default character device GPIO with
+  /// the [chip] number. The default chip number is 0, with the
+  /// path <tt>/dev/gpiochip0</tt>.
+  ///
   /// Use [GPIO.setBaseGPIOpath] to change the default character device path.
   GPIO.nameAdvanced(this.name, GPIOconfig config, [this.chip = 0])
       : path = _gpioBasePath + chip.toString(),
@@ -577,9 +589,10 @@ class GPIO extends IsolateAPI {
   }
 
   /// Polls multiple GPIOs for an edge event configured with [GPIO.setGPIOedge].
-  /// For character device GPIOs, the edge event should be consumed with [GPIO.readEvent]. For sysfs GPIOs,
-  /// the edge event should be consumed with [GPIO.read].
-  /// [timeoutMillis] can be positive for a timeout in milliseconds, zero for a non-blocking poll, or
+  /// For character device GPIOs, the edge event should be consumed with
+  /// [GPIO.readEvent]. For sysfs GPIOs, the edge event should be consumed
+  /// with [GPIO.read]. [timeoutMillis] can be positive for a timeout
+  /// in milliseconds, zero for a non-blocking poll, or
   /// negative for a blocking poll. Returns a [PollMultipleEvent()]
   static PollMultipleEvent pollMultiple(List<GPIO> gpios, int timeoutMillis) {
     final ptr = malloc<Pointer<Void>>(gpios.length);
@@ -620,7 +633,8 @@ class GPIO extends IsolateAPI {
   }
 
   /// Polls a GPIO for the edge event configured with [GPIO.setGPIOedge].
-  /// For character device GPIOs, the edge event should be consumed with gpio_read_event().
+  /// For character device GPIOs, the edge event should be consumed
+  ///  with gpio_read_event().
   /// For sysfs GPIOs, the edge event should be consumed with [GPIO.read].
   GPIOpolling poll(int timeoutMillis) {
     _checkStatus();
@@ -630,7 +644,8 @@ class GPIO extends IsolateAPI {
   }
 
   /// Reads the edge event that occurred with the GPIO.
-  /// This method is intended for use with character device GPIOs and is unsupported by sysfs GPIOs.
+  /// This method is intended for use with character device GPIOs and is
+  /// unsupported by sysfs GPIOs.
   GPIOreadEvent readEvent() {
     _checkStatus();
     var edge = malloc<Int32>(1);
@@ -748,20 +763,23 @@ class GPIO extends IsolateAPI {
   }
 
   /// Returns the GPIO chip file descriptor of the GPIO handle.
-  /// This method is intended for use with character device GPIOs and is unsupported by sysfs GPIOs.
+  /// This method is intended for use with character device GPIOs and is
+  /// unsupported by sysfs GPIOs.
   int getGPIOchipFD() {
     _checkStatus();
     return _nativeGPIOchipFd(_gpioHandle);
   }
 
   /// Returns the line name of the GPIO.
-  /// This method is intended for use with character device GPIOs and always returns the empty string for sysfs GPIOs.
+  /// This method is intended for use with character device GPIOs and always
+  /// returns the empty string for sysfs GPIOs.
   String getGPIOname() {
     return _getString(_nativeGPIOname);
   }
 
   /// Returns the line consumer label of the GPIO.
-  /// This method is intended for use with character device GPIOs and always returns the empty string for sysfs GPIOs.
+  /// This method is intended for use with character device GPIOs and always
+  /// returns the empty string for sysfs GPIOs.
   String getGPIOlabel() {
     return _getString(_nativeGPIOlabel);
   }

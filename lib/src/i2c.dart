@@ -266,7 +266,8 @@ String _getErrmsg(Pointer<Void> handle) {
 
 /// I2C wrapper functions for Linux userspace i2c-dev devices.
 ///
-/// c-periphery [I2C](https://github.com/vsergeev/c-periphery/blob/master/docs/i2c.md) documentation.
+/// c-periphery [I2C](https://github.com/vsergeev/c-periphery/blob/master/docs/i2c.md)
+/// documentation.
 class I2C extends IsolateAPI {
   static const String _i2cBasePath = '/dev/i2c-';
   late Pointer<Void> _i2cHandle;
@@ -443,7 +444,8 @@ class I2C extends IsolateAPI {
     result.dispose();
   }
 
-  /// Writes a [wordValue] to the I2C device with the [address] and the bit [order].
+  /// Writes a [wordValue] to the I2C device with the [address] and the
+  /// bit [order].
   ///
   /// Some I2C devices can directly be written without an explicit register.
   void writeWord(int address, int wordValue,
@@ -553,7 +555,8 @@ class I2C extends IsolateAPI {
 
   /// Reads a byte from [register] of the I2C device with the [address].
   ///
-  /// The optional register parameters bit [order]/[width] enables 16-bit register.
+  /// The optional register parameters bit [order]/[width] enables
+  /// 16-bit register.
   ///
   /// The bit [order] depends on the I2C device.
   int readByteReg(int address, int register,
@@ -575,7 +578,8 @@ class I2C extends IsolateAPI {
 
   /// Reads [len] bytes from [register] of the I2C device with the [address].
   ///
-  /// The optional register parameters bit [order]/[width] enables 16-bit register.
+  /// The optional register parameters bit [order]/[width] enables
+  /// 16-bit register.
   ///
   /// Some I2C devices can directly be read without explicit register.
   /// The bit [order] depends on the I2C device.
@@ -636,7 +640,8 @@ class I2C extends IsolateAPI {
     return _i2cHandle.address;
   }
 
-  /// Returns the file descriptor (for the underlying i2c-dev device) of the I2C handle.
+  /// Returns the file descriptor (for the underlying i2c-dev device) of
+  /// the I2C handle.
   int getI2Cfd() {
     _checkStatus();
     return _nativeI2Cfd(_i2cHandle);
