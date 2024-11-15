@@ -257,22 +257,3 @@ class SDC30 {
     return crc;
   }
 }
-
-void main() {
-  // Select the right I2C bus number /dev/i2c-?
-  // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
-  var i2c = I2C(0);
-  try {
-    print("test sensor");
-    var s = SDC30(i2c);
-    // firmware version major: 3; minor: 66;
-    print(s.getFirmwareVersion());
-    print(s.getMeasurementInterval());
-    while (true) {
-      sleep(Duration(seconds: 4));
-      s.getValues();
-    }
-  } finally {
-    i2c.dispose();
-  }
-}
