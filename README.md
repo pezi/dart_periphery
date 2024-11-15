@@ -569,10 +569,10 @@ The project is currently still beta and development is ongoing.
 * [BME680](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme680.dart): Temperature, humidity pressure and gas (Indoor Airy Quality) sensor.
 * [SHT31](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht31.dart): Temperature and humidity sensor. 
 * [CozIR](https://github.com/pezi/dart_periphery/blob/main/example/serial_cozir.dart): CO₂, temperature and humidity sensor.
-* [Grove Gesture](https://github.com/pezi/dart_periphery/blob/main/example/i2c_gesture_sensor.dart) can recognize 9 basic gestures.
-* [MPU-6050 Six-Axis](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mpu6050.dart) (Gyro + Accelerometer) sensor.
-* [MCP9808](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mcp9808.dart) high accuracy temperature sensor.
-* [MLX90615](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mlx90615.dart) digital infrared non-contact temperature sensor.
+* [Grove Gesture](https://github.com/pezi/dart_periphery/blob/main/example/i2c_gesture_sensor.dart): can recognize 9 basic gestures.
+* [MPU-6050 Six-Axis](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mpu6050.dart): (Gyro + Accelerometer) sensor.
+* [MCP9808](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mcp9808.dart): high accuracy temperature sensor.
+* [MLX90615](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mlx90615.dart): digital infrared non-contact temperature sensor.
 * [SDC30](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sdc30.dart): CO₂, temperature and humidity sensor.
 * FriendlyARM [BakeBit Set](https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
 * [Grove Base Hat](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi/)/[GrovePi Plus](https://wiki.seeedstudio.com/GrovePi_Plus)
@@ -588,16 +588,14 @@ The project is currently still beta and development is ongoing.
 
 [Test suite](https://github.com/pezi/dart_periphery/tree/main/test)
 
-| Architecture  |   GPIO    | GPIO<sub>sysfs</sub> |   I2C   |   SPI   | Serial  |  MMIO¹  |   PWM   |     LED |
+| Architecture  |   GPIO    | GPIO<sub>sysfs</sub> |   I2C   |   SPI   | Serial  |  MMIO   |   PWM   |     LED |
 |---------------|:---------:|:--------------------:|:-------:|:-------:|:-------:|:-------:|:-------:|--------:|
-| **ARM** ²     |  &#9989;  |       &#9989;        | &#9989; | &#9989; | &#9989; | &#9744; | &#9989; | &#9989; |
-| **AARCH64** ³ | &#10060;⁴ |       &#9989;        | &#9989; | &#9989; | &#9989; | &#9744; | &#9989; | &#9989; |
+| **ARM** ²     |  &#9989;  |       &#9989;        | &#9989; | &#9989; | &#9989; | &#9989; | &#9989; | &#9989; |
+| **AARCH64** ³ | &#10060;⁴ |       &#9989;        | &#9989; | &#9989; | &#9989; | &#9989; | &#9989; | &#9989; |
 | **X86** ⁵     |  &#9744;  |       &#9744;        | &#9744; | &#9744; | &#9744; | &#9744; | &#9744; | &#9744; |
 | **X86_64** ⁵  |  &#9744;  |       &#9744;        | &#9744; | &#9744; | &#9744; | &#9744; | &#9744; | &#9744; |
 
 &#9744; missing test | &#9989; test passed | &#10060; test failed
-
-¹ Delayed until FFI inline @Array() support in Dart Version >=2.13 is [available](https://github.com/dart-lang/sdk/issues/35763)
 
 ² [Raspberry Pi 3 Model B](https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/)
 

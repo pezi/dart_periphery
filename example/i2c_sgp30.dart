@@ -14,7 +14,7 @@ import 'package:dart_periphery/dart_periphery.dart';
 void main() {
   // Select the right I2C bus number /dev/i2c-?
   // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
-  var s = SGP30(I2C(1));
+  var s = SGP30(I2C(0));
   print('Serial number: ${s.getSerialId()}');
   print(s.getFeatureSetVersion());
   sleep(Duration(milliseconds: 1000));
