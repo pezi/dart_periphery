@@ -575,7 +575,7 @@ The project is currently still beta and development is ongoing.
 * [MLX90615](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mlx90615.dart) digital infrared non-contact temperature sensor.
 * FriendlyARM [BakeBit Set](https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
 * [Grove Base Hat](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi/)/[GrovePi Plus](https://wiki.seeedstudio.com/GrovePi_Plus)
-* [PN532](https://github.com/pezi/dart_periphery/pull/6) NFC Reader Module, Thanks to UliPrantz!
+* [PN532](https://github.com/pezi/dart_periphery/pull/6) NFC Reader Module, Thanks to [UliPrantz](https://github.com/UliPrantz)!
 * SSD1306 OLED (in progress)
 
 ## Next steps
