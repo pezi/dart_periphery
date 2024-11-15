@@ -8,7 +8,6 @@
 // https://javiercarrascocruz.github.io/i2c-on-linux#3-example-with-a-virtual-device-i2c-stub
 
 import 'package:dart_periphery/src/i2c.dart';
-import 'utils/byte_buffer.dart';
 import 'dart:typed_data';
 import 'dart:io';
 
@@ -40,6 +39,36 @@ class SDC30exception implements Exception {
   SDC30exception(this.errorMsg);
 }
 
+/// [SDC30] measured data: CO2, temperature and humidity.
+class SDC30result {
+  final bool available;
+
+  /// PPM
+  final double co2;
+
+  /// temperature °C
+  final double temperature;
+
+  /// relative humidity %
+  final double humidity;
+
+  SDC30result(this.co2, this.temperature, this.humidity) : available = true;
+  SDC30result.empty()
+      : available = false,
+        co2 = 0,
+        temperature = 0,
+        humidity = 0;
+
+  @override
+  String toString() =>
+      'BME280result [CO2=$co2,$temperature, humidity=$humidity]';
+
+  /// Returns a [SDC30result] as a JSON string. [fractionDigits] controls the number fraction digits.
+  String toJSON([int fractionDigits = 2]) {
+    return '{"CO2":"${co2.toStringAsFixed(fractionDigits)}","temperature":"${temperature.toStringAsFixed(fractionDigits)}","humidity":"${humidity.toStringAsFixed(fractionDigits)}"}';
+  }
+}
+
 /// SDC30 CO2 & Temperature & Humidity Sensor
 /// https://www.seeedstudio.com/Grove-CO2-Temperature-Humidity-Sensor-SCD30-p-2911.html
 class SDC30 {
@@ -48,25 +77,60 @@ class SDC30 {
 
   /// Creates a MCP9808 sensor instance that uses the [i2c] bus with
   /// the optional [i2cAddress].
-  SDC30(this.i2c, [this.i2cAddress = sdc30DefaultI2Caddress]) {}
+  SDC30(this.i2c, [this.i2cAddress = sdc30DefaultI2Caddress]) {
+    setMeasurementInterval(2);
+  }
 
-  /// Sets interval between measurements
+  /// Sets [interval] between measurements
+  ///
   /// 2 seconds to 1800 seconds (30 minutes)
   void setMeasurementInterval(int interval) {
     sendCommand(Command.setMeasurementInterval, interval);
   }
 
+  /// Returns the measurement interval in secounds.
   int getMeasurementInterval() {
     return getCommandValue(Command.setMeasurementInterval);
   }
 
-  /// Enables or disables the ASC
+  /// Enables or disables the auto self calibration.
   void setAutoSelfCalibration(bool enable) {
     sendCommand(Command.automaticSelfCalibration, enable ? 1 : 0);
   }
 
+  /// Returns if auto self calibration is enabled.
+  bool isAutoSelfCalibrationl() {
+    return getCommandValue(Command.automaticSelfCalibration) != 0;
+  }
+
+  /// Sets the temperature [offset].
+  void setTemperatureOffset(int offset) {
+    sendCommand(Command.setTemperatureOffset, offset);
+  }
+
+  /// Returns the temperature offset.
+  int getTemperatureOffset() {
+    return getCommandValue(Command.setTemperatureOffset);
+  }
+
+  /// Sets [altitude] compensation.
+  void setAltitudeCompensation(int altitude) {
+    sendCommand(Command.setAltitudeCompensation, altitude);
+  }
+
+  /// Returns the altitude compensation.
+  int getAltitudeCompensation() {
+    return getCommandValue(Command.setAltitudeCompensation);
+  }
+
+  /// SCD30 soft reset
+  void reset() {
+    sendCommandNoArg(Command.reset);
+  }
+
   /// Sets the forced recalibration factor. See 1.3.7.
-  /// The reference CO2 concentration has to be within the range 400 ppm ≤ cref(CO2) ≤ 2000 ppm.
+  /// The reference CO2 concentration has to be within the
+  /// range 400 ppm ≤ cref(CO2) ≤ 2000 ppm.
   void setForcedRecalibrationFactor(int concentration) {
     if (concentration < 400 || concentration > 2000) {
       return; // Error check.
@@ -74,6 +138,15 @@ class SDC30 {
     return sendCommand(Command.setForcedRecalibrationFactor, concentration);
   }
 
+  /// Returns the forced recalibration factor.
+  int getForcedRecalibrationFactor() {
+    return getCommandValue(Command.setForcedRecalibrationFactor);
+  }
+
+  /// Return the firmware version.
+  ///
+  /// higher byte - major version
+  /// lower byte - minor version
   int getFirmwareVersion() {
     return getCommandValue(Command.readFirmwareVersion);
   }
@@ -83,7 +156,7 @@ class SDC30 {
     return readRegister(Command.getDataReady) == 1;
   }
 
-  double floatFromBytes(List<int> bytes, int index) {
+  double _floatFromBytes(List<int> bytes, int index) {
     // Create a ByteData from the list of bytes
     final byteData = ByteData(4);
     var offset = 0;
@@ -98,9 +171,12 @@ class SDC30 {
     return byteData.getFloat32(0, Endian.big);
   }
 
-  void readMeasurement() {
+  /// Returns a [BME680result] with CO₂, temperature, and humidity.
+  ///
+  /// Check [BME680result.isAvailable]  to determine if data is available.
+  SDC30result getValues() {
     if (!isDataAvailable()) {
-      return;
+      return SDC30result.empty();
     }
     var address = <int>[];
     address.add(Command.readMeasurement.value >> 8);
@@ -109,17 +185,17 @@ class SDC30 {
     sleep(const Duration(microseconds: 3));
     var data = i2c.readBytes(sdc30DefaultI2Caddress, 18);
 
-    // check crc
+    // check crc8 for the byte tripplets
     for (var i = 0; i < 18; i += 3) {
       if (_crc8(data, i) != (data[i + 2] & 0xff)) {
         throw SDC30exception('CRC8 error');
       }
     }
 
-    var co2 = floatFromBytes(data, 0);
-    var temperature = floatFromBytes(data, 6);
-    var humidity = floatFromBytes(data, 12);
-    print("$co2 $temperature $humidity");
+    var co2 = _floatFromBytes(data, 0);
+    var temperature = _floatFromBytes(data, 6);
+    var humidity = _floatFromBytes(data, 12);
+    return SDC30result(co2, temperature, humidity);
   }
 
   // Sends a command along with arguments and CRC
@@ -194,9 +270,7 @@ void main() {
     print(s.getMeasurementInterval());
     while (true) {
       sleep(Duration(seconds: 4));
-      if (s.isDataAvailable()) {
-        s.readMeasurement();
-      }
+      s.getValues();
     }
   } finally {
     i2c.dispose();
