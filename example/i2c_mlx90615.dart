@@ -4,7 +4,7 @@
 
 import 'package:dart_periphery/dart_periphery.dart';
 
-///  MLX90615 - digital infrared non-contact temperature sensor
+/// MLX90615 - digital infrared non-contact temperature sensor
 ///
 /// https://www.seeedstudio.com/Grove-Digital-Infrared-Temperature-Sensor.html
 ///

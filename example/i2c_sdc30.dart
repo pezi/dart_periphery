@@ -5,6 +5,10 @@
 import 'package:dart_periphery/dart_periphery.dart';
 import 'dart:io';
 
+/// SDC30 - CO2 & Temperature & Humidity Sensor
+///
+/// https://www.seeedstudio.com/Grove-CO2-Temperature-Humidity-Sensor-SCD30-p-2911.html
+///
 void main() {
   // Select the right I2C bus number /dev/i2c-?
   // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)

@@ -3,9 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 // https://github.com/Sensirion/python-i2c-scd30/tree/master
-
 // https://github.com/agners/micropython-scd30/blob/master/scd30.py
-// https://javiercarrascocruz.github.io/i2c-on-linux#3-example-with-a-virtual-device-i2c-stub
 
 import 'package:dart_periphery/src/i2c.dart';
 import 'dart:typed_data';
@@ -43,7 +41,7 @@ class SDC30exception implements Exception {
 class SDC30result {
   final bool available;
 
-  /// PPM
+  /// CO2 PPM
   final double co2;
 
   /// temperature °C
@@ -70,7 +68,13 @@ class SDC30result {
 }
 
 /// SDC30 CO2 & Temperature & Humidity Sensor
-/// https://www.seeedstudio.com/Grove-CO2-Temperature-Humidity-Sensor-SCD30-p-2911.html
+///
+/// See for more
+/// * [SDC30 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sdc30.dart)
+/// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/sdc30.dart)
+/// * [Datasheet](https://sensirion.com/media/documents/4EAF6AF8/61652C3C/Sensirion_CO2_Sensors_SCD30_Datasheet.pdf)
+/// * Technical resource [seedstudio](https://www.seeedstudio.com/Grove-CO2-Temperature-Humidity-Sensor-SCD30-p-2911.html)
+
 class SDC30 {
   final I2C i2c;
   final int i2cAddress;
@@ -105,6 +109,9 @@ class SDC30 {
 
   /// Sets the temperature [offset].
   void setTemperatureOffset(int offset) {
+    if (offset < 0.0) {
+      return;
+    }
     sendCommand(Command.setTemperatureOffset, offset);
   }
 
@@ -113,7 +120,7 @@ class SDC30 {
     return getCommandValue(Command.setTemperatureOffset);
   }
 
-  /// Sets [altitude] compensation.
+  /// Sets the [altitude] compensation.
   void setAltitudeCompensation(int altitude) {
     sendCommand(Command.setAltitudeCompensation, altitude);
   }
@@ -121,6 +128,15 @@ class SDC30 {
   /// Returns the altitude compensation.
   int getAltitudeCompensation() {
     return getCommandValue(Command.setAltitudeCompensation);
+  }
+
+  /// Sets the pressure compenstation. This is passed during measurement startup.
+  /// [pressureMillibar] can be 700 to 1200
+  void setAmbientPressure(int pressureMillibar) {
+    if (pressureMillibar < 700 || pressureMillibar > pressureMillibar) {
+      return;
+    }
+    sendCommand(Command.setTemperatureOffset, pressureMillibar);
   }
 
   /// SCD30 soft reset
@@ -162,6 +178,7 @@ class SDC30 {
     var offset = 0;
     for (int i = 0; i < 4; i++) {
       byteData.setUint8(i, bytes[index + offset + i]);
+      // skip crc8 byte
       if (i == 1) {
         offset = 1;
       }
@@ -229,6 +246,7 @@ class SDC30 {
     i2c.writeBytes(sdc30DefaultI2Caddress, data);
   }
 
+  /// Returns the value for a [Command]
   int getCommandValue(Command command) {
     var address = <int>[];
     address.add(command.value >> 8);

@@ -662,8 +662,8 @@ class BME680 {
         (i2c.readByteReg(i2cAddress, resistanceHeatRangeAddress) &
                 resistanceHeatRangeMask) >>
             4;
-    // res_heat_val is the heater resistance correction factor stored in register
-    // address 0x00
+    // res_heat_val is the heater resistance correction factor stored in
+    // register address 0x00
     // (signed, value from -128 to 127)
     _calibration.resistanceHeaterValue =
         i2c.readByteReg(i2cAddress, resistanceHeatValueAddress);

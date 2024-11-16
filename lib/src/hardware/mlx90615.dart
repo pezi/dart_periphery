@@ -31,20 +31,25 @@ class MLX90615exception implements Exception {
   MLX90615exception(this.errorMsg);
 }
 
+enum TemperatureType { ambient, object }
+
 /// [MLX90615] measured data: temperature
 class MLX90615result {
+  final TemperatureType type;
+
   /// temperature °C
   final double temperature;
 
-  MLX90615result(this.temperature);
+  MLX90615result(this.type, this.temperature);
 
   @override
-  String toString() => 'MCP9808result [temperature=$temperature]';
+  String toString() =>
+      'MCP9808result [type=${type.name}, temperature=$temperature]';
 
   /// Returns a [MLX90615result] as a JSON string. [fractionDigits] controls the
   /// number fraction digits.
   String toJSON([int fractionDigits = 2]) {
-    return '{"temperature":"${temperature.toStringAsFixed(fractionDigits)}"}';
+    return '{"type":"${type.name}","temperature":"${temperature.toStringAsFixed(fractionDigits)}"}';
   }
 }
 
@@ -76,7 +81,7 @@ class MLX90615 {
     return crc;
   }
 
-  int read16(int register, bool crcCheck) {
+  int _read16(int register, bool crcCheck) {
     var data = i2c.readBytesReg(i2cAddress, register, 3);
     for (int i = 0; i < data.length; i++) {
       data[i] = data[i] & 0xff;
@@ -96,9 +101,17 @@ class MLX90615 {
     return data[0] | data[1] << 8;
   }
 
-  /// Reads the object temperature in the range [-40, 85] °C
+  /// Returns a [MLX90615result] with [TemperatureType] type and temperature,
+  MLX90615result getValue(TemperatureType type) {
+    if (type == TemperatureType.ambient) {
+      return MLX90615result(type, getAmbientTemperature());
+    }
+    return MLX90615result(type, getObjectTemperature());
+  }
+
+  /// Reads the ambient temperature in the range [-40, 85] °C
   double getAmbientTemperature([bool crcCheck = true]) {
-    var value = read16(ambientTemperature, crcCheck);
+    var value = _read16(ambientTemperature, crcCheck);
     if (value > 0x7FFF) {
       throw MLX90615exception('Invalid ambient temperature error');
     }
@@ -107,7 +120,7 @@ class MLX90615 {
 
   /// Reads the object temperature in the range [-40, 115] °C
   double getObjectTemperature([bool crcCheck = true]) {
-    var value = read16(objectTemperature, crcCheck);
+    var value = _read16(objectTemperature, crcCheck);
     if (value > 0x7FFF) {
       throw MCP9808exception('Invalid object temperature error');
     }
@@ -116,7 +129,7 @@ class MLX90615 {
 
   /// Reads the unique sensor Id, a 32 bits integer stored in EEPROM
   int getId([bool crcCheck = true]) {
-    return read16(regIdLow, crcCheck) | read16(regIdHigh, crcCheck);
+    return _read16(regIdLow, crcCheck) | _read16(regIdHigh, crcCheck);
   }
 
   /// Reads the EEPROM returning a list of 16 values, each one a 16
@@ -127,7 +140,7 @@ class MLX90615 {
   List<int> readEEPROM([bool crcCheck = true]) {
     var eeprom = <int>[];
     for (int addresss = 0x10; addresss < 0x20; ++addresss) {
-      eeprom.add(read16(addresss, crcCheck) & 0xFF);
+      eeprom.add(_read16(addresss, crcCheck) & 0xFF);
     }
     return eeprom;
   }
@@ -135,7 +148,7 @@ class MLX90615 {
   /// Reads the emissivity stored in EEPROM, an integer from 5 to 100
   /// corresponding to emissivity from 0.05 to 1.00.
   int readEmissivity([bool crcCheck = true]) {
-    var d = read16(eepromEmissivity, crcCheck);
+    var d = _read16(eepromEmissivity, crcCheck);
     if (d >= 32768) {
       d = 32768 - d;
     }
