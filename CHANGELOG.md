@@ -1,3 +1,5 @@
+## 0.9.9 2024-11-17
+* Add SDC30 - CO2, temperature amd humidity sensor
 ## 0.9.8 2024-10-30
 * Fix readme
 ## 0.9.7 2024-10-30
