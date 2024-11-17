@@ -34,7 +34,8 @@ class HatCmd {
     return data;
   }
 
-  /// Returns a command buffer containing a command, a [pin] and two optional values: [value] and  [value2].
+  /// Returns a command buffer containing a command, a [pin] and two
+  /// optional values: [value] and  [value2].
   List<int> getCmdSeqExt(int pin, [int value = 0, int value2 = 0]) {
     var data = <int>[];
     data.add(cmd);
@@ -57,7 +58,8 @@ const int hatRegister = 1;
 
 const int delay = 50;
 
-// The original C code for the GrovePi Plus uses retries due a hardware problem :(!
+// The original C code for the GrovePi Plus uses retries
+// due a hardware problem :(!
 // NanoHat Hub has no problems, seems to be the better hardware!
 int retry = 3;
 
@@ -452,7 +454,8 @@ class GroveBaseHat {
     i2c.writeByteReg(hatArduinoI2Caddress, 0, 0xF0);
   }
 
-  /// Reads the ratio between channel input voltage and power voltage (most time it's 3.3V).
+  /// Reads the ratio between channel input voltage and power voltage
+  /// (most time it's 3.3V).
   /// [channel] 0 - 7, specify the channel to read, returns the ration in 0.1%.
   int readRatio(int channel) {
     _checkChannel(channel);

@@ -19,4 +19,5 @@ String getCperipheryVersion() {
   return _nativeVersion().toDartString();
 }
 
-const String dartPeripheryVersion = '0.9.8';
+/// dart_periphery version
+const String dartPeripheryVersion = '0.9.9';

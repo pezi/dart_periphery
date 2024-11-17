@@ -319,7 +319,8 @@ class Serial extends IsolateAPI {
   late Pointer<Void> _serialHandle;
   bool _invalid = false;
 
-  /// Converts a [Serial] to a JSON string. See constructor [isolate] for details.
+  /// Converts a [Serial] to a JSON string. See constructor [isolate] for
+  /// details.
   @override
   String toJson() {
     return '{"class":"Serial","path":"$path","baudrate":${baudrate.index},"databits":${databits.index},"parity":${parity.index},"stopbits":${stopbits.index},"xonxoff":$xonxoff,"rtsct":$rtsct,"handle":${_serialHandle.address}}';
@@ -366,8 +367,10 @@ class Serial extends IsolateAPI {
     return int.parse(stopbits.toString().substring(tmp.length));
   }
 
-  /// Opens the <tt>tty</tt> device at the specified [path] (e.g. "/dev/ttyUSB0"), with the specified [baudrate], and the
-  /// defaults of 8 data bits, no parity, 1 stop bit, software flow control (xonxoff) off, hardware flow control (rtscts) off.
+  /// Opens the <tt>tty</tt> device at the specified [path]
+  /// (e.g. "/dev/ttyUSB0"), with the specified [baudrate], and the
+  /// defaults of 8 data bits, no parity, 1 stop bit, software
+  /// flow control (xonxoff) off, hardware flow control (rtscts) off.
   Serial(this.path, this.baudrate)
       : databits = DataBits.db8,
         parity = Parity.parityNone,
@@ -387,18 +390,21 @@ class Serial extends IsolateAPI {
     return serialHandle;
   }
 
-  /// Opens the <tt>tty</tt> device at the specified [path] (e.g. "/dev/ttyUSB0"), with the specified [baudrate], [databits],
-  /// [parity], [stopbits], software flow control ([xonxoff]), and hardware flow control ([rtsct]) settings.
+  /// Opens the <tt>tty</tt> device at the specified [path]
+  /// (e.g. "/dev/ttyUSB0"), with the specified [baudrate], [databits],
+  /// [parity], [stopbits], software flow control ([xonxoff]), and hardware
+  /// flow control ([rtsct]) settings.
   ///
-  /// serial should be a valid pointer to an allocated Serial handle structure. databits can be 5, 6, 7, or 8.
-  /// parity can be PARITY_NONE, PARITY_ODD, or PARITY_EVEN . StopBits can be 1 or 2.
+  /// serial should be a valid pointer to an allocated Serial handle structure.
+  /// databits can be 5, 6, 7, or 8. parity can be PARITY_NONE, PARITY_ODD,
+  /// or PARITY_EVEN . StopBits can be 1 or 2.
   Serial.advanced(this.path, this.baudrate, this.databits, this.parity,
       this.stopbits, this.xonxoff, this.rtsct)
       : _serialHandle = _openSerialAdvanced(
             path, baudrate, databits, parity, stopbits, xonxoff, rtsct);
 
-  /// Duplicates an existing [Serial] from a JSON string. This special constructor
-  /// is used to transfer an existing [GPIO] to an other isolate.
+  /// Duplicates an existing [Serial] from a JSON string. This special
+  /// constructor is used to transfer an existing [GPIO] to an other isolate.
   Serial.isolate(String json)
       : path = jsonMap(json)['path'] as String,
         baudrate = Baudrate.values[jsonMap(json)['baudrate'] as int],
@@ -438,9 +444,9 @@ class Serial extends IsolateAPI {
   /// Polls for data available for reading from the serial port.
   ///
   ///
-  /// [timeout] can be positive for a timeout in milliseconds, zero for a non-blocking poll, or negative
-  /// for a blocking poll.
-  /// Returns 'true' on success (data available for reading), 'false on timeout,
+  /// [timeout] can be positive for a timeout in milliseconds, zero for a
+  /// non-blocking poll, or negative for a blocking poll.
+  /// Returns 'true' on success (data available for reading), 'false on timeout.
   bool poll(int timeout) {
     _checkStatus();
     return _checkError(_nativeSerialPool(_serialHandle, timeout)) == 1
@@ -485,17 +491,29 @@ class Serial extends IsolateAPI {
   /// Reads up to [len] number of bytes from the serial port with the specified
   /// millisecond timeout.
   ///
-  /// [timeout] can be positive for a blocking read with atimeout in milliseconds, zero
-  /// for a non-blocking read, or negative for a blocking read that will block until length number of bytes are read.
-  /// For a non-blocking or timeout-bound read, this method may return less than the requested number of bytes.
-  /// For a blocking read with the VMIN setting configured, this method will block until at least VMIN bytes are read.
-  /// For a blocking read with both VMIN and VTIME settings configured, this method will block until at least
-  /// VMIN bytes are read or the VTIME interbyte timeout expires after the last byte read.
-  /// In either case, this method may return less than the requested number of bytes.
-  /// [timeout] can be positive for a blocking read with a timeout in milliseconds, zero for a non-blocking read, or
-  /// negative for a blocking read.
+  /// [timeout] can be positive for a blocking read with atimeout in
+  /// milliseconds, zero
   ///
-  /// Returns a 'ReadEvent' containing the number of bytes read and a bytes array on success, false on timeout.
+  /// For a non-blocking read, or negative for a blocking read that will
+  /// block until length number of bytes are read.
+  ///
+  /// For a non-blocking or timeout-bound read, this method may return less
+  /// than the requested number of bytes.
+  ///
+  /// For a blocking read with the VMIN setting configured, this method will
+  /// block until at least VMIN bytes are read.
+  ///
+  /// For a blocking read with both VMIN and VTIME settings configured, this
+  /// method will block until at least VMIN bytes are read or the VTIME
+  /// interbyte timeout expires after the last byte read.
+  ///
+  /// In either case, this method may return less than the requested number
+  /// of bytes. [timeout] can be positive for a blocking read with a timeout
+  /// in milliseconds, zero for a non-blocking read, or negative for
+  /// a blocking read.
+  ///
+  /// Returns a 'ReadEvent' containing the number of bytes read and a bytes
+  /// array on success, false on timeout.
   SerialReadEvent read(int len, int timeout) {
     _checkStatus();
 
@@ -541,7 +559,8 @@ class Serial extends IsolateAPI {
     return write(utf8.encode(data));
   }
 
-  /// Flushes the write buffer of the serial port (i.e. force its write immediately).
+  /// Flushes the write buffer of the serial port
+  /// (i.e. force its write immediately).
   void flush() {
     _checkStatus();
     _checkError(_nativeSerialFlush(_serialHandle));
@@ -703,7 +722,8 @@ class Serial extends IsolateAPI {
     _checkError(_nativeSerialSetXonxof(_serialHandle, flag == true ? 1 : 0));
   }
 
-  /// Returns if the RTS/CTS (request to send/ clear to send) flow control is enabled or disabled.
+  /// Returns if the RTS/CTS (request to send/ clear to send) flow control is
+  /// enabled or disabled.
   bool getRTSCTS() {
     return _getBoolValue(_nativeSerialGetRtscts);
   }
@@ -714,34 +734,46 @@ class Serial extends IsolateAPI {
     _checkError(_nativeSerialSetRtscts(_serialHandle, flag == true ? 1 : 0));
   }
 
-  /// Gets the termios VMIN settings, respectively, of the underlying tty device.
-  /// VMIN specifies the minimum number of bytes returned from a blocking read. VTIME specifies the timeout in seconds
-  /// of a blocking read. When both VMIN and VTIME settings are configured, VTIME acts as an interbyte
-  /// timeout that restarts on every byte received, and a blocking read will block until either VMIN bytes are
-  /// read or the VTIME timeout expires after the last byte read. See the termios man page for more information.
-  /// vmin can be between 0 and 255. vtime can be between 0 and 25.5 seconds, with a resolution of 0.1 seconds.
+  /// Gets the termios VMIN settings, respectively, of the underlying tty
+  /// device.
+  /// VMIN specifies the minimum number of bytes returned from a blocking read.
+  /// VTIME specifies the timeout in seconds of a blocking read. When both VMIN
+  /// and VTIME settings are configured, VTIME acts as an interbyte timeout that
+  /// restarts on every byte received, and a blocking read will block until
+  /// either VMIN bytes are read or the VTIME timeout expires after the last
+  /// byte read. See the termios man page for more information. vmin can be
+  /// between 0 and 255. vtime can be between 0 and 25.5 seconds, with a
+  /// resolution of 0.1 seconds.
   int getVMIN() {
     _checkStatus();
     return _getInt32Value(_nativeSerialGetVmin);
   }
 
-  /// Sets the termios VMIN settings, respectively, of the underlying tty device.
-  /// VMIN specifies the minimum number of bytes returned from a blocking read. VTIME specifies the timeout in seconds
-  /// of a blocking read. When both VMIN and VTIME settings are configured, VTIME acts as an interbyte
-  /// timeout that restarts on every byte received, and a blocking read will block until either VMIN bytes are
-  /// read or the VTIME timeout expires after the last byte read. See the termios man page for more information.
-  /// vmin can be between 0 and 255. vtime can be between 0 and 25.5 seconds, with a resolution of 0.1 seconds.
+  /// Sets the termios VMIN settings, respectively, of the underlying tty
+  /// device.
+  /// VMIN specifies the minimum number of bytes returned from a blocking read.
+  /// VTIME specifies the timeout in seconds of a blocking read. When both VMIN
+  /// and VTIME settings are configured, VTIME acts as an interbyte timeout
+  /// that restarts on every byte received, and a blocking read will block
+  /// until either VMIN bytes areread or the VTIME timeout expires after the
+  /// last byte read. See the termios man page for more information.
+  /// vmin can be between 0 and 255. vtime can be between 0 and 25.5 seconds,
+  /// with a resolution of 0.1 seconds.
   void setVMIN(int vmin) {
     _checkStatus();
     _checkError(_nativeSerialSetVmin(_serialHandle, vmin));
   }
 
-  /// Gets the termios VTIME settings, respectively, of the underlying tty device.
-  /// VMIN specifies the minimum number of bytes returned from a blocking read. VTIME specifies the timeout in seconds
-  /// of a blocking read. When both VMIN and VTIME settings are configured, VTIME acts as an interbyte
-  /// timeout that restarts on every byte received, and a blocking read will block until either VMIN bytes are
-  /// read or the VTIME timeout expires after the last byte read. See the termios man page for more information.
-  /// vmin can be between 0 and 255. vtime can be between 0 and 25.5 seconds, with a resolution of 0.1 seconds.
+  /// Gets the termios VTIME settings, respectively, of the underlying tty
+  /// device.
+  /// VMIN specifies the minimum number of bytes returned from a blocking read.
+  /// VTIME specifies the timeout in seconds of a blocking read. When both VMIN
+  /// and VTIME settings are configured, VTIME acts as an interbyte timeout that
+  /// restarts on every byte received, and a blocking read will block until
+  /// either VMIN bytes are read or the VTIME timeout expires after the last
+  /// byte read. See the termios man page for more information. vmin can
+  /// be between 0 and 255. vtime can be between 0 and 25.5 seconds, with a
+  /// resolution of 0.1 seconds.
   double getVTIME() {
     _checkStatus();
     var data = malloc<Float>(1);
@@ -754,17 +786,21 @@ class Serial extends IsolateAPI {
   }
 
   /// Sets the termios VTIME settings, respectively, of the underlying tty device.
-  /// VMIN specifies the minimum number of bytes returned from a blocking read. VTIME specifies the timeout in seconds
-  /// of a blocking read. When both VMIN and VTIME settings are configured, VTIME acts as an interbyte
-  /// timeout that restarts on every byte received, and a blocking read will block until either VMIN bytes are
-  /// read or the VTIME timeout expires after the last byte read. See the termios man page for more information.
-  /// vmin can be between 0 and 255. vtime can be between 0 and 25.5 seconds, with a resolution of 0.1 seconds.
+  /// VMIN specifies the minimum number of bytes returned from a blocking read.
+  /// VTIME specifies the timeout in seconds of a blocking read. When both VMIN
+  /// and VTIME settings are configured, VTIME acts as an interbyte timeout that
+  /// restarts on every byte received, and a blocking read will block until
+  /// either VMIN bytes are read or the VTIME timeout expires after the last
+  /// byte read. See the termios man page for more information.
+  /// vmin can be between 0 and 255. vtime can be between 0 and 25.5 seconds,
+  /// with a resolution of 0.1 seconds.
   void setVTIME(double vtime) {
     _checkStatus();
     _checkError(_nativeSerialSetVtime(_serialHandle, vtime));
   }
 
-  /// Returns the file descriptor (for the underlying tty device) of the Serial handle.
+  /// Returns the file descriptor (for the underlying tty device) of the
+  /// Serial handle.
   int getSerialFD() {
     _checkStatus();
     return _nativeSerialFd(_serialHandle);

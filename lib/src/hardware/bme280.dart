@@ -138,7 +138,8 @@ class BME280result {
   }
 }
 
-/// Bosch BME280/BMP280 sensor for temperature, pressure and humidity (BME280 only).
+/// Bosch BME280/BMP280 sensor for temperature, pressure and
+/// humidity (BME280 only).
 ///
 /// See for more
 /// * [BM280 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme280.dart)
@@ -364,7 +365,8 @@ class BME280 {
     return BME280result(temp / 100.0, pressure / 25600.0, humidity / 1024.0);
   }
 
-  /// Waits [maxIntervals] * [interval] milliseconds for data to become available.
+  /// Waits [maxIntervals] * [interval] milliseconds for data to
+  /// become available.
   bool waitDataAvailable(int interval, int maxIntervals) {
     for (var i = 0; i < maxIntervals; i++) {
       // check data ready

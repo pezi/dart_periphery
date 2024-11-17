@@ -356,8 +356,10 @@ class BME680result {
     return '{"temperature":"${temperature.toStringAsFixed(fractionDigits)}","pressure":"${pressure.toStringAsFixed(fractionDigits)}","humidity":"${humidity.toStringAsFixed(fractionDigits)},"airQualityScore":${airQualityScore.toStringAsFixed(fractionDigits)}"';
   }
 
-  /// Returns a [BME680result] as a JSON string with only temperature, pressure, humidity and airQualityScore, if the optional parameter
-  /// [allVars] is false, true returns all variables. [fractionDigits] controls the number of fraction digits.
+  /// Returns a [BME680result] as a JSON string with only temperature, pressure,
+  /// humidity and airQualityScore, if the optional parameter [allVars] is
+  /// false, true returns all variables. [fractionDigits] controls the number
+  /// of fraction digits.
   String toJSON([int fractionDigits = 2, bool allVars = false]) {
     if (allVars == false) {
       return '${_toJSONbase(fractionDigits)}}';
@@ -367,10 +369,13 @@ class BME680result {
   }
 }
 
-/// Bosch BME680 sensor for temperature, humidity, pressure and gas sensor ([IAQ](https://en.wikipedia.org/wiki/Indoor_air_quality) Indoor air quality).
+/// Bosch BME680 sensor for temperature, humidity, pressure and gas sensor
+/// ([IAQ](https://en.wikipedia.org/wiki/Indoor_air_quality)
+///  Indoor air quality).
 ///
 /// IAQ is in an index that can have values between 0 and 500 with
-/// resolution of 1 to indicate or quantify the quality of the air available in the surrounding.
+/// resolution of 1 to indicate or quantify the quality of the air available
+/// in the surrounding.
 ///
 /// See for more
 /// * [BM680 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme680.dart)
@@ -436,8 +441,8 @@ class BME680 {
 
     _getCalibrationData();
 
-    // It is highly recommended to set first osrs_h<2:0> followed by osrs_t<2:0> and
-    // osrs_p<2:0> in one write command (see Section 3.3).
+    // It is highly recommended to set first osrs_h<2:0> followed by
+    // osrs_t<2:0> and osrs_p<2:0> in one write command (see Section 3.3).
     setHumidityOversample(OversamplingMultiplier.x2); // 0x72
     setTemperatureOversample(OversamplingMultiplier.x4); // 0x74
     setPressureOversampling(OversamplingMultiplier.x8); // 0x74
@@ -657,8 +662,8 @@ class BME680 {
         (i2c.readByteReg(i2cAddress, resistanceHeatRangeAddress) &
                 resistanceHeatRangeMask) >>
             4;
-    // res_heat_val is the heater resistance correction factor stored in register
-    // address 0x00
+    // res_heat_val is the heater resistance correction factor stored in
+    // register address 0x00
     // (signed, value from -128 to 127)
     _calibration.resistanceHeaterValue =
         i2c.readByteReg(i2cAddress, resistanceHeatValueAddress);
@@ -695,8 +700,9 @@ class BME680 {
     return sum;
   }
 
-  /// Returns a [BME680result] with temperature, pressure, humidity and IAQ or throws
-  /// an exception after [sensorReadRetryCounter] retries to read sensor data.
+  /// Returns a [BME680result] with temperature, pressure, humidity and IAQ or
+  /// throws an exception after [sensorReadRetryCounter] retries to read sensor
+  /// data.
   BME680result getValues() {
     setPowerMode(PowerMode.forced);
     var retries = sensorReadRetryCounter;
@@ -907,8 +913,8 @@ class BME680 {
     }
   }
 
-  /// Sets the temperature [profile], [heaterDuration] and the [heaterTemperature] of gas sensor.
-  /// [filterSize] sets IIR filter size
+  /// Sets the temperature [profile], [heaterDuration] and the
+  /// [heaterTemperature] of gas sensor. [filterSize] sets IIR filter size
   /// * Target heater profile, between  0 and 9
   /// * Target temperature in degrees celsius, between 200 and 400
   /// * Target duration in milliseconds, between 1 and 4032
@@ -926,7 +932,8 @@ class BME680 {
     // Selecting the runGas and NB conversion settings for the sensor
   }
 
-  /// Sets the temperature [profile], [heaterDuration] and the [heaterTemperature] of gas sensor.
+  /// Sets the temperature [profile], [heaterDuration] and the
+  /// [heaterTemperature] of gas sensor.
   ///
   /// * Target heater profile, between  0 and 9
   /// * Target temperature in degrees celsius, between 200 and 400
@@ -960,8 +967,8 @@ class BME680 {
             nbconversionMask];
   }
 
-  /// Sets the current gas sensor conversion [heaterProfile]. Select one of the 10
-  /// configured heating durations/set points.
+  /// Sets the current gas sensor conversion [heaterProfile]. Select one of
+  /// the 10 configured heating durations/set points.
   void setGasHeaterProfile(final HeaterProfile heaterProfile) {
     _setRegByte(configOdrRunGasNbcAddress, nbconversionMask,
         nbconversionPosition, heaterProfile.index);

@@ -6,8 +6,8 @@ import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'native/lib_base64.dart';
+import 'package:archive/archive.dart';
 
 const pkgName = 'dart_periphery';
 
@@ -145,7 +145,8 @@ List<String> getFlutterPiArgs() {
 void saveLibrary(File file, String base64EncodedLib) {
   try {
     file.createSync(recursive: false);
-    final decodedBytes = base64Decode(base64EncodedLib);
+    final decodedBytes =
+        XZDecoder().decodeBytes(base64Decode(base64EncodedLib));
     // hint: a crash occurs, if an used lib is written again
     file.writeAsBytesSync(decodedBytes);
   } on Error catch (e) {
