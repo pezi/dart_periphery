@@ -606,6 +606,7 @@ The project is currently still beta and development is ongoing.
 c-periphery [test program](https://github.com/vsergeev/c-periphery/blob/master/tests/test_gpio.c). This is a point of deeper investigations
 
 ⁵ no X86/X86_64 SoC for testing available
+
 ⁶ only limited tests
 
 
