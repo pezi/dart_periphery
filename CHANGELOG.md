@@ -1,8 +1,14 @@
 ## 0.9.9 2024-11-17
+
 * Add SDC30 - CO2, temperature amd humidity sensor
+* internal pre-build c-periphery libraries are compressed using the xz format 
+  
 ## 0.9.8 2024-10-30
+
 * Fix readme
+
 ## 0.9.7 2024-10-30
+
 * library loader: use dart:ffi Abi instead of uname() for architecture detection
 * Fix issue https://github.com/pezi/flutter-pi-sensor-tester/issues/1
 * Remove deprecated method: useSharedLibray (typo) -> useSharedLibrary 
@@ -15,6 +21,7 @@
 * add RISC-V support
 
 ## 0.9.6 2024-07-27
+
 * Add isolate support
 * Update Dart version reference inside the readme to 3.4.4.
 * [Fix I2C error](https://github.com/pezi/dart_periphery/issues/25)

@@ -145,7 +145,7 @@ class BME280result {
 /// * [BM280 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme280.dart)
 /// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/bme280.dart)
 /// * [Datasheet](https://cdn-shop.adafruit.com/datasheets/BST-BME280_DS001-10.pdf)
-/// * This implementation is derived from project [DIOZero](https://github.com/mattjlewis/diozero/blob/master/diozero-core/src/main/java/com/diozero/devices/BME280.java)
+/// * This implementation is derived from project [DIOZero](https://github.com/mattjlewis/diozero/blob/main/diozero-core/src/main/java/com/diozero/devices/BMx280.java)
 class BME280 {
   late I2C _i2c;
   late SPI _spi;
@@ -200,8 +200,9 @@ class BME280 {
   }
 
   void _initialize() {
-    // get model
-    switch (_readByte(idReg)) {
+    // get model id
+    var id = _readByte(idReg);
+    switch (id) {
       case bmp280Id:
         _model = BME280model.bmp280;
         break;
@@ -209,8 +210,9 @@ class BME280 {
         _model = BME280model.bme280;
         break;
       default:
-        throw BME280exception('Unknown model');
+        throw BME280exception('Unknown modelwith ID: $id');
     }
+    _readCoefficients();
     _readCoefficients();
     setOperatingModes(OversamplingMultiplier.x1, OversamplingMultiplier.x1,
         OversamplingMultiplier.x1, OperatingMode.modeNormal);
