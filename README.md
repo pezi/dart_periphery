@@ -3,7 +3,7 @@
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
 
-[![pub package](https://img.shields.io/badge/pub-v0.9.9-orange)](https://pub.dartlang.org/packages/dart_periphery)
+[![pub package](https://img.shields.io/badge/pub-v0.9.10-orange)](https://pub.dartlang.org/packages/dart_periphery)
 
 ## Important hints
 
@@ -594,6 +594,7 @@ The project is currently still beta and development is ongoing.
 | **AARCH64** ³ | &#10060;⁴ |       &#9989;        | &#9989; | &#9989; | &#9989; | &#9989; | &#9989; | &#9989; |
 | **X86** ⁵     |  &#9744;  |       &#9744;        | &#9744; | &#9744; | &#9744; | &#9744; | &#9744; | &#9744; |
 | **X86_64** ⁵  |  &#9744;  |       &#9744;        | &#9744; | &#9744; | &#9744; | &#9744; | &#9744; | &#9744; |
+| **RISC V** ⁶  |  &#9744;  |       &#9744;        | &#9744; | &#9744; | &#9744; | &#9744; | &#9744; | &#9744; |
 
 &#9744; missing test | &#9989; test passed | &#10060; test failed
 
@@ -605,6 +606,7 @@ The project is currently still beta and development is ongoing.
 c-periphery [test program](https://github.com/vsergeev/c-periphery/blob/master/tests/test_gpio.c). This is a point of deeper investigations
 
 ⁵ no X86/X86_64 SoC for testing available
+⁶ only limited tests
 
 
 ## Help wanted
