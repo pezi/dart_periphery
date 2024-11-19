@@ -13,15 +13,23 @@ void main() {
   // Select the right I2C bus number /dev/i2c-?
   // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
   var i2c = I2C(1);
-  var bme680 = BME680(i2c);
+  try {
+    print("dart_periphery Version: $dartPeripheryVersion");
+    print("c-periphery Version   : ${getCperipheryVersion()}");
+    print('I2C info:${i2c.getI2Cinfo()}');
+    print("BME680 sensor");
 
-  while (true) {
-    var result = bme680.getValues();
-    bme680.getHumidityOversample();
-    print('Temperature: ${result.temperature}');
-    print('Humidity: ${result.humidity}');
-    print('Pressure: ${result.pressure}');
-    print('IAQ: ${result.airQualityScore}');
-    sleep(Duration(milliseconds: 1000));
+    var bme680 = BME680(i2c);
+    while (true) {
+      var result = bme680.getValues();
+      bme680.getHumidityOversample();
+      print('Temperature: ${result.temperature}');
+      print('Humidity: ${result.humidity}');
+      print('Pressure: ${result.pressure}');
+      print('IAQ: ${result.airQualityScore}');
+      sleep(Duration(milliseconds: 1000));
+    }
+  } finally {
+    i2c.dispose();
   }
 }

@@ -14,7 +14,11 @@ void main() {
   // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
   var i2c = I2C(1);
   try {
+    print("dart_periphery Version: $dartPeripheryVersion");
+    print("c-periphery Version   : ${getCperipheryVersion()}");
     print('I2C info:${i2c.getI2Cinfo()}');
+    print("BME280 sensor");
+
     var bme280 = BME280(i2c);
     var r = bme280.getValues();
     print('Temperature [°] ${r.temperature.toStringAsFixed(1)}');
