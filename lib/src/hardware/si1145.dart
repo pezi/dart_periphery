@@ -9,11 +9,15 @@ import 'dart:io';
 import '../../dart_periphery.dart';
 
 // https://github.com/Seeed-Studio/Grove_Sunlight_Sensor
-// https://github.com/Seeed-Studio/Seeed_Python_SI114X
+// https://github.com/Seeed-Studio/Seeed_Python_SI114X/blob/master/seeed_si114x.py#L235
 
-int si1145DefaultI2Caddress = 0x60;
+const si1145DefaultI2Caddress = 0x60;
 
-enum SI1145reg {
+abstract class IntEnum {
+  int getValue();
+}
+
+enum SI1145reg implements IntEnum {
   partId(0x00),
   revId(0x01),
   seqId(0x02),
@@ -52,9 +56,14 @@ enum SI1145reg {
 
   final int value;
   const SI1145reg(this.value);
+
+  @override
+  int getValue() {
+    return value;
+  }
 }
 
-enum SI1145cmd {
+enum SI1145cmd implements IntEnum {
   nop(0x00),
   reset(0x01),
   busaddr(0x02),
@@ -72,9 +81,14 @@ enum SI1145cmd {
 
   final int value;
   const SI1145cmd(this.value);
+
+  @override
+  int getValue() {
+    return value;
+  }
 }
 
-enum SI1145param {
+enum SI1145param implements IntEnum {
   i2caddr(0x00),
   chlist(0x01),
   psled12Select(0x02),
@@ -99,6 +113,11 @@ enum SI1145param {
 
   final int value;
   const SI1145param(this.value);
+
+  @override
+  int getValue() {
+    return value;
+  }
 }
 
 enum SI1145chlist {
@@ -114,7 +133,22 @@ enum SI1145chlist {
   const SI1145chlist(this.value);
 }
 
-enum SI1145adcmux {
+enum SI1145LedCurrent implements IntEnum {
+  cur5ma(0x01),
+  cur11ma(0x02),
+  cur22ma(0x03),
+  cur45ma(0x04);
+
+  final int value;
+  const SI1145LedCurrent(this.value);
+
+  @override
+  int getValue() {
+    return value;
+  }
+}
+
+enum SI1145adcmux implements IntEnum {
   smallIr(0x00),
   visiable(0x02),
   largeIr(0x03),
@@ -125,9 +159,14 @@ enum SI1145adcmux {
 
   final int value;
   const SI1145adcmux(this.value);
+
+  @override
+  int getValue() {
+    return value;
+  }
 }
 
-enum Si1145ledSel {
+enum Si1145ledSel implements IntEnum {
   ps1None(0x00),
   ps1Led1(0x01),
   ps1Led2(0x02),
@@ -139,9 +178,14 @@ enum Si1145ledSel {
 
   final int value;
   const Si1145ledSel(this.value);
+
+  @override
+  int getValue() {
+    return value;
+  }
 }
 
-enum Si1145adcGain {
+enum SI1145adcGain implements IntEnum {
   div1(0x00),
   div2(0x01),
   div4(0x02),
@@ -150,10 +194,15 @@ enum Si1145adcGain {
   div32(0x05);
 
   final int value;
-  const Si1145adcGain(this.value);
+  const SI1145adcGain(this.value);
+
+  @override
+  int getValue() {
+    return value;
+  }
 }
 
-enum Si1145adcCounter {
+enum SI1145adcCounter implements IntEnum {
   adcclk1(0x00),
   adcclk7(0x01),
   adcclk15(0x02),
@@ -164,27 +213,42 @@ enum Si1145adcCounter {
   adcclk511(0x07);
 
   final int value;
-  const Si1145adcCounter(this.value);
+  const SI1145adcCounter(this.value);
+
+  @override
+  int getValue() {
+    return value;
+  }
 }
 
-enum Si1145adcMisc {
+enum SI1145adcMisc implements IntEnum {
   lowrange(0x00),
   highrange(0x20),
   adcNormalproximity(0x00),
   adcRawadc(0x04);
 
   final int value;
-  const Si1145adcMisc(this.value);
+  const SI1145adcMisc(this.value);
+
+  @override
+  int getValue() {
+    return value;
+  }
 }
 
-enum Si1145irqen {
+enum SI1145irqen implements IntEnum {
   als(0x01),
   ps1(0x04),
   ps2(0x08),
   ps3(0x10);
 
   final int value;
-  const Si1145irqen(this.value);
+  const SI1145irqen(this.value);
+
+  @override
+  int getValue() {
+    return value;
+  }
 }
 
 /// [SI1145] exception
@@ -202,12 +266,21 @@ class SI1145 {
 
   /// Creates a SI1145 sensor instance that uses the [i2c] bus with
   /// the optional [i2cAddress].
-  SI1145(this.i2c, [this.i2cAddress = sht31DefaultI2Caddress]) {
+  SI1145(this.i2c, [this.i2cAddress = si1145DefaultI2Caddress]) {
     init();
   }
 
   void writeByte(SI1145reg reg, int byte) {
     i2c.writeByteReg(i2cAddress, reg.value, byte);
+  }
+
+  void writeEnumByte(SI1145reg reg, IntEnum byte) {
+    i2c.writeByteReg(i2cAddress, reg.value, byte.getValue());
+  }
+
+  int readWord(IntEnum reg) {
+    var v = i2c.readBytesReg(i2cAddress, reg.getValue(), 2);
+    return (v[0] & 0xff) | (v[1] & 0xff) << 8;
   }
 
   int readByte(SI1145reg reg) {
@@ -222,18 +295,22 @@ class SI1145 {
     writeByte(SI1145reg.irqMode2, 0);
     writeByte(SI1145reg.intCfg, 0);
     writeByte(SI1145reg.irqStatus, 0xFF);
-    writeByte(SI1145reg.command, SI1145cmd.reset.value);
+    writeEnumByte(SI1145reg.command, SI1145cmd.reset);
     sleep(Duration(microseconds: 100));
     writeByte(SI1145reg.hwKey, 0x17);
     sleep(Duration(microseconds: 100));
   }
 
-  int writeParamData(int register, int value) {
+  int writeParamData(IntEnum register, int value) {
     // write Value into PARAMWR reg first
     writeByte(SI1145reg.wr, value);
-    writeByte(SI1145reg.command, register | SI1145cmd.set.value);
+    writeByte(SI1145reg.command, register.getValue() | SI1145cmd.set.value);
     // SI1145 writes value out to PARAM_RD,read and confirm its right
     return readByte(SI1145reg.rd);
+  }
+
+  int writeParamEnum(IntEnum register, IntEnum value) {
+    return writeParamData(register, value.getValue());
   }
 
   void deInit() {
@@ -244,11 +321,39 @@ class SI1145 {
     writeByte(SI1145reg.ucoeff2, 0x02);
     writeByte(SI1145reg.ucoeff3, 0x00);
     writeParamData(
-        SI1145param.chlist.value,
+        SI1145param.chlist,
         SI1145chlist.enuv.value |
             SI1145chlist.enalsir.value |
             SI1145chlist.enalsvis.value |
             SI1145chlist.enps1.value);
+
+    // set LED1 CURRENT(22.4mA)(It is a normal value for many LED
+    writeParamEnum(SI1145param.ps1Adcmux, SI1145adcmux.largeIr);
+    writeByte(SI1145reg.psLed21, SI1145LedCurrent.cur22ma.value);
+    writeParamEnum(SI1145param.psled12Select, Si1145ledSel.ps1Led1);
+
+    // PS ADC SETTING
+    writeParamEnum(SI1145param.psAdcGain, SI1145adcGain.div1);
+    writeParamEnum(SI1145param.psAdcCounter, SI1145adcCounter.adcclk511);
+    writeParamEnum(SI1145param.psAdcMisc, SI1145adcMisc.highrange);
+
+    // VIS ADC SETTING
+    writeParamEnum(SI1145param.alsVisAdcGain, SI1145adcGain.div1);
+    writeParamEnum(SI1145param.alsVisAdcCounter, SI1145adcCounter.adcclk511);
+    writeParamEnum(SI1145param.alsVisAdcMisc, SI1145adcMisc.highrange);
+
+    // IR ADC SETTING
+    writeParamEnum(SI1145param.alsIrAdcGain, SI1145adcGain.div1);
+    writeParamEnum(SI1145param.alsIrAdcCounter, SI1145adcCounter.adcclk511);
+    writeParamEnum(SI1145param.alsIrAdcMisc, SI1145adcMisc.highrange);
+
+    // interrupt enable
+    writeByte(SI1145reg.intCfg, 1);
+    writeEnumByte(SI1145reg.irqEnable, SI1145irqen.als);
+
+    // auto run
+    writeByte(SI1145reg.measRate0, 0xFF);
+    writeEnumByte(SI1145reg.command, SI1145cmd.psalsAuto);
   }
 
   void init() {
@@ -257,5 +362,31 @@ class SI1145 {
     }
     reset();
     deInit();
+  }
+
+  int readVisible() {
+    return readWord(SI1145reg.alsVisData0);
+  }
+
+  int readIr() {
+    return readWord(SI1145reg.alsIrData0);
+  }
+
+  int readUV() {
+    return readWord(SI1145reg.auxData0Uvindex0);
+  }
+}
+
+void main() {
+  var i2c = I2C(1);
+  try {
+    print("dart_periphery Version: $dartPeripheryVersion");
+    print("c-periphery Version   : ${getCperipheryVersion()}");
+    print('I2C info: ${i2c.getI2Cinfo()}');
+    print("SI1145 sensor");
+
+    var s = SI1145(i2c);
+  } finally {
+    i2c.dispose();
   }
 }
