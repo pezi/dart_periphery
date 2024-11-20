@@ -17,7 +17,7 @@ void main() {
   try {
     print("dart_periphery Version: $dartPeripheryVersion");
     print("c-periphery Version   : ${getCperipheryVersion()}");
-    print('I2C info:${i2c.getI2Cinfo()}');
+    print('I2C info :${i2c.getI2Cinfo()}');
     print("MCP9808 sensor");
 
     var sensor = MCP9808(i2c);

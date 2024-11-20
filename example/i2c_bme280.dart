@@ -16,7 +16,7 @@ void main() {
   try {
     print("dart_periphery Version: $dartPeripheryVersion");
     print("c-periphery Version   : ${getCperipheryVersion()}");
-    print('I2C info:${i2c.getI2Cinfo()}');
+    print('I2C info: ${i2c.getI2Cinfo()}');
     print("BME280 sensor");
 
     var bme280 = BME280(i2c);

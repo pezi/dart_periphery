@@ -13,7 +13,7 @@ void main() {
   try {
     print("dart_periphery Version: $dartPeripheryVersion");
     print("c-periphery Version   : ${getCperipheryVersion()}");
-    print('SPI info:${spi.getSPIinfo()}');
+    print('SPI info: ${spi.getSPIinfo()}');
     print("BM280 sensor");
 
     var bme280 = BME280.spi(spi);
