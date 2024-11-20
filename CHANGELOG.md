@@ -1,3 +1,7 @@
+## 0.9.10 2024-11-??
+* Add SI1151 sunlight sensor
+* Rework README
+
 ## 0.9.9 2024-11-17
 
 * Add SDC30 - CO2, temperature amd humidity sensor
