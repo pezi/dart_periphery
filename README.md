@@ -495,7 +495,9 @@ Dart Periphery independently.
 
 ## flutter-pi
 
-**dart_periphery** works with flutter-pi, a light-weight [Flutter Engine Embedder](https://github.com/ardera/flutter-pi) for 
+**dart_periphery** works with flutter-pi, a light-weight [Flutter Engine Embedder](https://github.com/ardera/flutter-pi) for Raspberry Pi.
+
+### flutter-pi specific methods
 
 ``` dart
 // Loads the libraray form the flutter-pi asset directory.
@@ -505,22 +507,13 @@ void loadLibFromFlutterAssetDir(bool load)
 the appropriate library from the flutter asset directory. This overwrites the library 
 self-extraction mechanism.
 
-* In most cases the ARMv7 library: [libperiphery_arm.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm.so) for Raspberry Pi OS 32-bit
+* ARMv7 library: [libperiphery_arm.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm.so) for Raspberry Pi OS 32-bit
 * ARMv8 [libperiphery_arm64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm64.so) for Raspberry Pi OS 64-bit
 
-If this way fails, the auto detection can be overruled by following methods:
-
-``` dart
-void useSharedLibray();
-void setCustomLibrary(String absolutePath)
-void useLocalLibrary()
-void setTempDirectory(String tmpDir)
-```
 
 These methods must be called before any **dart_periphery** interface is used! See last 
 section, [native libraries](https://pub.dev/packages/dart_periphery#native-libraries) for details.
 
-For flutter-pi the method
 
 ``` dart
 List<String> getFlutterPiArgs();
