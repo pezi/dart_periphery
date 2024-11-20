@@ -11,10 +11,12 @@ import 'package:dart_periphery/dart_periphery.dart';
 // [COZIR CO2 Sensor](https://co2meters.com/Documentation/Manuals/Manual_GC_0024_0025_0026_Revised8.pdf)
 //
 void main() {
-  print('Serial test - COZIR CO2 Sensor');
   var s = Serial('/dev/serial0', Baudrate.b9600);
   try {
+    print("dart_periphery Version: $dartPeripheryVersion");
+    print("c-periphery Version   : ${getCperipheryVersion()}");
     print('Serial interface info: ${s.getSerialInfo()}');
+    print('Serial test - COZIR CO2 Sensor');
 
     // Return firmware version and sensor serial number - two lines
     s.writeString('Y\r\n');

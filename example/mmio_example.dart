@@ -54,6 +54,9 @@ void main() {
   var mmio = MMIO.advanced(0, blockSize, '/dev/gpiomem');
   var gpio = MemMappedGPIO(mmio);
   try {
+    print("dart_periphery Version: $dartPeripheryVersion");
+    print("c-periphery Version   : ${getCperipheryVersion()}");
+    print("MMIO demo");
     print(mmio.getMMIOinfo());
     var pin = 18;
     print('Led (pin=18) on');

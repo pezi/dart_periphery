@@ -159,9 +159,10 @@ class SDC30 {
     return getCommandValue(Command.setForcedRecalibrationFactor);
   }
 
-  /// Return the firmware version.
+  /// Returns the firmware version.
   ///
   /// higher byte - major version
+  ///
   /// lower byte - minor version
   int getFirmwareVersion() {
     return getCommandValue(Command.readFirmwareVersion);
