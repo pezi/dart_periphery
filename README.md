@@ -5,14 +5,14 @@
 
 [![pub package](https://img.shields.io/badge/pub-v0.9.10-orange)](https://pub.dartlang.org/packages/dart_periphery)
 
-## Important hints
+## 📣 Important hints
 
 This version updates CPU detection by switching from uname() to Dart’s built-in [Abi class](https://api.flutter.dev/flutter/dart-ffi/Abi-class.html). 
 Special thanks to [Hanns Winkler](https://github.com/pezi/dart_periphery/pulls) for his contribution!
 
 Added RISC-V support, thanks to [Ali Tariq](https://github.com/alitariq4589) from [10xEngineers](https://10xEngineers.ai) for providing remote access to a Banana Pi BPI-F3 16GB on [Cloud-V](https://cloud-v.co), which enabled building the RISC-V variant of the c-periphery library.
 
-## Introduction
+## 📖 Introduction
 
 **dart_periphery** is a Dart port of the native [c-periphery library](https://github.com/vsergeev/c-periphery) (v2.4.2) 
 for Linux Peripheral I/O (GPIO, LED, PWM, SPI, I2C, MMIO and Serial peripheral I/O). This package 
@@ -38,7 +38,7 @@ Abstract from the project web site:
 Nevertheless, **dart_periphery** tries to be close as possible to the original library. 
 See following [documentation](https://github.com/vsergeev/c-periphery/tree/master/docs). Thanks to **Vanya Sergeev** for his great job!
 
-## Why c-periphery?
+## 🤔 Why c-periphery?
 
 The number of GPIO libraries/interfaces is is shrinking:
 
@@ -55,7 +55,7 @@ The number of GPIO libraries/interfaces is is shrinking:
 * [Led](#led) (onboard leds) example / [API](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/Led-class.html)
 * [MMIO](#mmio) (Memory Mapped I/O) example / [API](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/MMIO-class.html)
 
-## Examples
+## 🪧 Examples
 
 ### GPIO
 
@@ -350,7 +350,7 @@ void main() {
 }
 ```
 
-## Install Dart on Raspbian and Armbian
+## 🏗 Install Dart on Raspbian and Armbian
 
 1.) Navigate to the home directory:
 
@@ -429,7 +429,7 @@ dart --version
 Dart SDK version: 3.5.4 (stable) (Wed Oct 16 16:18:51 2024 +0000) on "linux_arm64"
 ```
 
-## Native libraries
+## 📚 Native libraries
 
 **dart_periphery** includes prebuilt native c-periphery libraries for
 
@@ -476,7 +476,7 @@ void useLocalLibrary()
 ```
 The appropriate library can be found [here](https://github.com/pezi/dart_periphery/blob/main/lib/src/native) .
 
-## Dart isolates 
+## ⏱️ Dart isolates 
 
 Starting from version *0.9.7*, the default library handling mechanism creates a temporary library 
 file, named in the format `pid_1456_libperiphery_arm.so`. The unique process ID for each isolate 
@@ -493,9 +493,9 @@ void setCustomLibrary(String absolutePath);
 must be called separately within each isolate. This is necessary because each isolate initializes 
 Dart Periphery independently.
 
-## flutter-pi
+## 🍓 flutter-pi
 
-**dart_periphery** works with flutter-pi, a light-weight [Flutter Engine Embedder](https://github.com/ardera/flutter-pi) for Raspberry Pi.
+**dart_periphery** works with flutter-pi, a light-weight [Flutter Engine Embedder](https://github.com/ardera/flutter-pi) for  Raspberry Pi.
 
 ### flutter-pi specific methods
 
@@ -522,7 +522,7 @@ List<String> getFlutterPiArgs();
 returns the command line parameter list of the `flutter-pi` command. The last parameter contains 
 the asset directory.
 
-## flutter-pi-sensor-tester
+## 🌡 flutter-pi-sensor-tester
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/flutter_sensor_tester.gif "Flutter Sensor Tester")
 
@@ -545,7 +545,7 @@ and subsequently to the Flutter UI. This model is used for actuator control, suc
 
 The project is currently still beta and development is ongoing.
 
-## Tested SoC hardware
+## 🔬 Tested SoC hardware
 
 * [Raspberry Pi 3 Model B](https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/), OS: Raspberry Pi OS
 * [Raspberry Pi Zero 2 W](https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/), OS: Raspberry Pi OS 
@@ -555,7 +555,7 @@ The project is currently still beta and development is ongoing.
 * [Banana Pi BPI-M1](https://en.wikipedia.org/wiki/Banana_Pi#Banana_Pi_BPI-M1) with a Allwinner A20 Dual-core, OS: [Armbian](https://www.armbian.com/bananapi/)
 * [Banana Pi BPI-F3 16GB](https://wiki.banana-pi.org/Banana_Pi_BPI-F3) with a [SpacemiT K1 8 core RISC-V](https://docs.banana-pi.org/en/BPI-F3/SpacemiT_K1), OS: Ubuntu 23.04 (GNU/Linux 6.2.0-1010-starfive riscv64)
 
-## Supported devices (sensors, actuators, expansion hats and displays)
+## 🖥 Supported devices (sensors, actuators, expansion hats and displays)
 
 * [SGP30](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sgp30.dart): tVOC and eCO2 Gas Sensor
 * [BME280](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme280.dart): Temperature, humidity and pressure sensor.
@@ -572,12 +572,7 @@ The project is currently still beta and development is ongoing.
 * [PN532](https://github.com/pezi/dart_periphery/pull/6) NFC Reader Module, Thanks to [UliPrantz](https://github.com/UliPrantz)!
 * SSD1306 OLED (in progress)
 
-## Next steps
-
-* Add GPIO documentation for different SoCs.
-* Port hardware devices from the [mattjlewis / diozero Java Project](https://github.com/mattjlewis/diozero/tree/master/diozero-core/src/main/java/com/diozero/devices) to **dart_periphery**
-
-## Test matrix
+## 📋 Test matrix
 
 [Test suite](https://github.com/pezi/dart_periphery/tree/main/test)
 
@@ -603,7 +598,7 @@ c-periphery [test program](https://github.com/vsergeev/c-periphery/blob/master/t
 ⁶ only limited tests
 
 
-## Help wanted
+## 🙏 Help wanted
 
 * Testing **dart_periphery** on different [SoC platforms](https://www.armbian.com/download/)
 * Documentation review - I am not a native speaker.
