@@ -4,7 +4,7 @@
 
 import 'package:dart_periphery/dart_periphery.dart';
 
-// Grove gesture sensor
+// PAJ7620U2 gesture sensor - recognizes 9 basic gestures
 //
 // https://wiki.seeedstudio.com/Grove-Gesture_v1.0
 //

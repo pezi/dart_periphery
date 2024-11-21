@@ -4,8 +4,7 @@
 
 import 'package:dart_periphery/dart_periphery.dart';
 
-// Grove - Temp&Humi Sensor(SHT31) is a highly reliable, accurate,
-// quick response and integrated temperature & humidity sensor.
+// SHT31 - temperature and humidity sensor
 //
 // https://wiki.seeedstudio.com/Grove-TempAndHumi_Sensor-SHT31
 //

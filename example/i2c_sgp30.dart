@@ -6,8 +6,7 @@ import 'dart:io';
 
 import 'package:dart_periphery/dart_periphery.dart';
 
-// SGP30 - VOC and eCO2 gas sensor. This sensor is an air quality detection
-// sensor based on the SGP30 chip.
+// SGP30 sensor - VOC and eCO2 gas, air quality detection sensor
 //
 // https://wiki.seeedstudio.com/Grove-VOC_and_eCO2_Gas_Sensor-SGP30/
 //

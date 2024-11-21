@@ -6,7 +6,7 @@ import 'dart:io';
 
 import 'package:dart_periphery/dart_periphery.dart';
 
-// MCP9808 high accuracy temperature sensor
+// MCP9808 - high accuracy temperature sensor
 //
 // https://www.seeedstudio.com/Grove-I2C-High-Accuracy-Temperature-Sensor-MCP9808.html
 //

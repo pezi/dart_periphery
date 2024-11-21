@@ -5,7 +5,7 @@
 import 'package:dart_periphery/dart_periphery.dart';
 import 'dart:io';
 
-// MPU-6050 Six-Axis (Gyro + Accelerometer)
+// MPU-6050 Six-Axis (Gyro + Accelerometer) sensor
 //
 // Datasheet: https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/
 //
