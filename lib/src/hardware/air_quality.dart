@@ -7,7 +7,7 @@
 /// converted to a Dart representation.
 library;
 
-/// helper for lower/uppercase checking
+/// Helper for lower/uppercase checking
 extension CharacterCase on String {
   bool isUpperCase() {
     int ascii = codeUnitAt(0);
@@ -20,7 +20,7 @@ extension CharacterCase on String {
   }
 }
 
-/// Return a [AirQuality] for a [iaq] value
+/// Return an [AirQuality] for a [iaq] value
 AirQuality getAirQuality(int iaq) {
   for (var q in AirQuality.values) {
     if (q == AirQuality.invalidValue) {

@@ -634,7 +634,7 @@ class GPIO extends IsolateAPI {
 
   /// Polls a GPIO for the edge event configured with [GPIO.setGPIOedge].
   /// For character device GPIOs, the edge event should be consumed
-  ///  with gpio_read_event().
+  /// with [readEvent].
   /// For sysfs GPIOs, the edge event should be consumed with [GPIO.read].
   GPIOpolling poll(int timeoutMillis) {
     _checkStatus();

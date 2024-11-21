@@ -4,26 +4,21 @@
 
 import 'package:dart_periphery/dart_periphery.dart';
 
-// BMP280 high-precision, low-power combined humidity, pressure, and
-// temperature sensor
-//
-//  https://wiki.seeedstudio.com/Grove-Barometer_Sensor-BME280/
-//
+/// Grove - Sunlight Sensor is a multi-channel digital light sensor,
+/// which has the ability to detect visible light and infrared light.
+///
+///  https://www.seeedstudio.com/Grove-Sunlight-Sensor.html
 void main() {
   // Select the right I2C bus number /dev/i2c-?
-  // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
+  // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian
   var i2c = I2C(1);
   try {
     print("dart_periphery Version: $dartPeripheryVersion");
     print("c-periphery Version   : ${getCperipheryVersion()}");
     print('I2C info: ${i2c.getI2Cinfo()}');
-    print("BME280 sensor");
-
-    var bme280 = BME280(i2c);
-    var r = bme280.getValues();
-    print('Temperature [°] ${r.temperature.toStringAsFixed(1)}');
-    print('Humidity [%] ${r.humidity.toStringAsFixed(1)}');
-    print('Pressure [hPa] ${r.pressure.toStringAsFixed(1)}');
+    print("SI1145 sensor");
+    var s = SI1145(i2c);
+    print(s.getValues());
   } finally {
     i2c.dispose();
   }

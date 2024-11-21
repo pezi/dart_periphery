@@ -76,6 +76,15 @@ export 'src/hardware/mcp9808.dart'
     show MCP9808, MCP9808result, MCP9808exception, mcp9808DefaultI2Caddress;
 export 'src/hardware/sdc30.dart'
     show SDC30, SDC30exception, SDC30result, sdc30DefaultI2Caddress;
+export 'src/hardware/si1145.dart'
+    show
+        SI1145,
+        SI1145exception,
+        SI1145reg,
+        SI1145cmd,
+        SI1145param,
+        IntEnum,
+        si1145DefaultI2Caddress;
 export 'src/hardware/utils/byte_buffer.dart' show BitOrder;
 export 'src/hardware/utils/uint.dart';
 export 'src/i2c.dart'

@@ -15,6 +15,11 @@ void main() {
   // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
   var i2c = I2C(1);
   try {
+    print("dart_periphery Version: $dartPeripheryVersion");
+    print("c-periphery Version   : ${getCperipheryVersion()}");
+    print('I2C info :${i2c.getI2Cinfo()}');
+    print("MCP9808 sensor");
+
     var sensor = MCP9808(i2c);
     sleep(Duration(milliseconds: 100));
     var r = sensor.getValue();

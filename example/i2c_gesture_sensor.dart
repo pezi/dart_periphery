@@ -12,7 +12,13 @@ void main() {
   // Select the right I2C bus number /dev/i2c-?
   // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
   var i2c = I2C(1);
+
   try {
+    print("dart_periphery Version: $dartPeripheryVersion");
+    print("c-periphery Version   : ${getCperipheryVersion()}");
+    print('I2C info: ${i2c.getI2Cinfo()}');
+    print("Gesture sensor");
+
     var gesture = GestureSensor(i2c);
     print('Grove Gesture sensor is running...');
     while (true) {

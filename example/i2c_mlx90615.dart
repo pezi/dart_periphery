@@ -11,8 +11,13 @@ import 'package:dart_periphery/dart_periphery.dart';
 void main() {
   // Select the right I2C bus number /dev/i2c-?
   // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
-  var i2c = I2C(1);
+  var i2c = I2C(0);
   try {
+    print("dart_periphery Version: $dartPeripheryVersion");
+    print("c-periphery Version   : ${getCperipheryVersion()}");
+    print('I2C info: ${i2c.getI2Cinfo()}');
+    print("MLX90615 sensor");
+
     var mlx90615 = MLX90615(i2c);
     print(
         'MLX90615 ambient temperature [t°] ${mlx90615.getAmbientTemperature().toStringAsFixed(2)}');

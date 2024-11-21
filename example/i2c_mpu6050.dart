@@ -14,6 +14,11 @@ void main() {
   // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
   var i2c = I2C(1);
   try {
+    print("dart_periphery Version: $dartPeripheryVersion");
+    print("c-periphery Version   : ${getCperipheryVersion()}");
+    print('I2C info: ${i2c.getI2Cinfo()}');
+    print("MPU6050 sensor");
+
     var mpu = MPU6050(i2c);
     var index = 0;
     var wait = 50; // wait 50 ms

@@ -12,8 +12,8 @@ class PN532 {
   final PN532BaseProtocol pn532ProtocolImpl;
 
   /// This is the basic implementation of all the functions of the PN532.
-  /// Also the protocol unspecific communication with PN532 is implemented within
-  /// this class.
+  /// Also the protocol unspecific communication with PN532 is implemented
+  /// within this class.
   /// CAUTION: I only test `getFirmwareVersion()` and `readPassivTargetId()`!
   PN532({required this.pn532ProtocolImpl});
 
