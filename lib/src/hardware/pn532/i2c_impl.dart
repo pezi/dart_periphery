@@ -15,9 +15,12 @@ class PN532I2CImpl extends PN532BaseProtocol {
   /// The `SCL` of PN532 must be connected to the `SCL` of the Pi.
   ///
   /// The `irqPin`, `resetPin` and `hardwareRequestPin` are all optional!
-  /// OPTIONAL: The `IRQ` of PN532 should be connected to a `GPIO` pin of your choice (default: 16) of the Pi.
-  /// OPTIONAL: The `RSTPDN` of PN532 should be connected to a `GPIO` pin of your choice (default: 12) of the Pi.
-  /// OPTIONAL: The `PIN32` of PN532 should be connected to a `GPIO` pin of your choice of the Pi. (This is the `hardwareRequestPin`)
+  /// OPTIONAL: The `IRQ` of PN532 should be connected to a `GPIO` pin of your
+  ///  choice (default: 16) of the Pi.
+  /// OPTIONAL: The `RSTPDN` of PN532 should be connected to a `GPIO` pin of
+  /// your choice (default: 12) of the Pi.
+  /// OPTIONAL: The `PIN32` of PN532 should be connected to a `GPIO` pin of your
+  /// choice of the Pi. (This is the `hardwareRequestPin`)
   /// For the `IRQ`, `RSTPDN` and `hardwareRequestPin` pin you can choose any
   /// GPIO pin of the pi just be aware that it seems like that the used dart
   /// package `dart_periphery` can't open all GPIOs

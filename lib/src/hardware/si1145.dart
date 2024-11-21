@@ -8,6 +8,8 @@ import 'dart:io';
 
 import '../../dart_periphery.dart';
 
+// Resources:
+// https://www.seeedstudio.com/Grove-Sunlight-Sensor.html
 // https://github.com/Seeed-Studio/Grove_Sunlight_Sensor
 // https://github.com/Seeed-Studio/Seeed_Python_SI114X/blob/master/seeed_si114x.py#L235
 
@@ -260,6 +262,30 @@ class SI1145exception implements Exception {
   SI1145exception(this.errorMsg);
 }
 
+/// [SI1145] measured data: visible, IR and UV part of the sunlight.
+class SI1145result {
+  /// visible
+  final int visible;
+  final int ir;
+  final int uv;
+
+  @override
+  String toString() => 'SI1145result [visible=$visible, ir=$ir, uv=$uv]';
+
+  String toJSON() {
+    return '{"visible":"$visible","ir","$ir","uv","$uv"}';
+  }
+
+  SI1145result(this.visible, this.ir, this.uv);
+}
+
+/// SiLabs  sensor for temperature, pressure and
+/// humidity (BME280 only).
+///
+/// See for more
+/// * [BM280 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme280.dart)
+/// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/bme280.dart)
+/// * [Datasheet](https://cdn-shop.adafruit.com/datasheets/BST-BME280_DS001-10.pdf)
 class SI1145 {
   final I2C i2c;
   final int i2cAddress;
@@ -274,7 +300,7 @@ class SI1145 {
     i2c.writeByteReg(i2cAddress, reg.value, byte);
   }
 
-  void writeEnumByte(SI1145reg reg, IntEnum byte) {
+  void writeEnum(SI1145reg reg, IntEnum byte) {
     i2c.writeByteReg(i2cAddress, reg.value, byte.getValue());
   }
 
@@ -287,21 +313,7 @@ class SI1145 {
     return i2c.readByteReg(i2cAddress, reg.value);
   }
 
-  void reset() {
-    writeByte(SI1145reg.measRate0, 0);
-    writeByte(SI1145reg.measRate0, 0);
-    writeByte(SI1145reg.irqEnable, 0);
-    writeByte(SI1145reg.irqMode1, 0);
-    writeByte(SI1145reg.irqMode2, 0);
-    writeByte(SI1145reg.intCfg, 0);
-    writeByte(SI1145reg.irqStatus, 0xFF);
-    writeEnumByte(SI1145reg.command, SI1145cmd.reset);
-    sleep(Duration(microseconds: 100));
-    writeByte(SI1145reg.hwKey, 0x17);
-    sleep(Duration(microseconds: 100));
-  }
-
-  int writeParamData(IntEnum register, int value) {
+  int writeParam(IntEnum register, int value) {
     // write Value into PARAMWR reg first
     writeByte(SI1145reg.wr, value);
     writeByte(SI1145reg.command, register.getValue() | SI1145cmd.set.value);
@@ -310,7 +322,21 @@ class SI1145 {
   }
 
   int writeParamEnum(IntEnum register, IntEnum value) {
-    return writeParamData(register, value.getValue());
+    return writeParam(register, value.getValue());
+  }
+
+  void reset() {
+    writeByte(SI1145reg.measRate0, 0);
+    writeByte(SI1145reg.measRate1, 0);
+    writeByte(SI1145reg.irqEnable, 0);
+    writeByte(SI1145reg.irqMode1, 0);
+    writeByte(SI1145reg.irqMode2, 0);
+    writeByte(SI1145reg.intCfg, 0);
+    writeByte(SI1145reg.irqStatus, 0xFF);
+    writeEnum(SI1145reg.command, SI1145cmd.reset);
+    sleep(Duration(microseconds: 100));
+    writeByte(SI1145reg.hwKey, 0x17);
+    sleep(Duration(microseconds: 100));
   }
 
   void deInit() {
@@ -320,7 +346,7 @@ class SI1145 {
     writeByte(SI1145reg.ucoeff1, 0x89);
     writeByte(SI1145reg.ucoeff2, 0x02);
     writeByte(SI1145reg.ucoeff3, 0x00);
-    writeParamData(
+    writeParam(
         SI1145param.chlist,
         SI1145chlist.enuv.value |
             SI1145chlist.enalsir.value |
@@ -335,7 +361,8 @@ class SI1145 {
     // PS ADC SETTING
     writeParamEnum(SI1145param.psAdcGain, SI1145adcGain.div1);
     writeParamEnum(SI1145param.psAdcCounter, SI1145adcCounter.adcclk511);
-    writeParamEnum(SI1145param.psAdcMisc, SI1145adcMisc.highrange);
+    writeParam(SI1145param.psAdcMisc,
+        SI1145adcMisc.highrange.value | SI1145adcMisc.adcRawadc.value);
 
     // VIS ADC SETTING
     writeParamEnum(SI1145param.alsVisAdcGain, SI1145adcGain.div1);
@@ -349,11 +376,11 @@ class SI1145 {
 
     // interrupt enable
     writeByte(SI1145reg.intCfg, 1);
-    writeEnumByte(SI1145reg.irqEnable, SI1145irqen.als);
+    writeEnum(SI1145reg.irqEnable, SI1145irqen.als);
 
     // auto run
     writeByte(SI1145reg.measRate0, 0xFF);
-    writeEnumByte(SI1145reg.command, SI1145cmd.psalsAuto);
+    writeEnum(SI1145reg.command, SI1145cmd.psalsAuto);
   }
 
   void init() {
@@ -364,29 +391,19 @@ class SI1145 {
     deInit();
   }
 
-  int readVisible() {
+  int getVisible() {
     return readWord(SI1145reg.alsVisData0);
   }
 
-  int readIr() {
+  int getIr() {
     return readWord(SI1145reg.alsIrData0);
   }
 
-  int readUV() {
+  int getUV() {
     return readWord(SI1145reg.auxData0Uvindex0);
   }
-}
 
-void main() {
-  var i2c = I2C(1);
-  try {
-    print("dart_periphery Version: $dartPeripheryVersion");
-    print("c-periphery Version   : ${getCperipheryVersion()}");
-    print('I2C info: ${i2c.getI2Cinfo()}');
-    print("SI1145 sensor");
-
-    var s = SI1145(i2c);
-  } finally {
-    i2c.dispose();
+  SI1145result getValues() {
+    return SI1145result(getVisible(), getIr(), getUV());
   }
 }
