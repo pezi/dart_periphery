@@ -4,8 +4,7 @@
 
 import 'package:dart_periphery/dart_periphery.dart';
 
-/// Grove SI1145 - Sunlight Sensor is a multi-channel digital light sensor,
-/// which has the ability to detect visible light and infrared light.
+/// SI1145 - visible & IR light and UV index sensor
 ///
 ///  https://www.seeedstudio.com/Grove-Sunlight-Sensor.html
 void main() {

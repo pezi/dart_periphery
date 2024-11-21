@@ -1,11 +1,11 @@
-// Copyright (c) 2022, the Dart project authors.  Please see the AUTHORS file
+// Copyright (c) 2024, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:dart_periphery/dart_periphery.dart';
 import 'dart:io';
 
-/// SDC30 - CO2 & Temperature & Humidity Sensor
+/// SDC30 - CO2, temperature and humidity sensor
 ///
 /// https://www.seeedstudio.com/Grove-CO2-Temperature-Humidity-Sensor-SCD30-p-2911.html
 ///
