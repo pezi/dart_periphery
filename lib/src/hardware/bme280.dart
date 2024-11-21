@@ -269,7 +269,8 @@ class BME280 {
     }
   }
 
-  /// Sets the oversampling multipliers [tempOversampling],[pressOversampling],[humOversampling] and [operatingMode].
+  /// Sets the oversampling multipliers [tempOversampling],[pressOversampling],
+  /// [humOversampling] and [operatingMode].
   void setOperatingModes(
       OversamplingMultiplier tempOversampling,
       OversamplingMultiplier pressOversampling,

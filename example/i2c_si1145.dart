@@ -1,10 +1,10 @@
-// Copyright (c) 2022, the Dart project authors.  Please see the AUTHORS file
+// Copyright (c) 2024, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:dart_periphery/dart_periphery.dart';
 
-/// Grove - Sunlight Sensor is a multi-channel digital light sensor,
+/// Grove SI1145 - Sunlight Sensor is a multi-channel digital light sensor,
 /// which has the ability to detect visible light and infrared light.
 ///
 ///  https://www.seeedstudio.com/Grove-Sunlight-Sensor.html

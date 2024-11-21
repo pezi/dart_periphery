@@ -285,7 +285,7 @@ class SI1145result {
   SI1145result(this.visible, this.ir, this.uvIndexRaw);
 }
 
-/// SiLabs SI1145 sensor for visible, IR and UV light
+/// SiLabs SI1145 sensor for visible & IR light and UV index
 ///
 /// See for more
 /// * [SI1145 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_si1145.dart)
@@ -318,7 +318,7 @@ class SI1145 {
     return i2c.readByteReg(i2cAddress, reg.value);
   }
 
-  /// Writes an [value] to a [register].
+  /// Writes a [value] to a [register].
   int writeParam(IntEnum register, int value) {
     // write Value into PARAMWR reg first
     _writeByte(SI1145reg.wr, value);
@@ -327,19 +327,27 @@ class SI1145 {
     return _readByte(SI1145reg.rd);
   }
 
-  /// Writes an [IntEnum] from a [register].
+  /// Writes an [IntEnum] to a [register].
   int writeParamEnum(IntEnum register, IntEnum value) {
     return writeParam(register, value.getValue());
   }
 
-  /// Reads an [IntEnum]
+  /// Reads an [IntEnum] froma a [register].
   int readParam(IntEnum register) {
     _writeByte(SI1145reg.command, register.getValue() | SI1145cmd.query.value);
     return _readByte(SI1145reg.rd);
   }
 
+  void _init() {
+    if (_readByte(SI1145reg.partId) != 0x45) {
+      throw SI1145exception("SI1145 sensor initialization failed");
+    }
+    _reset();
+    _initRegister();
+  }
+
   /// Resets the sensor
-  void reset() {
+  void _reset() {
     _writeByte(SI1145reg.measRate0, 0);
     _writeByte(SI1145reg.measRate1, 0);
     _writeByte(SI1145reg.irqEnable, 0);
@@ -353,7 +361,8 @@ class SI1145 {
     sleep(Duration(microseconds: 100));
   }
 
-  void _deInit() {
+  /// Register initialization.
+  void _initRegister() {
     // ENABLE UV reading
     // these reg must be set to the fixed value
     _writeByte(SI1145reg.ucoeff0, 0x29);
@@ -397,20 +406,12 @@ class SI1145 {
     _writeEnum(SI1145reg.command, SI1145cmd.psalsAuto);
   }
 
-  void _init() {
-    if (_readByte(SI1145reg.partId) != 0x45) {
-      throw SI1145exception("Sensor init failed");
-    }
-    reset();
-    _deInit();
-  }
-
-  /// Returns the visible light  [nm].
+  /// Returns the visible light in [nm].
   int getVisible() {
     return _readWord(SI1145reg.alsVisData0);
   }
 
-  /// Return the infrared right [nm].
+  /// Returns the infrared light in [nm].
   int getIR() {
     return _readWord(SI1145reg.alsIrData0);
   }
@@ -422,12 +423,13 @@ class SI1145 {
     return _readWord(SI1145reg.auxData0Uvindex0);
   }
 
-  /// Returns the raw UV index value
+  /// Returns the UV index.
   double getUVindex() {
     return _readWord(SI1145reg.auxData0Uvindex0) / 100.0;
   }
 
-  /// Return a [SI1145result] with visible & IR light [nm] and UV index raw value.
+  /// Returns a [SI1145result] with visible & IR light [nm] and UV
+  /// index raw value.
   SI1145result getValues() {
     return SI1145result(getVisible(), getIR(), getUVindexRaw());
   }
