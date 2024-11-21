@@ -324,6 +324,11 @@ class SI1145 {
     return writeParam(register, value.getValue());
   }
 
+  int readParam(IntEnum register) {
+    writeByte(SI1145reg.command, register.getValue() | SI1145cmd.query.value);
+    return readByte(SI1145reg.rd);
+  }
+
   void reset() {
     writeByte(SI1145reg.measRate0, 0);
     writeByte(SI1145reg.measRate1, 0);
