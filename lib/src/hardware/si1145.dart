@@ -11,7 +11,7 @@ import '../../dart_periphery.dart';
 // Resources:
 // https://www.seeedstudio.com/Grove-Sunlight-Sensor.html
 // https://github.com/Seeed-Studio/Grove_Sunlight_Sensor
-// https://github.com/Seeed-Studio/Seeed_Python_SI114X/blob/master/seeed_si114x.py#L235
+// https://github.com/Seeed-Studio/Seeed_Python_SI114X/blob/master/seeed_si114x.py
 
 const si1145DefaultI2Caddress = 0x60;
 
@@ -279,13 +279,12 @@ class SI1145result {
   SI1145result(this.visible, this.ir, this.uv);
 }
 
-/// SiLabs  sensor for temperature, pressure and
-/// humidity (BME280 only).
+/// SiLabs SI1145 sensor for visible, IR and UV light
 ///
 /// See for more
-/// * [BM280 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme280.dart)
-/// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/bme280.dart)
-/// * [Datasheet](https://cdn-shop.adafruit.com/datasheets/BST-BME280_DS001-10.pdf)
+/// * [SI1145 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_si1145.dart)
+/// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/si1145.dart)
+/// * [Datasheet](https://www.silabs.com/documents/public/data-sheets/Si1145-46-47.pdf)
 class SI1145 {
   final I2C i2c;
   final int i2cAddress;
