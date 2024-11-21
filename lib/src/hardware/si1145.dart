@@ -267,16 +267,20 @@ class SI1145result {
   /// visible
   final int visible;
   final int ir;
-  final int uv;
+  final int uvRaw;
 
   @override
-  String toString() => 'SI1145result [visible=$visible, ir=$ir, uv=$uv]';
+  String toString() => 'SI1145result [visible=$visible, ir=$ir, uv=$uvRaw]';
 
   String toJSON() {
-    return '{"visible":"$visible","ir","$ir","uv","$uv"}';
+    return '{"visible":"$visible","ir","$ir","uvRaw","$uvRaw"}';
   }
 
-  SI1145result(this.visible, this.ir, this.uv);
+  double getUVindex() {
+    return uvRaw / 100.0;
+  }
+
+  SI1145result(this.visible, this.ir, this.uvRaw);
 }
 
 /// SiLabs SI1145 sensor for visible, IR and UV light
@@ -403,11 +407,15 @@ class SI1145 {
     return readWord(SI1145reg.alsIrData0);
   }
 
-  int getUV() {
+  int getUVraw() {
     return readWord(SI1145reg.auxData0Uvindex0);
   }
 
+  double getUV() {
+    return readWord(SI1145reg.auxData0Uvindex0) / 100.0;
+  }
+
   SI1145result getValues() {
-    return SI1145result(getVisible(), getIr(), getUV());
+    return SI1145result(getVisible(), getIr(), getUVraw());
   }
 }
