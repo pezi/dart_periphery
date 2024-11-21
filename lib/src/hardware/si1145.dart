@@ -262,25 +262,27 @@ class SI1145exception implements Exception {
   SI1145exception(this.errorMsg);
 }
 
-/// [SI1145] measured data: visible, IR and UV part of the sunlight.
+/// [SI1145] measured data: visible, IR and raw UV
 class SI1145result {
   /// visible
   final int visible;
   final int ir;
-  final int uvRaw;
+  final int uvIndexRaw;
 
   @override
-  String toString() => 'SI1145result [visible=$visible, ir=$ir, uv=$uvRaw]';
+  String toString() =>
+      'SI1145result [visible=$visible, ir=$ir, uvIndexRaw=$uvIndexRaw]';
 
   String toJSON() {
-    return '{"visible":"$visible","ir","$ir","uvRaw","$uvRaw"}';
+    return '{"visible":"$visible","ir","$ir","uvIndexRaw","$uvIndexRaw"}';
   }
 
+  /// Returns the adjusted UV index.
   double getUVindex() {
-    return uvRaw / 100.0;
+    return uvIndexRaw / 100.0;
   }
 
-  SI1145result(this.visible, this.ir, this.uvRaw);
+  SI1145result(this.visible, this.ir, this.uvIndexRaw);
 }
 
 /// SiLabs SI1145 sensor for visible, IR and UV light
@@ -296,64 +298,68 @@ class SI1145 {
   /// Creates a SI1145 sensor instance that uses the [i2c] bus with
   /// the optional [i2cAddress].
   SI1145(this.i2c, [this.i2cAddress = si1145DefaultI2Caddress]) {
-    init();
+    _init();
   }
 
-  void writeByte(SI1145reg reg, int byte) {
+  void _writeByte(SI1145reg reg, int byte) {
     i2c.writeByteReg(i2cAddress, reg.value, byte);
   }
 
-  void writeEnum(SI1145reg reg, IntEnum byte) {
+  void _writeEnum(SI1145reg reg, IntEnum byte) {
     i2c.writeByteReg(i2cAddress, reg.value, byte.getValue());
   }
 
-  int readWord(IntEnum reg) {
+  int _readWord(IntEnum reg) {
     var v = i2c.readBytesReg(i2cAddress, reg.getValue(), 2);
     return (v[0] & 0xff) | (v[1] & 0xff) << 8;
   }
 
-  int readByte(SI1145reg reg) {
+  int _readByte(SI1145reg reg) {
     return i2c.readByteReg(i2cAddress, reg.value);
   }
 
+  /// Writes an [value] to a [register].
   int writeParam(IntEnum register, int value) {
     // write Value into PARAMWR reg first
-    writeByte(SI1145reg.wr, value);
-    writeByte(SI1145reg.command, register.getValue() | SI1145cmd.set.value);
+    _writeByte(SI1145reg.wr, value);
+    _writeByte(SI1145reg.command, register.getValue() | SI1145cmd.set.value);
     // SI1145 writes value out to PARAM_RD,read and confirm its right
-    return readByte(SI1145reg.rd);
+    return _readByte(SI1145reg.rd);
   }
 
+  /// Writes an [IntEnum] from a [register].
   int writeParamEnum(IntEnum register, IntEnum value) {
     return writeParam(register, value.getValue());
   }
 
+  /// Reads an [IntEnum]
   int readParam(IntEnum register) {
-    writeByte(SI1145reg.command, register.getValue() | SI1145cmd.query.value);
-    return readByte(SI1145reg.rd);
+    _writeByte(SI1145reg.command, register.getValue() | SI1145cmd.query.value);
+    return _readByte(SI1145reg.rd);
   }
 
+  /// Resets the sensor
   void reset() {
-    writeByte(SI1145reg.measRate0, 0);
-    writeByte(SI1145reg.measRate1, 0);
-    writeByte(SI1145reg.irqEnable, 0);
-    writeByte(SI1145reg.irqMode1, 0);
-    writeByte(SI1145reg.irqMode2, 0);
-    writeByte(SI1145reg.intCfg, 0);
-    writeByte(SI1145reg.irqStatus, 0xFF);
-    writeEnum(SI1145reg.command, SI1145cmd.reset);
+    _writeByte(SI1145reg.measRate0, 0);
+    _writeByte(SI1145reg.measRate1, 0);
+    _writeByte(SI1145reg.irqEnable, 0);
+    _writeByte(SI1145reg.irqMode1, 0);
+    _writeByte(SI1145reg.irqMode2, 0);
+    _writeByte(SI1145reg.intCfg, 0);
+    _writeByte(SI1145reg.irqStatus, 0xFF);
+    _writeEnum(SI1145reg.command, SI1145cmd.reset);
     sleep(Duration(microseconds: 100));
-    writeByte(SI1145reg.hwKey, 0x17);
+    _writeByte(SI1145reg.hwKey, 0x17);
     sleep(Duration(microseconds: 100));
   }
 
-  void deInit() {
+  void _deInit() {
     // ENABLE UV reading
     // these reg must be set to the fixed value
-    writeByte(SI1145reg.ucoeff0, 0x29);
-    writeByte(SI1145reg.ucoeff1, 0x89);
-    writeByte(SI1145reg.ucoeff2, 0x02);
-    writeByte(SI1145reg.ucoeff3, 0x00);
+    _writeByte(SI1145reg.ucoeff0, 0x29);
+    _writeByte(SI1145reg.ucoeff1, 0x89);
+    _writeByte(SI1145reg.ucoeff2, 0x02);
+    _writeByte(SI1145reg.ucoeff3, 0x00);
     writeParam(
         SI1145param.chlist,
         SI1145chlist.enuv.value |
@@ -363,7 +369,7 @@ class SI1145 {
 
     // set LED1 CURRENT(22.4mA)(It is a normal value for many LED
     writeParamEnum(SI1145param.ps1Adcmux, SI1145adcmux.largeIr);
-    writeByte(SI1145reg.psLed21, SI1145LedCurrent.cur22ma.value);
+    _writeByte(SI1145reg.psLed21, SI1145LedCurrent.cur22ma.value);
     writeParamEnum(SI1145param.psled12Select, Si1145ledSel.ps1Led1);
 
     // PS ADC SETTING
@@ -383,39 +389,46 @@ class SI1145 {
     writeParamEnum(SI1145param.alsIrAdcMisc, SI1145adcMisc.highrange);
 
     // interrupt enable
-    writeByte(SI1145reg.intCfg, 1);
-    writeEnum(SI1145reg.irqEnable, SI1145irqen.als);
+    _writeByte(SI1145reg.intCfg, 1);
+    _writeEnum(SI1145reg.irqEnable, SI1145irqen.als);
 
     // auto run
-    writeByte(SI1145reg.measRate0, 0xFF);
-    writeEnum(SI1145reg.command, SI1145cmd.psalsAuto);
+    _writeByte(SI1145reg.measRate0, 0xFF);
+    _writeEnum(SI1145reg.command, SI1145cmd.psalsAuto);
   }
 
-  void init() {
-    if (readByte(SI1145reg.partId) != 0x45) {
+  void _init() {
+    if (_readByte(SI1145reg.partId) != 0x45) {
       throw SI1145exception("Sensor init failed");
     }
     reset();
-    deInit();
+    _deInit();
   }
 
+  /// Returns the visible light  [nm].
   int getVisible() {
-    return readWord(SI1145reg.alsVisData0);
+    return _readWord(SI1145reg.alsVisData0);
   }
 
-  int getIr() {
-    return readWord(SI1145reg.alsIrData0);
+  /// Return the infrared right [nm].
+  int getIR() {
+    return _readWord(SI1145reg.alsIrData0);
   }
 
-  int getUVraw() {
-    return readWord(SI1145reg.auxData0Uvindex0);
+  /// Returns the raw UV index value.
+  ///
+  /// value / 100.0 for the correct index
+  int getUVindexRaw() {
+    return _readWord(SI1145reg.auxData0Uvindex0);
   }
 
-  double getUV() {
-    return readWord(SI1145reg.auxData0Uvindex0) / 100.0;
+  /// Returns the raw UV index value
+  double getUVindex() {
+    return _readWord(SI1145reg.auxData0Uvindex0) / 100.0;
   }
 
+  /// Return a [SI1145result] with visible & IR light [nm] and UV index raw value.
   SI1145result getValues() {
-    return SI1145result(getVisible(), getIr(), getUVraw());
+    return SI1145result(getVisible(), getIR(), getUVindexRaw());
   }
 }

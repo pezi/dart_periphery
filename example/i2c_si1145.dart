@@ -4,6 +4,10 @@
 
 import 'package:dart_periphery/dart_periphery.dart';
 
+/// Grove - Sunlight Sensor is a multi-channel digital light sensor,
+/// which has the ability to detect visible light and infrared light.
+///
+///  https://www.seeedstudio.com/Grove-Sunlight-Sensor.html
 void main() {
   // Select the right I2C bus number /dev/i2c-?
   // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian
@@ -13,7 +17,6 @@ void main() {
     print("c-periphery Version   : ${getCperipheryVersion()}");
     print('I2C info: ${i2c.getI2Cinfo()}');
     print("SI1145 sensor");
-
     var s = SI1145(i2c);
     print(s.getValues());
   } finally {
