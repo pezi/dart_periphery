@@ -1,4 +1,4 @@
-## 0.9.10 2024-11-??
+## 0.9.10 2024-11-21
 
 * Add SI1145 sunlight sensor
 * Rework README
