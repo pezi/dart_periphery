@@ -3,7 +3,7 @@
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
 
-[![pub package](https://img.shields.io/badge/pub-v0.9.10-orange)](https://pub.dartlang.org/packages/dart_periphery)
+[![pub package](https://img.shields.io/badge/pub-v0.9.11-orange)](https://pub.dartlang.org/packages/dart_periphery)
 
 ## 📣 Important hints
 
@@ -491,7 +491,7 @@ void setCustomLibrary(String absolutePath);
 ```
 
 must be called separately within each isolate. This is necessary because each isolate initializes 
-Dart Periphery independently.
+**dart_periphery** independently.
 
 ## 🍓 flutter-pi
 

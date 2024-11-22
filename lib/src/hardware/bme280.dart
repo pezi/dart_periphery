@@ -15,7 +15,7 @@ import 'utils/byte_buffer.dart';
 // Datasheet: https://cdn-shop.adafruit.com/datasheets/BST-BME280_DS001-10.pdf
 //
 // This code bases on the diozero project - Thanks to Matthew Lewis!
-// https://github.com/mattjlewis/diozero/blob/master/diozero-core/src/main/java/com/diozero/devices/BME280.java
+// https://github.com/mattjlewis/diozero/blob/main/diozero-core/src/main/java/com/diozero/devices/BMx280.java
 
 const int bme280DefaultI2Caddress = 0x76;
 const int bme280AlternativeI2Caddress = 0x77;
