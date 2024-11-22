@@ -6,31 +6,37 @@ import 'dart:io';
 
 import '../i2c.dart';
 
-const int digitalReadCmd = 1;
-const int digitalWriteCmd = 2;
-const int analogReadCmd = 3;
-const int analogWriteCmd = 4;
-const int pinModeCmd = 5;
-const int ultraSonicCmd = 7;
-const int firmwareCmd = 8;
-const int ledbarInitCmd = 110;
-const int ledbarReleaseCmd = 111;
-const int ledbarShowCmd = 112;
-const int servoAttachCmd = 120;
-const int servoDetachCmd = 121;
-const int servoWriteCmd = 122;
+enum Command {
+  digitalRead(1),
+  digitalWrite(2),
+  analogRead(3),
+  analogWrite(4),
+  pinMode(5),
+  ultraSonic(7),
+  firmware(8),
+  ledbarInit(110),
+  ledbarRelease(111),
+  ledbarShow(112),
+  servoAttach(120),
+  servoDetach(121),
+  servoWrite(122);
+
+  final int value;
+
+  const Command(this.value);
+}
 
 /// Command buffer for a hat command.
 ///
 /// Format: byte 1 : command, byte 2 : pin, byte 3 and 4: optional parameter
 class HatCmd {
-  int cmd;
+  Command cmd;
   HatCmd(this.cmd);
 
   /// Returns an command buffer containing a command.
   List<int> getCmdSeq() {
     var data = List<int>.filled(4, 0);
-    data[0] = cmd;
+    data[0] = cmd.value;
     return data;
   }
 
@@ -38,7 +44,7 @@ class HatCmd {
   /// optional values: [value] and  [value2].
   List<int> getCmdSeqExt(int pin, [int value = 0, int value2 = 0]) {
     var data = <int>[];
-    data.add(cmd);
+    data.add(cmd.value);
     data.add(pin);
     data.add(value);
     data.add(value2);
@@ -139,7 +145,7 @@ class ArduinoBasedHat {
     var error = I2Cexception.empty();
     for (var i = 0; i < retry; ++i) {
       try {
-        writeI2Cblock(HatCmd(pinModeCmd).getCmdSeqExt(pin, mode.index));
+        writeI2Cblock(HatCmd(Command.pinMode).getCmdSeqExt(pin, mode.index));
         _updateLastAction();
         return;
       } on I2Cexception catch (e) {
@@ -156,7 +162,7 @@ class ArduinoBasedHat {
     var error = I2Cexception.empty();
     for (var i = 0; i < retry; ++i) {
       try {
-        writeI2Cblock(HatCmd(digitalReadCmd).getCmdSeqExt(pin));
+        writeI2Cblock(HatCmd(Command.digitalRead).getCmdSeqExt(pin));
         sleep(Duration(milliseconds: delay));
         var value = i2c.readByteReg(hatArduinoI2Caddress, 1);
         _updateLastAction();
@@ -178,7 +184,8 @@ class ArduinoBasedHat {
     var error = I2Cexception.empty();
     for (var i = 0; i < retry; ++i) {
       try {
-        writeI2Cblock(HatCmd(digitalWriteCmd).getCmdSeqExt(pin, value.index));
+        writeI2Cblock(
+            HatCmd(Command.digitalWrite).getCmdSeqExt(pin, value.index));
         _updateLastAction();
         return;
       } on I2Cexception catch (e) {
@@ -195,7 +202,7 @@ class ArduinoBasedHat {
     var error = I2Cexception.empty();
     for (var i = 0; i < retry; ++i) {
       try {
-        writeI2Cblock(HatCmd(analogReadCmd).getCmdSeqExt(pin));
+        writeI2Cblock(HatCmd(Command.analogRead).getCmdSeqExt(pin));
         sleep(Duration(milliseconds: delay));
         var data = i2c.readBytesReg(hatArduinoI2Caddress, hatRegister, 4);
         var value = (data[1] & 0xff) * 256 + (data[2]);
@@ -218,7 +225,7 @@ class ArduinoBasedHat {
     var error = I2Cexception.empty();
     for (var i = 0; i < retry; ++i) {
       try {
-        writeI2Cblock(HatCmd(analogWriteCmd).getCmdSeqExt(pin, value));
+        writeI2Cblock(HatCmd(Command.analogWrite).getCmdSeqExt(pin, value));
         _updateLastAction();
         return;
       } on I2Cexception catch (e) {
@@ -235,7 +242,7 @@ class ArduinoBasedHat {
     var error = I2Cexception.empty();
     for (var i = 0; i < retry; ++i) {
       try {
-        writeI2Cblock(HatCmd(firmwareCmd).getCmdSeq());
+        writeI2Cblock(HatCmd(Command.firmware).getCmdSeq());
         sleep(Duration(milliseconds: 100));
         var data = i2c.readBytesReg(hatArduinoI2Caddress, hatRegister, 4);
         print(data.length);
@@ -249,7 +256,7 @@ class ArduinoBasedHat {
     throw error;
   }
 
-  void _sendCmd(int cmd, int pin, [int value1 = 0, int value2 = 0]) {
+  void _sendCmd(Command cmd, int pin, [int value1 = 0, int value2 = 0]) {
     autoWait();
     var error = I2Cexception.empty();
     for (var i = 0; i < retry; ++i) {
@@ -273,40 +280,40 @@ class NanoHatHub extends ArduinoBasedHat {
 
   /// Initializes the [LED bar](http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_LED_Bar):
   void ledBarInitExt(int pin, int chipset, int ledNumber) {
-    _sendCmd(ledbarInitCmd, pin, chipset, ledNumber);
+    _sendCmd(Command.ledbarInit, pin, chipset, ledNumber);
   }
 
   /// Initialize the LED bar.
   void ledBarInit(int pin) {
-    _sendCmd(ledbarInitCmd, pin, 0, 5);
+    _sendCmd(Command.ledbarInit, pin, 0, 5);
   }
 
   /// Shows the LED bar.
   void ledBarShow(int pin, int highBits, int lowBits) {
-    _sendCmd(ledbarShowCmd, pin, highBits, lowBits);
+    _sendCmd(Command.ledbarShow, pin, highBits, lowBits);
   }
 
   /// Releases the LED bar.
   void ledBarRelease(int pin) {
-    _sendCmd(ledbarReleaseCmd, pin);
+    _sendCmd(Command.ledbarRelease, pin);
   }
 
   /// Attaches the servo to [pin].
   void servoAttach(int pin) {
-    _sendCmd(servoAttachCmd, pin);
+    _sendCmd(Command.servoAttach, pin);
   }
 
   /// Detaches the servo from [pin].
   ///
   /// http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_Servo
   void servoDetach(int pin) {
-    _sendCmd(servoDetachCmd, pin);
+    _sendCmd(Command.servoDetach, pin);
   }
 
   /// Steers the position of the servo at [pin] to [position].
   /// For details see  http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_Servo
   void servoWrite(int pin, int position) {
-    _sendCmd(servoWriteCmd, pin, position);
+    _sendCmd(Command.servoWrite, pin, position);
   }
 
   /// Reads a value from the 'Ultrasonic Ranger' in the range form range 5-300cm.
@@ -316,7 +323,7 @@ class NanoHatHub extends ArduinoBasedHat {
     var error = I2Cexception.empty();
     for (var i = 0; i < retry; ++i) {
       try {
-        writeI2Cblock(HatCmd(ultraSonicCmd).getCmdSeqExt(pin));
+        writeI2Cblock(HatCmd(Command.ultraSonic).getCmdSeqExt(pin));
         sleep(Duration(milliseconds: 100));
         var data = i2c.readBytesReg(hatArduinoI2Caddress, hatRegister, 3);
         _updateLastAction();

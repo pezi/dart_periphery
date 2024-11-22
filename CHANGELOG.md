@@ -10,7 +10,7 @@
   
 ## 0.9.8
 
-* Fix readme
+* Fix README
 
 ## 0.9.7
 
