@@ -52,10 +52,10 @@ class HatCmd {
   }
 }
 
-/// Digital value a [GrovePiPlusHat] or [NanoHatHub] pin.
+/// Digital pin value
 enum DigitalValue { low, high }
 
-/// Pin mode of a  [GrovePiPlusHat] or [NanoHatHub] pin.
+/// Pin mode
 enum PinMode { input, output }
 
 // default i2c address
@@ -72,8 +72,13 @@ int retry = 3;
 /// Base class for the I2C communication between the SoC
 /// (RaspberryPi & NanoPi) and the Arduino Nano based hat.
 ///
-///  <a href="http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_NanoHat_Hub">NanoHat Hub</a><br>
-///  <a href="https://wiki.seeedstudio.com/GrovePi_Plus">GrovePi Plus</a>
+///  [NanoHat](http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
+///
+///  [GrovePi Plus](https://wiki.seeedstudio.com/GrovePi_Plus)
+///
+///  [Grove Base Hat RaspberryPi](https://www.seeedstudio.com/Grove-Base-Hat-for-Raspberry-Pi.html)
+///
+///  [Grove Base Hat RaspberryPi Zero](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi_Zero)
 ///
 class ArduinoBasedHat {
   final I2C i2c;
@@ -245,7 +250,6 @@ class ArduinoBasedHat {
         writeI2Cblock(HatCmd(Command.firmware).getCmdSeq());
         sleep(Duration(milliseconds: 100));
         var data = i2c.readBytesReg(hatArduinoI2Caddress, hatRegister, 4);
-        print(data.length);
         _updateLastAction();
         return '${data[1] & 0xff}.${data[2] & 0xff}.${data[3] & 0xff}';
       } on I2Cexception catch (e) {
@@ -404,7 +408,6 @@ class GroveBaseHat {
 
   /// Returns the name of the hat model.
   String getName() {
-    print(getId());
     switch (getId()) {
       case rpiHatPid:
         return 'Grove Base Hat RPi';
@@ -508,7 +511,7 @@ void main() {
   print(hat.getFirmware());
   print(hat.getName());
   while (true) {
-    print(hat.readADCraw(0));
-    sleep(Duration(milliseconds: 500));
+    print(hat.readRatio(0));
+    sleep(Duration(milliseconds: 100));
   }
 }

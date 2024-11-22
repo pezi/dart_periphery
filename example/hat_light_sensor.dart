@@ -7,6 +7,6 @@ void main() {
   print(hat.getName());
   while (true) {
     print(hat.readADCraw(0));
-    sleep(Duration(milliseconds: 500));
+    sleep(Duration(milliseconds: 100));
   }
 }
