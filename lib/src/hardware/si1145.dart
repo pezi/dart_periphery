@@ -288,7 +288,7 @@ class SI1145result {
 /// SiLabs SI1145 sensor for visible & IR light and UV index
 ///
 /// See for more
-/// * [SI1145 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_si1145.dart)
+/// * [SI1145 example code](https://github.com/pezi/dart_periphery/blob/main/examples/i2c_si1145.dart)
 /// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/si1145.dart)
 /// * [Datasheet](https://www.silabs.com/documents/public/data-sheets/Si1145-46-47.pdf)
 class SI1145 {

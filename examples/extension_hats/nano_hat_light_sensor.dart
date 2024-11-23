@@ -2,11 +2,11 @@ import 'dart:io';
 import 'package:dart_periphery/dart_periphery.dart';
 
 void main() {
-  var hat = GroveBaseHat();
-  print(hat.getFirmware());
-  print(hat.getName());
+  var hat = NanoHatHub();
+
+  print(hat.getFirmwareVersion());
   while (true) {
-    print(hat.readADCraw(0));
+    print(hat.analogRead(0));
     sleep(Duration(milliseconds: 100));
   }
 }

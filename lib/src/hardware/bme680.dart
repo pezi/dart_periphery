@@ -378,7 +378,7 @@ class BME680result {
 /// in the surrounding.
 ///
 /// See for more
-/// * [BM680 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme680.dart)
+/// * [BM680 example code](https://github.com/pezi/dart_periphery/blob/main/examples/i2c_bme680.dart)
 /// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/bme680.dart)
 /// * [Datasheet](https://cdn-shop.adafruit.com/product-files/3660/BME680.pdf)
 /// * This implementation is derived from project [DIOZero](https://github.com/mattjlewis/diozero/blob/master/diozero-core/src/main/java/com/diozero/devices/BME680.java)

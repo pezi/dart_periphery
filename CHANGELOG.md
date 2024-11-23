@@ -58,7 +58,7 @@
 ## 0.9.0
 
 * **v0.9.0** is an API change release which fixes all the camel case warnings of the source code. When starting this project enums and variables from existing C und Java code were not converted to the camel case.
-* [pn532](https://github.com/pezi/dart_periphery/blob/main/example/pn532.dart)-example provided by [UliPranz](https://github.com/pezi/dart_periphery/pull/6), a NFC Reader Module, Thanks to UliPrantz!
+* [pn532](https://github.com/pezi/dart_periphery/blob/main/examples/pn532.dart)-example provided by [UliPranz](https://github.com/pezi/dart_periphery/pull/6), a NFC Reader Module, Thanks to UliPrantz!
 
 ## 0.8.29
 
@@ -76,7 +76,7 @@
 ## 0.8.26
 
 * replace system_info package by native uname() call to detect the cpu architecture.
-* add uname() support- see [example](https://github.com/pezi/dart_periphery/blob/main/example/uname.dart).
+* add uname() support- see [example](https://github.com/pezi/dart_periphery/blob/main/examples/uname.dart).
 
 ## 0.8.25-RC
 
@@ -100,12 +100,12 @@
 
 ## 0.8.21-beta
 
-* Fix [MPU6050 sensor](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mpu6050.dart) - second fix
+* Fix [MPU6050 sensor](https://github.com/pezi/dart_periphery/blob/main/examples/i2c_mpu6050.dart) - second fix
 * Add JSON support for BME680, BME280, SGP30 and SHT31
 
 ## 0.8.20-beta
 
-* Fix [MPU6050 sensor](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mpu6050.dart) - rework implementation
+* Fix [MPU6050 sensor](https://github.com/pezi/dart_periphery/blob/main/examples/i2c_mpu6050.dart) - rework implementation
 
 ## 0.8.19-beta
 
@@ -127,7 +127,7 @@
 
 ## 0.8.15-beta
 
-* [BME680 support](https://wiki.seeedstudio.com/Grove-Temperature_Humidity_Pressure_Gas_Sensor_BME680/) - see [example](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme680.dart).
+* [BME680 support](https://wiki.seeedstudio.com/Grove-Temperature_Humidity_Pressure_Gas_Sensor_BME680/) - see [example](https://github.com/pezi/dart_periphery/blob/main/examples/i2c_bme680.dart).
 
 ## 0.8.14-beta
 
@@ -136,8 +136,8 @@
 
 ## 0.8.12-beta
 
-* [Grove-VOC and eCO2 Gas Sensor(SGP30)](https://wiki.seeedstudio.com/Grove-VOC_and_eCO2_Gas_Sensor-SGP30/) support - see [example](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sgp30.dart).
-* [Grove Gesture](https://wiki.seeedstudio.com/Grove-Gesture_v1.0/) support - see [example](https://github.com/pezi/dart_periphery/blob/main/example/i2c_gesture_sensor.dart).
+* [Grove-VOC and eCO2 Gas Sensor(SGP30)](https://wiki.seeedstudio.com/Grove-VOC_and_eCO2_Gas_Sensor-SGP30/) support - see [example](https://github.com/pezi/dart_periphery/blob/main/examples/i2c_sgp30.dart).
+* [Grove Gesture](https://wiki.seeedstudio.com/Grove-Gesture_v1.0/) support - see [example](https://github.com/pezi/dart_periphery/blob/main/examples/i2c_gesture_sensor.dart).
 * Reorganize examples
 
 ## 0.8.11-beta
@@ -168,7 +168,7 @@
 
 ## 0.8.7-beta
 
-* Release [MMIO (Memory Mapped I/O) support](https://github.com/pezi/dart_periphery/blob/main/example/mmio_example.dart).
+* Release [MMIO (Memory Mapped I/O) support](https://github.com/pezi/dart_periphery/blob/main/examples/mmio_example.dart).
 
 ## 0.8.6-beta
 
@@ -176,7 +176,7 @@
 
 ## 0.8.5-beta
 
-* Add [example/spi_loopback.dart](https://github.com/pezi/dart_periphery/blob/main/example/spi_loopback.dart)
+* Add [example/spi_loopback.dart](https://github.com/pezi/dart_periphery/blob/main/examples/spi_loopback.dart)
 * Fix SPI transfer() implementation.
 
 ## 0.8.4-beta

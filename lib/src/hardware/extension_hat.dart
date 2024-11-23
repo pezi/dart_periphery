@@ -2,6 +2,8 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// https://github.com/friendlyarm/BakeBit/blob/master/Firmware/Source/bakebit_v1.0.0/bakebit_v1.0.0.ino
+
 import 'dart:io';
 
 import '../i2c.dart';
@@ -210,7 +212,7 @@ class ArduinoBasedHat {
         writeI2Cblock(HatCmd(Command.analogRead).getCmdSeqExt(pin));
         sleep(Duration(milliseconds: delay));
         var data = i2c.readBytesReg(hatArduinoI2Caddress, hatRegister, 4);
-        var value = (data[1] & 0xff) * 256 + (data[2]);
+        var value = (data[1] & 0xff) << 8 | (data[2] & 0xff);
         if (value == 65535) {
           value = -1;
         }
@@ -278,6 +280,7 @@ class ArduinoBasedHat {
 }
 
 /// Extension hat from [FriendlyARM](http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
+/// https://github.com/friendlyarm/BakeBit
 class NanoHatHub extends ArduinoBasedHat {
   int i2cBus;
   NanoHatHub([this.i2cBus = 0]) : super(I2C(i2cBus));
@@ -377,10 +380,24 @@ class BakeBitLedBar {
 
 /// SeedStudio [GrovePiPlusHat](https://wiki.seeedstudio.com/GrovePi_Plus/)
 ///
-/// Do not use this hardware
+/// Do not use this hardware!
 /// - UART is not working correct with some devices e.g. CozIR CO2 sensor
 /// - Problems using more than 2 I2C devices
 /// - Problems using I2C and SPI bus at the same time
+///
+/// | Paramter        | GrovePi+    |
+/// | ----------------| ----------- |
+/// | Working Voltage | 5V          |
+/// | MCU             | ATMEGA328P  |
+/// | Grove Ports     | 7 x Digital(5V), 3 x Analog(5V), 3 x I2C(5V) |
+/// |                 | 1 x SERIAL: Connect to ATMEGA328P D0/1(5V) |
+/// |                 | 1 x RPISER: Connect to Raspberry Pi(3.3V), 1 x ISP  |
+/// | Grove-Digital   | Connect to ATMEGA328P digital pins and transfer to I2C |
+/// |                 | signal, then through level converter to Raspberry Pi |
+/// | Grove-Analog    | Connect to ATMEGA328P analog pins(10bit ADC) and then |
+/// |                 | transfer to I2C signal, then through level converter to |
+/// |                 | Raspberry Pi |
+/// | Grove-I2C       | Connect through level converter to Raspberry Pi |
 class GrovePiPlusHat extends ArduinoBasedHat {
   final int i2cBus;
   GrovePiPlusHat([this.i2cBus = 1]) : super(I2C(i2cBus));
@@ -390,6 +407,24 @@ const int rpiHatPid = 0x04;
 const int rpiZeroHatPid = 0x05;
 
 /// SeedStudio [Grove Base Hat for Raspberry Pi](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi/)
+///
+/// | Parameter            | Grove Base Hat                      |
+/// |----------------------|-------------------------------------|
+/// | Working Voltage      | 3.3V                                |
+/// | MCU                  | STM32F030F4P6                       |
+/// | Grove Ports Pi       | 6 x Digital(3.3V), 4 x Analog(3.3V) |
+/// |                      | 3 x I2C(3.3V); 1 x PWM(3.3V)        |
+/// |                      | 1 x RPISER(UART) connect to Pi(3.3V)|
+/// |                      |                                     |
+/// | Grove Ports Pi Zero  | 3 x I2C(3.3V), 1 x PWM(3.3V)        |
+/// |                      | 1 x RPISER(UART) connect to Pi(3.3V)|
+/// |                      |                                     |
+/// | Grove-Digital        | Connect to Raspberry Pi directly    |
+/// | Grove-Analog         | Connect to STM32F030F4P6(12bit ADC  |
+/// |                      | and then transfer to I2C signal,    |
+/// |                      | route to Pi directly                |
+/// | Grove-I2C, Grove-PWM | Connect to Raspberry Pi directly    |
+/// | and RPISER           |                                     |
 class GroveBaseHat {
   final I2C i2c;
   final int i2cBus;

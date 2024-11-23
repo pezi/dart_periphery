@@ -56,7 +56,7 @@ class MLX90615result {
 ///  MLX90615 - digital infrared non-contact temperature sensor
 ///
 /// See for more
-/// * [MLX90615 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mlx90615.dart)
+/// * [MLX90615 example code](https://github.com/pezi/dart_periphery/blob/main/examples/i2c_mlx90615.dart)
 /// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/mlx90615.dart)
 /// * [Datasheet](https://files.seeedstudio.com/wiki/Grove-Digital_Infrared_Temperature_Sensor/res/MLX90615.pdf)
 /// * This implementation is derived from project [MicroPython_MLX90615_driver](https://github.com/rcolistete/MicroPython_MLX90615_driver/tree/master) including the method documentation.
