@@ -1,22 +1,17 @@
+// Copyright (c) 2024, the Dart project authors.  Please see the AUTHORS file
+// for details. All rights reserved. Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
+
 import 'dart:io';
 import 'package:dart_periphery/dart_periphery.dart';
 
-enum Hat { nano, grove, grovePlus }
-
-void usage() {
-  print("Parameter: [nano|grove|grovePlus] anlogPIn");
-}
-
-(Hat hat, int pin) checkArgs(List<String> args) {
-  if (args.length != 2) {
-    usage();
-    exit(0);
-  }
-  return (Hat.values.byName(args[0]), int.parse(args[0]));
-}
+import 'parse_cmd_line.dart';
 
 const wait = 500;
 
+/// https://wiki.seeedstudio.com/Grove-Light_Sensor/
+///
+/// Usage: [nano|grove|grovePlus] analogPin
 void main(List<String> args) {
   var tupple = checkArgs(args);
   var pin = tupple.$2;
@@ -25,6 +20,7 @@ void main(List<String> args) {
       {
         var hat = NanoHatHub();
         print(hat.getFirmwareVersion());
+
         while (true) {
           print(hat.analogRead(pin));
           sleep(Duration(milliseconds: wait));
@@ -34,6 +30,7 @@ void main(List<String> args) {
       {
         var hat = NanoHatHub();
         print(hat.getFirmwareVersion());
+
         while (true) {
           print(hat.analogRead(pin));
           sleep(Duration(milliseconds: wait));
