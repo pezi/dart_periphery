@@ -189,9 +189,9 @@ class SDC30 {
     return byteData.getFloat32(0, Endian.big);
   }
 
-  /// Returns a [BME680result] with CO₂, temperature, and humidity.
+  /// Returns a [SDC30result] with CO₂, temperature, and humidity.
   ///
-  /// Check [BME680result.isAvailable]  to determine if data is available.
+  /// Check [SDC30result.isDataAvailable]  to determine if data is available.
   SDC30result getValues() {
     if (!isDataAvailable()) {
       return SDC30result.empty();

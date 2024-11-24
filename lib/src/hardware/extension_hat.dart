@@ -59,6 +59,7 @@ enum DigitalValue {
   low,
   high;
 
+  /// Inverts a [DigitalValue]
   DigitalValue invert() {
     return index == 0 ? DigitalValue.high : DigitalValue.low;
   }
@@ -361,7 +362,7 @@ class BakeBitLedBar {
 
   BakeBitLedBar() : bitMask = 0;
 
-  /// Sets [led] ([LedBarLed.LED1]-[LedBarLed.LED5]) to [color].
+  /// Sets [led] ([LedBarLed.led1]-[LedBarLed.led5]) to [color].
   void setLed(LedBarLed led, LedBarColor color) {
     bitMask |= (color.index + 1) << (led.index * 3);
   }
