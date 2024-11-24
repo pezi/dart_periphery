@@ -43,7 +43,7 @@ class HatCmd {
   }
 
   /// Returns a command buffer containing a command, a [pin] and two
-  /// optional values: [value] and  [value2].
+  /// optional values: [value] and [value2].
   List<int> getCmdSeqExt(int pin, [int value = 0, int value2 = 0]) {
     var data = <int>[];
     data.add(cmd.value);
@@ -55,10 +55,11 @@ class HatCmd {
 }
 
 /// Digital pin value
-enum DigitalValue { low, high }
+enum DigitalValue {
+  low,
+  high;
 
-extension Neagate on DigitalValue {
-  DigitalValue negate() {
+  DigitalValue invert() {
     return index == 0 ? DigitalValue.high : DigitalValue.low;
   }
 }

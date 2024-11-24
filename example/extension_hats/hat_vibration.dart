@@ -30,7 +30,7 @@ void main(List<String> args) {
         var value = hat.digitalRead(magnetPin);
         print(value);
         if (value != old) {
-          hat.digitalWrite(ledPin, value.negate());
+          hat.digitalWrite(ledPin, value.invert());
         }
         sleep(Duration(milliseconds: wait));
         old = value;
@@ -47,7 +47,7 @@ void main(List<String> args) {
         var value = hat.digitalRead(magnetPin);
         print(value);
         if (value != old) {
-          hat.digitalWrite(ledPin, value.negate());
+          hat.digitalWrite(ledPin, value.invert());
         }
         sleep(Duration(milliseconds: wait));
         old = value;
