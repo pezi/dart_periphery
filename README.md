@@ -569,7 +569,8 @@ The project is currently still beta and development is ongoing.
 * [SDC30](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sdc30.dart): CO₂, temperature and humidity sensor.
 * [SI1145](https://github.com/pezi/dart_periphery/blob/main/example/i2c_si1145.dart): Sunlight sensor: visible & IR light, UV index
 * [Light sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_light_sensor.dart)
-* [Magenetic switch](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magentic_switch.dart)
+* [Magenetic switch sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magentic_switch.dart)
+* [Magenetic hall sensor ](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magentic_hall.dart)
 * FriendlyARM [BakeBit Set](https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
 * [Grove Base Hat RaspberryPi](https://www.seeedstudio.com/Grove-Base-Hat-for-Raspberry-Pi.html)
 * [Grove Base Hat RaspberryPi Zero](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi_Zero)

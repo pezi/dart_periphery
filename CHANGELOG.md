@@ -1,8 +1,9 @@
 ## 0.9.11
 
-* Rework extension hat code
+* Improve extension hat support for [Nano Hat](https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub), [Grove Base Hat RaspberryPi](https://www.seeedstudio.com/Grove-Base-Hat-for-Raspberry-Pi.html) and [Grove Base Hat RaspberryPi Zero](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi_Zero)
 * Add [Light sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_light_sensor.dart)
-* Add [Magenetic switch](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magentic_switch.dart)
+* Add [Magenetic switch sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magentic_switch.dart)
+* Add [Magenetic hall sensor ](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magentic_hall.dart)
 
 ## 0.9.10
 
