@@ -56,7 +56,7 @@ class SHT31result {
 /// Sensirion SHT31 temperature and humidity sensor with a high accuracy.
 ///
 /// See for more
-/// * [SHT31 example code](https://github.com/pezi/dart_periphery/blob/main/examples/i2c_sht31.dart)
+/// * [SHT31 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht31.dart)
 /// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/sht31.dart)
 /// * [Datasheet](https://docs.rs-online.com/6b89/0900766b816bf6a6.pdf)
 class SHT31 {

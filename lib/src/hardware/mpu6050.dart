@@ -126,7 +126,7 @@ class MPU6050exception implements Exception {
 
 /// MPU-6050 Six-Axis (Gyro + Accelerometer) sensor
 ///
-/// * [MPU-6050 example code](https://github.com/pezi/dart_periphery/blob/main/examples/i2c_mpu6050.dart)
+/// * [MPU-6050 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mpu6050.dart)
 /// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/mpu6050.dart)
 /// * [Datasheet](https://invensense.tdk.com/wp-content/uploads/2015/02/MPU-6000-Datasheet1.pdf)
 /// * This implementation is derived from project [Raspoid](https://github.com/Raspoid/raspoid/blob/master/src/main/com/raspoid/additionalcomponents/MPU6050.java)

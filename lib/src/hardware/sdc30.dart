@@ -70,7 +70,7 @@ class SDC30result {
 /// SDC30 CO2 & Temperature & Humidity Sensor
 ///
 /// See for more
-/// * [SDC30 example code](https://github.com/pezi/dart_periphery/blob/main/examples/i2c_sdc30.dart)
+/// * [SDC30 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sdc30.dart)
 /// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/sdc30.dart)
 /// * [Datasheet](https://sensirion.com/media/documents/4EAF6AF8/61652C3C/Sensirion_CO2_Sensors_SCD30_Datasheet.pdf)
 /// * Technical resource [seedstudio](https://www.seeedstudio.com/Grove-CO2-Temperature-Humidity-Sensor-SCD30-p-2911.html)

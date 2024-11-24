@@ -119,7 +119,7 @@ class SGP30result {
 /// Sensirion eCO2 gas sensor, an air quality detection sensor.
 ///
 /// See for more
-/// * [SGP30 example code](https://github.com/pezi/dart_periphery/blob/main/examples/i2c_sgp30.dart)
+/// * [SGP30 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sgp30.dart)
 /// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/sgp30.dart)
 /// * [Datasheet](https://www.mouser.in/datasheet/2/682/Sensirion_Gas_Sensors_SGP30_Datasheet-1511334.pdf)
 /// * This implementation is derived from project [DIOZero](https://github.com/mattjlewis/diozero/blob/master/diozero-core/src/main/java/com/diozero/devices/SGP30.java)

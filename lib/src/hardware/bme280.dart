@@ -142,7 +142,7 @@ class BME280result {
 /// humidity (BME280 only).
 ///
 /// See for more
-/// * [BM280 example code](https://github.com/pezi/dart_periphery/blob/main/examples/i2c_bme280.dart)
+/// * [BM280 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme280.dart)
 /// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/bme280.dart)
 /// * [Datasheet](https://cdn-shop.adafruit.com/datasheets/BST-BME280_DS001-10.pdf)
 /// * This implementation is derived from project [DIOZero](https://github.com/mattjlewis/diozero/blob/main/diozero-core/src/main/java/com/diozero/devices/BMx280.java)

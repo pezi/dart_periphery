@@ -334,7 +334,7 @@ var initRegisterArray = <int>[
 /// PixArt PAJ7620U2 chip, can recognize 9 basic gestures.
 ///
 /// See for more
-/// * [PAJ7620U2 example code](https://github.com/pezi/dart_periphery/blob/main/examples/i2c_gesture_sensor.dart)
+/// * [PAJ7620U2 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_gesture_sensor.dart)
 /// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/gesture_sensor.dart)
 /// * [Datasheet](https://www.waveshare.com/w/upload/1/15/PAJ7620U2_GDS-R1.0_29032016_41002AEN.pdf)
 /// * This code bases on [grove_gesture_sensor.py](https://github.com/Seeed-Studio/grove.py/blob/master/grove/grove_gesture_sensor.py)

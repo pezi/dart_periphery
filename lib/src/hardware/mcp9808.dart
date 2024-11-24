@@ -56,7 +56,7 @@ class MCP9808result {
 /// MCP9808 - high accuracy temperature sensor
 ///
 /// See for more
-/// * [MCP9808 example code](https://github.com/pezi/dart_periphery/blob/main/examples/i2c_mcp9808.dart)
+/// * [MCP9808 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mcp9808.dart)
 /// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/mcp9808.dart)
 /// * [Datasheet](https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ProductDocuments/DataSheets/MCP9808-0.5C-Maximum-Accuracy-Digital-Temperature-Sensor-Data-Sheet-DS20005095B.pdf)
 /// * Technical resource [seedstudio](https://www.seeedstudio.com/Grove-I2C-High-Accuracy-Temperature-Sensor-MCP9808.html)

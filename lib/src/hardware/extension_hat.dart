@@ -78,9 +78,6 @@ int retry = 3;
 ///
 ///  [GrovePi Plus](https://wiki.seeedstudio.com/GrovePi_Plus)
 ///
-///  [Grove Base Hat RaspberryPi](https://www.seeedstudio.com/Grove-Base-Hat-for-Raspberry-Pi.html)
-///
-///  [Grove Base Hat RaspberryPi Zero](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi_Zero)
 ///
 class ArduinoBasedHat {
   final I2C i2c;
@@ -406,7 +403,10 @@ class GrovePiPlusHat extends ArduinoBasedHat {
 const int rpiHatPid = 0x04;
 const int rpiZeroHatPid = 0x05;
 
-/// SeedStudio [Grove Base Hat for Raspberry Pi](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi/)
+///  [Grove Base Hat RaspberryPi](https://www.seeedstudio.com/Grove-Base-Hat-for-Raspberry-Pi.html)
+///
+///  [Grove Base Hat RaspberryPi Zero](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi_Zero)
+///
 ///
 /// | Parameter            | Grove Base Hat                      |
 /// |----------------------|-------------------------------------|
@@ -540,13 +540,3 @@ void main() {
   //hat.digitalWrite(3, DigitalValue.LOW);
 }
 */
-
-void main() {
-  var hat = GroveBaseHat();
-  print(hat.getFirmware());
-  print(hat.getName());
-  while (true) {
-    print(hat.readRatio(0));
-    sleep(Duration(milliseconds: 100));
-  }
-}
