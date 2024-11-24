@@ -10,7 +10,7 @@ import 'parse_cmd_line.dart';
 
 const wait = 150;
 
-/// https://wiki.seeedstudio.com/Grove-Hall_Sensor/
+/// https://wiki.seeedstudio.com/Grove-Vibration_Sensor_SW-420/
 
 ///
 /// Usage: [nano|grove|grovePlus] magentPin ledPin
