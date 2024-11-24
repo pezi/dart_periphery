@@ -74,7 +74,7 @@ int retry = 3;
 /// Base class for the I2C communication between the SoC
 /// (RaspberryPi & NanoPi) and the Arduino Nano based hat.
 ///
-///  [NanoHat](http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
+///  [NanoHat](http://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
 ///
 ///  [GrovePi Plus](https://wiki.seeedstudio.com/GrovePi_Plus)
 ///
@@ -276,13 +276,13 @@ class ArduinoBasedHat {
   }
 }
 
-/// Extension hat from [FriendlyARM](http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
+/// Extension hat from [FriendlyARM](http://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
 /// https://github.com/friendlyarm/BakeBit
 class NanoHatHub extends ArduinoBasedHat {
   int i2cBus;
   NanoHatHub([this.i2cBus = 0]) : super(I2C(i2cBus));
 
-  /// Initializes the [LED bar](http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_LED_Bar):
+  /// Initializes the [LED bar](http://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_LED_Bar):
   void ledBarInitExt(int pin, int chipset, int ledNumber) {
     _sendCmd(Command.ledbarInit, pin, chipset, ledNumber);
   }
@@ -309,19 +309,19 @@ class NanoHatHub extends ArduinoBasedHat {
 
   /// Detaches the servo from [pin].
   ///
-  /// http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_Servo
+  /// https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_Servo
   void servoDetach(int pin) {
     _sendCmd(Command.servoDetach, pin);
   }
 
   /// Steers the position of the servo at [pin] to [position].
-  /// For details see  http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_Servo
+  /// For details see  http://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_Servo
   void servoWrite(int pin, int position) {
     _sendCmd(Command.servoWrite, pin, position);
   }
 
   /// Reads a value from the 'Ultrasonic Ranger' in the range form range 5-300cm.
-  /// http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_Ultrasonic_Ranger
+  /// http://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_Ultrasonic_Ranger
   int readUltrasonic(int pin) {
     autoWait();
     var error = I2Cexception.empty();
@@ -347,7 +347,7 @@ enum LedBarColor { green, red, yellow, blue, ghostWhite, orange, cyan }
 /// LED bar led numeration - see [NanoHatHub.ledBarInitExt] for details.
 enum LedBarLed { led1, led2, led3, led4, led5 }
 
-/// Helper class for the [BakeBit LED bar](http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_LED_Bar) -
+/// Helper class for the [BakeBit LED bar](http://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_LED_Bar) -
 /// see [NanoHatHub.ledBarInitExt] for details.
 class BakeBitLedBar {
   int bitMask;
