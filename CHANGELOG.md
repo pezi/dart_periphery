@@ -1,4 +1,4 @@
-## 0.0.11
+## 0.9.11
 
 * Rework extension hat code
 * Add [Light sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_light_sensor.dart)

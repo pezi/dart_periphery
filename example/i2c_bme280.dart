@@ -4,11 +4,11 @@
 
 import 'package:dart_periphery/dart_periphery.dart';
 
-// BMP280 - high-precision, low-power combined humidity, pressure, and
-// temperature sensor
-//
-//  https://wiki.seeedstudio.com/Grove-Barometer_Sensor-BME280/
-//
+/// BMP280 - high-precision, low-power combined humidity, pressure, and
+/// temperature sensor
+///
+///  https://wiki.seeedstudio.com/Grove-Barometer_Sensor-BME280/
+///
 void main() {
   // Select the right I2C bus number /dev/i2c-?
   // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)

@@ -57,6 +57,12 @@ class HatCmd {
 /// Digital pin value
 enum DigitalValue { low, high }
 
+extension Neagate on DigitalValue {
+  DigitalValue negate() {
+    return index == 0 ? DigitalValue.high : DigitalValue.low;
+  }
+}
+
 /// Pin mode
 enum PinMode { input, output }
 

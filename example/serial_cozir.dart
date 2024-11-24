@@ -6,10 +6,10 @@ import 'dart:io';
 
 import 'package:dart_periphery/dart_periphery.dart';
 
-// COZIR CO2 Sensor
-//
-// [COZIR CO2 Sensor](https://co2meters.com/Documentation/Manuals/Manual_GC_0024_0025_0026_Revised8.pdf)
-//
+/// COZIR CO2 Sensor
+///
+/// [COZIR CO2 Sensor](https://co2meters.com/Documentation/Manuals/Manual_GC_0024_0025_0026_Revised8.pdf)
+///
 void main() {
   var s = Serial('/dev/serial0', Baudrate.b9600);
   try {

@@ -4,10 +4,10 @@
 
 import 'package:dart_periphery/dart_periphery.dart';
 
-// SHT31 - temperature and humidity sensor
-//
-// https://wiki.seeedstudio.com/Grove-TempAndHumi_Sensor-SHT31
-//
+/// SHT31 - temperature and humidity sensor
+///
+/// https://wiki.seeedstudio.com/Grove-TempAndHumi_Sensor-SHT31
+///
 void main() {
   // Select the right I2C bus number /dev/i2c-?
   // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)

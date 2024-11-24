@@ -4,10 +4,10 @@
 
 import 'package:dart_periphery/dart_periphery.dart';
 
-// PAJ7620U2 gesture sensor - recognizes 9 basic gestures
-//
-// https://wiki.seeedstudio.com/Grove-Gesture_v1.0
-//
+/// PAJ7620U2 gesture sensor - recognizes 9 basic gestures
+///
+/// https://wiki.seeedstudio.com/Grove-Gesture_v1.0
+///
 void main() {
   // Select the right I2C bus number /dev/i2c-?
   // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
