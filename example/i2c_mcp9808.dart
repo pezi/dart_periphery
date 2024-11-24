@@ -6,10 +6,10 @@ import 'dart:io';
 
 import 'package:dart_periphery/dart_periphery.dart';
 
-// MCP9808 - high accuracy temperature sensor
-//
-// https://www.seeedstudio.com/Grove-I2C-High-Accuracy-Temperature-Sensor-MCP9808.html
-//
+/// MCP9808 - high accuracy temperature sensor
+///
+/// https://www.seeedstudio.com/Grove-I2C-High-Accuracy-Temperature-Sensor-MCP9808.html
+///
 void main() {
   // Select the right I2C bus number /dev/i2c-?
   // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)

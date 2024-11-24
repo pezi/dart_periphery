@@ -5,10 +5,10 @@
 import 'package:dart_periphery/dart_periphery.dart';
 import 'dart:io';
 
-// BME680 - combined temperature, humidity, pressure and gas sensor.
-//
-// https://wiki.seeedstudio.com/Grove-Temperature_Humidity_Pressure_Gas_Sensor_BME680/
-//
+/// BME680 - combined temperature, humidity, pressure and gas sensor.
+///
+/// https://wiki.seeedstudio.com/Grove-Temperature_Humidity_Pressure_Gas_Sensor_BME680/
+///
 void main() {
   // Select the right I2C bus number /dev/i2c-?
   // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)

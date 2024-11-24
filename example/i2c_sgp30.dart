@@ -6,10 +6,10 @@ import 'dart:io';
 
 import 'package:dart_periphery/dart_periphery.dart';
 
-// SGP30 sensor - VOC and eCO2 gas, air quality detection sensor
-//
-// https://wiki.seeedstudio.com/Grove-VOC_and_eCO2_Gas_Sensor-SGP30/
-//
+/// SGP30 sensor - VOC and eCO2 gas, air quality detection sensor
+///
+/// https://wiki.seeedstudio.com/Grove-VOC_and_eCO2_Gas_Sensor-SGP30/
+///
 void main() {
   // Select the right I2C bus number /dev/i2c-?
   // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)

@@ -2,35 +2,43 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+// https://github.com/friendlyarm/BakeBit/blob/master/Firmware/Source/bakebit_v1.0.0/bakebit_v1.0.0.ino
+
 import 'dart:io';
 
 import '../i2c.dart';
 
-const int digitalReadCmd = 1;
-const int digitalWriteCmd = 2;
-const int analogReadCmd = 3;
-const int analogWriteCmd = 4;
-const int pinModeCmd = 5;
-const int ultraSonicCmd = 7;
-const int firmwareCmd = 8;
-const int ledbarInitCmd = 110;
-const int ledbarReleaseCmd = 111;
-const int ledbarShowCmd = 112;
-const int servoAttachCmd = 120;
-const int servoDetachCmd = 121;
-const int servoWriteCmd = 122;
+enum Command {
+  digitalRead(1),
+  digitalWrite(2),
+  analogRead(3),
+  analogWrite(4),
+  pinMode(5),
+  ultraSonic(7),
+  firmware(8),
+  ledbarInit(110),
+  ledbarRelease(111),
+  ledbarShow(112),
+  servoAttach(120),
+  servoDetach(121),
+  servoWrite(122);
+
+  final int value;
+
+  const Command(this.value);
+}
 
 /// Command buffer for a hat command.
 ///
 /// Format: byte 1 : command, byte 2 : pin, byte 3 and 4: optional parameter
 class HatCmd {
-  int cmd;
+  Command cmd;
   HatCmd(this.cmd);
 
   /// Returns an command buffer containing a command.
   List<int> getCmdSeq() {
     var data = List<int>.filled(4, 0);
-    data[0] = cmd;
+    data[0] = cmd.value;
     return data;
   }
 
@@ -38,7 +46,7 @@ class HatCmd {
   /// optional values: [value] and  [value2].
   List<int> getCmdSeqExt(int pin, [int value = 0, int value2 = 0]) {
     var data = <int>[];
-    data.add(cmd);
+    data.add(cmd.value);
     data.add(pin);
     data.add(value);
     data.add(value2);
@@ -46,10 +54,16 @@ class HatCmd {
   }
 }
 
-/// Digital value a [GrovePiPlusHat] or [NanoHatHub] pin.
+/// Digital pin value
 enum DigitalValue { low, high }
 
-/// Pin mode of a  [GrovePiPlusHat] or [NanoHatHub] pin.
+extension Neagate on DigitalValue {
+  DigitalValue negate() {
+    return index == 0 ? DigitalValue.high : DigitalValue.low;
+  }
+}
+
+/// Pin mode
 enum PinMode { input, output }
 
 // default i2c address
@@ -66,8 +80,10 @@ int retry = 3;
 /// Base class for the I2C communication between the SoC
 /// (RaspberryPi & NanoPi) and the Arduino Nano based hat.
 ///
-///  <a href="http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_NanoHat_Hub">NanoHat Hub</a><br>
-///  <a href="https://wiki.seeedstudio.com/GrovePi_Plus">GrovePi Plus</a>
+///  [NanoHat](http://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
+///
+///  [GrovePi Plus](https://wiki.seeedstudio.com/GrovePi_Plus)
+///
 ///
 class ArduinoBasedHat {
   final I2C i2c;
@@ -139,7 +155,7 @@ class ArduinoBasedHat {
     var error = I2Cexception.empty();
     for (var i = 0; i < retry; ++i) {
       try {
-        writeI2Cblock(HatCmd(pinModeCmd).getCmdSeqExt(pin, mode.index));
+        writeI2Cblock(HatCmd(Command.pinMode).getCmdSeqExt(pin, mode.index));
         _updateLastAction();
         return;
       } on I2Cexception catch (e) {
@@ -156,7 +172,7 @@ class ArduinoBasedHat {
     var error = I2Cexception.empty();
     for (var i = 0; i < retry; ++i) {
       try {
-        writeI2Cblock(HatCmd(digitalReadCmd).getCmdSeqExt(pin));
+        writeI2Cblock(HatCmd(Command.digitalRead).getCmdSeqExt(pin));
         sleep(Duration(milliseconds: delay));
         var value = i2c.readByteReg(hatArduinoI2Caddress, 1);
         _updateLastAction();
@@ -178,7 +194,8 @@ class ArduinoBasedHat {
     var error = I2Cexception.empty();
     for (var i = 0; i < retry; ++i) {
       try {
-        writeI2Cblock(HatCmd(digitalWriteCmd).getCmdSeqExt(pin, value.index));
+        writeI2Cblock(
+            HatCmd(Command.digitalWrite).getCmdSeqExt(pin, value.index));
         _updateLastAction();
         return;
       } on I2Cexception catch (e) {
@@ -195,10 +212,10 @@ class ArduinoBasedHat {
     var error = I2Cexception.empty();
     for (var i = 0; i < retry; ++i) {
       try {
-        writeI2Cblock(HatCmd(analogReadCmd).getCmdSeqExt(pin));
+        writeI2Cblock(HatCmd(Command.analogRead).getCmdSeqExt(pin));
         sleep(Duration(milliseconds: delay));
         var data = i2c.readBytesReg(hatArduinoI2Caddress, hatRegister, 4);
-        var value = (data[1] & 0xff) * 256 + (data[2]);
+        var value = (data[1] & 0xff) << 8 | (data[2] & 0xff);
         if (value == 65535) {
           value = -1;
         }
@@ -218,7 +235,7 @@ class ArduinoBasedHat {
     var error = I2Cexception.empty();
     for (var i = 0; i < retry; ++i) {
       try {
-        writeI2Cblock(HatCmd(analogWriteCmd).getCmdSeqExt(pin, value));
+        writeI2Cblock(HatCmd(Command.analogWrite).getCmdSeqExt(pin, value));
         _updateLastAction();
         return;
       } on I2Cexception catch (e) {
@@ -235,10 +252,9 @@ class ArduinoBasedHat {
     var error = I2Cexception.empty();
     for (var i = 0; i < retry; ++i) {
       try {
-        writeI2Cblock(HatCmd(firmwareCmd).getCmdSeq());
+        writeI2Cblock(HatCmd(Command.firmware).getCmdSeq());
         sleep(Duration(milliseconds: 100));
         var data = i2c.readBytesReg(hatArduinoI2Caddress, hatRegister, 4);
-        print(data.length);
         _updateLastAction();
         return '${data[1] & 0xff}.${data[2] & 0xff}.${data[3] & 0xff}';
       } on I2Cexception catch (e) {
@@ -249,7 +265,7 @@ class ArduinoBasedHat {
     throw error;
   }
 
-  void _sendCmd(int cmd, int pin, [int value1 = 0, int value2 = 0]) {
+  void _sendCmd(Command cmd, int pin, [int value1 = 0, int value2 = 0]) {
     autoWait();
     var error = I2Cexception.empty();
     for (var i = 0; i < retry; ++i) {
@@ -266,57 +282,58 @@ class ArduinoBasedHat {
   }
 }
 
-/// Extension hat from [FriendlyARM](http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
+/// Extension hat from [FriendlyARM](http://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
+/// https://github.com/friendlyarm/BakeBit
 class NanoHatHub extends ArduinoBasedHat {
   int i2cBus;
   NanoHatHub([this.i2cBus = 0]) : super(I2C(i2cBus));
 
-  /// Initializes the [LED bar](http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_LED_Bar):
+  /// Initializes the [LED bar](http://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_LED_Bar):
   void ledBarInitExt(int pin, int chipset, int ledNumber) {
-    _sendCmd(ledbarInitCmd, pin, chipset, ledNumber);
+    _sendCmd(Command.ledbarInit, pin, chipset, ledNumber);
   }
 
   /// Initialize the LED bar.
   void ledBarInit(int pin) {
-    _sendCmd(ledbarInitCmd, pin, 0, 5);
+    _sendCmd(Command.ledbarInit, pin, 0, 5);
   }
 
   /// Shows the LED bar.
   void ledBarShow(int pin, int highBits, int lowBits) {
-    _sendCmd(ledbarShowCmd, pin, highBits, lowBits);
+    _sendCmd(Command.ledbarShow, pin, highBits, lowBits);
   }
 
   /// Releases the LED bar.
   void ledBarRelease(int pin) {
-    _sendCmd(ledbarReleaseCmd, pin);
+    _sendCmd(Command.ledbarRelease, pin);
   }
 
   /// Attaches the servo to [pin].
   void servoAttach(int pin) {
-    _sendCmd(servoAttachCmd, pin);
+    _sendCmd(Command.servoAttach, pin);
   }
 
   /// Detaches the servo from [pin].
   ///
-  /// http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_Servo
+  /// https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_Servo
   void servoDetach(int pin) {
-    _sendCmd(servoDetachCmd, pin);
+    _sendCmd(Command.servoDetach, pin);
   }
 
   /// Steers the position of the servo at [pin] to [position].
-  /// For details see  http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_Servo
+  /// For details see  http://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_Servo
   void servoWrite(int pin, int position) {
-    _sendCmd(servoWriteCmd, pin, position);
+    _sendCmd(Command.servoWrite, pin, position);
   }
 
   /// Reads a value from the 'Ultrasonic Ranger' in the range form range 5-300cm.
-  /// http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_Ultrasonic_Ranger
+  /// http://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_Ultrasonic_Ranger
   int readUltrasonic(int pin) {
     autoWait();
     var error = I2Cexception.empty();
     for (var i = 0; i < retry; ++i) {
       try {
-        writeI2Cblock(HatCmd(ultraSonicCmd).getCmdSeqExt(pin));
+        writeI2Cblock(HatCmd(Command.ultraSonic).getCmdSeqExt(pin));
         sleep(Duration(milliseconds: 100));
         var data = i2c.readBytesReg(hatArduinoI2Caddress, hatRegister, 3);
         _updateLastAction();
@@ -336,7 +353,7 @@ enum LedBarColor { green, red, yellow, blue, ghostWhite, orange, cyan }
 /// LED bar led numeration - see [NanoHatHub.ledBarInitExt] for details.
 enum LedBarLed { led1, led2, led3, led4, led5 }
 
-/// Helper class for the [BakeBit LED bar](http://wiki.friendlyarm.com/wiki/index.php/BakeBit_-_LED_Bar) -
+/// Helper class for the [BakeBit LED bar](http://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_LED_Bar) -
 /// see [NanoHatHub.ledBarInitExt] for details.
 class BakeBitLedBar {
   int bitMask;
@@ -366,10 +383,24 @@ class BakeBitLedBar {
 
 /// SeedStudio [GrovePiPlusHat](https://wiki.seeedstudio.com/GrovePi_Plus/)
 ///
-/// Do not use this hardware
+/// Do not use this hardware!
 /// - UART is not working correct with some devices e.g. CozIR CO2 sensor
 /// - Problems using more than 2 I2C devices
 /// - Problems using I2C and SPI bus at the same time
+///
+/// | Paramter        | GrovePi+    |
+/// | ----------------| ----------- |
+/// | Working Voltage | 5V          |
+/// | MCU             | ATMEGA328P  |
+/// | Grove Ports     | 7 x Digital(5V), 3 x Analog(5V), 3 x I2C(5V) |
+/// |                 | 1 x SERIAL: Connect to ATMEGA328P D0/1(5V) |
+/// |                 | 1 x RPISER: Connect to Raspberry Pi(3.3V), 1 x ISP  |
+/// | Grove-Digital   | Connect to ATMEGA328P digital pins and transfer to I2C |
+/// |                 | signal, then through level converter to Raspberry Pi |
+/// | Grove-Analog    | Connect to ATMEGA328P analog pins(10bit ADC) and then |
+/// |                 | transfer to I2C signal, then through level converter to |
+/// |                 | Raspberry Pi |
+/// | Grove-I2C       | Connect through level converter to Raspberry Pi |
 class GrovePiPlusHat extends ArduinoBasedHat {
   final int i2cBus;
   GrovePiPlusHat([this.i2cBus = 1]) : super(I2C(i2cBus));
@@ -378,7 +409,29 @@ class GrovePiPlusHat extends ArduinoBasedHat {
 const int rpiHatPid = 0x04;
 const int rpiZeroHatPid = 0x05;
 
-/// SeedStudio [Grove Base Hat for Raspberry Pi](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi/)
+///  [Grove Base Hat RaspberryPi](https://www.seeedstudio.com/Grove-Base-Hat-for-Raspberry-Pi.html)
+///
+///  [Grove Base Hat RaspberryPi Zero](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi_Zero)
+///
+///
+/// | Parameter            | Grove Base Hat                      |
+/// |----------------------|-------------------------------------|
+/// | Working Voltage      | 3.3V                                |
+/// | MCU                  | STM32F030F4P6                       |
+/// | Grove Ports Pi       | 6 x Digital(3.3V), 4 x Analog(3.3V) |
+/// |                      | 3 x I2C(3.3V); 1 x PWM(3.3V)        |
+/// |                      | 1 x RPISER(UART) connect to Pi(3.3V)|
+/// |                      |                                     |
+/// | Grove Ports Pi Zero  | 2 x Digital(3.3V), 3 x Analog(3.3V) |
+/// |                      | 3 x I2C(3.3V), 1 x PWM(3.3V)        |
+/// |                      | 1 x RPISER(UART) connect to Pi(3.3V)|
+/// |                      |                                     |
+/// | Grove-Digital        | Connect to Raspberry Pi directly    |
+/// | Grove-Analog         | Connect to STM32F030F4P6(12bit ADC  |
+/// |                      | and then transfer to I2C signal,    |
+/// |                      | route to Pi directly                |
+/// | Grove-I2C, Grove-PWM | Connect to Raspberry Pi directly    |
+/// | and RPISER           |                                     |
 class GroveBaseHat {
   final I2C i2c;
   final int i2cBus;
@@ -397,7 +450,6 @@ class GroveBaseHat {
 
   /// Returns the name of the hat model.
   String getName() {
-    print(getId());
     switch (getId()) {
       case rpiHatPid:
         return 'Grove Base Hat RPi';
@@ -495,13 +547,3 @@ void main() {
   //hat.digitalWrite(3, DigitalValue.LOW);
 }
 */
-
-void main() {
-  var hat = GroveBaseHat();
-  print(hat.getFirmware());
-  print(hat.getName());
-  while (true) {
-    print(hat.readADCraw(0));
-    sleep(Duration(milliseconds: 500));
-  }
-}

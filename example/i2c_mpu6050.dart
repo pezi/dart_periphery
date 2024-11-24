@@ -5,10 +5,10 @@
 import 'package:dart_periphery/dart_periphery.dart';
 import 'dart:io';
 
-// MPU-6050 Six-Axis (Gyro + Accelerometer) sensor
-//
-// Datasheet: https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/
-//
+/// MPU-6050 Six-Axis (Gyro + Accelerometer) sensor
+///
+/// Datasheet: https://invensense.tdk.com/products/motion-tracking/6-axis/mpu-6050/
+///
 void main() {
   // Select the right I2C bus number /dev/i2c-?
   // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
