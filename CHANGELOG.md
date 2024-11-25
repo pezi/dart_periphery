@@ -1,3 +1,7 @@
+## 0.9.12
+
+* Add button demo
+
 ## 0.9.11
 
 * Improve extension hat support for [Nano Hat](https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub), [Grove Base Hat RaspberryPi](https://www.seeedstudio.com/Grove-Base-Hat-for-Raspberry-Pi.html) and [Grove Base Hat RaspberryPi Zero](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi_Zero)

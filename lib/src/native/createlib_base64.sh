@@ -14,7 +14,7 @@ base64 -i libperiphery_ia32.so.xz | tr -d \\n > libperiphery_ia32.so.base64
 base64 -i libperiphery_x64.so.xz | tr -d \\n > libperiphery_x64.so.base64
 base64 -i libperiphery_riscv64.so.xz | tr -d \\n > libperiphery_riscv64.so.base64
 
-echo "// created by create_libbase64.sh" > lib.dart
+echo "// created by createlib_base64.sh - xz compressed based 64 verion" > lib.dart
 
 echo "String arm ='\c" >> lib.dart
 cat libperiphery_arm.so.base64 >> lib.dart
