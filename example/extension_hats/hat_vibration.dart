@@ -13,7 +13,7 @@ const wait = 150;
 /// https://wiki.seeedstudio.com/Grove-Vibration_Sensor_SW-420/
 
 ///
-/// Usage: [nano|grove|grovePlus] magentPin ledPin
+/// Usage: [nano|grove|grovePlus] vibrationPin ledPin
 void main(List<String> args) {
   var tupple = checkArgs2Pins(args);
   var magnetPin = tupple.$2;
@@ -30,7 +30,7 @@ void main(List<String> args) {
         var value = hat.digitalRead(magnetPin);
         print(value);
         if (value != old) {
-          hat.digitalWrite(ledPin, value.negate());
+          hat.digitalWrite(ledPin, value.invert());
         }
         sleep(Duration(milliseconds: wait));
         old = value;
@@ -47,7 +47,7 @@ void main(List<String> args) {
         var value = hat.digitalRead(magnetPin);
         print(value);
         if (value != old) {
-          hat.digitalWrite(ledPin, value.negate());
+          hat.digitalWrite(ledPin, value.invert());
         }
         sleep(Duration(milliseconds: wait));
         old = value;

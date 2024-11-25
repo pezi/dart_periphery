@@ -43,7 +43,7 @@ class HatCmd {
   }
 
   /// Returns a command buffer containing a command, a [pin] and two
-  /// optional values: [value] and  [value2].
+  /// optional values: [value] and [value2].
   List<int> getCmdSeqExt(int pin, [int value = 0, int value2 = 0]) {
     var data = <int>[];
     data.add(cmd.value);
@@ -55,10 +55,12 @@ class HatCmd {
 }
 
 /// Digital pin value
-enum DigitalValue { low, high }
+enum DigitalValue {
+  low,
+  high;
 
-extension Neagate on DigitalValue {
-  DigitalValue negate() {
+  /// Inverts a [DigitalValue]
+  DigitalValue invert() {
     return index == 0 ? DigitalValue.high : DigitalValue.low;
   }
 }
@@ -360,7 +362,7 @@ class BakeBitLedBar {
 
   BakeBitLedBar() : bitMask = 0;
 
-  /// Sets [led] ([LedBarLed.LED1]-[LedBarLed.LED5]) to [color].
+  /// Sets [led] ([LedBarLed.led1]-[LedBarLed.led5]) to [color].
   void setLed(LedBarLed led, LedBarColor color) {
     bitMask |= (color.index + 1) << (led.index * 3);
   }
