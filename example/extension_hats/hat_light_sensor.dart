@@ -43,7 +43,7 @@ void main(List<String> args) {
 
       while (true) {
         print(hat.readADCraw(pin));
-        sleep(Duration(milliseconds: 100));
+        sleep(Duration(milliseconds: wait));
       }
   }
 }

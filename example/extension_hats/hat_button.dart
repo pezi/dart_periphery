@@ -2,48 +2,73 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:io';
 import 'package:dart_periphery/dart_periphery.dart';
+import 'dart:io';
 
 import 'parse_cmd_line.dart';
 
-const wait = 500;
+const wait = 150;
 
-/// https://wiki.seeedstudio.com/Grove-Light_Sensor/
+/// https://wiki.seeedstudio.com/Grove-Button
 ///
-/// Usage: [nano|grove|grovePlus] buttonPin
+/// Usage: [nano|grove|grovePlus] buttonPin ledPin
 void main(List<String> args) {
-  var tupple = checkArgs(args);
-  var pin = tupple.$2;
+  var tupple = checkArgs2Pins(args);
+  var magnetPin = tupple.$2;
+  var ledPin = tupple.$3;
   switch (tupple.$1) {
     case Hat.nano:
-      {
-        var hat = NanoHatHub();
-        print(hat.getFirmwareVersion());
+      var hat = NanoHatHub();
+      print("Firmeware ${hat.getFirmwareVersion()}");
+      print("Magnet digial pin IN: $magnetPin");
+      print("Led digial pin OUT: $ledPin");
 
-        while (true) {
-          print(hat.analogRead(pin));
-          sleep(Duration(milliseconds: wait));
+      var old = DigitalValue.low;
+      while (true) {
+        var value = hat.digitalRead(magnetPin);
+        print(value);
+        if (value != old) {
+          hat.digitalWrite(ledPin, value);
         }
+        sleep(Duration(milliseconds: wait));
+        old = value;
       }
+
     case Hat.grovePlus:
-      {
-        var hat = NanoHatHub();
-        print(hat.getFirmwareVersion());
+      var hat = GrovePiPlusHat();
+      print("Firmeware ${hat.getFirmwareVersion()}");
+      print("Magnet digial pin IN: $magnetPin");
+      print("Led digial pin OUT: $ledPin");
 
-        while (true) {
-          print(hat.analogRead(pin));
-          sleep(Duration(milliseconds: wait));
+      var old = DigitalValue.low;
+      while (true) {
+        var value = hat.digitalRead(magnetPin);
+        print(value);
+        if (value != old) {
+          hat.digitalWrite(ledPin, value);
         }
+        sleep(Duration(milliseconds: wait));
+        old = value;
       }
+
     case Hat.grove:
       var hat = GroveBaseHat();
-      print(hat.getFirmware());
-      print(hat.getName());
+      print("Firmeware ${hat.getFirmware()}");
+      print("Extension hat ${hat.getName()}");
+      print("Magnet digial pin IN: $magnetPin");
+      print("Led digial pin OUT: $ledPin");
+      var magnet = GPIO(magnetPin, GPIOdirection.gpioDirIn);
+      var led = GPIO(ledPin, GPIOdirection.gpioDirOut);
 
+      var old = false;
       while (true) {
-        print(hat.readADCraw(pin));
-        sleep(Duration(milliseconds: 100));
+        var value = magnet.read();
+        print(value);
+        if (value != old) {
+          led.write(value);
+        }
+        sleep(Duration(milliseconds: wait));
+        old = value;
       }
   }
 }
