@@ -13,7 +13,7 @@ const wait = 150;
 /// https://wiki.seeedstudio.com/Grove-Vibration_Sensor_SW-420/
 
 ///
-/// Usage: [nano|grove|grovePlus] magentPin ledPin
+/// Usage: [nano|grove|grovePlus] vibrationPin ledPin
 void main(List<String> args) {
   var tupple = checkArgs2Pins(args);
   var magnetPin = tupple.$2;

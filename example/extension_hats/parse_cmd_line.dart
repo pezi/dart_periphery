@@ -4,6 +4,7 @@
 
 import 'dart:io';
 
+/// Supported extensions hats
 enum Hat { nano, grove, grovePlus }
 
 void usage() {
