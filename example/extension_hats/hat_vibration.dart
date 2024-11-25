@@ -16,18 +16,21 @@ const wait = 150;
 /// Usage: [nano|grove|grovePlus] vibrationPin ledPin
 void main(List<String> args) {
   var tupple = checkArgs2Pins(args);
-  var magnetPin = tupple.$2;
+  var vibrationPin = tupple.$2;
   var ledPin = tupple.$3;
   switch (tupple.$1) {
     case Hat.nano:
       var hat = NanoHatHub();
       print("Firmeware ${hat.getFirmwareVersion()}");
-      print("Magnet digial pin: $magnetPin");
+      print("Magnet digial pin: $vibrationPin");
       print("Led digial pin: $ledPin");
+
+      hat.pinMode(vibrationPin, PinMode.input);
+      hat.pinMode(ledPin, PinMode.output);
 
       var old = DigitalValue.high;
       while (true) {
-        var value = hat.digitalRead(magnetPin);
+        var value = hat.digitalRead(vibrationPin);
         print(value);
         if (value != old) {
           hat.digitalWrite(ledPin, value.invert());
@@ -39,12 +42,15 @@ void main(List<String> args) {
     case Hat.grovePlus:
       var hat = GrovePiPlusHat();
       print("Firmeware ${hat.getFirmwareVersion()}");
-      print("Magnet digial pin: $magnetPin");
+      print("Magnet digial pin: $vibrationPin");
       print("Led digial pin: $ledPin");
+
+      hat.pinMode(vibrationPin, PinMode.input);
+      hat.pinMode(ledPin, PinMode.output);
 
       var old = DigitalValue.high;
       while (true) {
-        var value = hat.digitalRead(magnetPin);
+        var value = hat.digitalRead(vibrationPin);
         print(value);
         if (value != old) {
           hat.digitalWrite(ledPin, value.invert());
@@ -56,9 +62,9 @@ void main(List<String> args) {
       var hat = GroveBaseHat();
       print("Firmeware ${hat.getFirmware()}");
       print("Extension hat ${hat.getName()}");
-      print("Magnet digial pin: $magnetPin");
+      print("Magnet digial pin: $vibrationPin");
       print("Led digial pin: $ledPin");
-      var magnet = GPIO(magnetPin, GPIOdirection.gpioDirIn);
+      var magnet = GPIO(vibrationPin, GPIOdirection.gpioDirIn);
       var led = GPIO(ledPin, GPIOdirection.gpioDirOut);
 
       var old = true;

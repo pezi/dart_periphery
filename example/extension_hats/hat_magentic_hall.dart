@@ -22,8 +22,11 @@ void main(List<String> args) {
     case Hat.nano:
       var hat = NanoHatHub();
       print("Firmeware ${hat.getFirmwareVersion()}");
-      print("Magnet digial pin: $magnetPin");
-      print("Led digial pin: $ledPin");
+      print("Magnet digital pin: $magnetPin");
+      print("Led digital pin: $ledPin");
+
+      hat.pinMode(magnetPin, PinMode.input);
+      hat.pinMode(ledPin, PinMode.output);
 
       var old = DigitalValue.high;
       while (true) {
@@ -39,8 +42,11 @@ void main(List<String> args) {
     case Hat.grovePlus:
       var hat = GrovePiPlusHat();
       print("Firmeware ${hat.getFirmwareVersion()}");
-      print("Magnet digial pin: $magnetPin");
-      print("Led digial pin: $ledPin");
+      print("Magnet digital pin: $magnetPin");
+      print("Led digital pin: $ledPin");
+
+      hat.pinMode(magnetPin, PinMode.input);
+      hat.pinMode(ledPin, PinMode.output);
 
       var old = DigitalValue.high;
       while (true) {
@@ -56,8 +62,8 @@ void main(List<String> args) {
       var hat = GroveBaseHat();
       print("Firmeware ${hat.getFirmware()}");
       print("Extension hat ${hat.getName()}");
-      print("Magnet digial pin: $magnetPin");
-      print("Led digial pin: $ledPin");
+      print("Magnet digital pin: $magnetPin");
+      print("Led digital pin: $ledPin");
       var magnet = GPIO(magnetPin, GPIOdirection.gpioDirIn);
       var led = GPIO(ledPin, GPIOdirection.gpioDirOut);
 
