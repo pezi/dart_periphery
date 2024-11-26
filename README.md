@@ -350,6 +350,8 @@ void main() {
 }
 ```
 
+### ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/grove.jpg "Extension hat - ADC support") 
+
 ## 🏗 Install Dart on Raspbian and Armbian
 
 1.) Navigate to the home directory:

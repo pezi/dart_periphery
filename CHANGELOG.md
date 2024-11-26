@@ -1,6 +1,7 @@
 ## 0.9.12
 
 * Add button demo
+* Add PIR motion sensor
 
 ## 0.9.11
 
