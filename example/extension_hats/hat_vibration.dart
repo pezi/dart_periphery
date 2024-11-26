@@ -14,6 +14,7 @@ const wait = 150;
 ///
 /// Usage: [nano|grove|grovePlus] vibrationPin ledPin
 void main(List<String> args) {
+  String pinInfo = "Vibration pin";
   var tupple = checkArgs2Pins(args, "vibrationPin", "ledPin");
   var vibrationPin = tupple.$2;
   var ledPin = tupple.$3;
@@ -21,7 +22,7 @@ void main(List<String> args) {
     case Hat.nano:
       var hat = NanoHatHub();
       print("Firmeware ${hat.getFirmwareVersion()}");
-      print("Vibration digial pin: $vibrationPin");
+      print("$pinInfo: $vibrationPin");
       print("Led digial pin: $ledPin");
 
       hat.pinMode(vibrationPin, PinMode.input);
@@ -41,7 +42,7 @@ void main(List<String> args) {
     case Hat.grovePlus:
       var hat = GrovePiPlusHat();
       print("Firmeware ${hat.getFirmwareVersion()}");
-      print("Vibration digial pin: $vibrationPin");
+      print("$pinInfo: $vibrationPin");
       print("Led digial pin: $ledPin");
 
       hat.pinMode(vibrationPin, PinMode.input);
@@ -61,7 +62,7 @@ void main(List<String> args) {
       var hat = GroveBaseHat();
       print("Firmeware ${hat.getFirmware()}");
       print("Extension hat ${hat.getName()}");
-      print("Vibration digial pin: $vibrationPin");
+      print("$pinInfo: $vibrationPin");
       print("Led digial pin: $ledPin");
 
       var magnet = GPIO(vibrationPin, GPIOdirection.gpioDirIn);

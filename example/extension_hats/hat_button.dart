@@ -13,15 +13,16 @@ const wait = 150;
 ///
 /// Usage: [nano|grove|grovePlus] buttonPin ledPin
 void main(List<String> args) {
-  var tupple = checkArgs2Pins(args, "buttonDigitalPin", "ledDigitalPin");
+  String pinInfo = "Button pin";
+  var tupple = checkArgs2Pins(args, "buttonPin", "ledPin");
   var buttonPin = tupple.$2;
   var ledPin = tupple.$3;
   switch (tupple.$1) {
     case Hat.nano:
       var hat = NanoHatHub();
       print("Firmeware ${hat.getFirmwareVersion()}");
-      print("Button digital pin IN: $buttonPin");
-      print("Led digial pin OUT: $ledPin");
+      print("$pinInfo: $buttonPin");
+      print("Led pin: $ledPin");
 
       hat.pinMode(buttonPin, PinMode.input);
       hat.pinMode(ledPin, PinMode.output);
@@ -42,8 +43,8 @@ void main(List<String> args) {
     case Hat.grovePlus:
       var hat = GrovePiPlusHat();
       print("Firmeware ${hat.getFirmwareVersion()}");
-      print("Button digital pin IN: $buttonPin");
-      print("Led digial pin OUT: $ledPin");
+      print("$pinInfo: $buttonPin");
+      print("Led pin: $ledPin");
 
       hat.pinMode(buttonPin, PinMode.input);
       hat.pinMode(ledPin, PinMode.output);
@@ -64,8 +65,8 @@ void main(List<String> args) {
       var hat = GroveBaseHat();
       print("Firmeware ${hat.getFirmware()}");
       print("Extension hat ${hat.getName()}");
-      print("Button digital pin IN: $buttonPin");
-      print("Led digial pin OUT: $ledPin");
+      print("$pinInfo: $buttonPin");
+      print("Led pin: $ledPin");
 
       var magnet = GPIO(buttonPin, GPIOdirection.gpioDirIn);
       var led = GPIO(ledPin, GPIOdirection.gpioDirOut);
