@@ -13,7 +13,7 @@ const wait = 150;
 ///
 /// Usage: [nano|grove|grovePlus] buttonPin ledPin
 void main(List<String> args) {
-  var tupple = checkArgs2Pins(args);
+  var tupple = checkArgs2Pins(args, "buttonDigitalPin", "ledDigitalPin");
   var buttonPin = tupple.$2;
   var ledPin = tupple.$3;
   switch (tupple.$1) {

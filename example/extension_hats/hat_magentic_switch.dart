@@ -13,7 +13,7 @@ const wait = 150;
 ///
 /// Usage: [nano|grove|grovePlus] vibrationPin ledPin
 void main(List<String> args) {
-  var tupple = checkArgs2Pins(args);
+  var tupple = checkArgs2Pins(args, "magenetPin", "ledPin");
   var magnetPin = tupple.$2;
   var ledPin = tupple.$3;
   switch (tupple.$1) {
@@ -65,6 +65,7 @@ void main(List<String> args) {
       print("Led digital pin OUT: $ledPin");
       var magnet = GPIO(magnetPin, GPIOdirection.gpioDirIn);
       var led = GPIO(ledPin, GPIOdirection.gpioDirOut);
+      led.write(false);
 
       var old = false;
       while (true) {
