@@ -13,26 +13,32 @@ const wait = 200;
 ///
 /// Usage: [nano|grove|grovePlus] pirMotionPin ledPin
 void main(List<String> args) {
-  String pinInfo = "Magenetic switch pin";
+  String pinInfo = "PIR motion pin";
   var tupple = checkArgs2Pins(args, "pirMotionPin", "ledPin");
-  var magnetPin = tupple.$2;
+  var pirMotionPin = tupple.$2;
   var ledPin = tupple.$3;
   switch (tupple.$1) {
     case Hat.nano:
       var hat = NanoHatHub();
       print("Firmeware ${hat.getFirmwareVersion()}");
-      print("$pinInfo: $magnetPin");
+      print("$pinInfo: $pirMotionPin");
       print("Led pin: $ledPin");
 
-      hat.pinMode(magnetPin, PinMode.input);
+      hat.pinMode(pirMotionPin, PinMode.input);
       hat.pinMode(ledPin, PinMode.output);
+
+      hat.digitalWrite(ledPin, DigitalValue.low);
 
       var old = DigitalValue.low;
       while (true) {
-        var value = hat.digitalRead(magnetPin);
-        print(value);
+        var value = hat.digitalRead(pirMotionPin);
         if (value != old) {
           hat.digitalWrite(ledPin, value);
+          if (value == DigitalValue.high) {
+            print("Motion detected");
+          } else {
+            print("Watching...");
+          }
         }
         sleep(Duration(milliseconds: wait));
         old = value;
@@ -41,18 +47,24 @@ void main(List<String> args) {
     case Hat.grovePlus:
       var hat = GrovePiPlusHat();
       print("Firmeware ${hat.getFirmwareVersion()}");
-      print("$pinInfo: $magnetPin");
+      print("$pinInfo: $pirMotionPin");
       print("Led pin: $ledPin");
 
-      hat.pinMode(magnetPin, PinMode.input);
+      hat.pinMode(pirMotionPin, PinMode.input);
       hat.pinMode(ledPin, PinMode.output);
+
+      hat.digitalWrite(ledPin, DigitalValue.low);
 
       var old = DigitalValue.low;
       while (true) {
-        var value = hat.digitalRead(magnetPin);
-        print(value);
+        var value = hat.digitalRead(pirMotionPin);
         if (value != old) {
           hat.digitalWrite(ledPin, value);
+          if (value == DigitalValue.high) {
+            print("Motion detected");
+          } else {
+            print("Watching...");
+          }
         }
         sleep(Duration(milliseconds: wait));
         old = value;
@@ -62,9 +74,9 @@ void main(List<String> args) {
       var hat = GroveBaseHat();
       print("Firmeware ${hat.getFirmware()}");
       print("Extension hat ${hat.getName()}");
-      print("$pinInfo: $magnetPin");
+      print("$pinInfo: $pirMotionPin");
       print("Led pin: $ledPin");
-      var pirMotion = GPIO(magnetPin, GPIOdirection.gpioDirIn);
+      var pirMotion = GPIO(pirMotionPin, GPIOdirection.gpioDirIn);
       var led = GPIO(ledPin, GPIOdirection.gpioDirOut);
       led.write(false);
 
