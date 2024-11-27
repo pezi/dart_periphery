@@ -352,7 +352,7 @@ void main() {
 
 ### Extension Hat Based ADC support
 
-![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/adc.jpg "Extension hat - ADC") 
+![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/hat_adc_demo.jpg "Extension hat - ADC") 
 
 Extension hats, such as the [Grove Base Hat RaspberryPi Zero](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi_Zero), add addidional functionality like ADC (Analog-to-Digital Conversion) support.
 
