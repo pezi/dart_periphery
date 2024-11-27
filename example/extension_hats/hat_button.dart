@@ -28,7 +28,8 @@ void main(List<String> args) {
       hat.pinMode(ledPin, PinMode.output);
       hat.digitalWrite(ledPin, DigitalValue.low);
 
-      // BakeBit button: button is not pressed the module will output high otherwise it will output low.
+      // BakeBit button: button is not pressed the module will output high
+      // otherwise it will output low.
       var old = DigitalValue.high;
       while (true) {
         var value = hat.digitalRead(buttonPin);
