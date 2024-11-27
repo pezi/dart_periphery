@@ -3,7 +3,6 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:dart_periphery/dart_periphery.dart';
-import 'package:dart_periphery/src/hardware/extension_hat.dart';
 import 'dart:io';
 
 import 'parse_cmd_line.dart';
@@ -15,19 +14,23 @@ const wait = 150;
 ///
 /// Usage: [nano|grove|grovePlus] vibrationPin ledPin
 void main(List<String> args) {
-  var tupple = checkArgs2Pins(args);
-  var magnetPin = tupple.$2;
+  String pinInfo = "Vibration pin";
+  var tupple = checkArgs2Pins(args, "vibrationPin", "ledPin");
+  var vibrationPin = tupple.$2;
   var ledPin = tupple.$3;
   switch (tupple.$1) {
     case Hat.nano:
       var hat = NanoHatHub();
       print("Firmeware ${hat.getFirmwareVersion()}");
-      print("Magnet digial pin: $magnetPin");
+      print("$pinInfo: $vibrationPin");
       print("Led digial pin: $ledPin");
+
+      hat.pinMode(vibrationPin, PinMode.input);
+      hat.pinMode(ledPin, PinMode.output);
 
       var old = DigitalValue.high;
       while (true) {
-        var value = hat.digitalRead(magnetPin);
+        var value = hat.digitalRead(vibrationPin);
         print(value);
         if (value != old) {
           hat.digitalWrite(ledPin, value.invert());
@@ -39,12 +42,15 @@ void main(List<String> args) {
     case Hat.grovePlus:
       var hat = GrovePiPlusHat();
       print("Firmeware ${hat.getFirmwareVersion()}");
-      print("Magnet digial pin: $magnetPin");
+      print("$pinInfo: $vibrationPin");
       print("Led digial pin: $ledPin");
+
+      hat.pinMode(vibrationPin, PinMode.input);
+      hat.pinMode(ledPin, PinMode.output);
 
       var old = DigitalValue.high;
       while (true) {
-        var value = hat.digitalRead(magnetPin);
+        var value = hat.digitalRead(vibrationPin);
         print(value);
         if (value != old) {
           hat.digitalWrite(ledPin, value.invert());
@@ -56,14 +62,16 @@ void main(List<String> args) {
       var hat = GroveBaseHat();
       print("Firmeware ${hat.getFirmware()}");
       print("Extension hat ${hat.getName()}");
-      print("Magnet digial pin: $magnetPin");
+      print("$pinInfo: $vibrationPin");
       print("Led digial pin: $ledPin");
-      var magnet = GPIO(magnetPin, GPIOdirection.gpioDirIn);
+
+      var virbration = GPIO(vibrationPin, GPIOdirection.gpioDirIn);
       var led = GPIO(ledPin, GPIOdirection.gpioDirOut);
+      led.write(false);
 
       var old = true;
       while (true) {
-        var value = magnet.read();
+        var value = virbration.read();
         print(value);
         if (value != old) {
           led.write(!value);

@@ -11,17 +11,21 @@ const wait = 150;
 
 /// https://wiki.seeedstudio.com/Grove-Magnetic_Switch/
 ///
-/// Usage: [nano|grove|grovePlus] magentPin ledPin
+/// Usage: [nano|grove|grovePlus] mageneticSwitchPin ledPin
 void main(List<String> args) {
-  var tupple = checkArgs2Pins(args);
+  String pinInfo = "Magenetic switch pin";
+  var tupple = checkArgs2Pins(args, "mageneticSwitchPin", "ledPin");
   var magnetPin = tupple.$2;
   var ledPin = tupple.$3;
   switch (tupple.$1) {
     case Hat.nano:
       var hat = NanoHatHub();
       print("Firmeware ${hat.getFirmwareVersion()}");
-      print("Magnet digial pin IN: $magnetPin");
-      print("Led digial pin OUT: $ledPin");
+      print("$pinInfo: $magnetPin");
+      print("Led pin: $ledPin");
+
+      hat.pinMode(magnetPin, PinMode.input);
+      hat.pinMode(ledPin, PinMode.output);
 
       var old = DigitalValue.low;
       while (true) {
@@ -37,8 +41,11 @@ void main(List<String> args) {
     case Hat.grovePlus:
       var hat = GrovePiPlusHat();
       print("Firmeware ${hat.getFirmwareVersion()}");
-      print("Magnet digial pin IN: $magnetPin");
-      print("Led digial pin OUT: $ledPin");
+      print("$pinInfo: $magnetPin");
+      print("Led pin: $ledPin");
+
+      hat.pinMode(magnetPin, PinMode.input);
+      hat.pinMode(ledPin, PinMode.output);
 
       var old = DigitalValue.low;
       while (true) {
@@ -55,10 +62,11 @@ void main(List<String> args) {
       var hat = GroveBaseHat();
       print("Firmeware ${hat.getFirmware()}");
       print("Extension hat ${hat.getName()}");
-      print("Magnet digial pin IN: $magnetPin");
-      print("Led digial pin OUT: $ledPin");
+      print("$pinInfo: $magnetPin");
+      print("Led pin: $ledPin");
       var magnet = GPIO(magnetPin, GPIOdirection.gpioDirIn);
       var led = GPIO(ledPin, GPIOdirection.gpioDirOut);
+      led.write(false);
 
       var old = false;
       while (true) {

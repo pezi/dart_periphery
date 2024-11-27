@@ -7,33 +7,38 @@ import 'dart:io';
 
 import 'parse_cmd_line.dart';
 
-const wait = 150;
+const wait = 200;
 
-/// https://wiki.seeedstudio.com/Grove-Hall_Sensor/
-
+/// https://wiki.seeedstudio.com/Grove-PIR_Motion_Sensor/
 ///
-/// Usage: [nano|grove|grovePlus] hallPin ledPin
+/// Usage: [nano|grove|grovePlus] pirMotionPin ledPin
 void main(List<String> args) {
-  String pinInfo = "Hall pin";
-  var tupple = checkArgs2Pins(args, "hallPin", "ledPin");
-  var magnetPin = tupple.$2;
+  String pinInfo = "PIR motion pin";
+  var tupple = checkArgs2Pins(args, "pirMotionPin", "ledPin");
+  var pirMotionPin = tupple.$2;
   var ledPin = tupple.$3;
   switch (tupple.$1) {
     case Hat.nano:
       var hat = NanoHatHub();
       print("Firmeware ${hat.getFirmwareVersion()}");
-      print("$pinInfo: $magnetPin");
+      print("$pinInfo: $pirMotionPin");
       print("Led pin: $ledPin");
 
-      hat.pinMode(magnetPin, PinMode.input);
+      hat.pinMode(pirMotionPin, PinMode.input);
       hat.pinMode(ledPin, PinMode.output);
 
-      var old = DigitalValue.high;
+      hat.digitalWrite(ledPin, DigitalValue.low);
+
+      var old = DigitalValue.low;
       while (true) {
-        var value = hat.digitalRead(magnetPin);
-        print(value);
+        var value = hat.digitalRead(pirMotionPin);
         if (value != old) {
-          hat.digitalWrite(ledPin, value.invert());
+          hat.digitalWrite(ledPin, value);
+          if (value == DigitalValue.high) {
+            print("Motion detected");
+          } else {
+            print("Watching...");
+          }
         }
         sleep(Duration(milliseconds: wait));
         old = value;
@@ -42,38 +47,49 @@ void main(List<String> args) {
     case Hat.grovePlus:
       var hat = GrovePiPlusHat();
       print("Firmeware ${hat.getFirmwareVersion()}");
-      print("$pinInfo: $magnetPin");
+      print("$pinInfo: $pirMotionPin");
       print("Led pin: $ledPin");
 
-      hat.pinMode(magnetPin, PinMode.input);
+      hat.pinMode(pirMotionPin, PinMode.input);
       hat.pinMode(ledPin, PinMode.output);
 
-      var old = DigitalValue.high;
+      hat.digitalWrite(ledPin, DigitalValue.low);
+
+      var old = DigitalValue.low;
       while (true) {
-        var value = hat.digitalRead(magnetPin);
-        print(value);
+        var value = hat.digitalRead(pirMotionPin);
         if (value != old) {
-          hat.digitalWrite(ledPin, value.invert());
+          hat.digitalWrite(ledPin, value);
+          if (value == DigitalValue.high) {
+            print("Motion detected");
+          } else {
+            print("Watching...");
+          }
         }
         sleep(Duration(milliseconds: wait));
         old = value;
       }
+
     case Hat.grove:
       var hat = GroveBaseHat();
       print("Firmeware ${hat.getFirmware()}");
       print("Extension hat ${hat.getName()}");
-      print("$pinInfo: $magnetPin");
+      print("$pinInfo: $pirMotionPin");
       print("Led pin: $ledPin");
-      var magnet = GPIO(magnetPin, GPIOdirection.gpioDirIn);
+      var pirMotion = GPIO(pirMotionPin, GPIOdirection.gpioDirIn);
       var led = GPIO(ledPin, GPIOdirection.gpioDirOut);
       led.write(false);
 
-      var old = true;
+      var old = false;
       while (true) {
-        var value = magnet.read();
-        print(value);
+        var value = pirMotion.read();
         if (value != old) {
-          led.write(!value);
+          led.write(value);
+          if (value == true) {
+            print("Motion detected");
+          } else {
+            print("Watching...");
+          }
         }
         sleep(Duration(milliseconds: wait));
         old = value;

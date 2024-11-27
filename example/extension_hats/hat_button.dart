@@ -9,28 +9,30 @@ import 'parse_cmd_line.dart';
 
 const wait = 150;
 
-/// https://wiki.seeedstudio.com/Grove-Hall_Sensor/
-
+/// https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_Button
 ///
-/// Usage: [nano|grove|grovePlus] hallPin ledPin
+/// Usage: [nano|grove|grovePlus] buttonPin ledPin
 void main(List<String> args) {
-  String pinInfo = "Hall pin";
-  var tupple = checkArgs2Pins(args, "hallPin", "ledPin");
-  var magnetPin = tupple.$2;
+  String pinInfo = "Button pin";
+  var tupple = checkArgs2Pins(args, "buttonPin", "ledPin");
+  var buttonPin = tupple.$2;
   var ledPin = tupple.$3;
   switch (tupple.$1) {
     case Hat.nano:
       var hat = NanoHatHub();
       print("Firmeware ${hat.getFirmwareVersion()}");
-      print("$pinInfo: $magnetPin");
+      print("$pinInfo: $buttonPin");
       print("Led pin: $ledPin");
 
-      hat.pinMode(magnetPin, PinMode.input);
+      hat.pinMode(buttonPin, PinMode.input);
       hat.pinMode(ledPin, PinMode.output);
+      hat.digitalWrite(ledPin, DigitalValue.low);
 
+      // BakeBit button: button is not pressed the module will output high
+      // otherwise it will output low.
       var old = DigitalValue.high;
       while (true) {
-        var value = hat.digitalRead(magnetPin);
+        var value = hat.digitalRead(buttonPin);
         print(value);
         if (value != old) {
           hat.digitalWrite(ledPin, value.invert());
@@ -42,15 +44,16 @@ void main(List<String> args) {
     case Hat.grovePlus:
       var hat = GrovePiPlusHat();
       print("Firmeware ${hat.getFirmwareVersion()}");
-      print("$pinInfo: $magnetPin");
+      print("$pinInfo: $buttonPin");
       print("Led pin: $ledPin");
 
-      hat.pinMode(magnetPin, PinMode.input);
+      hat.pinMode(buttonPin, PinMode.input);
       hat.pinMode(ledPin, PinMode.output);
+      hat.digitalWrite(ledPin, DigitalValue.low);
 
       var old = DigitalValue.high;
       while (true) {
-        var value = hat.digitalRead(magnetPin);
+        var value = hat.digitalRead(buttonPin);
         print(value);
         if (value != old) {
           hat.digitalWrite(ledPin, value.invert());
@@ -58,13 +61,15 @@ void main(List<String> args) {
         sleep(Duration(milliseconds: wait));
         old = value;
       }
+
     case Hat.grove:
       var hat = GroveBaseHat();
       print("Firmeware ${hat.getFirmware()}");
       print("Extension hat ${hat.getName()}");
-      print("$pinInfo: $magnetPin");
+      print("$pinInfo: $buttonPin");
       print("Led pin: $ledPin");
-      var magnet = GPIO(magnetPin, GPIOdirection.gpioDirIn);
+
+      var magnet = GPIO(buttonPin, GPIOdirection.gpioDirIn);
       var led = GPIO(ledPin, GPIOdirection.gpioDirOut);
       led.write(false);
 

@@ -521,31 +521,3 @@ class GroveBaseHat {
     return rpiZeroHatPid == getId();
   }
 }
-
-/*
-
-void main() {
-  var hat = ArduinoBasedHat(I2C(0));
-  print(hat.getFirmwareVersion());
-  hat.pinMode(3, PinMode.OUTPUT);
-  hat.digitalWrite(3, DigitalValue.LOW);
-
-  hat.pinMode(4, PinMode.INPUT);
-  var on = false;
-  while (true) {
-    var v = hat.digitalRead(4);
-    //print(v);
-    if (v == DigitalValue.LOW && on == false) {
-      hat.digitalWrite(3, DigitalValue.HIGH);
-      on = true;
-    }
-    if (v == DigitalValue.HIGH && on == true) {
-      hat.digitalWrite(3, DigitalValue.LOW);
-      on = false;
-    }
-    sleep(Duration(milliseconds: 100));
-  }
-  //sleep(Duration(seconds: 10));
-  //hat.digitalWrite(3, DigitalValue.LOW);
-}
-*/
