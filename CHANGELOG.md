@@ -1,5 +1,6 @@
 ## 0.9.12
 
+* Add extension hat based ADC example to README
 * Add button demo
 * Add PIR motion sensor
 

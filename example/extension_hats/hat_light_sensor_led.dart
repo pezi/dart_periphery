@@ -8,9 +8,12 @@ import 'package:dart_periphery/dart_periphery.dart';
 import 'parse_cmd_line.dart';
 
 const wait = 500;
-const treshold = 200;
+const treshold = 100;
 
 /// https://wiki.seeedstudio.com/Grove-Light_Sensor/
+///
+/// In this demo, the LED turns on when the value of the light sensor falls
+/// below a certain threshold.
 ///
 /// Usage: [nano|grove|grovePlus] analogPin
 void main(List<String> args) {
