@@ -1,8 +1,9 @@
 ## 0.9.12
 
-* Add extension hat based ADC example to README
+* Add section ADC with example to README 
 * Add button demo
-* Add PIR motion sensor
+* Add [PIR motion sensor](https://wiki.seeedstudio.com/Grove-PIR_Motion_Sensor/)
+* SPI: Fix wrong handling of a fixed data list 
 
 ## 0.9.11
 

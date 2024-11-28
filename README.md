@@ -608,7 +608,7 @@ The project is currently still beta and development is ongoing.
 * [Banana Pi BPI-M1](https://en.wikipedia.org/wiki/Banana_Pi#Banana_Pi_BPI-M1) with a Allwinner A20 Dual-core, OS: [Armbian](https://www.armbian.com/bananapi/)
 * [Banana Pi BPI-F3 16GB](https://wiki.banana-pi.org/Banana_Pi_BPI-F3) with a [SpacemiT K1 8 core RISC-V](https://docs.banana-pi.org/en/BPI-F3/SpacemiT_K1), OS: Ubuntu 23.04 (GNU/Linux 6.2.0-1010-starfive riscv64)
 
-## 🖥 Supported devices (sensors, actuators, expansion hats and displays)
+## 🖥 Supported devices (sensors, actuators, extensions hats and displays)
 
 * [SGP30](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sgp30.dart): tVOC and eCO2 Gas Sensor
 * [BME280](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme280.dart): Temperature, humidity and pressure sensor.
@@ -626,6 +626,7 @@ The project is currently still beta and development is ongoing.
 * [Magenetic switch sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magentic_switch.dart)
 * [Magenetic hall sensor ](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magentic_hall.dart)
 * [Vibration sensor ](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_vibration.dart)
+* [PIR motion sensor ](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_pir_motion.dart)
 * FriendlyElec [NanoHat Hub](https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
 * [Grove Base Hat RaspberryPi](https://www.seeedstudio.com/Grove-Base-Hat-for-Raspberry-Pi.html)
 * [Grove Base Hat RaspberryPi Zero](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi_Zero)
