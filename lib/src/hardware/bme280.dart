@@ -213,7 +213,6 @@ class BME280 {
         throw BME280exception('Unknown modelwith ID: $id');
     }
     _readCoefficients();
-    _readCoefficients();
     setOperatingModes(OversamplingMultiplier.x1, OversamplingMultiplier.x1,
         OversamplingMultiplier.x1, OperatingMode.modeNormal);
     setStandbyAndFilterModes(
