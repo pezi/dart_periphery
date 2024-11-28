@@ -3,7 +3,8 @@
 * Add section ADC with example to README 
 * Add button demo
 * Add [PIR motion sensor](https://wiki.seeedstudio.com/Grove-PIR_Motion_Sensor/)
-* SPI: Fix wrong handling of a fixed data list 
+* Add [Light sensor & Led Demo](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_light_sensor_led.dart)
+* SPI: Fix exception - wrong handling of a fixed data list 
 
 ## 0.9.11
 
