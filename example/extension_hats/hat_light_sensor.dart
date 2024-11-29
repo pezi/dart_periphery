@@ -15,7 +15,8 @@ const wait = 500;
 void main(List<String> args) {
   var tupple = checkArgs(args, "analogPin");
   var pin = tupple.$2;
-  switch (tupple.$1) {
+  var hat = tupple.$1;
+  switch (hat) {
     case Hat.nano:
       {
         var hat = NanoHatHub();
@@ -45,5 +46,7 @@ void main(List<String> args) {
         print(hat.readADCraw(pin));
         sleep(Duration(milliseconds: wait));
       }
+    case Hat.gpio:
+      print("Not supported!");
   }
 }

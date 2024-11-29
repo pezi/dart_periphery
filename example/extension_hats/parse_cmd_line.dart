@@ -5,7 +5,7 @@
 import 'dart:io';
 
 /// Supported extensions hats
-enum Hat { nano, grove, grovePlus }
+enum Hat { gpio, nano, grove, grovePlus }
 
 void usage(String pin) {
   print("Parameter: [nano|grove|grovePlus] $pin");

@@ -1,3 +1,7 @@
+## 0.9.13
+
+* Extend extension GIPIO based hat exmples to GPIO only.
+
 ## 0.9.12
 
 * Add section ADC with example to README 
