@@ -106,7 +106,7 @@ class RawLuminosity {
       required this.time,
       required this.gain});
 
-  int getFullSpeactrum() {
+  int getFullSpectrum() {
     return (channel1 << 16) | channel0;
   }
 
@@ -114,7 +114,7 @@ class RawLuminosity {
     return channel1;
   }
 
-  int getVisibale() {
+  int getVisible() {
     var full = (channel1 << 16) | channel0;
     return full - channel1;
   }
@@ -140,7 +140,7 @@ class RawLuminosity {
   }
 }
 
-/// TSL2591 sensor for visible, IR light and full spectrum and lux
+/// TSL2591 sensor for visible, IR light, full spectrum and lux
 ///
 /// See for more
 /// * [SI1145 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_tsl2591.dart)
