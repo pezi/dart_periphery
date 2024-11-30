@@ -70,16 +70,17 @@ enum Gain {
 }
 
 enum IntegrationTime {
-  time100ms(0x00),
-  time200ms(0x01),
-  time300ms(0x02),
-  time400ms(0x03),
-  time500ms(0x04),
-  time600ms(0x05);
+  time100ms(0x00, 100),
+  time200ms(0x01, 200),
+  time300ms(0x02, 300),
+  time400ms(0x03, 400),
+  time500ms(0x04, 500),
+  time600ms(0x05, 600);
 
   final int value;
+  final int milliseconds;
 
-  const IntegrationTime(this.value);
+  const IntegrationTime(this.value, this.milliseconds);
 
   static IntegrationTime fromInt(int value) {
     for (var gain in IntegrationTime.values) {
@@ -131,6 +132,8 @@ class RawLuminosity {
   }
 
   /// Calculates a lux value from both its infrared and visible light channels.
+  ///
+  /// Important hint: This value is not calibrated!
   int getLux() {
     var atime = 100.0 * time.value + 100.0;
     late int maxCounts;
@@ -180,7 +183,7 @@ class TSL2591 {
     enable();
   }
 
-  /// Enables the sensor.
+  /// Puts the sensor in a fully powered enabled mode.
   void enable() {
     _writeByte(
         Register.enable,
@@ -190,7 +193,7 @@ class TSL2591 {
             Command.enableNpien.value);
   }
 
-  /// Disables the sensor.
+  /// Disables the sensor and go into low power mode.
   void disable() {
     _writeByte(Register.enable, Command.enablePowerOff.value);
   }
@@ -235,7 +238,11 @@ class TSL2591 {
     this.time = time;
   }
 
-  /// Returns the raw values of a measuremnt.
+  /// Reads the raw luminosity from the sensor (both IR + visible and IR
+  /// only channels) and returns a [RawLuminosity].
+  /// [RawLuminosity.channel0] is IR + visible luminosity
+  /// and the [RawLuminosity.channel1] is the IR only
+  /// Both values are 16-bit unsigned values.
   RawLuminosity getRawLuminosity() {
     return RawLuminosity(
         channel0: _readWord(Register.chan0Low),
