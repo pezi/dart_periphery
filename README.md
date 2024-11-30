@@ -622,7 +622,7 @@ The project is currently still beta and development is ongoing.
 * [SDC30](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sdc30.dart): CO₂, temperature and humidity sensor.
 * [SI1145](https://github.com/pezi/dart_periphery/blob/main/example/i2c_si1145.dart): Sunlight sensor: visible & IR light, UV index
 * [TSL2591](https://github.com/pezi/dart_periphery/blob/main/example/i2c_tsl2591.dart) light sensor
-* Ananlog [Light sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_light_sensor_led.dart)s
+* Analog [Light sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_light_sensor_led.dart)
 * [Button](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_button.dart)
 * [Magenetic switch sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magentic_switch.dart)
 * [Magenetic hall sensor ](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magentic_hall.dart)
