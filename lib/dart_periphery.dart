@@ -85,7 +85,13 @@ export 'src/hardware/si1145.dart'
         SI1145param,
         si1145DefaultI2Caddress;
 export 'src/hardware/tsl2591.dart'
-    show TSL2591, TSL2591exception, Gain, IntegrationTime;
+    show
+        TSL2591,
+        TSL2591exception,
+        Gain,
+        IntegrationTime,
+        RawLuminosity,
+        tsl2591DefaultI2Caddress;
 export 'src/hardware/utils/byte_buffer.dart' show BitOrder;
 export 'src/hardware/utils/uint.dart';
 export 'src/i2c.dart'
