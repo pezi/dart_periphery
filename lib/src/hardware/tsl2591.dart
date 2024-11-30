@@ -17,15 +17,21 @@ enum Command {
   enablePowerOn(0x01),
   enableAen(0x02),
   enableAien(0x10),
-  enableNpien(0x80),
-  registerEnable(0x00),
-  registerControl(0x01),
-  registerDeviceId(0x12),
-  registerChan0Low(0x14),
-  registerChan1Low(0x16);
+  enableNpien(0x80);
 
   final int value;
   const Command(this.value);
+}
+
+enum Register {
+  enable(0x00),
+  control(0x01),
+  deviceId(0x12),
+  chan0Low(0x14),
+  chan1Low(0x16);
+
+  final int value;
+  const Register(this.value);
 }
 
 const maxCount100ms = 0x8FFF;
@@ -94,6 +100,7 @@ class TSL2591exception implements Exception {
   TSL2591exception(this.errorMsg);
 }
 
+/// Data class for raw values.
 class RawLuminosity {
   final int channel0;
   final int channel1;
@@ -106,19 +113,24 @@ class RawLuminosity {
       required this.time,
       required this.gain});
 
+  /// Returns the full spectrum (IR + visible) light and return its value
+  /// as a 32-bit unsigned number.
   int getFullSpectrum() {
     return (channel1 << 16) | channel0;
   }
 
+  /// Returns the visible light as a 16-bit unsigned number.
   int getInfraRed() {
     return channel1;
   }
 
+  /// Returns the visible light as a 32-bit unsigned number.
   int getVisible() {
     var full = (channel1 << 16) | channel0;
     return full - channel1;
   }
 
+  /// Calculates a lux value from both its infrared and visible light channels.
   int getLux() {
     var atime = 100.0 * time.value + 100.0;
     late int maxCounts;
@@ -153,7 +165,7 @@ class TSL2591 {
   Gain gain;
 
   /// Creates a SI1145 sensor instance that uses the [i2c] bus with
-  /// the optional [i2cAddress].
+  /// the optional [i2cAddress] with optional
   TSL2591(this.i2c,
       [this.time = IntegrationTime.time100ms,
       this.gain = Gain.med,
@@ -162,64 +174,73 @@ class TSL2591 {
   }
 
   void _init() {
-    if (_readByte(Command.registerDeviceId) != 0x45) {
+    if (_readByte(Register.deviceId) != 0x45) {
       throw TSL2591exception("Failed to find TSL2591 sensor");
     }
     enable();
   }
 
+  /// Enables the sensor.
   void enable() {
     _writeByte(
-        Command.registerEnable,
+        Register.enable,
         Command.enablePowerOn.value |
             Command.enableAen.value |
             Command.enableAien.value |
             Command.enableNpien.value);
   }
 
+  /// Disables the sensor.
   void disable() {
-    _writeByte(Command.registerEnable, Command.enablePowerOff.value);
+    _writeByte(Register.enable, Command.enablePowerOff.value);
   }
 
-  Gain getGain() {
-    return Gain.fromInt(_readByte(Command.registerControl) & 0x30);
-  }
-
-  void setGain(Gain gain) {
-    var value = (_readByte(Command.registerControl) & 0xCF) | gain.value;
-    this.gain = Gain.fromInt(value);
-  }
-
-  int _readByte(Command cmd) {
+  int _readByte(Register register) {
     return i2c.readByteReg(
-        i2cAddress, (cmd.value | Command.commandBit.value) & 0xff);
+        i2cAddress, (register.value | Command.commandBit.value) & 0xff);
   }
 
-  void _writeByte(Command cmd, int value) {
-    i2c.writeByteReg(i2cAddress, (cmd.value | Command.commandBit.value) & 0xff,
-        value & 0xff);
+  void _writeByte(Register register, int value) {
+    i2c.writeByteReg(i2cAddress,
+        (register.value | Command.commandBit.value) & 0xff, value & 0xff);
   }
 
+  int _readWord(Register register) {
+    var buf = i2c.readBytesReg(
+        i2cAddress, (register.value | Command.commandBit.value) & 0xff, 2);
+    return ((buf[1] & 0xff) << 8) | (buf[0] & 0xff);
+  }
+
+  /// Returns the [Gain].
+  Gain getGain() {
+    return Gain.fromInt(_readByte(Register.control) & 0x30);
+  }
+
+  /// Sets the [Gain].
+  void setGain(Gain gain) {
+    var value = (_readByte(Register.control) & 0xCF) | gain.value;
+    _writeByte(Register.control, value);
+    this.gain = gain;
+  }
+
+  /// Sets the [IntegrationTime].
   IntegrationTime getIntegrationTime() {
-    return IntegrationTime.fromInt(_readByte(Command.registerControl) & 0x07);
+    return IntegrationTime.fromInt(_readByte(Register.control) & 0x07);
   }
 
-  void setIntegrationTime(IntegrationTime gain) {
-    var value = (_readByte(Command.registerControl) & 0xF8) | gain.value;
-    time = IntegrationTime.fromInt(value);
+  /// Sets the [IntegrationTime].
+  void setIntegrationTime(IntegrationTime time) {
+    var value = (_readByte(Register.control) & 0xF8) | gain.value;
+    _writeByte(Register.control, value);
+    this.time = time;
   }
 
+  /// Returns the raw values of a measuremnt.
   RawLuminosity getRawLuminosity() {
     return RawLuminosity(
-        channel0: _readWord(Command.registerChan0Low),
-        channel1: _readWord(Command.registerChan1Low),
+        channel0: _readWord(Register.chan0Low),
+        channel1: _readWord(Register.chan1Low),
         time: time,
         gain: gain);
-  }
-
-  int _readWord(Command cmd) {
-    var buf = i2c.readBytesReg(
-        i2cAddress, (cmd.value | Command.commandBit.value) & 0xff, 2);
-    return ((buf[1] & 0xff) << 8) | (buf[0] & 0xff);
   }
 }
