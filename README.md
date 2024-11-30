@@ -355,7 +355,7 @@ void main() {
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/hat_adc_demo.jpg "Extension hat - ADC") 
 
-Extension hats, such as the [Grove Base Hat RaspberryPi Zero](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi_Zero), add addidional functionality like ADC (Analog-to-Digital Conversion) support. See also complete [example](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_light_sensor_led.dart) with support for FriendlyElec [NanoHat Hub](https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
+Extension hats, such as the [Grove Base Hat RaspberryPi Zero](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi_Zero), add addidional functionality like ADC (Analog-to-Digital Converter) support. See also complete [example](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_light_sensor_led.dart) with support for FriendlyElec [NanoHat Hub](https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
 and [Grove Base Hat RaspberryPi](https://www.seeedstudio.com/Grove-Base-Hat-for-Raspberry-Pi.html) 
 
 In this demo, the LED turns on when the value of the light sensor falls below a certain threshold.
@@ -621,7 +621,7 @@ The project is currently still beta and development is ongoing.
 * [MLX90615](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mlx90615.dart): digital infrared non-contact temperature sensor.
 * [SDC30](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sdc30.dart): CO₂, temperature and humidity sensor.
 * [SI1145](https://github.com/pezi/dart_periphery/blob/main/example/i2c_si1145.dart): Sunlight sensor: visible & IR light, UV index
-* [Light sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_light_sensor_led.dart)
+* Ananlog [Light sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_light_sensor_led.dart)
 * [Button](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_button.dart)
 * [Magenetic switch sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magentic_switch.dart)
 * [Magenetic hall sensor ](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magentic_hall.dart)

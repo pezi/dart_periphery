@@ -1,6 +1,7 @@
 ## 0.9.13
 
-* Extend extension GIPIO based hat exmples to GPIO only.
+* Extend extension hat exmples to GPIO only.
+* Add Adafruit TSL2591 light sensor
 
 ## 0.9.12
 
