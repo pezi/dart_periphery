@@ -5,9 +5,8 @@
 
 [![pub package](https://img.shields.io/badge/pub-v0.9.13-orange)](https://pub.dartlang.org/packages/dart_periphery)
 [![Pub Points](https://img.shields.io/pub/points/dart_periphery)](https://pub.dev/packages/dart_periphery/score)
-[![All Contributors](https://img.shields.io/github/contributors/pezi/dart_periphery)](https://github.com/leoafari/dart_periphery/graphs/contributors)
-[![MIT License](https://img.shields.io/github/license/pezi/dart_periphery)](https://opensource.org/licenses/mit-license.php)
-
+[![All Contributors](https://img.shields.io/github/contributors/pezi/dart_periphery)](https://github.com/pezi/dart_periphery/graphs/contributors)
+[![BSD License](https://img.shields.io/github/license/pezi/dart_periphery)](https://opensource.org/license/bsd-3-clause)
 
 ## 📣 Important hints
 
