@@ -582,7 +582,7 @@ the asset directory.
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/flutter_sensor_tester.gif "Flutter Sensor Tester")
 
-This [subproject](https://github.com/pezi/flutter_pi_sensor_tester) bases on 
+This [sub project](https://github.com/pezi/flutter_pi_sensor_tester) bases on 
 [flutter-pi](https://github.com/ardera/flutter-pi) and implements a simple
 isolate/stream architecture designed to transfer sensor data from an isolate to the Flutter UI:
 
