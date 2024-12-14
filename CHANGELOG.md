@@ -1,7 +1,8 @@
 ## 0.9.13
 
-* Extend extension hat exmples to GPIO only.
-* Add Adafruit [TSL2591](https://github.com/pezi/dart_periphery/blob/main/example/i2c_tsl2591.dart) light sensor
+* Extend extension hat examples to GPIO only.
+* Add extended button demo.
+* Add Adafruit [TSL2591](https://github.com/pezi/dart_periphery/blob/main/example/i2c_tsl2591.dart) light sensor.
 
 ## 0.9.12
 

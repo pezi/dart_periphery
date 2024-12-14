@@ -7,7 +7,8 @@ import 'dart:io';
 
 import 'parse_cmd_line.dart';
 
-const wait = 150;
+const wait = 50;
+const holdTime = 1000;
 
 /// https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_Button
 ///
@@ -78,11 +79,14 @@ void main(List<String> args) {
       led.write(false);
 
       var old = true;
+      var ledStatus = false;
+      var ledStatusOld = false;
+
       while (true) {
         var value = button.read();
-        print(value);
-        if (value != old) {
-          led.write(!value);
+        if (value == true) {}
+        if (ledStatus != ledStatusOld) {
+          led.write(ledStatus);
         }
         sleep(Duration(milliseconds: wait));
         old = value;
