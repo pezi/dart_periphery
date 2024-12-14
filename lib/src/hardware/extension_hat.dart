@@ -506,8 +506,8 @@ class GroveBaseHat extends IsolateAPI {
   GroveBaseHat.isolate(this.i2c);
 
   /// Returns the internal hardware id of the hat.
-  /// RPI_HAT_PID (0x4) for a 'Grove Base Hat RPi', and
-  /// RPI_ZERO_HAT_PID (0x05) for a 'Grove Base Hat RPi Zero'.
+  /// RPI_HAT_PID (0x4) for a `Grove Base Hat RPi`, and
+  /// RPI_ZERO_HAT_PID (0x05) for a `Grove Base Hat RPi Zero`.
   int getId() {
     if (_id == 0) {
       _id = _read16BitRegister(0x00);
@@ -581,7 +581,7 @@ class GroveBaseHat extends IsolateAPI {
     return _read16BitRegister(0x30 + channel);
   }
 
-  /// Returns true for the Pi Zero model, false for the Pi model.
+  /// Returns `true` for the Pi Zero model, false for the Pi model.
   bool isHatRPiZero() {
     return rpiZeroHatPid == getId();
   }
