@@ -487,12 +487,10 @@ const int rpiZeroHatPid = 0x05;
 /// | MCU                  | STM32F030F4P6                       |
 /// | Grove Ports Pi       | 6 x Digital(3.3V), 4 x Analog(3.3V) |
 /// |                      | 3 x I2C(3.3V); 1 x PWM(3.3V)        |
-/// |                      | 1 x RPISER(UART) connect to Pi(3.3V)|
-/// |                      |                                     |
+/// |                      | 1 x RPISER(UART) connect to Pi(3.3V)|             |
 /// | Grove Ports Pi Zero  | 2 x Digital(3.3V), 3 x Analog(3.3V) |
 /// |                      | 3 x I2C(3.3V), 1 x PWM(3.3V)        |
 /// |                      | 1 x RPISER(UART) connect to Pi(3.3V)|
-/// |                      |                                     |
 /// | Grove-Digital        | Connect to Raspberry Pi directly    |
 /// | Grove-Analog         | Connect to STM32F030F4P6(12bit ADC  |
 /// |                      | and then transfer to I2C signal,    |

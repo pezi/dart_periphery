@@ -20,7 +20,7 @@ extension CharacterCase on String {
   }
 }
 
-/// Return an [AirQuality] for a [iaq] value
+/// Returns an [AirQuality] for a [iaq] value
 AirQuality getAirQuality(int iaq) {
   for (var q in AirQuality.values) {
     if (q == AirQuality.invalidValue) {
@@ -33,7 +33,7 @@ AirQuality getAirQuality(int iaq) {
   return AirQuality.invalidValue;
 }
 
-/// IAQ intervals
+/// IAQ intervals: excellent - invalidValue
 enum AirQuality {
   excellent(0, 50, 0xFF02E400),
   good(51, 100, 0xFF92D04F),

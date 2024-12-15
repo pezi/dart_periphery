@@ -20,8 +20,8 @@ const int paj7620AddrBase = 0x00;
 // REGISTER BANK SELECT
 const int paj7620RegisterBankSel = (paj7620AddrBase + 0xEF); //W
 
-// DEVICE ID
-const int paj7620Id = 0x73;
+/// Default I2C address of the PAj7620 gesture sensor
+const int paj7620DefaultI2Caddress = 0x73;
 
 // REGISTER BANK 0
 const int paj7620AddrSuspendCmd = (paj7620AddrBase + 0x3); //W
@@ -353,16 +353,16 @@ class GestureSensor {
     // At the first access Raspberry PI 3 runs into a timeout - sensor is
     // still sleeping
     try {
-      data0 = i2c.readByteReg(paj7620Id, 0);
+      data0 = i2c.readByteReg(paj7620DefaultI2Caddress, 0);
     } on I2Cexception catch (e) {
       if (e.errorCode == I2CerrorCode.i2cErrorTransfer) {
         sleep(Duration(milliseconds: 10));
         // sensor should be up at this point!
-        data0 = i2c.readByteReg(paj7620Id, 0);
+        data0 = i2c.readByteReg(paj7620DefaultI2Caddress, 0);
       }
     }
 
-    var data1 = i2c.readByteReg(paj7620Id, 1);
+    var data1 = i2c.readByteReg(paj7620DefaultI2Caddress, 1);
 
     if ((data0 != 0x20) || (data1 != 0x76)) {
       throw GestureSensorException(
@@ -372,26 +372,26 @@ class GestureSensor {
     _paj7620SelectBank(Bank.bank0);
 
     for (var v in initRegisterArray) {
-      i2c.writeByteReg(paj7620Id, v >> 8, v & 0xff);
+      i2c.writeByteReg(paj7620DefaultI2Caddress, v >> 8, v & 0xff);
     }
 
     _paj7620SelectBank(Bank.bank1);
-    i2c.writeByteReg(paj7620Id, 0x65, 0x12);
+    i2c.writeByteReg(paj7620DefaultI2Caddress, 0x65, 0x12);
     _paj7620SelectBank(Bank.bank0);
   }
 
   void _paj7620SelectBank(Bank bank) {
-    i2c.writeByteReg(paj7620Id, paj7620RegisterBankSel,
+    i2c.writeByteReg(paj7620DefaultI2Caddress, paj7620RegisterBankSel,
         bank == Bank.bank0 ? paj7620Bank0 : paj7620Bank1);
   }
 
   /// Returns the actual detected gesture.
   Gesture getGesture() {
     var gesture = Gesture.nothing;
-    switch (i2c.readByteReg(paj7620Id, 0x43)) {
+    switch (i2c.readByteReg(paj7620DefaultI2Caddress, 0x43)) {
       case gesRightFlag:
         sleep(Duration(milliseconds: gestureReactionTime));
-        var data = i2c.readByteReg(paj7620Id, 0x43);
+        var data = i2c.readByteReg(paj7620DefaultI2Caddress, 0x43);
         if (data == gesLeftFlag) {
           gesture = Gesture.rightLeft;
         } else if (data == gesForwardFlag) {
@@ -406,7 +406,7 @@ class GestureSensor {
         return gesture;
       case gesLeftFlag:
         sleep(Duration(milliseconds: gestureReactionTime));
-        var data = i2c.readByteReg(paj7620Id, 0x43);
+        var data = i2c.readByteReg(paj7620DefaultI2Caddress, 0x43);
         if (data == gesRightFlag) {
           gesture = Gesture.leftRight;
         } else if (data == gesForwardFlag) {
@@ -421,7 +421,7 @@ class GestureSensor {
         return gesture;
       case gesUpFLag:
         sleep(Duration(milliseconds: gestureReactionTime));
-        var data = i2c.readByteReg(paj7620Id, 0x43);
+        var data = i2c.readByteReg(paj7620DefaultI2Caddress, 0x43);
         if (data == gesDownFlag) {
           gesture = Gesture.upDown;
         } else if (data == gesForwardFlag) {
@@ -436,7 +436,7 @@ class GestureSensor {
         return gesture;
       case gesDownFlag:
         sleep(Duration(milliseconds: gestureReactionTime));
-        var data = i2c.readByteReg(paj7620Id, 0x43);
+        var data = i2c.readByteReg(paj7620DefaultI2Caddress, 0x43);
         if (data == gesUpFLag) {
           gesture = Gesture.downUp;
         } else if (data == gesForwardFlag) {
@@ -451,7 +451,7 @@ class GestureSensor {
         return gesture;
       case gesForwardFlag:
         sleep(Duration(milliseconds: gestureReactionTime));
-        var data = i2c.readByteReg(paj7620Id, 0x43);
+        var data = i2c.readByteReg(paj7620DefaultI2Caddress, 0x43);
         if (data == gesBackwardFlag) {
           gesture = Gesture.forwardBackward;
         } else {
@@ -461,7 +461,7 @@ class GestureSensor {
         return gesture;
       case gesBackwardFlag:
         sleep(Duration(milliseconds: gestureReactionTime));
-        var data = i2c.readByteReg(paj7620Id, 0x43);
+        var data = i2c.readByteReg(paj7620DefaultI2Caddress, 0x43);
         if (data == gesForwardFlag) {
           gesture = Gesture.backwardForward;
         } else {
@@ -474,7 +474,7 @@ class GestureSensor {
       case gesCountClockwiseFlag:
         return Gesture.antiClockwise;
       default:
-        var data = i2c.readByteReg(paj7620Id, 0x44);
+        var data = i2c.readByteReg(paj7620DefaultI2Caddress, 0x44);
         if (data == gesWaveFlag) {
           Gesture.wave;
         } else {

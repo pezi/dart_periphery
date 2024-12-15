@@ -54,7 +54,11 @@ export 'src/hardware/extension_hat.dart'
         GrovePiPlusHat,
         GroveBaseHat;
 export 'src/hardware/gesture_sensor.dart'
-    show GestureSensor, GestureSensorException, Gesture;
+    show
+        GestureSensor,
+        GestureSensorException,
+        Gesture,
+        paj7620DefaultI2Caddress;
 export 'src/hardware/mpu6050.dart' show MPU6050, MPU6050exception;
 export 'src/hardware/pn532/base_protocol.dart';
 export 'src/hardware/pn532/exceptions.dart';

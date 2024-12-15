@@ -14,6 +14,7 @@ import 'numeric_enum.dart';
 
 const si1145DefaultI2Caddress = 0x60;
 
+/// SI1145reg specific register
 enum SI1145reg implements IntEnum {
   partId(0x00),
   revId(0x01),
@@ -60,6 +61,7 @@ enum SI1145reg implements IntEnum {
   }
 }
 
+/// SI1145 spedific commands
 enum SI1145cmd implements IntEnum {
   nop(0x00),
   reset(0x01),
@@ -85,6 +87,7 @@ enum SI1145cmd implements IntEnum {
   }
 }
 
+/// SI1145 specific parameter
 enum SI1145param implements IntEnum {
   i2caddr(0x00),
   chlist(0x01),
