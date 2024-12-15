@@ -15,7 +15,9 @@ import '../i2c.dart';
 import 'utils/byte_buffer.dart';
 
 const int productType = 0;
-const int i2cAddress = 0x58;
+
+/// Default I2C address of the SGP30 sensor
+const int sgp30DefaultI2Caddress = 0x58;
 
 // command and constants for reading the serial ID
 const int cmdGetSerialId = 0x3682;
@@ -160,7 +162,7 @@ class SGP30 {
       buffer.add(crc8(data));
     }
 
-    i2c.writeBytes(i2cAddress, buffer);
+    i2c.writeBytes(sgp30DefaultI2Caddress, buffer);
 
     sleep(Duration(milliseconds: delayMs));
 
@@ -168,7 +170,7 @@ class SGP30 {
       return const <int>[];
     }
 
-    var read = i2c.readBytes(i2cAddress, 3 * responseLength);
+    var read = i2c.readBytes(sgp30DefaultI2Caddress, 3 * responseLength);
 
     if (!checkCRC(read)) {
       throw SGP30exception('CRC8 mismatch!');

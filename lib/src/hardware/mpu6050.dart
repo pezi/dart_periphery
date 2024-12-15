@@ -25,7 +25,7 @@ enum DLPF {
   filter7
 }
 
-/// Default address of the MPU6050 device.
+/// Default address of the MPU6050 sensor.
 const int defaultMPU6050address = 0x68;
 
 /// Default value for the digital low pass filter (DLPF) setting for both

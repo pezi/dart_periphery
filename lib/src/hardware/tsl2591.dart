@@ -9,6 +9,7 @@ import '../../dart_periphery.dart';
 // Resources
 // https://github.com/adafruit/Adafruit_CircuitPython_TSL2591
 
+/// Default I2C address of the TSL2591 sensor
 const tsl2591DefaultI2Caddress = 0x29;
 
 enum Command {
@@ -199,8 +200,9 @@ class TSL2591 {
   }
 
   int _readByte(Register register) {
-    return i2c.readByteReg(
+    i2c.writeByte(
         i2cAddress, (register.value | Command.commandBit.value) & 0xff);
+    return i2c.readByte(i2cAddress);
   }
 
   void _writeByte(Register register, int value) {

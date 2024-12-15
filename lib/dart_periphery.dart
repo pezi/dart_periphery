@@ -66,7 +66,13 @@ export 'src/hardware/pn532/i2c_impl.dart';
 export 'src/hardware/pn532/pn532.dart';
 export 'src/hardware/pn532/spi_impl.dart';
 export 'src/hardware/sgp30.dart'
-    show SGP30, SGP30result, RawMeasurement, FeatureSetVersion, SGP30exception;
+    show
+        SGP30,
+        SGP30result,
+        RawMeasurement,
+        FeatureSetVersion,
+        SGP30exception,
+        sgp30DefaultI2Caddress;
 export 'src/hardware/sht31.dart'
     show
         SHT31,

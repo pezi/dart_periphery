@@ -12,6 +12,7 @@ import 'numeric_enum.dart';
 // https://github.com/Seeed-Studio/Grove_Sunlight_Sensor
 // https://github.com/Seeed-Studio/Seeed_Python_SI114X/blob/master/seeed_si114x.py
 
+/// Default I2C address of the SI1145 sensor
 const si1145DefaultI2Caddress = 0x60;
 
 /// SI1145reg specific register

@@ -26,6 +26,7 @@ enum Command {
   const Command(this.value);
 }
 
+/// Default I2C address of the SDC30 sensor
 const int sdc30DefaultI2Caddress = 0x61;
 
 /// [SDC30] exception
