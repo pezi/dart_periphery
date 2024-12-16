@@ -3,11 +3,12 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:math';
-
+import 'dart:io';
 import '../../dart_periphery.dart';
 
 // Resources
 // https://github.com/adafruit/Adafruit_CircuitPython_TSL2591
+// https://github.com/waveshare/TSL2591X-Light-Sensor/blob/master/RaspberryPi%26JetsonNano/c/lib/TSL2591.c
 
 /// Default I2C address of the TSL2591 sensor
 const tsl2591DefaultI2Caddress = 0x29;
@@ -178,7 +179,7 @@ class TSL2591 {
   }
 
   void _init() {
-    if (_readByte(Register.deviceId) != 0x45) {
+    if (_readByte(Register.deviceId) != 0x50) {
       throw TSL2591exception("Failed to find TSL2591 sensor");
     }
     enable();
@@ -200,9 +201,12 @@ class TSL2591 {
   }
 
   int _readByte(Register register) {
-    i2c.writeByte(
-        i2cAddress, (register.value | Command.commandBit.value) & 0xff);
-    return i2c.readByte(i2cAddress);
+    print("read byte from reg ${register.value.toRadixString(16)}");
+
+    var data = i2c.readBytesReg(
+        i2cAddress, (register.value | Command.commandBit.value) & 0xff, 1);
+    print(data);
+    return data[0];
   }
 
   void _writeByte(Register register, int value) {
