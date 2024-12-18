@@ -201,19 +201,16 @@ class TSL2591 {
   }
 
   int _readByte(Register register) {
-    var data = i2c.readBytesReg(
-        i2cAddress,register.value , 1);
+    var data = i2c.readBytesReg(i2cAddress, register.value, 1);
     return data[0];
   }
 
   void _writeByte(Register register, int value) {
-    i2c.writeByteReg(i2cAddress,
-        register.value , value & 0xff);
+    i2c.writeByteReg(i2cAddress, register.value, value & 0xff);
   }
 
   int _readWord(Register register) {
-    var buf = i2c.readBytesReg(
-        i2cAddress, register.value, 2);
+    var buf = i2c.readBytesReg(i2cAddress, register.value, 2);
     return ((buf[1] & 0xff) << 8) | (buf[0] & 0xff);
   }
 
