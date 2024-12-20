@@ -482,7 +482,7 @@ Test the installation
 
 ``` bash
 dart --version
-Dart SDK version: 3.5.4 (stable) (Wed Oct 16 16:18:51 2024 +0000) on "linux_arm64"
+Dart SDK version: 3.6.0 (stable) (Thu Dec 5 07:46:24 2024 -0800) on "linux_arm64"
 ```
 
 ## 📚 Native libraries
