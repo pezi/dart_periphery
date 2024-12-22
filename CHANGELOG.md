@@ -1,3 +1,6 @@
+## 0.9.14
+* Start with version 0.9.14    
+
 ## 0.9.13
 
 * Fix I2C `int readByteReg(int address, int register,
