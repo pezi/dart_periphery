@@ -3,7 +3,6 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:dart_periphery/dart_periphery.dart';
-import 'dart:io';
 
 import 'parse_cmd_line.dart';
 
@@ -39,17 +38,36 @@ void main(List<String> args) {
       hat.pinMode(ledPin, PinMode.output);
       hat.digitalWrite(ledPin, DigitalValue.low);
 
-      // BakeBit button: button is not pressed the module will output high
-      // otherwise it will output low.
-      var old = DigitalValue.high;
       while (true) {
-        var value = hat.digitalRead(buttonPin);
-        print(value);
-        if (value != old) {
-          hat.digitalWrite(ledPin, value.invert());
+        buttonState = hat.digitalRead(buttonPin) ==
+            DigitalValue.high; // Button is pressed when LOW
+
+        if (buttonState && !lastButtonState) {
+          // Button just pressed
+          buttonPressedTime = DateTime.now().millisecondsSinceEpoch;
+          buttonHeld = false;
         }
-        sleep(Duration(milliseconds: wait));
-        old = value;
+
+        if (!buttonState && lastButtonState) {
+          // Button just released
+          if (buttonHeld) {
+            // Toggle the LED state if the button was held long enough
+            ledState = !ledState;
+            hat.digitalWrite(
+                ledPin, ledState ? DigitalValue.high : DigitalValue.low);
+          }
+        }
+
+        // Check if the button is still pressed and held long enough
+        if (buttonState &&
+            !buttonHeld &&
+            (DateTime.now().millisecondsSinceEpoch - buttonPressedTime >=
+                holdTime)) {
+          buttonHeld = true; // Mark the button as held long enough
+        }
+
+        // Update the last button state
+        lastButtonState = buttonState;
       }
 
     case Hat.grovePlus:
@@ -61,16 +79,36 @@ void main(List<String> args) {
       hat.pinMode(buttonPin, PinMode.input);
       hat.pinMode(ledPin, PinMode.output);
       hat.digitalWrite(ledPin, DigitalValue.low);
-
-      var old = DigitalValue.high;
       while (true) {
-        var value = hat.digitalRead(buttonPin);
-        print(value);
-        if (value != old) {
-          hat.digitalWrite(ledPin, value.invert());
+        buttonState = hat.digitalRead(buttonPin) ==
+            DigitalValue.high; // Button is pressed when LOW
+
+        if (buttonState && !lastButtonState) {
+          // Button just pressed
+          buttonPressedTime = DateTime.now().millisecondsSinceEpoch;
+          buttonHeld = false;
         }
-        sleep(Duration(milliseconds: wait));
-        old = value;
+
+        if (!buttonState && lastButtonState) {
+          // Button just released
+          if (buttonHeld) {
+            // Toggle the LED state if the button was held long enough
+            ledState = !ledState;
+            hat.digitalWrite(
+                ledPin, ledState ? DigitalValue.high : DigitalValue.low);
+          }
+        }
+
+        // Check if the button is still pressed and held long enough
+        if (buttonState &&
+            !buttonHeld &&
+            (DateTime.now().millisecondsSinceEpoch - buttonPressedTime >=
+                holdTime)) {
+          buttonHeld = true; // Mark the button as held long enough
+        }
+
+        // Update the last button state
+        lastButtonState = buttonState;
       }
 
     case Hat.gpio:

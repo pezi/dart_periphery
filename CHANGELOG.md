@@ -1,14 +1,17 @@
 ## 0.9.13
 
-* Extend extension hat examples to GPIO only.
-* Add extended button demo.
+* Fix I2C `int readByteReg(int address, int register,
+      [BitOrder order = BitOrder.msbLast,
+      RegisterWidth width = RegisterWidth.bits8])` method - wrong data buffer handling
+* Extend extension hat [examples](https://github.com/pezi/dart_periphery/tree/main/example/extension_hats) to GPIO only.
+* Add extended [button](https://github.com/pezi/dart_periphery/blob/example/extension_hats/hat_button_extended.dart) demo.
 * Update Dart version reference inside the README to 3.6.0.
 * Add Adafruit [TSL2591](https://github.com/pezi/dart_periphery/blob/main/example/i2c_tsl2591.dart) light sensor.
 
 ## 0.9.12
 
-* Add section ADC with example to README 
-* Add button demo
+* Add section ADC with [example](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_light_sensor.dart) to README 
+* Add [button](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_button.dart) demo
 * Add [PIR motion sensor](https://wiki.seeedstudio.com/Grove-PIR_Motion_Sensor/)
 * Add [Light sensor & Led Demo](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_light_sensor_led.dart)
 * SPI: Fix exception - wrong handling of a fixed data list 
