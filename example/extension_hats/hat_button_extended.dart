@@ -19,6 +19,15 @@ void main(List<String> args) {
   var buttonPin = tupple.$2;
   var ledPin = tupple.$3;
   var hat = tupple.$1;
+
+  const holdTime = 1000; // Time to hold the button (in ms) to toggle LED
+
+  bool ledState = false; // Tracks the current LED state
+  var buttonPressedTime = 0; // Stores when the button was pressed
+  bool buttonHeld = false; // Tracks if the button has been held long enough
+  bool buttonState = false; // Current button state
+  bool lastButtonState = false; // Previous button state
+
   switch (hat) {
     case Hat.nano:
       var hat = NanoHatHub();
@@ -78,18 +87,34 @@ void main(List<String> args) {
       var led = GPIO(ledPin, GPIOdirection.gpioDirOut);
       led.write(false);
 
-      var old = true;
-      var ledStatus = false;
-      var ledStatusOld = false;
-
       while (true) {
-        var value = button.read();
-        if (value == true) {}
-        if (ledStatus != ledStatusOld) {
-          led.write(ledStatus);
+        buttonState = button.read(); // Button is pressed when LOW
+
+        if (buttonState && !lastButtonState) {
+          // Button just pressed
+          buttonPressedTime = DateTime.now().millisecondsSinceEpoch;
+          buttonHeld = false;
         }
-        sleep(Duration(milliseconds: wait));
-        old = value;
+
+        if (!buttonState && lastButtonState) {
+          // Button just released
+          if (buttonHeld) {
+            // Toggle the LED state if the button was held long enough
+            ledState = !ledState;
+            led.write(ledState);
+          }
+        }
+
+        // Check if the button is still pressed and held long enough
+        if (buttonState &&
+            !buttonHeld &&
+            (DateTime.now().millisecondsSinceEpoch - buttonPressedTime >=
+                holdTime)) {
+          buttonHeld = true; // Mark the button as held long enough
+        }
+
+        // Update the last button state
+        lastButtonState = buttonState;
       }
   }
 }
