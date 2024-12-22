@@ -614,7 +614,6 @@ class I2C extends IsolateAPI {
     var msg2 = result._messages[0];
     try {
       var read = msg2.len;
-
       var ptr = msg2.buf;
       var list = <int>[];
       for (var i = 0; i < read; ++i) {

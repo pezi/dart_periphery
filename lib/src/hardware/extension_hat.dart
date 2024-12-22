@@ -6,7 +6,11 @@
 
 import 'dart:io';
 
+import 'package:dart_periphery/src/isolate_api.dart';
+
 import '../i2c.dart';
+
+enum HatType { nano, grovePlus, grove }
 
 enum Command {
   digitalRead(1),
@@ -87,13 +91,14 @@ int retry = 3;
 ///  [GrovePi Plus](https://wiki.seeedstudio.com/GrovePi_Plus)
 ///
 ///
-class ArduinoBasedHat {
+class ArduinoBasedHat extends IsolateAPI {
   final I2C i2c;
   bool _autoWait = false;
   int _lastAction = 0;
 
   /// Sets the [i2c] bus.
   ArduinoBasedHat(this.i2c);
+  ArduinoBasedHat.isolate(this.i2c);
 
   /// Updates the timestamp of the last action.
   void _updateLastAction() {
@@ -282,13 +287,53 @@ class ArduinoBasedHat {
     }
     throw error;
   }
+
+  @override
+  IsolateAPI fromJson(String json) {
+    return ArduinoBasedHat.isolate(I2C.isolate(json));
+  }
+
+  @override
+  int getHandle() {
+    throw UnimplementedError();
+  }
+
+  @override
+  void setHandle(int handle) {
+    throw UnimplementedError();
+  }
+
+  @override
+  String toJson() {
+    return i2c.toJson();
+  }
 }
 
 /// Extension hat from [FriendlyARM](http://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
 /// https://github.com/friendlyarm/BakeBit
-class NanoHatHub extends ArduinoBasedHat {
-  int i2cBus;
-  NanoHatHub([this.i2cBus = 0]) : super(I2C(i2cBus));
+class NanoHatHub extends ArduinoBasedHat implements IsolateAPI {
+  NanoHatHub([int i2cBus = 0]) : super(I2C(i2cBus));
+  NanoHatHub.isolate(super.i2c);
+
+  @override
+  IsolateAPI fromJson(String json) {
+    return NanoHatHub.isolate(I2C.isolate(json));
+  }
+
+  @override
+  int getHandle() {
+    throw UnimplementedError();
+  }
+
+  @override
+  void setHandle(int handle) {
+    throw UnimplementedError();
+  }
+
+  @override
+  String toJson() {
+    return i2c.toJson();
+  }
 
   /// Initializes the [LED bar](http://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_LED_Bar):
   void ledBarInitExt(int pin, int chipset, int ledNumber) {
@@ -403,9 +448,29 @@ class BakeBitLedBar {
 /// |                 | transfer to I2C signal, then through level converter to |
 /// |                 | Raspberry Pi |
 /// | Grove-I2C       | Connect through level converter to Raspberry Pi |
-class GrovePiPlusHat extends ArduinoBasedHat {
-  final int i2cBus;
-  GrovePiPlusHat([this.i2cBus = 1]) : super(I2C(i2cBus));
+class GrovePiPlusHat extends ArduinoBasedHat implements IsolateAPI {
+  GrovePiPlusHat([int i2cBus = 1]) : super(I2C(i2cBus));
+  GrovePiPlusHat.isolate(super.i2c);
+
+  @override
+  IsolateAPI fromJson(String json) {
+    return GrovePiPlusHat.isolate(I2C.isolate(json));
+  }
+
+  @override
+  int getHandle() {
+    throw UnimplementedError();
+  }
+
+  @override
+  void setHandle(int handle) {
+    throw UnimplementedError();
+  }
+
+  @override
+  String toJson() {
+    return i2c.toJson();
+  }
 }
 
 const int rpiHatPid = 0x04;
@@ -422,27 +487,25 @@ const int rpiZeroHatPid = 0x05;
 /// | MCU                  | STM32F030F4P6                       |
 /// | Grove Ports Pi       | 6 x Digital(3.3V), 4 x Analog(3.3V) |
 /// |                      | 3 x I2C(3.3V); 1 x PWM(3.3V)        |
-/// |                      | 1 x RPISER(UART) connect to Pi(3.3V)|
-/// |                      |                                     |
+/// |                      | 1 x RPISER(UART) connect to Pi(3.3V)|             |
 /// | Grove Ports Pi Zero  | 2 x Digital(3.3V), 3 x Analog(3.3V) |
 /// |                      | 3 x I2C(3.3V), 1 x PWM(3.3V)        |
 /// |                      | 1 x RPISER(UART) connect to Pi(3.3V)|
-/// |                      |                                     |
 /// | Grove-Digital        | Connect to Raspberry Pi directly    |
 /// | Grove-Analog         | Connect to STM32F030F4P6(12bit ADC  |
 /// |                      | and then transfer to I2C signal,    |
 /// |                      | route to Pi directly                |
 /// | Grove-I2C, Grove-PWM | Connect to Raspberry Pi directly    |
 /// | and RPISER           |                                     |
-class GroveBaseHat {
+class GroveBaseHat extends IsolateAPI {
   final I2C i2c;
-  final int i2cBus;
   int _id = 0;
-  GroveBaseHat([this.i2cBus = 1]) : i2c = I2C(i2cBus);
+  GroveBaseHat([int i2cBus = 1]) : i2c = I2C(i2cBus);
+  GroveBaseHat.isolate(this.i2c);
 
   /// Returns the internal hardware id of the hat.
-  /// RPI_HAT_PID (0x4) for a 'Grove Base Hat RPi', and
-  /// RPI_ZERO_HAT_PID (0x05) for a 'Grove Base Hat RPi Zero'.
+  /// RPI_HAT_PID (0x4) for a `Grove Base Hat RPi`, and
+  /// RPI_ZERO_HAT_PID (0x05) for a `Grove Base Hat RPi Zero`.
   int getId() {
     if (_id == 0) {
       _id = _read16BitRegister(0x00);
@@ -516,8 +579,28 @@ class GroveBaseHat {
     return _read16BitRegister(0x30 + channel);
   }
 
-  /// Returns true for the Pi Zero model, false for the Pi model.
+  /// Returns `true` for the Pi Zero model, false for the Pi model.
   bool isHatRPiZero() {
     return rpiZeroHatPid == getId();
+  }
+
+  @override
+  IsolateAPI fromJson(String json) {
+    return GroveBaseHat.isolate(I2C.isolate(json));
+  }
+
+  @override
+  int getHandle() {
+    throw UnimplementedError();
+  }
+
+  @override
+  void setHandle(int handle) {
+    throw UnimplementedError();
+  }
+
+  @override
+  String toJson() {
+    return i2c.toJson();
   }
 }

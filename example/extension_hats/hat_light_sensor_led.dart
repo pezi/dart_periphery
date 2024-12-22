@@ -21,8 +21,8 @@ void main(List<String> args) {
   var tupple = checkArgs2Pins(args, "analogPin", "ledPin");
   var analogPin = tupple.$2;
   var ledPin = tupple.$3;
-
-  switch (tupple.$1) {
+  var hat = tupple.$1;
+  switch (hat) {
     case Hat.nano:
       {
         var hat = NanoHatHub();
@@ -104,5 +104,7 @@ void main(List<String> args) {
         }
         sleep(Duration(milliseconds: wait));
       }
+    case Hat.gpio:
+      print("Not supported!");
   }
 }

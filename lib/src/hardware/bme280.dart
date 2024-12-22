@@ -17,7 +17,10 @@ import 'utils/byte_buffer.dart';
 // This code bases on the diozero project - Thanks to Matthew Lewis!
 // https://github.com/mattjlewis/diozero/blob/main/diozero-core/src/main/java/com/diozero/devices/BMx280.java
 
+/// Default I2C address of the BME280 sensor
 const int bme280DefaultI2Caddress = 0x76;
+
+/// Alternative I2C address of the BME280 sensor
 const int bme280AlternativeI2Caddress = 0x77;
 
 const int calib00reg = 0x88;

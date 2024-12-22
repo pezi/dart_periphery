@@ -2,23 +2,20 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-//import 'dart:io';
-
 import 'dart:io';
 
 import '../../dart_periphery.dart';
+import 'numeric_enum.dart';
 
 // Resources:
 // https://www.seeedstudio.com/Grove-Sunlight-Sensor.html
 // https://github.com/Seeed-Studio/Grove_Sunlight_Sensor
 // https://github.com/Seeed-Studio/Seeed_Python_SI114X/blob/master/seeed_si114x.py
 
+/// Default I2C address of the SI1145 sensor
 const si1145DefaultI2Caddress = 0x60;
 
-abstract class IntEnum {
-  int getValue();
-}
-
+/// SI1145reg specific register
 enum SI1145reg implements IntEnum {
   partId(0x00),
   revId(0x01),
@@ -65,6 +62,7 @@ enum SI1145reg implements IntEnum {
   }
 }
 
+/// SI1145 spedific commands
 enum SI1145cmd implements IntEnum {
   nop(0x00),
   reset(0x01),
@@ -90,6 +88,7 @@ enum SI1145cmd implements IntEnum {
   }
 }
 
+/// SI1145 specific parameter
 enum SI1145param implements IntEnum {
   i2caddr(0x00),
   chlist(0x01),
@@ -340,7 +339,7 @@ class SI1145 {
 
   void _init() {
     if (_readByte(SI1145reg.partId) != 0x45) {
-      throw SI1145exception("SI1145 sensor initialization failed");
+      throw SI1145exception("Failed to find SI1145 sensor");
     }
     _reset();
     _initRegister();

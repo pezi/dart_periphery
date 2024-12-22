@@ -6,6 +6,16 @@ import 'dart:io';
 
 import 'package:dart_periphery/dart_periphery.dart';
 
+/// H 00495 T 01234 Z 06399
+///          11111111112222
+///012345678901234567890123
+(double, double, double) convert(String raw) {
+  var humidity = int.parse(raw.substring(3, 8)) / 10.0;
+  var temperature = (int.parse(raw.substring(11, 16)) - 1000) / 10.0;
+  var co2 = int.parse(raw.substring(19)) / 10.0;
+  return (humidity, temperature, co2);
+}
+
 /// COZIR CO2 Sensor
 ///
 /// [COZIR CO2 Sensor](https://co2meters.com/Documentation/Manuals/Manual_GC_0024_0025_0026_Revised8.pdf)
@@ -31,10 +41,12 @@ void main() {
     event = s.read(256, 1000);
     print('Response ${event.toString()}');
     sleep(Duration(seconds: 1));
-    for (var i = 0; i < 5; ++i) {
+    for (var i = 0; i < 20; ++i) {
       s.writeString('Q\r\n');
       event = s.read(256, 1000);
-      print(event.toString());
+      var tupple = convert(event.toString());
+      print(
+          "H: ${tupple.$1.toStringAsFixed(1)} T: ${tupple.$2.toStringAsFixed(1)} CO2:${tupple.$3.toInt()}");
       sleep(Duration(seconds: 5));
     }
   } finally {

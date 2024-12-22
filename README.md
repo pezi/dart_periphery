@@ -3,7 +3,10 @@
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
 
-[![pub package](https://img.shields.io/badge/pub-v0.9.12-orange)](https://pub.dartlang.org/packages/dart_periphery)
+[![pub package](https://img.shields.io/badge/pub-v0.9.13-orange)](https://pub.dartlang.org/packages/dart_periphery)
+[![Pub Points](https://img.shields.io/pub/points/dart_periphery)](https://pub.dev/packages/dart_periphery/score)
+[![All Contributors](https://img.shields.io/github/contributors/pezi/dart_periphery)](https://github.com/pezi/dart_periphery/graphs/contributors)
+[![BSD License](https://img.shields.io/github/license/pezi/dart_periphery)](https://opensource.org/license/bsd-3-clause)
 
 ## 📣 Important hints
 
@@ -355,7 +358,7 @@ void main() {
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/hat_adc_demo.jpg "Extension hat - ADC") 
 
-Extension hats, such as the [Grove Base Hat RaspberryPi Zero](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi_Zero), add addidional functionality like ADC (Analog-to-Digital Conversion) support. See also complete [example](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_light_sensor_led.dart) with support for FriendlyElec [NanoHat Hub](https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
+Extension hats, such as the [Grove Base Hat RaspberryPi Zero](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi_Zero), add addidional functionality like ADC (Analog-to-Digital Converter) support. See also complete [example](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_light_sensor_led.dart) with support for FriendlyElec [NanoHat Hub](https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
 and [Grove Base Hat RaspberryPi](https://www.seeedstudio.com/Grove-Base-Hat-for-Raspberry-Pi.html) 
 
 In this demo, the LED turns on when the value of the light sensor falls below a certain threshold.
@@ -416,35 +419,35 @@ cd ~
 ### arm
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.5.4/sdk/dartsdk-linux-arm-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.6.0/sdk/dartsdk-linux-arm-release.zip
 unzip dartsdk-linux-arm-release.zip
 ```
 
 ### arm64
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.5.4/sdk/dartsdk-linux-arm64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.6.0/sdk/dartsdk-linux-arm64-release.zip
 unzip dartsdk-linux-arm64-release.zip
 ```
 
 ### IA32
 
 ``` bash
-https://storage.googleapis.com/dart-archive/channels/stable/release/3.5.4/sdk/dartsdk-linux-ia32-release.zip
+https://storage.googleapis.com/dart-archive/channels/stable/release/3.6.0/sdk/dartsdk-linux-ia32-release.zip
 unzip dartsdk-linux-ia32-release.zip
 ```
 
 ### X64
 
 ``` bash
-https://storage.googleapis.com/dart-archive/channels/stable/release/3.5.4/sdk/dartsdk-linux-x64-release.zip
+https://storage.googleapis.com/dart-archive/channels/stable/release/3.6.0/sdk/dartsdk-linux-x64-release.zip
 unzip dartsdk-linux-x64-release.zip
 ```
 
 ### RISC-V (RV64GC)
 
 ``` bash
-https://storage.googleapis.com/dart-archive/channels/stable/release/3.5.4/sdk/dartsdk-linux-riscv64-release.zip
+https://storage.googleapis.com/dart-archive/channels/stable/release/3.6.0/sdk/dartsdk-linux-riscv64-release.zip
 unzip dartsdk-linux-riscv64-release.zip
 ```
 
@@ -479,7 +482,7 @@ Test the installation
 
 ``` bash
 dart --version
-Dart SDK version: 3.5.4 (stable) (Wed Oct 16 16:18:51 2024 +0000) on "linux_arm64"
+Dart SDK version: 3.6.0 (stable) (Thu Dec 5 07:46:24 2024 -0800) on "linux_arm64"
 ```
 
 ## 📚 Native libraries
@@ -621,7 +624,8 @@ The project is currently still beta and development is ongoing.
 * [MLX90615](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mlx90615.dart): digital infrared non-contact temperature sensor.
 * [SDC30](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sdc30.dart): CO₂, temperature and humidity sensor.
 * [SI1145](https://github.com/pezi/dart_periphery/blob/main/example/i2c_si1145.dart): Sunlight sensor: visible & IR light, UV index
-* [Light sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_light_sensor_led.dart)
+* [TSL2591](https://github.com/pezi/dart_periphery/blob/main/example/i2c_tsl2591.dart) light sensor
+* Analog [Light sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_light_sensor_led.dart)
 * [Button](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_button.dart)
 * [Magenetic switch sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magentic_switch.dart)
 * [Magenetic hall sensor ](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magentic_hall.dart)

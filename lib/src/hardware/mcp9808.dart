@@ -24,7 +24,7 @@ const setCriticalLimitAddress = 0x04;
 const ambientTemperatureAddress = 0x05;
 const setResolutionAddress = 0x08;
 
-/// MCP9808 sensor - default I2C address
+/// Default address of the MCP9808 sensor.
 const int mcp9808DefaultI2Caddress = 0x18;
 
 /// [MCP9808] exception

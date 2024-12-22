@@ -17,7 +17,8 @@ void main(List<String> args) {
   var tupple = checkArgs2Pins(args, "buttonPin", "ledPin");
   var buttonPin = tupple.$2;
   var ledPin = tupple.$3;
-  switch (tupple.$1) {
+  var hat = tupple.$1;
+  switch (hat) {
     case Hat.nano:
       var hat = NanoHatHub();
       print("Firmeware ${hat.getFirmwareVersion()}");
@@ -62,20 +63,23 @@ void main(List<String> args) {
         old = value;
       }
 
+    case Hat.gpio:
     case Hat.grove:
-      var hat = GroveBaseHat();
-      print("Firmeware ${hat.getFirmware()}");
-      print("Extension hat ${hat.getName()}");
+      if (hat == Hat.grove) {
+        var hat = GroveBaseHat();
+        print("Firmeware ${hat.getFirmware()}");
+        print("Extension hat ${hat.getName()}");
+      }
       print("$pinInfo: $buttonPin");
       print("Led pin: $ledPin");
 
-      var magnet = GPIO(buttonPin, GPIOdirection.gpioDirIn);
+      var button = GPIO(buttonPin, GPIOdirection.gpioDirIn);
       var led = GPIO(ledPin, GPIOdirection.gpioDirOut);
       led.write(false);
 
       var old = true;
       while (true) {
-        var value = magnet.read();
+        var value = button.read();
         print(value);
         if (value != old) {
           led.write(!value);

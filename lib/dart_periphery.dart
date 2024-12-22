@@ -54,7 +54,11 @@ export 'src/hardware/extension_hat.dart'
         GrovePiPlusHat,
         GroveBaseHat;
 export 'src/hardware/gesture_sensor.dart'
-    show GestureSensor, GestureSensorException, Gesture;
+    show
+        GestureSensor,
+        GestureSensorException,
+        Gesture,
+        paj7620DefaultI2Caddress;
 export 'src/hardware/mpu6050.dart' show MPU6050, MPU6050exception;
 export 'src/hardware/pn532/base_protocol.dart';
 export 'src/hardware/pn532/exceptions.dart';
@@ -62,7 +66,13 @@ export 'src/hardware/pn532/i2c_impl.dart';
 export 'src/hardware/pn532/pn532.dart';
 export 'src/hardware/pn532/spi_impl.dart';
 export 'src/hardware/sgp30.dart'
-    show SGP30, SGP30result, RawMeasurement, FeatureSetVersion, SGP30exception;
+    show
+        SGP30,
+        SGP30result,
+        RawMeasurement,
+        FeatureSetVersion,
+        SGP30exception,
+        sgp30DefaultI2Caddress;
 export 'src/hardware/sht31.dart'
     show
         SHT31,
@@ -83,8 +93,15 @@ export 'src/hardware/si1145.dart'
         SI1145reg,
         SI1145cmd,
         SI1145param,
-        IntEnum,
         si1145DefaultI2Caddress;
+export 'src/hardware/tsl2591.dart'
+    show
+        TSL2591,
+        TSL2591exception,
+        Gain,
+        IntegrationTime,
+        RawLuminosity,
+        tsl2591DefaultI2Caddress;
 export 'src/hardware/utils/byte_buffer.dart' show BitOrder;
 export 'src/hardware/utils/uint.dart';
 export 'src/i2c.dart'

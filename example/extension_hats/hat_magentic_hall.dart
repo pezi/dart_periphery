@@ -10,15 +10,15 @@ import 'parse_cmd_line.dart';
 const wait = 150;
 
 /// https://wiki.seeedstudio.com/Grove-Hall_Sensor/
-
 ///
-/// Usage: [nano|grove|grovePlus] hallPin ledPin
+/// Usage: [gpio|nano|grove|grovePlus] hallPin ledPin
 void main(List<String> args) {
   String pinInfo = "Hall pin";
   var tupple = checkArgs2Pins(args, "hallPin", "ledPin");
   var magnetPin = tupple.$2;
   var ledPin = tupple.$3;
-  switch (tupple.$1) {
+  var hat = tupple.$1;
+  switch (hat) {
     case Hat.nano:
       var hat = NanoHatHub();
       print("Firmeware ${hat.getFirmwareVersion()}");
@@ -58,12 +58,16 @@ void main(List<String> args) {
         sleep(Duration(milliseconds: wait));
         old = value;
       }
+    case Hat.gpio:
     case Hat.grove:
-      var hat = GroveBaseHat();
-      print("Firmeware ${hat.getFirmware()}");
-      print("Extension hat ${hat.getName()}");
+      if (hat == Hat.grove) {
+        var hat = GroveBaseHat();
+        print("Firmeware ${hat.getFirmware()}");
+        print("Extension hat ${hat.getName()}");
+      }
       print("$pinInfo: $magnetPin");
       print("Led pin: $ledPin");
+
       var magnet = GPIO(magnetPin, GPIOdirection.gpioDirIn);
       var led = GPIO(ledPin, GPIOdirection.gpioDirOut);
       led.write(false);
