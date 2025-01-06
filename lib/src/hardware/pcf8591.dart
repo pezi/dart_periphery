@@ -3,6 +3,8 @@
 // BSD-style license that can be found in the LICENSE file.
 
 // https://github.com/adafruit/Adafruit_CircuitPython_PCF8591/blob/main/adafruit_pcf8591/pcf8591.py
+// https://github.com/ShuDiamonds/PCF8591/blob/master/PCF8591.py
+// https://www.waveshare.com/wiki/Raspberry_Pi_Tutorial_Series:_PCF8591_AD/DA
 
 import 'package:dart_periphery/dart_periphery.dart';
 
@@ -51,15 +53,15 @@ class PFC8591 {
     var data = [0, 0];
     if (_dacEnabled) {
       data[0] = pfc8591enableDAC;
-      data[0] = _dac;
+      data[1] = _dac;
     }
     data[0] |= pin.index & 0x03;
     i2c.writeBytes(i2cAddress, data);
     return i2c.readBytes(i2cAddress, 2);
   }
 
-  void read(Pin pin) {
+  int read(Pin pin) {
     _halfRead(pin);
-    _halfRead(pin);
+   return _halfRead(pin)[1];
   }
 }
