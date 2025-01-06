@@ -1,5 +1,6 @@
 ## 0.9.14
-* Start with version 0.9.14    
+* Fix missing TSL2591 initialisation settings
+* Add PCF8591 8-bit A/D and D/A converter
 
 ## 0.9.13
 

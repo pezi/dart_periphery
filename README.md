@@ -578,16 +578,16 @@ List<String> getFlutterPiArgs();
 returns the command line parameter list of the `flutter-pi` command. The last parameter contains 
 the asset directory.
 
-## 🌡 flutter-pi-sensor-tester
+## 🌡 flutter_pi_sensor_tester
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/flutter_sensor_tester.gif "Flutter Sensor Tester")
 
 This [subproject](https://github.com/pezi/flutter_pi_sensor_tester) bases on 
 [flutter-pi](https://github.com/ardera/flutter-pi) and implements a simple
-isolate/stream architecture designed to transfer sensor data from an isolate to the Flutter UI:
+Dart isolate/stream architecture designed to transfer sensor data from an isolate to the Flutter UI:
 
 **Isolate Interface**: This consists of the steps InitTask, MainTask, and ExitTask, along with a 
-limited back channel for controlling the isolate. This setup is typically used for sensor 
+limited back channel for controlling the Dart isolate. This setup is typically used for sensor 
 measurements:
 * `InitTask`: Initializes the sensor.
 * `MainTask`: Collects sensor data and passes it to a stream.
@@ -597,9 +597,16 @@ measurements:
 This variant remains on standby for data; once data is processed, the result is passed to the stream 
 and subsequently to the Flutter UI. This model is used for actuator control, such as operating a LED.
 
+## 💧 flutter_sensor_tester 
+
+This project extends the flutter_pi_sensor_tester project to a client/server model. 
+
+
 **Support for Multiple Streams**: Enables handling of multiple data streams simultaneously.
 
 The project is currently still beta and development is ongoing.
+
+
 
 ## 🔬 Tested SoC hardware
 
