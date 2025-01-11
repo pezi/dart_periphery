@@ -60,8 +60,35 @@ class PFC8591 {
     return i2c.readBytes(i2cAddress, 2);
   }
 
+  //
   int read(Pin pin) {
-    _halfRead(pin);
-   return _halfRead(pin)[1];
+    _halfRead(pin); // dummy read
+    return _halfRead(pin)[1];
+  }
+
+  void enableDAC(bool flag) {
+    _dacEnabled = flag;
+    List<int> data;
+    if (flag) {
+      data = [pfc8591enableDAC, _dac];
+    } else {
+      data = [0, 0];
+    }
+    i2c.writeBytes(i2cAddress, data);
+    i2c.readBytes(i2cAddress, 2);
+  }
+
+  void write(int value) {
+    if (value < 0 || value > 255) {
+      throw PFC8591exception("8-bit DAC - valid range: [0,255]");
+    }
+    if (!_dacEnabled) {
+      throw PFC8591exception("DAC support is not enabled");
+    }
+
+    var data = [pfc8591enableDAC, value];
+    _dac = value;
+    i2c.writeBytes(i2cAddress, data);
+    i2c.readBytes(i2cAddress, 2);
   }
 }

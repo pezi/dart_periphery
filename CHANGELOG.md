@@ -1,6 +1,7 @@
 ## 0.9.14
 * Fix missing TSL2591 initialisation settings
 * Add PCF8591 8-bit A/D and D/A converter
+* I2C: Change internal data buffers from `Pointer<Int8>` to `Pointer<Uint8>`
 
 ## 0.9.13
 
