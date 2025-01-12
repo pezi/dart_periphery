@@ -5,6 +5,7 @@
 // https://github.com/adafruit/Adafruit_CircuitPython_PCF8591/blob/main/adafruit_pcf8591/pcf8591.py
 // https://github.com/ShuDiamonds/PCF8591/blob/master/PCF8591.py
 // https://www.waveshare.com/wiki/Raspberry_Pi_Tutorial_Series:_PCF8591_AD/DA
+// https://cdn-learn.adafruit.com/downloads/pdf/adafruit-pcf8591-adc-dac.pdf
 
 import 'package:dart_periphery/dart_periphery.dart';
 
@@ -41,14 +42,6 @@ class PFC8591 {
     referenceVoltage = refVoltage;
   }
 
-  void setDAC(bool dac) {
-    _dacEnabled = dac;
-  }
-
-  bool getDAC() {
-    return _dacEnabled;
-  }
-
   List<int> _halfRead(Pin pin) {
     var data = [0, 0];
     if (_dacEnabled) {
@@ -60,13 +53,14 @@ class PFC8591 {
     return i2c.readBytes(i2cAddress, 2);
   }
 
-  //
+  /// Reads a 8 bit value from a [pin].
   int read(Pin pin) {
     _halfRead(pin); // dummy read
     return _halfRead(pin)[1];
   }
 
-  void enableDAC(bool flag) {
+  /// Enables/disables the DAC (Digital Analog Converter).
+  void setDAC(bool flag) {
     _dacEnabled = flag;
     List<int> data;
     if (flag) {
@@ -78,6 +72,12 @@ class PFC8591 {
     i2c.readBytes(i2cAddress, 2);
   }
 
+  ///
+  bool getDAC() {
+    return _dacEnabled;
+  }
+
+  /// Writes a 8-bit [value] to the DAC (Digital Analog Converter) on pin 0.
   void write(int value) {
     if (value < 0 || value > 255) {
       throw PFC8591exception("8-bit DAC - valid range: [0,255]");
