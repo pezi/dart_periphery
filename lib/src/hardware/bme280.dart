@@ -197,7 +197,7 @@ class BME280 {
   BME280.spi(SPI spi)
       : _spi = spi,
         isI2C = false,
-        bitOrder = spi.bitOrder,
+        bitOrder = BitOrder.msbLast,
         i2cAddress = -1 {
     _initialize();
   }

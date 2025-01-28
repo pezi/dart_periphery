@@ -60,7 +60,7 @@ base class NativeI2Cmsg extends Struct {
   external int flags;
   @Int16()
   external int len;
-  external Pointer<Int8> buf;
+  external Pointer<Uint8> buf;
 
   @override
   String toString() {
@@ -157,7 +157,7 @@ class I2Cmsg {
         }
       }
       msg.flags = flags;
-      msg.buf = malloc<Int8>(data.len);
+      msg.buf = malloc<Uint8>(data.len);
       if (data.predefined.isNotEmpty) {
         var count = 0;
         for (var value in data.predefined) {

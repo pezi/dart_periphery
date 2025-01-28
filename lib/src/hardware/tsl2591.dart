@@ -181,6 +181,8 @@ class TSL2591 {
     if (_readByte(Register.deviceId) != 0x50) {
       throw TSL2591exception("Failed to find TSL2591 sensor");
     }
+    setGain(gain);
+    setIntegrationTime(time);
     enable();
   }
 

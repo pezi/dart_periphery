@@ -4,7 +4,7 @@
 
 import 'package:dart_periphery/dart_periphery.dart';
 
-/// BMP280 - high-precision, low-power combined humidity, pressure, and
+/// BME280 - high-precision, low-power combined humidity, pressure, and
 /// temperature sensor
 ///
 ///  https://wiki.seeedstudio.com/Grove-Barometer_Sensor-BME280/
@@ -15,7 +15,7 @@ void main() {
     print("dart_periphery Version: $dartPeripheryVersion");
     print("c-periphery Version   : ${getCperipheryVersion()}");
     print('SPI info: ${spi.getSPIinfo()}');
-    print("BM280 sensor");
+    print("BME280 sensor");
 
     var bme280 = BME280.spi(spi);
     var r = bme280.getValues();

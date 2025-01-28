@@ -1,3 +1,11 @@
+## 0.9.14
+* Fix missing TSL2591 initialisation settings
+* Add PCF8591 8-bit A/D and D/A converter (NOT TESTED)
+* I2C: Change internal data buffers from `Pointer<Int8>` to `Pointer<Uint8>`
+* SPI: Fix List<int> transfer(List<int> data, bool reuseBuffer)  
+* BME280 SPI - fix byte order problem
+* Update to Dart 3.6.1
+
 ## 0.9.13
 
 * Fix I2C `int readByteReg(int address, int register,
