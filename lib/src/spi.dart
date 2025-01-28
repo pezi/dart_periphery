@@ -401,16 +401,16 @@ class SPI extends IsolateAPI {
       if (reuseBuffer) {
         // data.clear();
         for (var i = 0; i < data.length; ++i) {
-          data[i] = 0;
+          data[i] = outPtr[i];
         }
-        result = data;
+        return data;
       } else {
         result = <int>[];
+        for (var i = 0; i < length; ++i) {
+          result.add(outPtr[i]);
+        }
+        return result;
       }
-      for (var i = 0; i < length; ++i) {
-        result.add(outPtr[i]);
-      }
-      return result;
     } finally {
       if (inPtr != nullptr) {
         malloc.free(inPtr);
