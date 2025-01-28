@@ -399,15 +399,14 @@ class SPI extends IsolateAPI {
       List<int> result;
       var length = data.length;
       if (reuseBuffer) {
-        // data.clear();
         for (var i = 0; i < data.length; ++i) {
           data[i] = outPtr[i];
         }
         return data;
       } else {
-        result = <int>[];
+        result = List<int>.filled(length, 0);
         for (var i = 0; i < length; ++i) {
-          result.add(outPtr[i]);
+          result[i] = outPtr[i];
         }
         return result;
       }
