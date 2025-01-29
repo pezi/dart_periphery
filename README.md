@@ -10,7 +10,7 @@
 
 ## 📣 Important hints
 
-This version updates CPU detection by switching from uname() to Dart’s built-in [Abi class](https://api.flutter.dev/flutter/dart-ffi/Abi-class.html). 
+This version updates CPU detection by switching from `uname()` to Dart’s built-in [Abi class](https://api.flutter.dev/flutter/dart-ffi/Abi-class.html). 
 Special thanks to [Hanns Winkler](https://github.com/pezi/dart_periphery/pulls) for his contribution!
 
 Added RISC-V support, thanks to [Ali Tariq](https://github.com/alitariq4589) from [10xEngineers](https://10xEngineers.ai) for providing remote access to a Banana Pi BPI-F3 16GB on [Cloud-V](https://cloud-v.co), which enabled building the RISC-V variant of the c-periphery library.
@@ -75,7 +75,7 @@ void main() {
   print('Native c-periphery Version :  ${getCperipheryVersion()}');
   print('GPIO test');
   var gpio = GPIO(18, GPIOdirection.gpioDirOut);
-  var gpio2 = GPIO(16, GPIOdirection.gpioDirOut;
+  var gpio2 = GPIO(16, GPIOdirection.gpioDirOut);
   var gpio3 = GPIO.advanced(5, config);
 
   print('GPIO info: ' + gpio.getGPIOinfo());
@@ -160,6 +160,8 @@ void main() {
 ```
 
 ### SPI
+
+![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/bme280_spi.jpg "BME280 SPI Sensor")
 
 ``` dart
 import 'package:dart_periphery/dart_periphery.dart';
