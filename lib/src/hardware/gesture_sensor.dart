@@ -88,7 +88,7 @@ class GestureSensorException implements Exception {
   GestureSensorException(this.errorMsg);
 }
 
-/// [PAj7620] directions
+/// Gesture sensor [PAj7620] directions
 enum Gesture {
   nothing,
   forward,
