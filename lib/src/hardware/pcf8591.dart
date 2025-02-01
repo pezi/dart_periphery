@@ -9,9 +9,10 @@
 
 import 'package:dart_periphery/dart_periphery.dart';
 
+/// [PFC8591] pins
 enum Pin { a0, a1, a2, a3 }
 
-/// Default I2C address of the PFC8591 ADC
+/// Default I2C address of the [PFC8591] ADC
 const int pcf8591DefaultI2Caddress = 0x48;
 
 /// [PFC8591] exception

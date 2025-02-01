@@ -539,7 +539,7 @@ class GPIO extends IsolateAPI {
   /// Opens the character device GPIO with the specified GPIO [name] and the
   /// configuration [config] at the default character device GPIO with
   /// the [chip] number. The default chip number is 0, with the
-  /// path <tt>/dev/gpiochip0</tt>.
+  /// path `/dev/gpiochip0`.
   ///
   /// Use [GPIO.setBaseGPIOpath] to change the default character device path.
   GPIO.nameAdvanced(this.name, GPIOconfig config, [this.chip = 0])

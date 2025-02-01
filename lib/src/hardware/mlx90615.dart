@@ -20,7 +20,7 @@ const int sleep = 0xC6;
 const regIdLow = 0x1E;
 const regIdHigh = 0x1F;
 
-/// Default address of the MLX90615 sensor.
+/// Default address of the [MLX90615] sensor.
 const int mlx90615DefaultI2Caddress = 0x5B;
 
 /// [MLX90615] exception

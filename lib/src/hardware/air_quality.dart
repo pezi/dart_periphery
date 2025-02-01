@@ -2,7 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-/// IAQ (Index of Air Quality) based ob following source
+/// IAQ (Index of Air Quality) based on following source
 /// https://community.bosch-sensortec.com/t5/MEMS-sensors-forum/BME680-688-IAQ-meaning/td-p/45196
 /// converted to a Dart representation.
 library;
@@ -20,7 +20,9 @@ extension CharacterCase on String {
   }
 }
 
-/// Returns an [AirQuality] for a [iaq] value
+/// Returns an [AirQuality] for a [iaq] value.
+///
+/// IAQ (Index of Air Quality) based on following [source](https://community.bosch-sensortec.com/t5/MEMS-sensors-forum/BME680-688-IAQ-meaning/td-p/45196).
 AirQuality getAirQuality(int iaq) {
   for (var q in AirQuality.values) {
     if (q == AirQuality.invalidValue) {
@@ -33,7 +35,9 @@ AirQuality getAirQuality(int iaq) {
   return AirQuality.invalidValue;
 }
 
-/// IAQ intervals: excellent - invalidValue
+/// IAQ values: excellent - invalidValue - contaning range and color
+///
+/// [source](https://community.bosch-sensortec.com/t5/MEMS-sensors-forum/BME680-688-IAQ-meaning/td-p/45196).
 enum AirQuality {
   excellent(0, 50, 0xFF02E400),
   good(51, 100, 0xFF92D04F),
@@ -55,11 +59,12 @@ enum AirQuality {
     return name;
   }
 
-  /// Constructs an [AirQuality] with the interval [lowerBound] - [upperBound]
-  /// and the color scheme according the original documentation - the
-  /// signal [color] represents a IAQ interval and the hint [isTextColorBlack]
-  /// indicates if an optional text uses black or white with [color] as
-  /// background.
+  /// Creates an [AirQuality] instance defined by the interval
+  /// [lowerBound] - [upperBound] and applies the color scheme as described in
+  /// the official [documentation](https://community.bosch-sensortec.com/t5/MEMS-sensors-forum/BME680-688-IAQ-meaning/td-p/45196).
+  /// The signal [color] parameter represents an IAQ value, while the
+  /// [isTextColorBlack] flag indicates whether black or white text should be
+  /// used on the [color] background.
   const AirQuality(this.lowerBound, this.upperBound, this.color,
       [this.isTextColorBlack = true]);
   final int lowerBound;

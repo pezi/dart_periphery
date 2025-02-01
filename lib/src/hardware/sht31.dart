@@ -13,10 +13,10 @@ import 'package:dart_periphery/src/hardware/utils/byte_buffer.dart';
 // https://github.com/ControlEverythingCommunity/SHT31/blob/master/Java/SHT31.java
 // https://github.com/adafruit/Adafruit_CircuitPython_SHT31D/blob/master/adafruit_sht31d.py
 
-/// Default I2C address of the SHT31 sensor
+/// Default I2C address of the [SHT31] sensor
 const int sht31DefaultI2Caddress = 0x44;
 
-/// Alternative I2C address of the SI1145 sensor
+/// Alternative I2C address of the [SHT31] sensor
 const int sht31AlternativeI2Caddress = 0x45;
 
 const int sht31MeasHighrepStretch = 0x2C06;

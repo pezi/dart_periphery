@@ -13,7 +13,7 @@ import '../i2c.dart';
 // https://github.com/Raspoid/raspoid/blob/master/src/main/com/raspoid/I2CComponent.java
 // https://github.com/Raspoid/raspoid/blob/master/src/main/com/raspoid/additionalcomponents/MPU6050.java
 
-/// Digital Low Pass Filter
+/// [MPU6050] Digital Low Pass Filter
 enum DLPF {
   filter0,
   filter1,
@@ -25,7 +25,7 @@ enum DLPF {
   filter7
 }
 
-/// Default address of the MPU6050 sensor.
+/// Default address of the [MPU6050] sensor.
 const int defaultMPU6050address = 0x68;
 
 /// Default value for the digital low pass filter (DLPF) setting for both
@@ -130,7 +130,6 @@ class MPU6050exception implements Exception {
 /// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/mpu6050.dart)
 /// * [Datasheet](https://invensense.tdk.com/wp-content/uploads/2015/02/MPU-6000-Datasheet1.pdf)
 /// * This implementation is derived from project [Raspoid](https://github.com/Raspoid/raspoid/blob/master/src/main/com/raspoid/additionalcomponents/MPU6050.java)
-
 class MPU6050 {
   final I2C i2c;
 

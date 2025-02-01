@@ -9,6 +9,7 @@ import 'package:dart_periphery/src/i2c.dart';
 import 'dart:typed_data';
 import 'dart:io';
 
+/// [SDC30] commands
 enum Command {
   continuousMeasurement(0x0010),
   setMeasurementInterval(0x4600),
@@ -26,7 +27,7 @@ enum Command {
   const Command(this.value);
 }
 
-/// Default I2C address of the SDC30 sensor
+/// Default I2C address of the [SDC30] sensor
 const int sdc30DefaultI2Caddress = 0x61;
 
 /// [SDC30] exception
@@ -68,14 +69,13 @@ class SDC30result {
   }
 }
 
-/// SDC30 CO2 & Temperature & Humidity Sensor
+/// SDC30 CO₂ & Temperature & Humidity Sensor
 ///
 /// See for more
 /// * [SDC30 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sdc30.dart)
 /// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/sdc30.dart)
 /// * [Datasheet](https://sensirion.com/media/documents/4EAF6AF8/61652C3C/Sensirion_CO2_Sensors_SCD30_Datasheet.pdf)
 /// * Technical resource [seedstudio](https://www.seeedstudio.com/Grove-CO2-Temperature-Humidity-Sensor-SCD30-p-2911.html)
-
 class SDC30 {
   final I2C i2c;
   final int i2cAddress;

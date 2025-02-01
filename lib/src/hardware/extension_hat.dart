@@ -10,8 +10,10 @@ import 'package:dart_periphery/src/isolate_api.dart';
 
 import '../i2c.dart';
 
+/// Supported extension hats
 enum HatType { nano, grovePlus, grove }
 
+/// Extension hat commands
 enum Command {
   digitalRead(1),
   digitalWrite(2),
@@ -34,7 +36,7 @@ enum Command {
 
 /// Command buffer for a hat command.
 ///
-/// Format: byte 1 : command, byte 2 : pin, byte 3 and 4: optional parameter
+/// Format: `byte 1` : command, `byte 2` : pin, `byte` 3 and 4: optional parameter
 class HatCmd {
   Command cmd;
   HatCmd(this.cmd);
@@ -310,7 +312,9 @@ class ArduinoBasedHat extends IsolateAPI {
 }
 
 /// Extension hat from [FriendlyARM](http://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
-/// https://github.com/friendlyarm/BakeBit
+///
+/// See for more
+/// * [github repository](https://github.com/friendlyarm/BakeBit)
 class NanoHatHub extends ArduinoBasedHat implements IsolateAPI {
   NanoHatHub([int i2cBus = 0]) : super(I2C(i2cBus));
   NanoHatHub.isolate(super.i2c);
@@ -335,46 +339,44 @@ class NanoHatHub extends ArduinoBasedHat implements IsolateAPI {
     return i2c.toJson();
   }
 
-  /// Initializes the [LED bar](http://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_LED_Bar):
+  /// Initializes the [LED bar](http://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_LED_Bar).
   void ledBarInitExt(int pin, int chipset, int ledNumber) {
     _sendCmd(Command.ledbarInit, pin, chipset, ledNumber);
   }
 
-  /// Initialize the LED bar.
+  /// Initialize the [LED bar](http://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_LED_Bar).
   void ledBarInit(int pin) {
     _sendCmd(Command.ledbarInit, pin, 0, 5);
   }
 
-  /// Shows the LED bar.
+  /// Shows the [LED bar](http://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_LED_Bar).
   void ledBarShow(int pin, int highBits, int lowBits) {
     _sendCmd(Command.ledbarShow, pin, highBits, lowBits);
   }
 
-  /// Releases the LED bar.
+  /// Releases the [LED bar](http://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_LED_Bar).
   void ledBarRelease(int pin) {
     _sendCmd(Command.ledbarRelease, pin);
   }
 
-  /// Attaches the servo to [pin].
+  /// Attaches the [servo](https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_Servo) to [pin].
   void servoAttach(int pin) {
     _sendCmd(Command.servoAttach, pin);
   }
 
-  /// Detaches the servo from [pin].
-  ///
-  /// https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_Servo
+  /// Detaches the [servo](https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_Servo) from [pin].
   void servoDetach(int pin) {
     _sendCmd(Command.servoDetach, pin);
   }
 
-  /// Steers the position of the servo at [pin] to [position].
-  /// For details see  http://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_Servo
+  /// Steers the position of the [servo](https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_Servo)
+  ///  at [pin] to [position].
   void servoWrite(int pin, int position) {
     _sendCmd(Command.servoWrite, pin, position);
   }
 
-  /// Reads a value from the 'Ultrasonic Ranger' in the range form range 5-300cm.
-  /// http://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_Ultrasonic_Ranger
+  /// Reads a value from the [Ultrasonic Ranger](http://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_Ultrasonic_Ranger)
+  /// in the range form range 5-300cm.
   int readUltrasonic(int pin) {
     autoWait();
     var error = I2Cexception.empty();

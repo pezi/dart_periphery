@@ -9,9 +9,10 @@ import '../../dart_periphery.dart';
 // https://github.com/adafruit/Adafruit_CircuitPython_TSL2591
 // https://github.com/waveshare/TSL2591X-Light-Sensor/blob/master/RaspberryPi%26JetsonNano/c/lib/TSL2591.c
 
-/// Default I2C address of the TSL2591 sensor
+/// Default I2C address of the [TSL2591] sensor
 const tsl2591DefaultI2Caddress = 0x29;
 
+/// [TSL2591] command
 enum Command {
   commandBit(0xA0),
   enablePowerOff(0x00),
@@ -24,6 +25,7 @@ enum Command {
   const Command(this.value);
 }
 
+/// [TSL2591] register
 enum Register {
   enable(0x00),
   control(0x01),
@@ -38,6 +40,7 @@ enum Register {
 const maxCount100ms = 0x8FFF;
 const maxCount = 0xFFFF;
 
+/// [TSL2591] coefficients
 enum TSL2591Lux {
   df(408.0),
   coefB(1.64),
@@ -48,6 +51,7 @@ enum TSL2591Lux {
   const TSL2591Lux(this.value);
 }
 
+/// [TSL2591] gain
 enum Gain {
   low(0x00, 1, "Low gain (1x)"),
   med(0x10, 25, "Medium gain (25x)"),
@@ -70,6 +74,7 @@ enum Gain {
   }
 }
 
+/// [TSL2591] timings
 enum IntegrationTime {
   time100ms(0x00, 100),
   time200ms(0x01, 200),
@@ -102,7 +107,7 @@ class TSL2591exception implements Exception {
   TSL2591exception(this.errorMsg);
 }
 
-/// Data class for raw values.
+/// [TSL2591] data class for raw values.
 class RawLuminosity {
   final int channel0;
   final int channel1;
