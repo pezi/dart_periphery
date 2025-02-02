@@ -170,6 +170,7 @@ enum SI1145adcmux implements IntEnum {
   }
 }
 
+/// [SI1145] specific register
 enum Si1145ledSel implements IntEnum {
   ps1None(0x00),
   ps1Led1(0x01),
@@ -189,6 +190,7 @@ enum Si1145ledSel implements IntEnum {
   }
 }
 
+/// [SI1145] specific register
 enum SI1145adcGain implements IntEnum {
   div1(0x00),
   div2(0x01),

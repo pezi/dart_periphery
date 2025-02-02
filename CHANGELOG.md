@@ -1,6 +1,6 @@
 ## 0.9.15
 
-* Start with 0.9.15 
+* Add DS1307 real time clock
 
 ## 0.9.14
 

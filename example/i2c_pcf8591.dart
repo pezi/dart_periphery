@@ -5,8 +5,6 @@
 import 'package:dart_periphery/dart_periphery.dart';
 import 'dart:io';
 
-import 'package:dart_periphery/src/hardware/pcf8591.dart';
-
 /// PCF8591 ADC+DAC combo
 ///
 /// Datasheet: https://cdn-learn.adafruit.com/downloads/pdf/adafruit-pcf8591-adc-dac.pdf
