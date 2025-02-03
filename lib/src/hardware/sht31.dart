@@ -19,6 +19,7 @@ const int sht31DefaultI2Caddress = 0x44;
 /// Alternative I2C address of the [SHT31] sensor
 const int sht31AlternativeI2Caddress = 0x45;
 
+/*
 const int sht31MeasHighrepStretch = 0x2C06;
 const int sht31MeasMedrepStretch = 0x2C0D;
 const int sht31MeasLowrepStretch = 0x2C10;
@@ -31,6 +32,25 @@ const int sht31SoftReset = 0x30A2;
 const int sht31HeaterEnable = 0x306D;
 const int sh31HeaterDisable = 0x3066;
 const int sh31ReadSerialNumber = 0x3780;
+*/
+
+enum SHT31command {
+  measHighrepStretch(0x2C06),
+  measMedrepStretch(0x2C0D),
+  measLowrepStretch(0x2C10),
+  measHighrep(0x2400),
+  measMedrep(0x240B),
+  measLowrep(0x2416),
+  readStatus(0xF32D),
+  clearStatus(0x3041),
+  softReset(0x30A2),
+  heaterEnable(0x306D),
+  heaterDisable(0x3066),
+  readSerialNumber(0x3780);
+
+  final int command;
+  const SHT31command(this.command);
+}
 
 /// [SHT31] exception
 class SHT31exception implements Exception {
@@ -82,28 +102,28 @@ class SHT31 {
   /// too long!
   void heater(bool heater) {
     if (heater) {
-      _writeCommand(sht31HeaterEnable);
+      _writeCommand(SHT31command.heaterEnable);
     } else {
-      _writeCommand(sh31HeaterDisable);
+      _writeCommand(SHT31command.heaterDisable);
     }
   }
 
   /// Resets the sensor.
   void reset() {
-    _writeCommand(sht31SoftReset);
+    _writeCommand(SHT31command.softReset);
     sleep(Duration(milliseconds: 5));
   }
 
   /// Returns the status of the sensor.
   int getStatus() {
-    _writeCommand(sht31ReadStatus);
+    _writeCommand(SHT31command.readStatus);
     sleep(Duration(milliseconds: 5));
     return i2c.readWord(i2cAddress, BitOrder.msbFirst);
   }
 
   /// Returns the serial number of the sensor.
   int getSerialNumber() {
-    _writeCommand(sh31ReadSerialNumber);
+    _writeCommand(SHT31command.readSerialNumber);
     sleep(Duration(milliseconds: 5));
     var data = i2c.readBytesReg(i2cAddress, 0, 6);
     if (!checkCRC(data)) {
@@ -115,14 +135,14 @@ class SHT31 {
         (data[4] & 0xff);
   }
 
-  void _writeCommand(int cmd) {
-    i2c.writeBytes(i2cAddress, [cmd >> 8, cmd & 0xff]);
+  void _writeCommand(SHT31command cmd) {
+    i2c.writeBytes(i2cAddress, [cmd.command >> 8, cmd.command & 0xff]);
   }
 
   /// Reads a [SHT31result] from the sensor with a high accuracy in a period of
   /// 500 milliseconds.
   SHT31result getValues() {
-    _writeCommand(sht31MeasHighrepStretch);
+    _writeCommand(SHT31command.measHighrepStretch);
 
     sleep(Duration(milliseconds: 500));
 
