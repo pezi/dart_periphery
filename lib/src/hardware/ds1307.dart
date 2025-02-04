@@ -50,10 +50,11 @@ class DS1307 {
   final I2C i2c;
   final int i2cAddress;
 
-  // Creates a SHT31 sensor instance that uses the [i2c] bus with
+  // Creates a DS1307 rtc instance that uses the [i2c] bus with
   /// the optional [i2cAddress].
   DS1307(this.i2c, [this.i2cAddress = ds1307DefaultI2Caddress]) {
     var value = i2c.readByteReg(ds1307DefaultI2Caddress, 0x07);
+    print(value);
     if (value & 0x6C != 0) {
       throw DS1307exception("Unable to find DS1307 at i2c address 0x68.");
     }
