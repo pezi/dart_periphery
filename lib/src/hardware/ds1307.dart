@@ -43,7 +43,7 @@ int dec2bcd(int value) {
 /// DS1307 real time clock
 ///
 /// See for more
-/// * [SHT31 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ds1307.dart)
+/// * [DS1307 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ds1307.dart)
 /// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/ds1307.dart)
 /// * [Datasheet](https://www.analog.com/media/en/technical-documentation/data-sheets/ds1307.pdf)
 class DS1307 {
@@ -53,6 +53,10 @@ class DS1307 {
   // Creates a DS1307 rtc instance that uses the [i2c] bus with
   /// the optional [i2cAddress].
   DS1307(this.i2c, [this.i2cAddress = ds1307DefaultI2Caddress]) {
+    var buf = [0x07, 0x00];
+    i2c.writeBytes(ds1307DefaultI2Caddress, [0x07, 0x00]);
+    print(i2c.readBytes(ds1307DefaultI2Caddress, 2));
+
     var value = i2c.readByteReg(ds1307DefaultI2Caddress, 0x07);
     print(value);
     if (value & 0x6C != 0) {
