@@ -58,7 +58,7 @@ class DS1307 {
     if (value & ((0xFF << 3 & 0xFF)) != 0) {
       throw DS1307exception("Unable to find DS1307 at i2c address 0x68.");
     }
-    value = i2c.readByteReg(ds1307DefaultI2Caddress, 0x03);
+    value = i2c.readByteReg(ds1307DefaultI2Caddress, 0x07);
     if (value & 0x6C != 0x00) {
       throw DS1307exception("Unable to find DS1307 at i2c address 0x68.");
     }
