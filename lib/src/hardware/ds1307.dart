@@ -54,8 +54,8 @@ class DS1307 {
   /// the optional [i2cAddress].
   DS1307(this.i2c, [this.i2cAddress = ds1307DefaultI2Caddress]) {
     var buf = [0x07, 0x00];
-    i2c.writeBytes(ds1307DefaultI2Caddress, [0x07, 0x00]);
-    print(i2c.readBytes(ds1307DefaultI2Caddress, 2));
+    i2c.writeBytes(ds1307DefaultI2Caddress, [0x03, 0x00]);
+    print(i2c.readBytes(ds1307DefaultI2Caddress, 2)[0].toRadixString(2));
 
     var value = i2c.readByteReg(ds1307DefaultI2Caddress, 0x07);
     print(value);
