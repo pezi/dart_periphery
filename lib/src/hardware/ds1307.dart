@@ -53,17 +53,13 @@ class DS1307 {
   // Creates a DS1307 rtc instance that uses the [i2c] bus with
   /// the optional [i2cAddress].
   DS1307(this.i2c, [this.i2cAddress = ds1307DefaultI2Caddress]) {
-    var buf = [0x07, 0x00];
-    i2c.writeBytes(ds1307DefaultI2Caddress, [0x03, 0x00]);
-    print(i2c.readBytes(ds1307DefaultI2Caddress, 2)[0].toRadixString(2));
-
-    var value = i2c.readByteReg(ds1307DefaultI2Caddress, 0x07);
+    var value = i2c.readByteReg(ds1307DefaultI2Caddress, 0x03);
     print(value);
-    if (value & 0x6C != 0) {
+    if (value & ((0xFF << 3 & 0xFF)) != 0) {
       throw DS1307exception("Unable to find DS1307 at i2c address 0x68.");
     }
     value = i2c.readByteReg(ds1307DefaultI2Caddress, 0x03);
-    if (value & 0x6C != 0xF8) {
+    if (value & 0x6C != 0x00) {
       throw DS1307exception("Unable to find DS1307 at i2c address 0x68.");
     }
   }
