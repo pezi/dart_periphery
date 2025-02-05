@@ -3,7 +3,9 @@
 // BSD-style license that can be found in the LICENSE file.
 
 export 'src/dummy.dart' show DummyDev;
+export 'src/isolate_api.dart' show IsolateAPI;
 export 'src/errno.dart' show ERRNO, Errno, ErrnoNotFound;
+export 'src/hardware/utils/byte_buffer.dart' show checkCRC, crc8;
 export 'src/gpio.dart'
     show
         GPIOpolling,

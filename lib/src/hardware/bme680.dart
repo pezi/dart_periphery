@@ -6,8 +6,7 @@ import 'dart:collection';
 import 'dart:io';
 import 'dart:math';
 
-import '../i2c.dart';
-import 'bosch.dart';
+import 'package:dart_periphery/dart_periphery.dart';
 import 'utils/byte_buffer.dart';
 
 // Resources:

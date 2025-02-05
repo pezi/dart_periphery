@@ -4,9 +4,7 @@
 
 import 'dart:io';
 
-import '../i2c.dart';
-import '../spi.dart';
-import 'bosch.dart';
+import 'package:dart_periphery/dart_periphery.dart';
 import 'utils/byte_buffer.dart';
 
 // Bosch BMx280 pressure and temperature sensor. The BME280 includes an

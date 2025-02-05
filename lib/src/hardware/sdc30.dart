@@ -5,7 +5,7 @@
 // https://github.com/Sensirion/python-i2c-scd30/tree/master
 // https://github.com/agners/micropython-scd30/blob/master/scd30.py
 
-import 'package:dart_periphery/src/i2c.dart';
+import 'package:dart_periphery/dart_periphery.dart';
 import 'dart:typed_data';
 import 'dart:io';
 

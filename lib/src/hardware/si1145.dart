@@ -4,7 +4,7 @@
 
 import 'dart:io';
 
-import '../../dart_periphery.dart';
+import 'package:dart_periphery/dart_periphery.dart';
 import 'numeric_enum.dart';
 
 // Resources:

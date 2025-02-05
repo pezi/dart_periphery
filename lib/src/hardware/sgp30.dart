@@ -11,8 +11,7 @@
 
 import 'dart:io';
 
-import '../i2c.dart';
-import 'utils/byte_buffer.dart';
+import 'package:dart_periphery/dart_periphery.dart';
 
 const int productType = 0;
 

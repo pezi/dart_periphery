@@ -6,9 +6,7 @@
 
 import 'dart:io';
 
-import 'package:dart_periphery/src/isolate_api.dart';
-
-import '../i2c.dart';
+import 'package:dart_periphery/dart_periphery.dart';
 
 /// Supported extension hats
 enum HatType { nano, grovePlus, grove }

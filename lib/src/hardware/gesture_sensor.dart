@@ -8,7 +8,7 @@
 
 import 'dart:io';
 
-import '../i2c.dart';
+import 'package:dart_periphery/dart_periphery.dart';
 
 const int _gestureReactionTime = 500;
 const int _gestureQuitTime = 1000;

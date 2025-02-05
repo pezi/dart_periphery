@@ -4,7 +4,6 @@
 import 'dart:io';
 
 import 'package:dart_periphery/dart_periphery.dart';
-import 'package:dart_periphery/src/hardware/utils/byte_buffer.dart';
 
 // Resources:
 // https://wiki.seeedstudio.com/Grove-TempAndHumi_Sensor-SHT31/

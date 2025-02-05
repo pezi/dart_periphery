@@ -2,7 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import '../../dart_periphery.dart';
+import 'package:dart_periphery/dart_periphery.dart';
 
 /// [MCP9808] temperature degree resolution
 ///
