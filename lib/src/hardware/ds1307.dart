@@ -11,6 +11,28 @@ import 'package:dart_periphery/dart_periphery.dart';
 /// Default address of the [DS1307] sensor.
 const int ds1307DefaultI2Caddress = 0x68;
 
+/// [DS1307] oscillator
+///
+/// 1Hz, 4.096kHz, 8.192kHz or 32.768kHz, or disable the oscillator
+enum Oscillator {
+  disable(0),
+  freq1Hz(1),
+  freq4kHz(4),
+  freq8kHz(8),
+  freq32kHz(32);
+
+  const Oscillator(this.frequency);
+  final int frequency;
+}
+
+enum LogicLevel {
+  low(0),
+  high(1);
+
+  const LogicLevel(this.level);
+  final int level;
+}
+
 /// [DS1307] register
 enum DS1307reg {
   dateTime(0),
@@ -47,10 +69,12 @@ int dec2bcd(int value) {
 class DS1307 {
   final I2C i2c;
   final int i2cAddress;
+  bool _halt;
 
   // Creates a DS1307 rtc instance that uses the [i2c] bus with
   /// the optional [i2cAddress].
-  DS1307(this.i2c, [this.i2cAddress = ds1307DefaultI2Caddress]) {
+  DS1307(this.i2c, [this.i2cAddress = ds1307DefaultI2Caddress])
+      : _halt = false {
     // minimal self test
     //
     // read  8-bit register 0x03: bit 0-3 day, bit 4-7 always 0
@@ -60,6 +84,7 @@ class DS1307 {
     }
   }
 
+  ///
   DateTime getDateTime() {
     var data =
         i2c.readBytesReg(ds1307DefaultI2Caddress, DS1307reg.dateTime.reg, 7);
@@ -74,6 +99,7 @@ class DS1307 {
     return DateTime(year, month, day, hour, minute, second);
   }
 
+  // Sets the RTC
   void setDateTime(DateTime dateTime) {
     var data = List<int>.filled(7, 0);
     data[0] = dec2bcd(dateTime.second);
@@ -85,5 +111,31 @@ class DS1307 {
     data[6] = dec2bcd(dateTime.year - 2000);
 
     i2c.writeBytesReg(ds1307DefaultI2Caddress, DS1307reg.dateTime.reg, data);
+  }
+
+  bool getRTCoscillatorStatus() {
+    return _halt;
+  }
+
+  /// Configures the [SQ pin](https://forum.arduino.cc/t/practical-use-of-ds1307-sqw-output/268525)
+  /// to output a square [wave] at
+  ///
+  /// 1Hz, 4.096kHz, 8.192kHz, or 32.768kHz,  or disables
+  /// the oscillator, setting the output logic [level] to high or low.
+  void setSquareWave(Oscillator wave, LogicLevel level) {
+    int rs0 = 0;
+    if (wave == Oscillator.freq4kHz || wave == Oscillator.freq32kHz) {
+      rs0 = 1;
+    }
+    int rs1 = 0;
+    if (wave == Oscillator.freq8kHz || wave == Oscillator.freq32kHz) {
+      rs1 = 1;
+    }
+    int sqw = 0;
+    if (wave != Oscillator.disable) {
+      sqw = 1;
+    }
+    int reg = rs0 | rs1 << 1 | sqw << 4 | level.level << 7;
+    i2c.writeByteReg(ds1307DefaultI2Caddress, DS1307reg.controlReg.reg, reg);
   }
 }

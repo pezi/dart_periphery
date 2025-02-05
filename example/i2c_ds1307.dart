@@ -4,10 +4,12 @@
 
 import 'package:dart_periphery/dart_periphery.dart';
 
-/// DS1307 -real time clock
+/// DS1307 real time clock
 ///
-/// https://www.seeedstudio.com/Grove-CO2-Temperature-Humidity-Sensor-SCD30-p-2911.html
+/// https://wiki.seeedstudio.com/Grove-RTC
 ///
+/// Hint: Be aware that many DS1307 modules in circulation operate
+/// exclusively at 5V.
 void main() {
   // Select the right I2C bus number /dev/i2c-?
   // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
@@ -19,6 +21,7 @@ void main() {
     print("DS1307 real time clock");
 
     var rtc = DS1307(i2c);
+    print(rtc.getDateTime());
   } finally {
     i2c.dispose();
   }
