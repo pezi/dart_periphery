@@ -1,6 +1,6 @@
 ## 0.9.15
 
-* Add DS1307 real time clock
+* Add DS1307/DS3231 real time clock
 
 ## 0.9.14
 
