@@ -63,19 +63,20 @@ int dec2bcd(int value) {
   return (value ~/ 10) << 4 | (value % 10);
 }
 
-/// DS1307 real time clock
+/// DS1307/D3231 real time clock
 ///
 /// See for more
 /// * [DS1307 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ds1307.dart)
 /// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/ds1307.dart)
-/// * [Datasheet](https://www.analog.com/media/en/technical-documentation/data-sheets/ds1307.pdf)
+/// * [Datasheet DS1307](https://www.analog.com/media/en/technical-documentation/data-sheets/ds1307.pdf)
+/// * [Datasheet DS3231](https://www.analog.com/media/en/technical-documentation/data-sheets/ds3231.pdf)
 class DS1307 {
   final I2C i2c;
   final int i2cAddress;
   final bool isDS2131;
   bool _halt;
 
-  // Creates a DS1307 rtc instance that uses the [i2c] bus with
+  // Creates a DS1307/D3231 rtc instance that uses the [i2c] bus with
   /// the optional [i2cAddress].
   DS1307(this.i2c,
       [this.isDS2131 = false, this.i2cAddress = ds1307DefaultI2Caddress])
@@ -158,7 +159,7 @@ class DS1307 {
     i2c.writeByteReg(ds1307DefaultI2Caddress, DS1307reg.dateTime.reg, reg);
   }
 
-  /// Returns the power status of the RTC oscillator
+  /// Returns the power status of the RTC oscillator.
   bool getRTCoscillatorPowerStatus() {
     return _halt;
   }
