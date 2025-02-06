@@ -79,12 +79,13 @@ class DS1307 {
     //
     // read  8-bit register 0x03: bit 0-3 day, bit 4-7 always 0
     var value = i2c.readByteReg(ds1307DefaultI2Caddress, 0x03);
+    // bit 4 -7 must be ß!
     if (value & ((0xFF << 3 & 0xFF)) != 0) {
       throw DS1307exception("DS1307 RTC not found");
     }
   }
 
-  ///
+  /// Returns the RTC time.
   DateTime getDateTime() {
     var data =
         i2c.readBytesReg(ds1307DefaultI2Caddress, DS1307reg.dateTime.reg, 7);
@@ -99,7 +100,7 @@ class DS1307 {
     return DateTime(year, month, day, hour, minute, second);
   }
 
-  // Sets the RTC
+  /// Sets the RTC to [dateTime].
   void setDateTime(DateTime dateTime) {
     var data = List<int>.filled(7, 0);
     data[0] = dec2bcd(dateTime.second);
@@ -110,11 +111,12 @@ class DS1307 {
     data[5] = dec2bcd(dateTime.month);
     data[6] = dec2bcd(dateTime.year - 2000);
 
-    i2c.writeBytesReg(ds1307DefaultI2Caddress, DS1307reg.dateTime.reg, data);
-  }
+    // power up oscillator if needed
+    if (_halt) {
+      data[0] |= (1 << 7);
+    }
 
-  bool getRTCoscillatorStatus() {
-    return _halt;
+    i2c.writeBytesReg(ds1307DefaultI2Caddress, DS1307reg.dateTime.reg, data);
   }
 
   /// Configures the [SQ pin](https://forum.arduino.cc/t/practical-use-of-ds1307-sqw-output/268525)
@@ -137,5 +139,22 @@ class DS1307 {
     }
     int reg = rs0 | rs1 << 1 | sqw << 4 | level.level << 7;
     i2c.writeByteReg(ds1307DefaultI2Caddress, DS1307reg.controlReg.reg, reg);
+  }
+
+  /// Powers up/down the RTC oscillator.
+  void haltRTCoscillator(bool halt) {
+    var reg = i2c.readByteReg(ds1307DefaultI2Caddress, DS1307reg.dateTime.reg);
+    if (halt) {
+      reg |= DS1307reg.chipHalt.reg;
+    } else {
+      reg |= ~DS1307reg.chipHalt.reg;
+    }
+    _halt = halt;
+    i2c.writeByteReg(ds1307DefaultI2Caddress, DS1307reg.dateTime.reg, reg);
+  }
+
+  /// Returns the power status of the RTC oscillator
+  bool getRTCoscillatorPowerStatus() {
+    return _halt;
   }
 }

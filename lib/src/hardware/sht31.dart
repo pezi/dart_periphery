@@ -18,21 +18,7 @@ const int sht31DefaultI2Caddress = 0x44;
 /// Alternative I2C address of the [SHT31] sensor
 const int sht31AlternativeI2Caddress = 0x45;
 
-/*
-const int sht31MeasHighrepStretch = 0x2C06;
-const int sht31MeasMedrepStretch = 0x2C0D;
-const int sht31MeasLowrepStretch = 0x2C10;
-const int sht31MeasHighrep = 0x2400;
-const int sht31MeasMedrep = 0x240B;
-const int sht31MeasLowrep = 0x2416;
-const int sht31ReadStatus = 0xF32D;
-const int sht31ClearStatus = 0x3041;
-const int sht31SoftReset = 0x30A2;
-const int sht31HeaterEnable = 0x306D;
-const int sh31HeaterDisable = 0x3066;
-const int sh31ReadSerialNumber = 0x3780;
-*/
-
+/// [SHT31] commands
 enum SHT31command {
   measHighrepStretch(0x2C06),
   measMedrepStretch(0x2C0D),

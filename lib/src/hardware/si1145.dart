@@ -292,7 +292,7 @@ class SI1145result {
   SI1145result(this.visible, this.ir, this.uvIndexRaw);
 }
 
-/// SiLabs SI1145 sensor for visible & IR light and UV index
+/// SiLabs SI1145 sensor for visible & IR light and UV index.
 ///
 /// See for more
 /// * [SI1145 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_si1145.dart)
@@ -353,7 +353,7 @@ class SI1145 {
     _initRegister();
   }
 
-  /// Resets the sensor
+  /// Reset the sensor
   void _reset() {
     _writeByte(SI1145reg.measRate0, 0);
     _writeByte(SI1145reg.measRate1, 0);

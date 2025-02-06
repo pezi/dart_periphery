@@ -57,7 +57,7 @@ The number of GPIO libraries/interfaces is is shrinking:
 * [PWM](#pwm) example / [API](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/PWM-class.html)
 * [Led](#led) (onboard leds) example / [API](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/Led-class.html)
 * [MMIO](#mmio) (Memory Mapped I/O) example / [API](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/MMIO-class.html)
-* [ADC](#adc) (Analog Digital Converter) example / [API-Grove](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/GroveBaseHat-class.html), [API-NanoHatHub](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/GroveBaseHat-class.html)
+* [ADC](#adc) (Analog Digital Converter) example / [API-Grove](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/GroveBaseHat-class.html), [API-NanoHatHub](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/NanoHatHub-class.html)
 
 ## 🪧 Examples
 

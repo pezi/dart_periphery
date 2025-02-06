@@ -12,7 +12,7 @@ import 'package:dart_periphery/dart_periphery.dart';
 /// Default I2C address of the [TSL2591] sensor
 const tsl2591DefaultI2Caddress = 0x29;
 
-/// [TSL2591] command
+/// [TSL2591] commands
 enum Command {
   commandBit(0xA0),
   enablePowerOff(0x00),
@@ -25,7 +25,7 @@ enum Command {
   const Command(this.value);
 }
 
-/// [TSL2591] register
+/// [TSL2591] registers
 enum Register {
   enable(0x00),
   control(0x01),
