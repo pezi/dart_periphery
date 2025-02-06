@@ -38,7 +38,10 @@ enum DS1307reg {
   dateTime(0),
   chipHalt(128),
   controlReg(7),
-  ramlReg(8);
+  ramlReg(8),
+
+  /// DS2131 only
+  temperature(11);
 
   const DS1307reg(this.reg);
   final int reg;
@@ -69,11 +72,13 @@ int dec2bcd(int value) {
 class DS1307 {
   final I2C i2c;
   final int i2cAddress;
+  final bool isDS2131;
   bool _halt;
 
   // Creates a DS1307 rtc instance that uses the [i2c] bus with
   /// the optional [i2cAddress].
-  DS1307(this.i2c, [this.i2cAddress = ds1307DefaultI2Caddress])
+  DS1307(this.i2c,
+      [this.isDS2131 = false, this.i2cAddress = ds1307DefaultI2Caddress])
       : _halt = false {
     // minimal self test
     //
@@ -156,5 +161,15 @@ class DS1307 {
   /// Returns the power status of the RTC oscillator
   bool getRTCoscillatorPowerStatus() {
     return _halt;
+  }
+
+  /// Returns the temperature of the DS2131 build in temperature sensor.
+  double getTemperature() {
+    if (!isDS2131) {
+      throw DS1307exception("Only supported for a DS2131");
+    }
+    var reg =
+        i2c.readBytesReg(ds1307DefaultI2Caddress, DS1307reg.temperature.reg, 2);
+    return ((reg[0] << 2) | (reg[1] >> 6)) * 0.25;
   }
 }
