@@ -37,10 +37,10 @@ base class Timeval extends Struct {
 
 /// Sets the linux system (local) time using a Dart [DateTime].
 ///
-/// The provided [dt] is assumed to represent local time.
+/// The provided [DateTime]] is assumed to represent local time.
 /// The code converts it to UTC (because the system clock is in UTC)
 /// and then fills a timeval structure for settimeofday.
-void setLinuxLocalTime(DateTime dt) {
+bool setLinuxLocalTime(DateTime dt) {
   // Convert the provided DateTime to UTC.
   final dtUtc = dt.toUtc();
 
@@ -59,10 +59,9 @@ void setLinuxLocalTime(DateTime dt) {
     // Call settimeofday. The second parameter (tz) is passed as nullptr.
     final int result = settimeofday(tvPtr, nullptr);
     if (result != 0) {
-      print(
-          "Failed to set system time. Are you running as root? (Error code: $result)");
+      return false;
     } else {
-      print("System time successfully set to: $dt");
+      return true;
     }
   } finally {
     // Free the allocated memory.
