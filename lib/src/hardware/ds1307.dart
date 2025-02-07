@@ -35,13 +35,13 @@ enum LogicLevel {
 
 /// [DS1307] register
 enum DS1307reg {
-  dateTime(0),
-  chipHalt(128),
-  controlReg(7),
-  ramlReg(8),
+  dateTime(0x00),
+  chipHalt(0x80),
+  controlReg(0x7),
+  ramlReg(0x8),
 
   /// DS2131 only
-  temperature(11);
+  temperature(0x11);
 
   const DS1307reg(this.reg);
   final int reg;

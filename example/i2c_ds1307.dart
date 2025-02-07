@@ -37,6 +37,9 @@ void main() {
     print("DS1307 real time clock");
 
     var rtc = DS1307(i2c, true);
+    if (rtc.isDS2131) {
+      print("RTC on board temperature sensor: ${rtc.getTemperature()}");
+    }
     print("Get current RTC date and time");
     print(rtc.getDateTime());
 
@@ -49,9 +52,6 @@ void main() {
     rtc.setDateTime(now);
     print("Get current RTC date and time");
     print(rtc.getDateTime());
-    if (rtc.isDS2131) {
-      print("RTC on board temperature sensor: ${rtc.getTemperature()}");
-    }
 
     print("Set system time to RTC time? ROOT rights needed!");
     if (!confirm()) {
