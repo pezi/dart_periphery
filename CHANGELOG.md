@@ -1,6 +1,10 @@
 ## 0.9.15
 
-* Add DS1307/DS3231 real time clock
+* Add DS1307/DS3231 real time clock support
+* Set Linux system time - `bool setLinuxLocalTime(DateTime dt)`
+* PCF8591 8-bit A/D and D/A converter tested
+* Add VL53L0X Time of Fligt sensor
+* Update to Dart 3.6.2
 
 ## 0.9.14
 

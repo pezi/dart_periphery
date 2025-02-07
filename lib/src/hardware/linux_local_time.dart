@@ -35,11 +35,11 @@ base class Timeval extends Struct {
   external int tv_usec;
 }
 
-/// Sets the linux system (local) time using a Dart [DateTime].
+/// Sets the linux system (local) time using a [DateTime].
 ///
-/// The provided [DateTime]] is assumed to represent local time.
+/// The provided [DateTime] is assumed to represent local time.
 /// The code converts it to UTC (because the system clock is in UTC)
-/// and then fills a timeval structure for settimeofday.
+/// and then fills a timeval structure for `settimeofday`.
 bool setLinuxLocalTime(DateTime dt) {
   // Convert the provided DateTime to UTC.
   final dtUtc = dt.toUtc();

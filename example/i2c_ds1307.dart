@@ -15,12 +15,12 @@ bool confirm() {
     } else if (input == 'no' || input == 'n') {
       return false;
     } else {
-      print("Invalid input. Please enter 'yes' or 'no'.");
+      print("Invalid input. Please enter 'y(es)' or 'n(o)'.");
     }
   }
 }
 
-/// DS1307 real time clock
+/// DS1307/DS3221 real time clock
 ///
 /// https://wiki.seeedstudio.com/Grove-RTC
 ///
@@ -36,12 +36,14 @@ void main() {
     print('I2C info: ${i2c.getI2Cinfo()}');
     print("DS1307 real time clock");
 
-    var rtc = DS1307(i2c, true);
+    var rtc = DS1307(i2c); // for DS3221 set DS1307(i2c, true)
+
+    print("Get current RTC date and time");
+    print(rtc.getDateTime());
+
     if (rtc.isDS2131) {
       print("RTC on board temperature sensor: ${rtc.getTemperature()}");
     }
-    print("Get current RTC date and time");
-    print(rtc.getDateTime());
 
     print("Set RTC to current sytem time?");
     if (!confirm()) {
