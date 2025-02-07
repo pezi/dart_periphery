@@ -49,7 +49,7 @@ class PFC8591 {
       data[0] = pfc8591enableDAC;
       data[1] = _dac;
     }
-    data[0] |= pin.index & 0x03;
+    data[0] |= pin.index;
     i2c.writeBytes(i2cAddress, data);
     return i2c.readBytes(i2cAddress, 2);
   }
@@ -73,7 +73,7 @@ class PFC8591 {
     i2c.readBytes(i2cAddress, 2);
   }
 
-  ///
+  /// Is DAC enabled?
   bool getDAC() {
     return _dacEnabled;
   }
