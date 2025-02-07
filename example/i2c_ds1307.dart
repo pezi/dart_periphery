@@ -21,7 +21,15 @@ void main() {
     print("DS1307 real time clock");
 
     var rtc = DS1307(i2c);
+    print("Get current RTC date and time");
     print(rtc.getDateTime());
+
+    print("Set RTC to current date and time");
+    var now = DateTime.now();
+    print(now);
+    print(rtc.getDateTime());
+    print("Test setting time");
+    setLinuxLocalTime(now);
   } finally {
     i2c.dispose();
   }
