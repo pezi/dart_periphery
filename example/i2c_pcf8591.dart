@@ -27,7 +27,7 @@ void main(List<String> args) {
   } else {
     var i2c = I2C(1);
     try {
-      var pfc = PFC8591(i2c);
+      var pcf = PCF8591(i2c);
 
       print("dart_periphery Version: $dartPeripheryVersion");
       print("c-periphery Version   : ${getCperipheryVersion()}");
@@ -35,17 +35,17 @@ void main(List<String> args) {
       print("MLX90615 sensor");
 
       if (args[0] == "write") {
-        pfc.setDAC(true);
+        pcf.setDAC(true);
         // write a sinus wave to DAC pin 0
         while (true) {
           for (int v in sinWave) {
-            pfc.write(v);
+            pcf.write(v);
           }
         }
       } else if (args[0] == "read") {
         while (true) {
           // read 8-bit value from pin 0
-          print(pfc.read(Pin.a0));
+          print(pcf.read(Pin.a0));
           sleep(Duration(seconds: 1));
         }
       }

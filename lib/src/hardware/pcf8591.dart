@@ -9,36 +9,36 @@
 
 import 'package:dart_periphery/dart_periphery.dart';
 
-/// [PFC8591] pins
+/// [PCF8591] pins
 enum Pin { a0, a1, a2, a3 }
 
-/// Default I2C address of the [PFC8591] ADC
+/// Default I2C address of the [PCF8591] ADC
 const int pcf8591DefaultI2Caddress = 0x48;
 
-/// [PFC8591] exception
-class PFC8591exception implements Exception {
+/// [PCF8591] exception
+class PCF8591exception implements Exception {
   final String errorMsg;
   @override
   String toString() => errorMsg;
 
-  PFC8591exception(this.errorMsg);
+  PCF8591exception(this.errorMsg);
 }
 
-const pfc8591lowerLimit = 2.5;
-const pfc8591UpperLimit = 6.0;
-const pfc8591enableDAC = 0x40;
+const pcf8591lowerLimit = 2.5;
+const pcf8591UpperLimit = 6.0;
+const pcf8591enableDAC = 0x40;
 
-class PFC8591 {
+class PCF8591 {
   final I2C i2c;
   final int i2cAddress;
   late final double referenceVoltage;
   bool _dacEnabled = false;
   int _dac = 0;
 
-  PFC8591(this.i2c,
+  PCF8591(this.i2c,
       [double refVoltage = 3.3, this.i2cAddress = pcf8591DefaultI2Caddress]) {
-    if (refVoltage <= pfc8591lowerLimit || refVoltage >= pfc8591UpperLimit) {
-      throw PFC8591exception("Reference voltage must be from 2.5 - 6.0");
+    if (refVoltage <= pcf8591lowerLimit || refVoltage >= pcf8591UpperLimit) {
+      throw PCF8591exception("Reference voltage must be from 2.5 - 6.0");
     }
     referenceVoltage = refVoltage;
   }
@@ -46,7 +46,7 @@ class PFC8591 {
   List<int> _halfRead(Pin pin) {
     var data = [0, 0];
     if (_dacEnabled) {
-      data[0] = pfc8591enableDAC;
+      data[0] = pcf8591enableDAC;
       data[1] = _dac;
     }
     data[0] |= pin.index;
@@ -65,7 +65,7 @@ class PFC8591 {
     _dacEnabled = flag;
     List<int> data;
     if (flag) {
-      data = [pfc8591enableDAC, _dac];
+      data = [pcf8591enableDAC, _dac];
     } else {
       data = [0, 0];
     }
@@ -81,13 +81,13 @@ class PFC8591 {
   /// Writes a 8-bit [value] to the DAC (Digital Analog Converter) on pin 0.
   void write(int value) {
     if (value < 0 || value > 255) {
-      throw PFC8591exception("8-bit DAC - valid range: [0,255]");
+      throw PCF8591exception("8-bit DAC - valid range: [0,255]");
     }
     if (!_dacEnabled) {
-      throw PFC8591exception("DAC support is not enabled");
+      throw PCF8591exception("DAC support is not enabled");
     }
 
-    var data = [pfc8591enableDAC, value];
+    var data = [pcf8591enableDAC, value];
     _dac = value;
     i2c.writeBytes(i2cAddress, data);
     i2c.readBytes(i2cAddress, 2);

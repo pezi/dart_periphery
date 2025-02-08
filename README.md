@@ -57,8 +57,8 @@ The number of GPIO libraries/interfaces is is shrinking:
 * [PWM](#pwm) example / [API](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/PWM-class.html)
 * [Led](#led) (onboard leds) example / [API](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/Led-class.html)
 * [MMIO](#mmio) (Memory Mapped I/O) example / [API](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/MMIO-class.html)
-* [ADC](#adc) (Analog Digital Converter) example / [API-Grove](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/GroveBaseHat-class.html), [API-NanoHatHub](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/NanoHatHub-class.html), [PFC8591](https://github.com/pezi/dart_periphery/blob/main/example/i2c_pfc8591.dart)
-* [DAC](#adc) (Digital Analog Converter) example / [PFC8591](https://github.com/pezi/dart_periphery/blob/main/example/i2c_pfc8591.dart)
+* [ADC](#adc) (Analog Digital Converter) example / [API-Grove](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/GroveBaseHat-class.html), [API-NanoHatHub](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/NanoHatHub-class.html), [PCF8591](https://github.com/pezi/dart_periphery/blob/main/example/i2c_pcf8591.dart)
+* [DAC](#adc) (Digital Analog Converter) example / [PCF8591](https://github.com/pezi/dart_periphery/blob/main/example/i2c_pcf8591.dart)
 
 
 ## 🪧 Examples
@@ -633,7 +633,7 @@ The project is currently still beta and development is ongoing.
 * [MPU-6050 Six-Axis](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mpu6050.dart): (Gyro + Accelerometer) sensor.
 * [MCP9808](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mcp9808.dart): high accuracy temperature sensor.
 * [MLX90615](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mlx90615.dart): digital infrared non-contact temperature sensor.
-* [PFC8591](https://github.com/pezi/dart_periphery/blob/main/example/i2c_pfc8591.dart): ADC+DAC combo 
+* [PCF8591](https://github.com/pezi/dart_periphery/blob/main/example/i2c_pcf8591.dart): ADC+DAC combo 
 * [SDC30](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sdc30.dart): CO₂, temperature and humidity sensor.
 * [SI1145](https://github.com/pezi/dart_periphery/blob/main/example/i2c_si1145.dart) sunlight sensor: visible & IR light, UV index
 * [TSL2591](https://github.com/pezi/dart_periphery/blob/main/example/i2c_tsl2591.dart) light sensor
