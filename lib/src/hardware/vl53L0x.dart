@@ -118,6 +118,7 @@ class VL53L0X {
   final int i2cAddress;
 
   VL53L0X(this.i2c, [this.i2cAddress = ds1307DefaultI2Caddress]) {
+    print(i2c.readBytesReg(vl53L0xDefaultI2Caddress, 0xC0, 3));
     /*
         # Check identification registers for expected values.
         # From section 3.2 of the datasheet.
@@ -130,4 +131,9 @@ class VL53L0X {
                 "Failed to find expected ID register values. Check wiring!"
             )*/
   }
+}
+
+void main() {
+  var i2c = I2C(1);
+  var v = VL53L0X(i2c);
 }
