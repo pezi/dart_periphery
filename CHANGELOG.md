@@ -1,3 +1,6 @@
+## 0.9.16
+* Add VL53L0X Time of Fligt sensor
+
 ## 0.9.15
 
 * Add DS1307/DS3231 real time clock support
