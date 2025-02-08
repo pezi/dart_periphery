@@ -7,7 +7,53 @@ import 'dart:io';
 
 // https://www.instructables.com/Arduino-and-PCF8591-ADC-DAC-IC/
 // https://circuitdigest.com/microcontroller-projects/interfacing-pcf8591-adc-dac-module-with-raspberry-pi
+
+// PCF8591 ADC+DAC combo
+//
+// Tested model form Botland
 // https://botland.store/raspberry-pi-gpio-extensions/2632-pcf8591-a-d-and-d-a-converter-8-bit-i2c-v2-5904422359164.html
+// with following build-in sensors thermistor,phototransistor, potentiometer
+//
+// To test e.g. phototransistor set jumper 5
+//
+// Datasheet: https://cdn-learn.adafruit.com/downloads/pdf/adafruit-pcf8591-adc-dac.pdf
+//
+void main(List<String> args) {
+  // Select the right I2C bus number /dev/i2c-?
+  // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
+
+  if (args.isEmpty || !(args[0] == "write" || args[0] == "read")) {
+    print("Commands: read or write");
+  } else {
+    var i2c = I2C(1);
+    try {
+      var pfc = PFC8591(i2c);
+
+      print("dart_periphery Version: $dartPeripheryVersion");
+      print("c-periphery Version   : ${getCperipheryVersion()}");
+      print('I2C info: ${i2c.getI2Cinfo()}');
+      print("MLX90615 sensor");
+
+      if (args[0] == "write") {
+        pfc.setDAC(true);
+        // write a sinus wave to DAC pin 0
+        while (true) {
+          for (int v in sinWave) {
+            pfc.write(v);
+          }
+        }
+      } else if (args[0] == "read") {
+        while (true) {
+          // read 8-bit value from pin 0
+          print(pfc.read(Pin.a0));
+          sleep(Duration(seconds: 1));
+        }
+      }
+    } finally {
+      i2c.dispose();
+    }
+  }
+}
 
 var sinWave = <int>[
   0x80,
@@ -267,34 +313,3 @@ var sinWave = <int>[
   0x7A,
   0x7D
 ];
-
-/// PCF8591 ADC+DAC combo
-///
-/// Datasheet: https://cdn-learn.adafruit.com/downloads/pdf/adafruit-pcf8591-adc-dac.pdf
-///
-void main(List<String> args) {
-  String commands = "Commands: read or write";
-  // Select the right I2C bus number /dev/i2c-?
-  // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
-  var i2c = I2C(1);
-  var pfc = PFC8591(i2c);
-  if (args.isEmpty) {
-    print(commands);
-  } else if (args[0] == "write") {
-    pfc.setDAC(true);
-    // write sin wave
-    while (true) {
-      for (int v in sinWave) {
-        pfc.write(v);
-      }
-    }
-  } else if (args[0] == "read") {
-    while (true) {
-      // read 8-bit value from pin 0
-      print(pfc.read(Pin.a0));
-      sleep(Duration(seconds: 1));
-    }
-  } else {
-    print(commands);
-  }
-}
