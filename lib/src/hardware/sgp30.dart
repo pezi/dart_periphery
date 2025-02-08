@@ -11,12 +11,11 @@
 
 import 'dart:io';
 
-import '../i2c.dart';
-import 'utils/byte_buffer.dart';
+import 'package:dart_periphery/dart_periphery.dart';
 
 const int productType = 0;
 
-/// Default I2C address of the SGP30 sensor
+/// Default I2C address of the [SGP30] sensor
 const int sgp30DefaultI2Caddress = 0x58;
 
 // command and constants for reading the serial ID
@@ -91,7 +90,7 @@ class FeatureSetVersion {
       'FeatureSetVersion [productType=0x${productType.toRadixString(16)}, productVersion=0x${productVersion.toRadixString(16)}]';
 }
 
-/// [SGP30] raw data container for H<sub>2</sub> and Ethanol
+/// [SGP30] raw data container for H₂ and Ethanol
 class RawMeasurement {
   final int h2;
   final int ethanol;
@@ -242,7 +241,7 @@ class SGP30 {
     return SGP30result(result[0], result[1]);
   }
 
-  /// Returns the H<sub>2</sub> and Ethanol measurement.
+  /// Returns the H₂ and Ethanol measurement.
   RawMeasurement measureRaw() {
     var result =
         _command(cmdRawMeasure, cmdRawMeasureWords, cmdRawMeasureDelayMs);

@@ -1,3 +1,10 @@
+## 0.9.15
+
+* Add DS1307/DS3231 real time clock support
+* Set Linux system time - `bool setLinuxLocalTime(DateTime dt)`
+* PCF8591 8-bit A/D and D/A converter tested
+* Update to Dart 3.6.2
+
 ## 0.9.14
 
 * Fix missing TSL2591 initialisation settings

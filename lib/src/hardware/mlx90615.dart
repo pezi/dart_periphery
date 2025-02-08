@@ -2,7 +2,7 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import '../../dart_periphery.dart';
+import 'package:dart_periphery/dart_periphery.dart';
 
 // https://wiki.seeedstudio.com/Grove-Digital_Infrared_Temperature_Sensor/
 // https://github.com/Seeed-Studio/Digital_Infrared_Temperature_Sensor_MLX90615
@@ -20,7 +20,7 @@ const int sleep = 0xC6;
 const regIdLow = 0x1E;
 const regIdHigh = 0x1F;
 
-/// Default address of the MLX90615 sensor.
+/// Default address of the [MLX90615] sensor.
 const int mlx90615DefaultI2Caddress = 0x5B;
 
 /// [MLX90615] exception

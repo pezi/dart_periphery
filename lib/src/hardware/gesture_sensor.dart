@@ -8,7 +8,7 @@
 
 import 'dart:io';
 
-import '../i2c.dart';
+import 'package:dart_periphery/dart_periphery.dart';
 
 const int _gestureReactionTime = 500;
 const int _gestureQuitTime = 1000;
@@ -20,7 +20,7 @@ const int paj7620AddrBase = 0x00;
 // REGISTER BANK SELECT
 const int paj7620RegisterBankSel = (paj7620AddrBase + 0xEF); //W
 
-/// Default I2C address of the PAj7620 gesture sensor
+/// Default I2C address of the [PAj7620] gesture sensor
 const int paj7620DefaultI2Caddress = 0x73;
 
 // REGISTER BANK 0
@@ -79,7 +79,7 @@ const int gesClockwiseFlag = 1 << 6;
 const int gesCountClockwiseFlag = 1 << 7;
 const int gesWaveFlag = 1 << 0;
 
-/// [GestureSensorException] exception
+/// [PAj7620] exception
 class GestureSensorException implements Exception {
   final String errorMsg;
   @override
@@ -88,7 +88,7 @@ class GestureSensorException implements Exception {
   GestureSensorException(this.errorMsg);
 }
 
-/// [Gesture] directions
+/// Gesture sensor [PAj7620] directions
 enum Gesture {
   nothing,
   forward,

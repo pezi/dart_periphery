@@ -4,7 +4,7 @@
 
 import 'dart:io';
 
-import '../../dart_periphery.dart';
+import 'package:dart_periphery/dart_periphery.dart';
 import 'numeric_enum.dart';
 
 // Resources:
@@ -12,10 +12,10 @@ import 'numeric_enum.dart';
 // https://github.com/Seeed-Studio/Grove_Sunlight_Sensor
 // https://github.com/Seeed-Studio/Seeed_Python_SI114X/blob/master/seeed_si114x.py
 
-/// Default I2C address of the SI1145 sensor
+/// Default I2C address of the [SI1145] sensor
 const si1145DefaultI2Caddress = 0x60;
 
-/// SI1145reg specific register
+/// [SI1145] specific register
 enum SI1145reg implements IntEnum {
   partId(0x00),
   revId(0x01),
@@ -62,7 +62,7 @@ enum SI1145reg implements IntEnum {
   }
 }
 
-/// SI1145 spedific commands
+/// [SI1145] specific commands
 enum SI1145cmd implements IntEnum {
   nop(0x00),
   reset(0x01),
@@ -88,7 +88,7 @@ enum SI1145cmd implements IntEnum {
   }
 }
 
-/// SI1145 specific parameter
+/// [SI1145] specific parameter
 enum SI1145param implements IntEnum {
   i2caddr(0x00),
   chlist(0x01),
@@ -121,6 +121,7 @@ enum SI1145param implements IntEnum {
   }
 }
 
+/// [SI1145] specific register
 enum SI1145chlist {
   enps1(0x01),
   enps2(0x02),
@@ -134,6 +135,7 @@ enum SI1145chlist {
   const SI1145chlist(this.value);
 }
 
+/// [SI1145] specific register
 enum SI1145LedCurrent implements IntEnum {
   cur5ma(0x01),
   cur11ma(0x02),
@@ -149,6 +151,7 @@ enum SI1145LedCurrent implements IntEnum {
   }
 }
 
+/// [SI1145] specific register
 enum SI1145adcmux implements IntEnum {
   smallIr(0x00),
   visiable(0x02),
@@ -167,6 +170,7 @@ enum SI1145adcmux implements IntEnum {
   }
 }
 
+/// [SI1145] specific register
 enum Si1145ledSel implements IntEnum {
   ps1None(0x00),
   ps1Led1(0x01),
@@ -186,6 +190,7 @@ enum Si1145ledSel implements IntEnum {
   }
 }
 
+/// [SI1145] specific register
 enum SI1145adcGain implements IntEnum {
   div1(0x00),
   div2(0x01),
@@ -203,6 +208,7 @@ enum SI1145adcGain implements IntEnum {
   }
 }
 
+/// [SI1145] specific register
 enum SI1145adcCounter implements IntEnum {
   adcclk1(0x00),
   adcclk7(0x01),
@@ -222,6 +228,7 @@ enum SI1145adcCounter implements IntEnum {
   }
 }
 
+/// [SI1145] specific register
 enum SI1145adcMisc implements IntEnum {
   lowrange(0x00),
   highrange(0x20),
@@ -237,6 +244,7 @@ enum SI1145adcMisc implements IntEnum {
   }
 }
 
+/// [SI1145] specific register
 enum SI1145irqen implements IntEnum {
   als(0x01),
   ps1(0x04),
@@ -284,7 +292,7 @@ class SI1145result {
   SI1145result(this.visible, this.ir, this.uvIndexRaw);
 }
 
-/// SiLabs SI1145 sensor for visible & IR light and UV index
+/// SiLabs SI1145 sensor for visible & IR light and UV index.
 ///
 /// See for more
 /// * [SI1145 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_si1145.dart)
@@ -345,7 +353,7 @@ class SI1145 {
     _initRegister();
   }
 
-  /// Resets the sensor
+  /// Reset the sensor
   void _reset() {
     _writeByte(SI1145reg.measRate0, 0);
     _writeByte(SI1145reg.measRate1, 0);

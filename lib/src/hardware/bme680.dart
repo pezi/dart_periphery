@@ -6,8 +6,7 @@ import 'dart:collection';
 import 'dart:io';
 import 'dart:math';
 
-import '../i2c.dart';
-import 'bosch.dart';
+import 'package:dart_periphery/dart_periphery.dart';
 import 'utils/byte_buffer.dart';
 
 // Resources:
@@ -17,10 +16,10 @@ import 'utils/byte_buffer.dart';
 // https://github.com/mattjlewis/diozero/blob/master/diozero-core/src/main/java/com/diozero/devices/BME680.java
 // https://cdn-shop.adafruit.com/product-files/3660/BME680.pdf
 
-/// Default I2C address of the BME680 sensor
+/// Default I2C address of the [BME680] sensor
 const int bme680DefaultI2Caddress = 0x76;
 
-/// Alternative I2C address of the BME680 sensor
+/// Alternative I2C address of the [BME680] sensor
 const int bme680AlternativeI2Caddress = 0x77;
 
 /// Chip vendor for the BME680

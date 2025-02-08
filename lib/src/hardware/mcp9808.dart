@@ -2,10 +2,11 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import '../../dart_periphery.dart';
+import 'package:dart_periphery/dart_periphery.dart';
 
-/// Temperature degree resolution: higher values allow for faster measurement,
-/// though with reduced accuracy.
+/// [MCP9808] temperature degree resolution
+///
+/// Higher values allow for faster measurement, though with reduced accuracy.
 enum Resolution {
   celsius_0p5(0.5),
   celsius_0p25(0.25),
@@ -24,7 +25,7 @@ const setCriticalLimitAddress = 0x04;
 const ambientTemperatureAddress = 0x05;
 const setResolutionAddress = 0x08;
 
-/// Default address of the MCP9808 sensor.
+/// Default address of the [MCP9808] sensor.
 const int mcp9808DefaultI2Caddress = 0x18;
 
 /// [MCP9808] exception
@@ -92,10 +93,6 @@ class MCP9808 {
   void setResolution(Resolution resolution) {
     i2c.writeByteReg(i2cAddress, setResolutionAddress, resolution.index);
   }
-
-  //int swapBytes16(int value) {
-  //  return ((value & 0xFF) << 8) | ((value >> 8) & 0xFF);
-  //}
 
   /// Returns the temperature
   MCP9808result getValue() {

@@ -1,4 +1,4 @@
-// Copyright (c) 2024, the Dart project authors.  Please see the AUTHORS file
+// Copyright (c) 2025, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
@@ -9,9 +9,10 @@
 
 import 'package:dart_periphery/dart_periphery.dart';
 
+/// [PFC8591] pins
 enum Pin { a0, a1, a2, a3 }
 
-/// Default I2C address of the PFC8591 ADC
+/// Default I2C address of the [PFC8591] ADC
 const int pcf8591DefaultI2Caddress = 0x48;
 
 /// [PFC8591] exception
@@ -48,7 +49,7 @@ class PFC8591 {
       data[0] = pfc8591enableDAC;
       data[1] = _dac;
     }
-    data[0] |= pin.index & 0x03;
+    data[0] |= pin.index;
     i2c.writeBytes(i2cAddress, data);
     return i2c.readBytes(i2cAddress, 2);
   }
@@ -72,7 +73,7 @@ class PFC8591 {
     i2c.readBytes(i2cAddress, 2);
   }
 
-  ///
+  /// Is DAC enabled?
   bool getDAC() {
     return _dacEnabled;
   }
