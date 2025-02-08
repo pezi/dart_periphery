@@ -108,7 +108,7 @@ export 'src/hardware/tsl2591.dart'
         RawLuminosity,
         tsl2591DefaultI2Caddress;
 export 'src/hardware/pcf8591.dart'
-    show PFC8591, PFC8591exception, Pin, pcf8591DefaultI2Caddress;
+    show PCF8591, PCF8591exception, Pin, pcf8591DefaultI2Caddress;
 
 export 'src/hardware/utils/byte_buffer.dart' show BitOrder;
 export 'src/hardware/utils/uint.dart';
