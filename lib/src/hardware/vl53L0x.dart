@@ -86,8 +86,8 @@ int _decodeTimeout(int val) {
 }
 
 /// Format: (LSByte * 2^MSByte) + 1
-int _encodeTimeout(double timeoutMclks) {
-  int t = timeoutMclks.toInt() & 0xFFFF;
+int _encodeTimeout(int timeoutMclks) {
+  int t = timeoutMclks & 0xFFFF;
   int lsByte = 0;
   int msByte = 0;
 
@@ -129,11 +129,14 @@ class VL53L0X {
   int _stop = 0;
   int _configControl = 0;
   double _signalRateLimit = 0;
+  bool _continuousMode = false;
   int _spadCount = 0;
   bool _spadIsAperture = false;
   int _firstSpadToEnable = 0;
   int _spadsEnabled = 0;
   int _measurementTimingBudgetUs = 0;
+  int _range = 0;
+  bool _dataReady = false;
 
   VL53L0X(this.i2c,
       [this.timeout = 0, this.i2cAddress = ds1307DefaultI2Caddress]) {
@@ -275,15 +278,13 @@ class VL53L0X {
     _measurementTimingBudgetUs = getMeasurementTimingBudget();
     writeU8(VL53L0Xconst.systemSequenceConfig, 0xE8);
 
-    /*
-        self.measurement_timing_budget = self._measurement_timing_budget_us
-        self._write_u8(_SYSTEM_SEQUENCE_CONFIG, 0x01)
-        self._perform_single_ref_calibration(0x40)
-        self._write_u8(_SYSTEM_SEQUENCE_CONFIG, 0x02)
-        self._perform_single_ref_calibration(0x00)
-        # "restore the previous Sequence Config"
-        self._write_u8(_SYSTEM_SEQUENCE_CONFIG, 0xE8)
-*/
+    setMeasurementTimingBudget(_measurementTimingBudgetUs);
+    writeU8(VL53L0Xconst.systemSequenceConfig, 0x01);
+    _performSingleRefCalibration(0x40);
+    writeU8(VL53L0Xconst.systemSequenceConfig, 0x02);
+    _performSingleRefCalibration(0x00);
+    // restore the previous Sequence Config
+    writeU8(VL53L0Xconst.systemSequenceConfig, 0xE8);
   }
 
   void writeRegisterList(List<(int, int)> data) {
@@ -349,6 +350,18 @@ class VL53L0X {
     return (buf[0] << 8) | buf[1];
   }
 
+  int readU16reg(int reg) {
+    var buf = i2c.readBytesReg(vl53L0xDefaultI2Caddress, reg, 2);
+    return (buf[0] << 8) | buf[1];
+  }
+
+  void writeU16(VL53L0Xconst c, int val) {
+    var buf = List<int>.filled(2, 0);
+    buf[1] = (val >> 8) & 0xFF;
+    buf[2] = val & 0xFF;
+    i2c.writeBytesReg(vl53L0xDefaultI2Caddress, c.value, buf);
+  }
+
   double getSignalRateLimit() {
     return readU16(VL53L0Xconst.finalRangeConfigMinCountRateRtnLimit) /
         (1 << 7);
@@ -358,12 +371,9 @@ class VL53L0X {
     if (!(value >= 0 && value <= 511.99)) {
       throw VL53L0Xexception("invalid setSignalRateLimit value");
     }
-    var val = (value * (1 << 7)).toInt();
-    var buf = List<int>.filled(2, 0);
-    buf[1] = (val >> 8) & 0xFF;
-    buf[2] = val & 0xFF;
-    i2c.writeBytesReg(vl53L0xDefaultI2Caddress,
-        VL53L0Xconst.finalRangeConfigMinCountRateRtnLimit.value, buf);
+
+    writeU16(VL53L0Xconst.finalRangeConfigMinCountRateRtnLimit,
+        (value * (1 << 7)).toInt());
   }
 
   void _performSingleRefCalibration(int vhvInitByte) {
@@ -460,6 +470,155 @@ class VL53L0X {
     }
     // _measurementTimingBudgetUs = budgetUs;
     return budgetUs;
+  }
+
+  void setMeasurementTimingBudget(int budgetUs) {
+    var usedBudgetUs = 1320 + 960;
+    var (bool tcc, bool dss, bool msrc, bool preRange, bool finalRange) =
+        _getSequenceStepEnables();
+    var stepTimeouts = _getSequenceStepTimeouts(preRange);
+    var msrcDssTccUs = stepTimeouts.$1;
+    var preRangeUs = stepTimeouts.$2;
+    var finalRangeVcselPeriodPclks = stepTimeouts.$4;
+    var preRangeMclks = stepTimeouts.$5;
+
+    if (tcc) {
+      usedBudgetUs += msrcDssTccUs + 590;
+    }
+    if (dss) {
+      usedBudgetUs += 2 * (msrcDssTccUs + 690);
+    } else if (msrc) {
+      usedBudgetUs += msrcDssTccUs + 660;
+    }
+    if (preRange) {
+      usedBudgetUs += preRangeUs + 660;
+    }
+    if (finalRange) {
+      usedBudgetUs += 550;
+    }
+    // Note that the final range timeout is determined by the timing
+    // budget and the sum of all other timeouts within the sequence.
+    // If there is no room for the final range timeout, then an error
+    // will be set. Otherwise, the remaining time will be applied to
+    // the final range.
+    if (usedBudgetUs > budgetUs) {
+      throw VL53L0Xexception("Requested timeout too big.");
+    }
+    var finalRangeTimeoutUs = budgetUs - usedBudgetUs;
+    var finalRangeTimeoutMclks = _timeoutMicrosecondsToMclks(
+        finalRangeTimeoutUs, finalRangeVcselPeriodPclks);
+    if (preRange) {
+      finalRangeTimeoutMclks += preRangeMclks;
+    }
+    writeU16(VL53L0Xconst.finalRangeConfigTimeoutMacropHi,
+        _encodeTimeout(finalRangeTimeoutMclks));
+    _measurementTimingBudgetUs = budgetUs;
+  }
+
+  void doRangeMeasurement() {
+    // Perform a single reading of the range for an object in front of the
+    // sensor, but without return the distance.
+    // Adapted from readRangeSingleMillimeters in pololu code at:
+    // https://github.com/pololu/vl53l0x-arduino/blob/master/VL53L0X.cpp
+    writeRegisterList([
+      (0x80, 0x01),
+      (0xFF, 0x01),
+      (0x00, 0x00),
+      (0x91, _stop),
+      (0x00, 0x01),
+      (0xFF, 0x00),
+      (0x80, 0x00),
+      (VL53L0Xconst.sysRangeStart.value, 0x01)
+    ]);
+    var start = DateTime.now().millisecondsSinceEpoch;
+    while ((readU8(VL53L0Xconst.sysRangeStart) & 0x01) > 0) {
+      if (timeout > 0 &&
+          (DateTime.now().millisecondsSinceEpoch - start) >= timeout) {
+        throw VL53L0Xexception("Timeout waiting for VL53L0X!");
+      }
+    }
+  }
+
+  bool isDataReady() {
+    // Check if data is available from the sensor. If true a call to .range
+    // will return quickly. If false, calls to .range will wait for the sensor's
+    // next reading to be available."""
+    if (!_dataReady) {
+      _dataReady = readU8(VL53L0Xconst.resultInterruptStatus) & 0x07 != 0;
+    }
+    return _dataReady;
+  }
+
+  int readRange() {
+    // Return a range reading in millimeters.
+    //    Note: Avoid calling this directly. If you do single mode, you need
+    //    to call `do_range_measurement` first. Or your program will stuck or
+    //    timeout occurred.
+    var start = DateTime.now().millisecondsSinceEpoch;
+    while (!isDataReady()) {
+      if (timeout > 0 &&
+          (DateTime.now().millisecondsSinceEpoch - start) >= timeout) {
+        throw VL53L0Xexception("Timeout waiting for VL53L0X!");
+      }
+    }
+    // assumptions: Linearity Corrective Gain is 1000 (default)
+    //fractional ranging is not enabled
+    var rangeMM = readU16reg(VL53L0Xconst.resultRangeStatus.value + 10);
+    writeU8(VL53L0Xconst.systemInterruptClear, 0x01);
+    _dataReady = false;
+    return rangeMM;
+  }
+
+  double getDistance() {
+    return _range / 10;
+  }
+
+  int getRange() {
+    if (!_continuousMode) {
+      doRangeMeasurement();
+    }
+    return readRange();
+  }
+
+  void startContinuous() {
+    // Perform a continuous reading of the range for an object in front of the sensor.
+    //
+    //Adapted from startContinuous in pololu code at:
+    //   https://github.com/pololu/vl53l0x-arduino/blob/master/VL53L0X.cpp
+    writeRegisterList([
+      (0x80, 0x01),
+      (0xFF, 0x01),
+      (0x00, 0x00),
+      (0x91, _stop),
+      (0x00, 0x01),
+      (0xFF, 0x00),
+      (0x80, 0x00),
+      (VL53L0Xconst.sysRangeStart.value, 0x02),
+    ]);
+    var start = DateTime.now().millisecondsSinceEpoch;
+    while ((readU8(VL53L0Xconst.sysRangeStart) & 0x01) > 0) {
+      if (timeout > 0 &&
+          (DateTime.now().millisecondsSinceEpoch - start) >= timeout) {
+        throw VL53L0Xexception("Timeout waiting for VL53L0X!");
+      }
+    }
+    _continuousMode = true;
+  }
+
+  void stopContinuous() {
+    // Perform a continuous reading of the range for an object in front of the sensor.
+    //
+    //Adapted from startContinuous in pololu code at:
+    //   https://github.com/pololu/vl53l0x-arduino/blob/master/VL53L0X.cpp
+    writeRegisterList([
+      (VL53L0Xconst.sysRangeStart.value, 0x01),
+      (0xFF, 0x01),
+      (0x00, 0x00),
+      (0x91, 0x00),
+      (0x00, 0x01),
+      (0xFF, 0x00),
+    ]);
+    doRangeMeasurement();
   }
 }
 
