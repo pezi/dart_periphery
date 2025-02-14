@@ -45,7 +45,7 @@ void main() {
       print("RTC on board temperature sensor: ${rtc.getTemperature()}");
     }
 
-    print("Set RTC to current sytem time?");
+    print("Set RTC to current system time?");
     if (!confirm()) {
       return;
     }

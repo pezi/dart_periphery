@@ -87,12 +87,12 @@ int _decodeTimeout(int val) {
 
 /// Format: (LSByte * 2^MSByte) + 1
 int _encodeTimeout(int timeoutMclks) {
-  int t = timeoutMclks & 0xFFFF;
+  timeoutMclks = timeoutMclks & 0xFFFF;
   int lsByte = 0;
   int msByte = 0;
 
-  if (t > 0) {
-    lsByte = t - 1;
+  if (timeoutMclks > 0) {
+    lsByte = timeoutMclks - 1;
     while (lsByte > 255) {
       lsByte >>= 1;
       msByte++;
@@ -128,7 +128,6 @@ class VL53L0X {
   final int timeout;
   int _stop = 0;
   int _configControl = 0;
-  double _signalRateLimit = 0;
   bool _continuousMode = false;
   int _spadCount = 0;
   bool _spadIsAperture = false;
@@ -138,6 +137,76 @@ class VL53L0X {
   int _range = 0;
   bool _dataReady = false;
 
+  // i2c helper
+
+  /// Reads an 8-bit unsigned integer from a register address.
+  int readU8reg(int reg) {
+    return i2c.readByteReg(vl53L0xDefaultI2Caddress, reg);
+  }
+
+  /// Reads an 8-bit unsigned integer from a [VL53L0Xconst], representing a
+  /// register address.
+  int readU8(VL53L0Xconst c) {
+    return i2c.readByteReg(vl53L0xDefaultI2Caddress, c.value);
+  }
+
+  /// Reads a 16-bit unsigned integer from a [VL53L0Xconst], representing a
+  /// register address.
+  int readU16(VL53L0Xconst c) {
+    var buf = i2c.readBytesReg(vl53L0xDefaultI2Caddress, c.value, 2);
+    return (buf[0] << 8) | buf[1];
+  }
+
+  /// Reads a 16-bit unsigned integer from a register address.
+  int readU16reg(int reg) {
+    var buf = i2c.readBytesReg(vl53L0xDefaultI2Caddress, reg, 2);
+    return (buf[0] << 8) | buf[1];
+  }
+
+  /// Writes an 8-bit unsigned integer to a [VL53L0Xconst], representing a
+  /// register address.
+  void writeU8(VL53L0Xconst c, int v) {
+    i2c.writeByteReg(vl53L0xDefaultI2Caddress, c.value, v);
+  }
+
+  /// Writes an 8-bit unsigned integer to a register address.
+  void writeU8reg(int reg, int v) {
+    i2c.writeByteReg(vl53L0xDefaultI2Caddress, reg, v);
+  }
+
+  /// Writes a 16-bit unsigned integer to a [VL53L0Xconst], representing a
+  /// register address.
+  void writeU16(VL53L0Xconst c, int val) {
+    var buf = List<int>.filled(2, 0);
+    buf[0] = (val >> 8) & 0xFF;
+    buf[1] = val & 0xFF;
+    i2c.writeBytesReg(vl53L0xDefaultI2Caddress, c.value, buf);
+  }
+
+  /// Writes a list of tuples (register,value).
+  void writeRegList(List<(int, int)> data) {
+    for (var pair in data) {
+      i2c.writeByteReg(vl53L0xDefaultI2Caddress, pair.$1, pair.$2);
+    }
+  }
+
+  /// Modifies an 8-bit unsigned integer from a [VL53L0Xconst] using a
+  /// function and returns the register's value before modification.
+  int modifyReg(VL53L0Xconst c, int Function(int value) modify) {
+    var result = readU8reg(c.value);
+    writeU8(c, modify(result));
+    return result;
+  }
+
+  /// Modifies an 8-bit unsigned integer from a [reg] using a
+  /// function and returns the register's value before modification.
+  int modifyRegAddress(int reg, int Function(int value) modify) {
+    var result = readU8reg(reg);
+    writeU8reg(reg, modify(result));
+    return result;
+  }
+
+  // VL53L0X Time of Flight Distance Sensor
   VL53L0X(this.i2c,
       [this.timeout = 0, this.i2cAddress = ds1307DefaultI2Caddress]) {
     // Check identification registers for expected values
@@ -149,25 +218,28 @@ class VL53L0X {
     // Initialize access to the sensor.  This is based on the logic from:
     // https://github.com/pololu/vl53l0x-arduino/blob/master/VL53L0X.cpp
     // Set I2C standard mode.
-    writeRegisterList([(0x88, 0x00), (0x80, 0x01), (0xFF, 0x01), (0x00, 0x00)]);
+    writeRegList([(0x88, 0x00), (0x80, 0x01), (0xFF, 0x01), (0x00, 0x00)]);
 
     _stop = readU8reg(0x91);
-    writeRegisterList([(0x00, 0x01), (0xFF, 0x00), (0x80, 0x00)]);
+    writeRegList([(0x00, 0x01), (0xFF, 0x00), (0x80, 0x00)]);
+
     // disable SIGNAL_RATE_MSRC (bit 1) and SIGNAL_RATE_PRE_RANGE (bit 4)
     // limit checks
-    _configControl = modifyReg(
-        VL53L0Xconst.msrcConfigControl.value, (value) => value | 0x12);
+    _configControl =
+        modifyReg(VL53L0Xconst.msrcConfigControl, (value) => value | 0x12);
 
     // set final range signal rate limit to 0.25 MCPS (million counts per second)
-    _signalRateLimit = 0.25;
+    setSignalRateLimit(0.25);
     writeU8(VL53L0Xconst.systemSequenceConfig, 0xFF);
+
     _setSpad();
+
     var refSpadMap = i2c.readBytesReg(vl53L0xDefaultI2Caddress,
         VL53L0Xconst.globalConfigSpadEnablesRef0.value, 6);
 
     // VL53L0Xconst.
     // VL53L0Xconst.globalConfigRefEnStartSelect
-    writeRegisterList([
+    writeRegList([
       (0xFF, 0x01),
       (VL53L0Xconst.dynamicSpadRefEnStartOffset.value, 0x00),
       (VL53L0Xconst.dynamicSpadNumRequestedRefSpad.value, 0x2C),
@@ -188,7 +260,10 @@ class VL53L0X {
       }
     }
 
-    writeRegisterList([
+    i2c.writeBytesReg(vl53L0xDefaultI2Caddress,
+        VL53L0Xconst.globalConfigSpadEnablesRef0.value, refSpadMap);
+
+    writeRegList([
       (0xFF, 0x01),
       (0x00, 0x00),
       (0xFF, 0x00),
@@ -272,7 +347,7 @@ class VL53L0X {
     ]);
 
     writeU8(VL53L0Xconst.systemInterruptConfigGpio, 0x04);
-    modifyReg(VL53L0Xconst.gpioHvMuxActiveHigh.value, (value) => value & ~0x10);
+    modifyReg(VL53L0Xconst.gpioHvMuxActiveHigh, (value) => value & ~0x10);
     writeU8(VL53L0Xconst.systemInterruptClear, 0x01);
 
     _measurementTimingBudgetUs = getMeasurementTimingBudget();
@@ -283,31 +358,20 @@ class VL53L0X {
     _performSingleRefCalibration(0x40);
     writeU8(VL53L0Xconst.systemSequenceConfig, 0x02);
     _performSingleRefCalibration(0x00);
-    // restore the previous Sequence Config
+
+    // restore the previous sequence Config
     writeU8(VL53L0Xconst.systemSequenceConfig, 0xE8);
   }
 
-  void writeRegisterList(List<(int, int)> data) {
-    for (var pair in data) {
-      i2c.writeByteReg(vl53L0xDefaultI2Caddress, pair.$1, pair.$2);
-    }
-  }
-
-  int modifyReg(int reg, int Function(int value) modify) {
-    var result = i2c.readByteReg(vl53L0xDefaultI2Caddress, reg);
-    i2c.writeByteReg(vl53L0xDefaultI2Caddress, 0x83, modify(result));
-    return result;
-  }
-
+  // Get reference SPAD count and type, returned as a 2-tuple of
+  // count and boolean is_aperture.  Based on code from:
+  //  https://github.com/pololu/vl53l0x-arduino/blob/master/VL53L0X.cpp
   void _setSpad() {
-    // Get reference SPAD count and type, returned as a 2-tuple of
-    // count and boolean is_aperture.  Based on code from:
-    //  https://github.com/pololu/vl53l0x-arduino/blob/master/VL53L0X.cpp
-    writeRegisterList([(0x80, 0x01), (0xFF, 0x01), (0x00, 0x00), (0xFF, 0x06)]);
+    writeRegList([(0x80, 0x01), (0xFF, 0x01), (0x00, 0x00), (0xFF, 0x06)]);
 
-    modifyReg(0x32, (value) => value | 0x04);
+    modifyRegAddress(0x83, (value) => value | 0x04);
 
-    writeRegisterList(
+    writeRegList(
         [(0xFF, 0x07), (0x81, 0x01), (0x80, 0x01), (0x94, 0x6B), (0x83, 0x00)]);
 
     var start = DateTime.now().millisecondsSinceEpoch;
@@ -323,43 +387,10 @@ class VL53L0X {
     var tmp = readU8reg(0x92);
     _spadCount = tmp & 0x7F;
     _spadIsAperture = ((tmp >> 7) & 0x01) == 1;
-    writeRegisterList([(0x81, 0x00), (0xFF, 0x06)]);
+    writeRegList([(0x81, 0x00), (0xFF, 0x06)]);
 
-    modifyReg(0x32, (value) => value & ~0x04);
-    writeRegisterList([(0xFF, 0x01), (0x00, 0x01), (0xFF, 0x00), (0x80, 0x00)]);
-  }
-
-  void writeU8(VL53L0Xconst c, int v) {
-    i2c.writeByteReg(vl53L0xDefaultI2Caddress, c.value, v);
-  }
-
-  void writeU8reg(int reg, int v) {
-    i2c.writeByteReg(vl53L0xDefaultI2Caddress, reg, v);
-  }
-
-  int readU8reg(int reg) {
-    return i2c.readByteReg(vl53L0xDefaultI2Caddress, reg);
-  }
-
-  int readU8(VL53L0Xconst c) {
-    return i2c.readByteReg(vl53L0xDefaultI2Caddress, c.value);
-  }
-
-  int readU16(VL53L0Xconst c) {
-    var buf = i2c.readBytesReg(vl53L0xDefaultI2Caddress, c.value, 2);
-    return (buf[0] << 8) | buf[1];
-  }
-
-  int readU16reg(int reg) {
-    var buf = i2c.readBytesReg(vl53L0xDefaultI2Caddress, reg, 2);
-    return (buf[0] << 8) | buf[1];
-  }
-
-  void writeU16(VL53L0Xconst c, int val) {
-    var buf = List<int>.filled(2, 0);
-    buf[1] = (val >> 8) & 0xFF;
-    buf[2] = val & 0xFF;
-    i2c.writeBytesReg(vl53L0xDefaultI2Caddress, c.value, buf);
+    modifyRegAddress(0x83, (value) => value & ~0x04);
+    writeRegList([(0xFF, 0x01), (0x00, 0x01), (0xFF, 0x00), (0x80, 0x00)]);
   }
 
   double getSignalRateLimit() {
@@ -368,16 +399,14 @@ class VL53L0X {
   }
 
   void setSignalRateLimit(double value) {
-    if (!(value >= 0 && value <= 511.99)) {
-      throw VL53L0Xexception("invalid setSignalRateLimit value");
-    }
-
     writeU16(VL53L0Xconst.finalRangeConfigMinCountRateRtnLimit,
         (value * (1 << 7)).toInt());
   }
 
+  // ** refiew until here **
+
   void _performSingleRefCalibration(int vhvInitByte) {
-    writeU8(VL53L0Xconst.sysRangeStart, 0x01 | vhvInitByte & 0xF);
+    writeU8(VL53L0Xconst.sysRangeStart, 0x01 | vhvInitByte & 0xFF);
     var start = DateTime.now().millisecondsSinceEpoch;
     while ((readU8(VL53L0Xconst.resultInterruptStatus) & 0x07) == 0) {
       if (timeout > 0 &&
@@ -410,10 +439,10 @@ class VL53L0X {
     return (tcc, dss, msrc, preRange, finalRange);
   }
 
+  // based on get_sequence_step_timeout() from ST API but modified by
+  // pololu here:
+  //   https://github.com/pololu/vl53l0x-arduino/blob/master/VL53L0X.cpp
   (int, int, int, int, int) _getSequenceStepTimeouts(bool preRange) {
-    // based on get_sequence_step_timeout() from ST API but modified by
-    // pololu here:
-    //   https://github.com/pololu/vl53l0x-arduino/blob/master/VL53L0X.cpp
     var preRangeVcselPeriodPclks =
         _getVcselPulsePeriod(VL53L0Xconst.vcselPeriodPreRange);
     var msrcDssTccMclks =
@@ -443,8 +472,8 @@ class VL53L0X {
     );
   }
 
+  // The measurement timing budget in microseconds
   int getMeasurementTimingBudget() {
-    //The measurement timing budget in microseconds
     var budgetUs = 1910 + 960;
     var (bool tcc, bool dss, bool msrc, bool preRange, bool finalRange) =
         _getSequenceStepEnables();
@@ -471,6 +500,8 @@ class VL53L0X {
     // _measurementTimingBudgetUs = budgetUs;
     return budgetUs;
   }
+
+  // ** refiew until here **
 
   void setMeasurementTimingBudget(int budgetUs) {
     var usedBudgetUs = 1320 + 960;
@@ -520,7 +551,7 @@ class VL53L0X {
     // sensor, but without return the distance.
     // Adapted from readRangeSingleMillimeters in pololu code at:
     // https://github.com/pololu/vl53l0x-arduino/blob/master/VL53L0X.cpp
-    writeRegisterList([
+    writeRegList([
       (0x80, 0x01),
       (0xFF, 0x01),
       (0x00, 0x00),
@@ -585,7 +616,7 @@ class VL53L0X {
     //
     //Adapted from startContinuous in pololu code at:
     //   https://github.com/pololu/vl53l0x-arduino/blob/master/VL53L0X.cpp
-    writeRegisterList([
+    writeRegList([
       (0x80, 0x01),
       (0xFF, 0x01),
       (0x00, 0x00),
@@ -610,7 +641,7 @@ class VL53L0X {
     //
     //Adapted from startContinuous in pololu code at:
     //   https://github.com/pololu/vl53l0x-arduino/blob/master/VL53L0X.cpp
-    writeRegisterList([
+    writeRegList([
       (VL53L0Xconst.sysRangeStart.value, 0x01),
       (0xFF, 0x01),
       (0x00, 0x00),

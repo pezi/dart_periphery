@@ -423,35 +423,35 @@ cd ~
 ### arm
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.6.2/sdk/dartsdk-linux-arm-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.7.0/sdk/dartsdk-linux-arm-release.zip
 unzip dartsdk-linux-arm-release.zip
 ```
 
 ### arm64
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.6.2/sdk/dartsdk-linux-arm64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.7.0/sdk/dartsdk-linux-arm64-release.zip
 unzip dartsdk-linux-arm64-release.zip
 ```
 
 ### IA32
 
 ``` bash
-https://storage.googleapis.com/dart-archive/channels/stable/release/3.6.2/sdk/dartsdk-linux-ia32-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.7.0/sdk/dartsdk-linux-ia32-release.zip
 unzip dartsdk-linux-ia32-release.zip
 ```
 
 ### X64
 
 ``` bash
-https://storage.googleapis.com/dart-archive/channels/stable/release/3.6.2/sdk/dartsdk-linux-x64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.7.0/sdk/dartsdk-linux-x64-release.zip
 unzip dartsdk-linux-x64-release.zip
 ```
 
 ### RISC-V (RV64GC)
 
 ``` bash
-https://storage.googleapis.com/dart-archive/channels/stable/release/3.6.2/sdk/dartsdk-linux-riscv64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.7.0/sdk/dartsdk-linux-riscv64-release.zip
 unzip dartsdk-linux-riscv64-release.zip
 ```
 
@@ -486,7 +486,7 @@ Test the installation
 
 ``` bash
 dart --version
-Dart SDK version: 3.6.2 (stable) (Wed Jan 29 01:20:39 2025 -0800) on "linux_arm"
+Dart SDK version: 3.7.0 (stable) (Wed Feb 5 04:53:58 2025 -0800) on "linux_riscv64"
 ```
 
 ## 📚 Native libraries
