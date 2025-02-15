@@ -423,35 +423,35 @@ cd ~
 ### arm
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.6.2/sdk/dartsdk-linux-arm-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.7.0/sdk/dartsdk-linux-arm-release.zip
 unzip dartsdk-linux-arm-release.zip
 ```
 
 ### arm64
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.6.2/sdk/dartsdk-linux-arm64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.7.0/sdk/dartsdk-linux-arm64-release.zip
 unzip dartsdk-linux-arm64-release.zip
 ```
 
 ### IA32
 
 ``` bash
-https://storage.googleapis.com/dart-archive/channels/stable/release/3.6.2/sdk/dartsdk-linux-ia32-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.7.0/sdk/dartsdk-linux-ia32-release.zip
 unzip dartsdk-linux-ia32-release.zip
 ```
 
 ### X64
 
 ``` bash
-https://storage.googleapis.com/dart-archive/channels/stable/release/3.6.2/sdk/dartsdk-linux-x64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.7.0/sdk/dartsdk-linux-x64-release.zip
 unzip dartsdk-linux-x64-release.zip
 ```
 
 ### RISC-V (RV64GC)
 
 ``` bash
-https://storage.googleapis.com/dart-archive/channels/stable/release/3.6.2/sdk/dartsdk-linux-riscv64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.7.0/sdk/dartsdk-linux-riscv64-release.zip
 unzip dartsdk-linux-riscv64-release.zip
 ```
 
@@ -486,7 +486,7 @@ Test the installation
 
 ``` bash
 dart --version
-Dart SDK version: 3.6.2 (stable) (Wed Jan 29 01:20:39 2025 -0800) on "linux_arm"
+Dart SDK version: 3.7.0 (stable) (Wed Feb 5 04:53:58 2025 -0800) on "linux_riscv64"
 ```
 
 ## 📚 Native libraries
@@ -614,13 +614,13 @@ The project is currently still beta and development is ongoing.
 
 ## 🔬 Tested SoC hardware
 
-* [Raspberry Pi 3 Model B](https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/), OS: Raspberry Pi OS
-* [Raspberry Pi Zero 2 W](https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/), OS: Raspberry Pi OS 
+* [Raspberry Pi 3 Model B](https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/), OS: [Raspberry Pi OS](https://www.raspberrypi.com/software/)
+* [Raspberry Pi Zero 2 W](https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/), OS: [Raspberry Pi OS](https://www.raspberrypi.com/software/)
 * [NanoPi](https://wiki.friendlyelec.com/wiki/index.php/NanoPi_NEO) with a Allwinner H3, Quad-core 32-bit CPU, OS: [Armbian](https://www.armbian.com/nanopi-neo-core-2-lts/)
 * [NanoPi M1](https://wiki.friendlyelec.com/wiki/index.php/NanoPi_M1) with a Allwinner H3, Quad-core 32-bit CPU: OS [Armbian](https://www.armbian.com/nanopi-m1/)
 * [NanoPi Neo2](https://wiki.friendlyelec.com/wiki/index.php/NanoPi_NEO2) with a Allwinner H5, Quad-core 64-bit CPU, OS: [Armbian](https://www.armbian.com/nanopi-neo-2/)
 * [Banana Pi BPI-M1](https://en.wikipedia.org/wiki/Banana_Pi#Banana_Pi_BPI-M1) with a Allwinner A20 Dual-core, OS: [Armbian](https://www.armbian.com/bananapi/)
-* [Banana Pi BPI-F3 16GB](https://wiki.banana-pi.org/Banana_Pi_BPI-F3) with a [SpacemiT K1 8 core RISC-V](https://docs.banana-pi.org/en/BPI-F3/SpacemiT_K1), OS: Ubuntu 23.04 (GNU/Linux 6.2.0-1010-starfive riscv64)
+* [Banana Pi BPI-F3 16GB](https://wiki.banana-pi.org/Banana_Pi_BPI-F3) with a [SpacemiT K1 8 core RISC-V](https://docs.banana-pi.org/en/BPI-F3/SpacemiT_K1), OS: [Armbian DEV](https://www.armbian.com/bananapi-f3), [Wiki](https://github.com/pezi/dart_periphery/wiki/BPI_F3) article
 
 ## 🖥 Supported devices (sensors, actuators, extensions hats and displays)
 
