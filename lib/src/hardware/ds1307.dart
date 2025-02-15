@@ -76,7 +76,7 @@ class DS1307 {
   final bool isDS2131;
   bool _halt;
 
-  // Creates a DS1307/D3231 rtc instance that uses the [i2c] bus with
+  // Creates a DS1307/DS3231 rtc instance that uses the [i2c] bus with
   /// the optional [i2cAddress].
   DS1307(this.i2c,
       [this.isDS2131 = false, this.i2cAddress = ds1307DefaultI2Caddress])
