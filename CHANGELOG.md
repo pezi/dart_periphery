@@ -1,6 +1,7 @@
 ## 0.9.16
 * Add VL53L0X Time of Fligt sensor
 * Update to Dart 3.7.0
+* Add platform package switch `linux` only   
 * Enable project [WIKI](https://github.com/pezi/dart_periphery/wiki)
 * Test dart_periphery on a real [RISC-V Board](https://github.com/pezi/dart_periphery/wiki/BPI_F3)
 
