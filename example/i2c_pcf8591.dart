@@ -10,7 +10,7 @@ import 'dart:io';
 
 // PCF8591 ADC+DAC combo
 //
-// Tested model form Botland
+// Tested model from Botland
 // https://botland.store/raspberry-pi-gpio-extensions/2632-pcf8591-a-d-and-d-a-converter-8-bit-i2c-v2-5904422359164.html
 // with following build-in sensors thermistor,phototransistor, potentiometer
 //

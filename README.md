@@ -601,14 +601,17 @@ measurements:
 This variant remains on standby for data; once data is processed, the result is passed to the stream 
 and subsequently to the Flutter UI. This model is used for actuator control, such as operating a LED.
 
+**Support for Multiple Streams**: Enables handling of multiple data streams simultaneously.
+
+Thhis project is currently still beta and development is ongoing.
+
+
 ## 💧 flutter_sensor_tester 
 
 This project extends the flutter_pi_sensor_tester project to a client/server model. 
 
+![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/client_server.png "Client Server")
 
-**Support for Multiple Streams**: Enables handling of multiple data streams simultaneously.
-
-The project is currently still beta and development is ongoing.
 
 
 
