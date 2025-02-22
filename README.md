@@ -10,10 +10,9 @@
 
 ## 📣 Important hints
 
-This version updates CPU detection by switching from `uname()` to Dart’s built-in [Abi class](https://api.flutter.dev/flutter/dart-ffi/Abi-class.html). 
-Special thanks to [Hanns Winkler](https://github.com/pezi/dart_periphery/pulls) for his contribution!
-
 Added RISC-V support, thanks to [Ali Tariq](https://github.com/alitariq4589) from [10xEngineers](https://10xEngineers.ai) for providing remote access to a Banana Pi BPI-F3 16GB on [Cloud-V](https://cloud-v.co), which enabled building the RISC-V variant of the c-periphery library.
+
+The repository’s [Wiki](https://github.com/pezi/dart_periphery/wiki) is now enabled.
 
 ## 📖 Introduction
 
