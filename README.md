@@ -559,11 +559,11 @@ must be called separately within each isolate. This is necessary because each is
 ### flutter-pi specific methods
 
 ``` dart
-// Loads the libraray form the flutter-pi asset directory.
+// Loads the library from the flutter-pi asset directory.
 void loadLibFromFlutterAssetDir(bool load) 
 ```
 
-the appropriate library from the flutter asset directory. This overwrites the library 
+loads the appropriate library from the flutter asset directory. This overwrites the library 
 self-extraction mechanism.
 
 * ARMv7 library: [libperiphery_arm.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm.so) for Raspberry Pi OS 32-bit
@@ -675,7 +675,7 @@ c-periphery [test program](https://github.com/vsergeev/c-periphery/blob/master/t
 
 ⁵ no X86/X86_64 SoC for testing available
 
-⁶ only limited tests
+⁶ Banana Pi BPI-F3, only limited tests
 
 
 ## 🙏 Help wanted
