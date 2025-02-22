@@ -20,7 +20,7 @@ import 'dart:io';
 //
 void main(List<String> args) {
   // Select the right I2C bus number /dev/i2c-?
-  // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
+  // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian), 4 BPI-F3
 
   if (args.isEmpty || !(args[0] == "write" || args[0] == "read")) {
     print("Commands: read or write");

@@ -9,7 +9,7 @@ import 'package:dart_periphery/dart_periphery.dart';
 ///  https://www.seeedstudio.com/Grove-Sunlight-Sensor.html
 void main() {
   // Select the right I2C bus number /dev/i2c-?
-  // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian
+  // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian), 4 BPI-F3
   var i2c = I2C(1);
   try {
     print("dart_periphery Version: $dartPeripheryVersion");

@@ -11,7 +11,7 @@ import 'dart:io';
 ///
 void main() {
   // Select the right I2C bus number /dev/i2c-?
-  // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
+  // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian), 4 BPI-F3
   var i2c = I2C(1);
   try {
     print("dart_periphery Version: $dartPeripheryVersion");

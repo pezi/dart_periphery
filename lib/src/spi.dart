@@ -209,7 +209,7 @@ Map<String, dynamic> _jsonMap(String json) {
   return _map;
 }
 
-/// SPI wrapper functions for Linux userspace <tt>spidev</tt> devices.
+/// SPI wrapper functions for Linux userspace `spidev` devices.
 ///
 /// c-periphery [SPI](https://github.com/vsergeev/c-periphery/blob/master/docs/spi.md)
 /// documentation.
@@ -375,7 +375,7 @@ class SPI extends IsolateAPI {
   /// If [reuseBuffer] is true, [data] will be used for the result buffer,
   /// for false a new buffer will be created.
   ///
-  /// Returns a 'List<int>' result buffer.
+  /// Returns a `List<int>` result buffer.
   List<int> transfer(List<int> data, bool reuseBuffer) {
     // ignore: avoid_init_to_null
     Pointer<Uint8> inPtr = nullptr;
@@ -424,7 +424,7 @@ class SPI extends IsolateAPI {
   /// result buffer. If [reuseBuffer] is true, [data] will be used the result
   /// buffer, for false a new buffer will be created.
   ///
-  /// Returns a ' Pointer<Int8>' result buffer. Be aware to malloc.free the low
+  /// Returns a `Pointer<Int8>` result buffer. Be aware to malloc.free the low
   /// level system memory buffers!
   Pointer<Uint8> transferInt8(Pointer<Uint8> data, bool reuseBuffer, int len) {
     Pointer<Uint8> inPtr;
@@ -559,7 +559,7 @@ class SPI extends IsolateAPI {
     _checkError(_nativeSPIsetExtraFlags32(_spiHandle, value));
   }
 
-  /// Returns the file descriptor (for the underlying <tt>spidev</tt> device)
+  /// Returns the file descriptor (for the underlying `spidev` device)
   /// of the SPI handle.
   int getSPIfd() {
     _checkStatus();

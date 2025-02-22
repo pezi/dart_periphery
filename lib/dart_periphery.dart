@@ -91,6 +91,8 @@ export 'src/hardware/mcp9808.dart'
     show MCP9808, MCP9808result, MCP9808exception, mcp9808DefaultI2Caddress;
 export 'src/hardware/sdc30.dart'
     show SDC30, SDC30exception, SDC30result, sdc30DefaultI2Caddress;
+export 'src/hardware/vl53l0x.dart'
+    show VL53L0X, VL53L0Xexception, vl53L0xDefaultI2Caddress;
 export 'src/hardware/si1145.dart'
     show
         SI1145,

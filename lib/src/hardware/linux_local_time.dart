@@ -18,7 +18,7 @@ typedef SettimeofdayDart = int Function(Pointer<Timeval> tv, Pointer<Void> tz);
 final SettimeofdayDart settimeofday =
     libc.lookupFunction<SettimeofdayNative, SettimeofdayDart>('settimeofday');
 
-/// Representation of the C 'struct timeval' defined in <sys/time.h>
+/// Representation of the C 'struct timeval' defined in `<sys/time.h>`
 ///
 /// In Linux on 64-bit systems, both fields are typically 64-bit integers:
 ///   struct timeval {

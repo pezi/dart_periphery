@@ -31,7 +31,7 @@ enum RegisterWidth { bits8, bits16 }
     #define I2C_M_RECV_LEN		0x0400
 */
 
-/// [I2C] native i2c_msg flags from <linux/i2c.h> - converted only to lower case
+/// [I2C] native i2c_msg flags from `<linux/i2c.h>` - converted only to lower case
 /// camel case looks a little strange
 enum I2CmsgFlags {
   // ignore: constant_identifier_names
@@ -84,7 +84,7 @@ class NativeI2CmsgHelper {
   bool _isFreed = false;
   NativeI2CmsgHelper(this._messages, this.size);
 
-  /// Returns a Pointer<NativeI2Cmsg> to the native memory structures.
+  /// Returns a `Pointer<NativeI2Cmsg>` to the native memory structures.
   Pointer<NativeI2Cmsg> getMessages() {
     if (_isFreed) {
       throw I2Cexception(I2CerrorCode.i2cErrorClose,

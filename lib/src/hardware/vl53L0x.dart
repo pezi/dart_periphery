@@ -6,8 +6,6 @@
 // https://github.com/adafruit/Adafruit_CircuitPython_VL53L0X
 // https://www.st.com/resource/en/datasheet/vl53l0x.pdf
 
-import 'dart:io';
-
 import 'package:dart_periphery/dart_periphery.dart';
 import 'package:collection/collection.dart';
 import 'dart:math' as math;
@@ -129,14 +127,12 @@ class VL53L0X {
   final int i2cAddress;
   final int timeout;
   int _stop = 0;
-  int _configControl = 0;
   bool _continuousMode = false;
   int _spadCount = 0;
   bool _spadIsAperture = false;
   int _firstSpadToEnable = 0;
   int _spadsEnabled = 0;
   int _measurementTimingBudgetUs = 0;
-  int _range = 0;
   bool _dataReady = false;
 
   // i2c helper
@@ -227,8 +223,7 @@ class VL53L0X {
 
     // disable SIGNAL_RATE_MSRC (bit 1) and SIGNAL_RATE_PRE_RANGE (bit 4)
     // limit checks
-    _configControl =
-        modifyReg(VL53L0Xconst.msrcConfigControl, (value) => value | 0x12);
+    modifyReg(VL53L0Xconst.msrcConfigControl, (value) => value | 0x12);
 
     // set final range signal rate limit to 0.25 MCPS (million counts per second)
     setSignalRateLimit(0.25);
@@ -601,10 +596,7 @@ class VL53L0X {
     return rangeMM;
   }
 
-  double getDistance() {
-    return _range / 10;
-  }
-
+  // Return the range in mm.
   int getRange() {
     if (!_continuousMode) {
       doRangeMeasurement();
@@ -656,14 +648,5 @@ class VL53L0X {
     ]);
     _continuousMode = false;
     doRangeMeasurement();
-  }
-}
-
-void main() {
-  var i2c = I2C(1);
-  var v = VL53L0X(i2c);
-  while (true) {
-    print(v.getRange());
-    sleep(Duration(seconds: 1));
   }
 }
