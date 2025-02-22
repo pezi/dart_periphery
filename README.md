@@ -3,7 +3,7 @@
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
 
-[![pub package](https://img.shields.io/badge/pub-v0.9.15-orange)](https://pub.dartlang.org/packages/dart_periphery)
+[![pub package](https://img.shields.io/badge/pub-v0.9.16-orange)](https://pub.dartlang.org/packages/dart_periphery)
 [![Pub Points](https://img.shields.io/pub/points/dart_periphery)](https://pub.dev/packages/dart_periphery/score)
 [![All Contributors](https://img.shields.io/github/contributors/pezi/dart_periphery)](https://github.com/pezi/dart_periphery/graphs/contributors)
 [![BSD License](https://img.shields.io/github/license/pezi/dart_periphery)](https://opensource.org/license/bsd-3-clause)
@@ -601,15 +601,17 @@ measurements:
 This variant remains on standby for data; once data is processed, the result is passed to the stream 
 and subsequently to the Flutter UI. This model is used for actuator control, such as operating a LED.
 
+**Support for Multiple Streams**: Enables handling of multiple data streams simultaneously.
+
+This project is currently still beta and development is ongoing.
+
 ## 💧 flutter_sensor_tester 
 
 This project extends the flutter_pi_sensor_tester project to a client/server model. 
 
+![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/client_server.png "Client Server")
 
-**Support for Multiple Streams**: Enables handling of multiple data streams simultaneously.
-
-The project is currently still beta and development is ongoing.
-
+This project is currently alpha and will be publishd with the next version.
 
 
 ## 🔬 Tested SoC hardware
@@ -620,7 +622,8 @@ The project is currently still beta and development is ongoing.
 * [NanoPi M1](https://wiki.friendlyelec.com/wiki/index.php/NanoPi_M1) with a Allwinner H3, Quad-core 32-bit CPU: OS [Armbian](https://www.armbian.com/nanopi-m1/)
 * [NanoPi Neo2](https://wiki.friendlyelec.com/wiki/index.php/NanoPi_NEO2) with a Allwinner H5, Quad-core 64-bit CPU, OS: [Armbian](https://www.armbian.com/nanopi-neo-2/)
 * [Banana Pi BPI-M1](https://en.wikipedia.org/wiki/Banana_Pi#Banana_Pi_BPI-M1) with a Allwinner A20 Dual-core, OS: [Armbian](https://www.armbian.com/bananapi/)
-* [Banana Pi BPI-F3 16GB](https://wiki.banana-pi.org/Banana_Pi_BPI-F3) with a [SpacemiT K1 8 core RISC-V](https://docs.banana-pi.org/en/BPI-F3/SpacemiT_K1), OS: [Armbian DEV](https://www.armbian.com/bananapi-f3), [Wiki](https://github.com/pezi/dart_periphery/wiki/BPI_F3) article
+* [Banana Pi BPI-F3 16GB](https://wiki.banana-pi.org/Banana_Pi_BPI-F3) with a [SpacemiT K1 8 core RISC-V](https://docs.banana-pi.org/en/BPI-F3/SpacemiT_K1), OS: [Armbian Dev](https://www.armbian.com/bananapi-f3), [Wiki](https://github.com/pezi/dart_periphery/wiki/BPI_F3) article
+
 
 ## 🖥 Supported devices (sensors, actuators, extensions hats and displays)
 
@@ -638,6 +641,7 @@ The project is currently still beta and development is ongoing.
 * [SI1145](https://github.com/pezi/dart_periphery/blob/main/example/i2c_si1145.dart) sunlight sensor: visible & IR light, UV index
 * [TSL2591](https://github.com/pezi/dart_periphery/blob/main/example/i2c_tsl2591.dart) light sensor
 * [DS1307/DS3231](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ds1307.dart) real time clock support
+* [VL53L0X](https://github.com/pezi/dart_periphery/blob/main/example/i2c_vl53l0x.dart) time of fligth sensor
 * Analog [Light sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_light_sensor_led.dart)
 * [Button](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_button.dart)
 * [Magenetic switch sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magentic_switch.dart)
@@ -660,7 +664,7 @@ The project is currently still beta and development is ongoing.
 | **AARCH64** ³ | &#10060;⁴ |       &#9989;        | &#9989; | &#9989; | &#9989; | &#9989; | &#9989; | &#9989; |
 | **X86** ⁵     |  &#9744;  |       &#9744;        | &#9744; | &#9744; | &#9744; | &#9744; | &#9744; | &#9744; |
 | **X86_64** ⁵  |  &#9744;  |       &#9744;        | &#9744; | &#9744; | &#9744; | &#9744; | &#9744; | &#9744; |
-| **RISC V** ⁶  |  &#9744;  |       &#9744;        | &#9744; | &#9744; | &#9744; | &#9744; | &#9744; | &#9744; |
+| **RISC V** ⁶  |  &#9744;  |       &#9744;        | &#9989; | &#9744; | &#9744; | &#9744; | &#9744; | &#9744; |
 
 &#9744; missing test | &#9989; test passed | &#10060; test failed
 

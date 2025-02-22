@@ -367,7 +367,7 @@ class Serial extends IsolateAPI {
     return int.parse(stopbits.toString().substring(tmp.length));
   }
 
-  /// Opens the <tt>tty</tt> device at the specified [path]
+  /// Opens the `tty` device at the specified [path]
   /// (e.g. "/dev/ttyUSB0"), with the specified [baudrate], and the
   /// defaults of 8 data bits, no parity, 1 stop bit, software
   /// flow control (xonxoff) off, hardware flow control (rtscts) off.
@@ -390,7 +390,7 @@ class Serial extends IsolateAPI {
     return serialHandle;
   }
 
-  /// Opens the <tt>tty</tt> device at the specified [path]
+  /// Opens the `tty` device at the specified [path]
   /// (e.g. "/dev/ttyUSB0"), with the specified [baudrate], [databits],
   /// [parity], [stopbits], software flow control ([xonxoff]), and hardware
   /// flow control ([rtsct]) settings.

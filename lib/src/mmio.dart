@@ -185,7 +185,7 @@ class MMIOexception implements Exception {
   String toString() => errorMsg;
 }
 
-/// MMIO wrapper functions for the Linux userspace <tt>/dev/mem</tt> device.
+/// MMIO wrapper functions for the Linux userspace `/dev/mem` device.
 ///
 /// c-periphery [MMIO](https://github.com/vsergeev/c-periphery/blob/master/docs/mmio.md) documentation.
 class MMIO extends IsolateAPI {
@@ -196,7 +196,7 @@ class MMIO extends IsolateAPI {
   final String path;
 
   /// Maps the region of physical memory specified by the [base] physical address and [size] in bytes, using
-  /// the default <tt>/dev/mem</tt> memory character device.
+  /// the default `/dev/mem` memory character device.
   ///
   /// Neither base nor size need be aligned to a page boundary.
   MMIO(this.base, this.size)
@@ -226,7 +226,7 @@ class MMIO extends IsolateAPI {
   /// memory character device [path].
   ///
   /// This open function can be used with sandboxed memory character
-  /// devices, e.g. <tt>/dev/gpiomem</tt>.
+  /// devices, e.g. `/dev/gpiomem`.
   /// Neither base nor size need be aligned to a page boundary.
   MMIO.advanced(this.base, this.size, this.path)
       : _mmioHandle = _mmioOpenAdvanced(base, size, path);
