@@ -603,8 +603,7 @@ and subsequently to the Flutter UI. This model is used for actuator control, suc
 
 **Support for Multiple Streams**: Enables handling of multiple data streams simultaneously.
 
-Thhis project is currently still beta and development is ongoing.
-
+This project is currently still beta and development is ongoing.
 
 ## 💧 flutter_sensor_tester 
 
@@ -612,7 +611,7 @@ This project extends the flutter_pi_sensor_tester project to a client/server mod
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/client_server.png "Client Server")
 
-
+This project is currently alpha and will be publishd with the next version.
 
 
 ## 🔬 Tested SoC hardware

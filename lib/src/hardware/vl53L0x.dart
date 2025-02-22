@@ -501,8 +501,6 @@ class VL53L0X {
     return budgetUs;
   }
 
-  // ** refiew until here **
-
   void setMeasurementTimingBudget(int budgetUs) {
     var usedBudgetUs = 1320 + 960;
     var (bool tcc, bool dss, bool msrc, bool preRange, bool finalRange) =
@@ -526,31 +524,32 @@ class VL53L0X {
     }
     if (finalRange) {
       usedBudgetUs += 550;
+
+      // Note that the final range timeout is determined by the timing
+      // budget and the sum of all other timeouts within the sequence.
+      // If there is no room for the final range timeout, then an error
+      // will be set. Otherwise, the remaining time will be applied to
+      // the final range.
+      if (usedBudgetUs > budgetUs) {
+        throw VL53L0Xexception("Requested timeout too big.");
+      }
+      var finalRangeTimeoutUs = budgetUs - usedBudgetUs;
+      var finalRangeTimeoutMclks = _timeoutMicrosecondsToMclks(
+          finalRangeTimeoutUs, finalRangeVcselPeriodPclks);
+      if (preRange) {
+        finalRangeTimeoutMclks += preRangeMclks;
+      }
+      writeU16(VL53L0Xconst.finalRangeConfigTimeoutMacropHi,
+          _encodeTimeout(finalRangeTimeoutMclks));
+      _measurementTimingBudgetUs = budgetUs;
     }
-    // Note that the final range timeout is determined by the timing
-    // budget and the sum of all other timeouts within the sequence.
-    // If there is no room for the final range timeout, then an error
-    // will be set. Otherwise, the remaining time will be applied to
-    // the final range.
-    if (usedBudgetUs > budgetUs) {
-      throw VL53L0Xexception("Requested timeout too big.");
-    }
-    var finalRangeTimeoutUs = budgetUs - usedBudgetUs;
-    var finalRangeTimeoutMclks = _timeoutMicrosecondsToMclks(
-        finalRangeTimeoutUs, finalRangeVcselPeriodPclks);
-    if (preRange) {
-      finalRangeTimeoutMclks += preRangeMclks;
-    }
-    writeU16(VL53L0Xconst.finalRangeConfigTimeoutMacropHi,
-        _encodeTimeout(finalRangeTimeoutMclks));
-    _measurementTimingBudgetUs = budgetUs;
   }
 
+  // Perform a single reading of the range for an object in front of the
+  // sensor, but without return the distance.
+  // Adapted from readRangeSingleMillimeters in pololu code at:
+  // https://github.com/pololu/vl53l0x-arduino/blob/master/VL53L0X.cpp
   void doRangeMeasurement() {
-    // Perform a single reading of the range for an object in front of the
-    // sensor, but without return the distance.
-    // Adapted from readRangeSingleMillimeters in pololu code at:
-    // https://github.com/pololu/vl53l0x-arduino/blob/master/VL53L0X.cpp
     writeRegList([
       (0x80, 0x01),
       (0xFF, 0x01),
@@ -570,21 +569,21 @@ class VL53L0X {
     }
   }
 
+  // Check if data is available from the sensor. If true a call to .range
+  // will return quickly. If false, calls to .range will wait for the sensor's
+  // next reading to be available
   bool isDataReady() {
-    // Check if data is available from the sensor. If true a call to .range
-    // will return quickly. If false, calls to .range will wait for the sensor's
-    // next reading to be available."""
     if (!_dataReady) {
       _dataReady = readU8(VL53L0Xconst.resultInterruptStatus) & 0x07 != 0;
     }
     return _dataReady;
   }
 
+  // Return a range reading in millimeters.
+  //    Note: Avoid calling this directly. If you do single mode, you need
+  //    to call `do_range_measurement` first. Or your program will stuck or
+  //    timeout occurred.
   int readRange() {
-    // Return a range reading in millimeters.
-    //    Note: Avoid calling this directly. If you do single mode, you need
-    //    to call `do_range_measurement` first. Or your program will stuck or
-    //    timeout occurred.
     var start = DateTime.now().millisecondsSinceEpoch;
     while (!isDataReady()) {
       if (timeout > 0 &&
@@ -611,11 +610,12 @@ class VL53L0X {
     return readRange();
   }
 
+  // Perform a continuous reading of the range for an object in front of
+  // the sensor.
+  //
+  // Adapted from startContinuous in pololu code at:
+  // https://github.com/pololu/vl53l0x-arduino/blob/master/VL53L0X.cpp
   void startContinuous() {
-    // Perform a continuous reading of the range for an object in front of the sensor.
-    //
-    //Adapted from startContinuous in pololu code at:
-    //   https://github.com/pololu/vl53l0x-arduino/blob/master/VL53L0X.cpp
     writeRegList([
       (0x80, 0x01),
       (0xFF, 0x01),
@@ -636,11 +636,14 @@ class VL53L0X {
     _continuousMode = true;
   }
 
+  // ** refiew until here **
+
+  // Perform a continuous reading of the range for an object in front of
+  // the sensor.
+  //
+  // Adapted from startContinuous in pololu code at:
+  // https://github.com/pololu/vl53l0x-arduino/blob/master/VL53L0X.cpp
   void stopContinuous() {
-    // Perform a continuous reading of the range for an object in front of the sensor.
-    //
-    //Adapted from startContinuous in pololu code at:
-    //   https://github.com/pololu/vl53l0x-arduino/blob/master/VL53L0X.cpp
     writeRegList([
       (VL53L0Xconst.sysRangeStart.value, 0x01),
       (0xFF, 0x01),
@@ -649,6 +652,7 @@ class VL53L0X {
       (0x00, 0x01),
       (0xFF, 0x00),
     ]);
+    _continuousMode = false;
     doRangeMeasurement();
   }
 }
