@@ -10,6 +10,7 @@ import 'dart:io';
 ///
 /// https://wiki.seeedstudio.com/Grove-Time_of_Flight_Distance_Sensor-VL53L0X/
 ///
+/// Source: https://github.com/adafruit/Adafruit_CircuitPython_VL53L0X/tree/main/examples
 
 void main(List<String> args) {
   // Select the right I2C bus number /dev/i2c-?
@@ -36,13 +37,15 @@ void main(List<String> args) {
     v.setMeasurementTimingBudget(200000);
     v.startContinuous();
     try {
-      // try to adjust the sleep time (simulating program doing something else)
-      //  # and see how fast the sensor returns the range
-      sleep(Duration(microseconds: 100));
-      var time = DateTime.now().millisecondsSinceEpoch;
-      var range = v.getRange();
-      var div = DateTime.now().millisecondsSinceEpoch - time;
-      print("Range: $range mm $div ms");
+      while (true) {
+        // try to adjust the sleep time (simulating program doing something else)
+        // and see how fast the sensor returns the range
+        sleep(Duration(microseconds: 100));
+        var time = DateTime.now().millisecondsSinceEpoch;
+        var range = v.getRange();
+        var div = DateTime.now().millisecondsSinceEpoch - time;
+        print("Range: $range mm $div ms");
+      }
     } on Exception catch (e) {
       print('Exception details:\n $e');
     } finally {
@@ -50,15 +53,3 @@ void main(List<String> args) {
     }
   }
 }
-
-/*
-# Main loop will read the range and print it every second.
-with vl53.continuous_mode():
-    while True:
-        # try to adjust the sleep time (simulating program doing something else)
-        # and see how fast the sensor returns the range
-        time.sleep(0.1)
-
-        curTime = time.time()
-        print("Range: {0}mm ({1:.2f}ms)".format(vl53.range, time.time() - curTime))
-        */
