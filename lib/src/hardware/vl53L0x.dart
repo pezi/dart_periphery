@@ -6,6 +6,8 @@
 // https://github.com/adafruit/Adafruit_CircuitPython_VL53L0X
 // https://www.st.com/resource/en/datasheet/vl53l0x.pdf
 
+import 'dart:io';
+
 import 'package:dart_periphery/dart_periphery.dart';
 import 'package:collection/collection.dart';
 import 'dart:math' as math;
@@ -660,4 +662,8 @@ class VL53L0X {
 void main() {
   var i2c = I2C(1);
   var v = VL53L0X(i2c);
+  while (true) {
+    print(v.getRange());
+    sleep(Duration(seconds: 1));
+  }
 }
