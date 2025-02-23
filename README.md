@@ -57,7 +57,7 @@ The number of GPIO libraries/interfaces is shrinking:
 * [Led](#led) (onboard leds) example / [API](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/Led-class.html)
 * [MMIO](#mmio) (Memory Mapped I/O) example / [API](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/MMIO-class.html)
 * [ADC](#adc) (Analog Digital Converter) example / [API-Grove](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/GroveBaseHat-class.html), [API-NanoHatHub](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/NanoHatHub-class.html), [PCF8591](https://github.com/pezi/dart_periphery/blob/main/example/i2c_pcf8591.dart)
-* [DAC](#adc) (Digital Analog Converter) example / [PCF8591](https://github.com/pezi/dart_periphery/blob/main/example/i2c_pcf8591.dart)
+* DAC (Digital Analog Converter) example / [PCF8591](https://github.com/pezi/dart_periphery/blob/main/example/i2c_pcf8591.dart)
 
 
 ## 🪧 Examples
