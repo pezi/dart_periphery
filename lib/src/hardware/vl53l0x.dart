@@ -656,6 +656,11 @@ class VL53L0X {
     _continuousMode = true;
   }
 
+  /// Returns a [VL53L0Xresult] with range in mm.
+  VL53L0Xresult getResult() {
+    return VL53L0Xresult(getRange());
+  }
+
   /// Stops the continuous reading of the range for an object in front of
   /// the sensor.
   void stopContinuous() {

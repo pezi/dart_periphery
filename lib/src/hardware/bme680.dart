@@ -67,6 +67,7 @@ const double maxFreqHz = 181;
 /// Minimum frequency of the measurements.
 const double minFreqHz = 23.1;
 
+/// BME680 retry counter
 const int sensorReadRetryCounter = 10;
 
 /// [BME680] power modes
