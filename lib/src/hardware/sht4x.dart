@@ -45,8 +45,8 @@ enum Mode {
 }
 
 /// [SHT4x] exception
-class SHT4xexception implements Exception {
-  SHT4xexception(this.errorMsg);
+class SHT4xException implements Exception {
+  SHT4xException(this.errorMsg);
   final String errorMsg;
   @override
   String toString() => errorMsg;
@@ -105,7 +105,7 @@ class SHT4x {
     sleep(Duration(milliseconds: 1));
     var data = i2c.readBytes(i2cAddress, 6);
     if (!checkCRC(data)) {
-      throw SHT4xexception('CRC8 error');
+      throw SHT4xException('CRC8 error');
     }
     return (data[0] & 0xff) << 24 |
         (data[1] & 0xff) << 16 |
