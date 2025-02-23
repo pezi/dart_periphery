@@ -1,3 +1,6 @@
+## 0.9.18
+* Add AHT20 temperature and humidity sensor
+
 ## 0.9.17
 * Add SHT4x temperature and humidity sensor  
 * Rework VL53L0X Time-of-Flight code
