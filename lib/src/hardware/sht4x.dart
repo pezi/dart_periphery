@@ -20,21 +20,22 @@ enum SHT4xcommand {
   const SHT4xcommand(this.command);
 }
 
+/// [SHT4x] sensor mode
 enum Mode {
-  noHeatHighPrecision(0xFD, "No heater, high precision", 0.01),
-  noHeatMediumPrecision(0xF6, "No heater, high precision", 0.005),
-  noHeatLowPrecision(0xE0, "No heater, low precision", 0.002),
-  highHeat1s(0x39, "High heat, 1 second", 1.1),
-  highHeat100mx(0x32, "High heat, 0.1 second", 0.11),
-  medHeat1s(0x2F, "Med heat, 1 second", 1.1),
-  medHeat100ms(0x24, "Med heat, 0.1 second", 0.11),
-  lowHeat1s(0x1E, "Low heat, 1 second", 1.1),
-  lowHeat100ms(0x15, "Low heat, 0.1 second", 0.11);
+  noHeatHighPrecision(0xFD, "No heater, high precision", 10),
+  noHeatMediumPrecision(0xF6, "No heater, medium precision", 5),
+  noHeatLowPrecision(0xE0, "No heater, low precision", 2),
+  highHeat1s(0x39, "High heat, 1 second", 1100),
+  highHeat100mx(0x32, "High heat, 0.1 second", 110),
+  medHeat1s(0x2F, "Med heat, 1 second", 1100),
+  medHeat100ms(0x24, "Med heat, 0.1 second", 110),
+  lowHeat1s(0x1E, "Low heat, 1 second", 1100),
+  lowHeat100ms(0x15, "Low heat, 0.1 second", 1100);
 
-  final int mode;
+  final int command;
   final String description;
-  final double factor;
-  const Mode(this.mode, this.description, this.factor);
+  final int delay;
+  const Mode(this.command, this.description, this.delay);
 }
 
 /// [SHT4x] exception
@@ -72,12 +73,13 @@ class SHT4x {
   final int i2cAddress;
   Mode _mode = Mode.noHeatHighPrecision;
 
-  /// Creates a SHT31 sensor instance that uses the [i2c] bus with
+  /// Creates a SHT4x sensor instance that uses the [i2c] bus with
   /// the optional [i2cAddress].
   SHT4x(this.i2c, [this.i2cAddress = sht31DefaultI2Caddress]) {
     reset();
   }
 
+  /// Resets the sensor.
   void reset() {
     i2c.writeByte(i2cAddress, SHT4xcommand.softReset.command);
     sleep(Duration(milliseconds: 1));
@@ -93,20 +95,31 @@ class SHT4x {
 
   /// Returns the serial number of the sensor.
   int getSerialNumber() {
-    var data =
-        i2c.readBytesReg(i2cAddress, SHT4xcommand.readSerialNumber.command, 6);
+    i2c.writeByte(i2cAddress, SHT4xcommand.readSerialNumber.command);
+    sleep(Duration(milliseconds: 1));
+    var data = i2c.readBytes(i2cAddress, 6);
     if (!checkCRC(data)) {
-      throw SHT31exception('CRC8 error');
+      throw SHT4xexception('CRC8 error');
     }
     return (data[0] & 0xff) << 24 |
         (data[1] & 0xff) << 16 |
         (data[3] & 0xff) << 8 |
         (data[4] & 0xff);
   }
-}
 
-void main() {
-  var i2c = I2C(1);
-  var s = SHT4x(i2c);
-  print(s.getSerialNumber());
+  /// Reads a [SHT4xresult] from the sensor with a accuracy depending on the
+  /// [Mode] setting.
+  SHT4xresult getValues() {
+    i2c.writeByte(i2cAddress, _mode.command);
+    sleep(Duration(milliseconds: _mode.delay));
+    var data = i2c.readBytes(i2cAddress, 6);
+    if (!checkCRC(data)) {
+      throw SHT31exception('CRC8 error');
+    }
+    var temp =
+        ((((data[0] & 0xFF) << 8) + (data[1] & 0xFF)) * 175.0) / 65535.0 - 45.0;
+    var humidity =
+        ((((data[3] & 0xFF) << 8) + (data[4] & 0xFF)) * 125.0) / 65535.0 - 6.0;
+    return SHT4xresult(temp, humidity);
+  }
 }
