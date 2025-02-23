@@ -1,5 +1,5 @@
 ## 0.9.17
-* Start with version 0.9.17  
+* Add SHT4x temperature and humidity sensor  
 
 ## 0.9.16
 * Add VL53L0X Time of Fligth sensor
