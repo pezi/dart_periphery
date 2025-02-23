@@ -25,17 +25,23 @@ enum Mode {
   noHeatHighPrecision(0xFD, "No heater, high precision", 10),
   noHeatMediumPrecision(0xF6, "No heater, medium precision", 5),
   noHeatLowPrecision(0xE0, "No heater, low precision", 2),
-  highHeat1s(0x39, "High heat, 1 second", 1100),
-  highHeat100mx(0x32, "High heat, 0.1 second", 110),
-  medHeat1s(0x2F, "Med heat, 1 second", 1100),
-  medHeat100ms(0x24, "Med heat, 0.1 second", 110),
-  lowHeat1s(0x1E, "Low heat, 1 second", 1100),
-  lowHeat100ms(0x15, "Low heat, 0.1 second", 1100);
+  highHeatHighPrecision1000ms(0x39, " 1 sec high heat, high precision", 1000),
+  highHeatHighPrecision100ms(0x32, "0.1 sec high heat, high precision", 100),
+  mediumHeatHighPrecision1000ms(
+      0x2F, "1 sec, medium heat, high precision", 1000),
+  mediumHeatHighPrecision100ms(
+      0x24, "0.1 sec, medium heat, high precision", 100),
+  lowHeatHighPrecision1000ms(0x1E, "1 sec, low heat, high precision", 1000),
+  lowHeatHighPrecision100ms(0x15, "0.1 sec, low heat, high precision", 100);
 
   final int command;
   final String description;
   final int delay;
   const Mode(this.command, this.description, this.delay);
+
+  String getInfo() {
+    return "$name: $description, measurement: $delay ms";
+  }
 }
 
 /// [SHT4x] exception
@@ -120,6 +126,16 @@ class SHT4x {
         ((((data[0] & 0xFF) << 8) + (data[1] & 0xFF)) * 175.0) / 65535.0 - 45.0;
     var humidity =
         ((((data[3] & 0xFF) << 8) + (data[4] & 0xFF)) * 125.0) / 65535.0 - 6.0;
+
+    // adjust humidity
+    if (humidity > 100) {
+      humidity = 100;
+    } else {
+      if (humidity < 0) {
+        humidity = 0;
+      }
+    }
+
     return SHT4xresult(temp, humidity);
   }
 }

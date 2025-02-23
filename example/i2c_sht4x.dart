@@ -20,6 +20,10 @@ void main() {
 
     var sht4x = SHT4x(i2c);
     print('Serial number: ${sht4x.getSerialNumber()}');
+    print("Current mode ${sht4x.getMode().getInfo()}");
+
+    // default mode - set other [Mode] for heating
+    // sht4x.setMode(Mode.noHeatHighPrecision);
 
     var r = sht4x.getValues();
     print('SHT4x [t°] ${r.temperature.toStringAsFixed(2)}');
