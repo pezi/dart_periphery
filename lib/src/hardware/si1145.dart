@@ -413,12 +413,12 @@ class SI1145 {
     _writeEnum(SI1145reg.command, SI1145cmd.psalsAuto);
   }
 
-  /// Returns the visible light in [nm].
+  /// Returns the visible light in nm.
   int getVisible() {
     return _readWord(SI1145reg.alsVisData0);
   }
 
-  /// Returns the infrared light in [nm].
+  /// Returns the infrared light in nm.
   int getIR() {
     return _readWord(SI1145reg.alsIrData0);
   }
@@ -435,7 +435,7 @@ class SI1145 {
     return _readWord(SI1145reg.auxData0Uvindex0) / 100.0;
   }
 
-  /// Returns a [SI1145result] with visible & IR light [nm] and UV
+  /// Returns a [SI1145result] with visible & IR light nm and UV
   /// index raw value.
   SI1145result getValues() {
     return SI1145result(getVisible(), getIR(), getUVindexRaw());

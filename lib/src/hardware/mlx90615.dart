@@ -110,7 +110,7 @@ class MLX90615 {
     return MLX90615result(type, getObjectTemperature());
   }
 
-  /// Reads the ambient temperature in the range [-40, 85] °C
+  /// Reads the ambient temperature in the range -40 - 85 °C
   double getAmbientTemperature([bool crcCheck = true]) {
     var value = _read16(ambientTemperature, crcCheck);
     if (value > 0x7FFF) {
@@ -119,7 +119,7 @@ class MLX90615 {
     return (value * 2 - 27315) / 100;
   }
 
-  /// Reads the object temperature in the range [-40, 115] °C
+  /// Reads the object temperature in the range -40 - 115 °C
   double getObjectTemperature([bool crcCheck = true]) {
     var value = _read16(objectTemperature, crcCheck);
     if (value > 0x7FFF) {
