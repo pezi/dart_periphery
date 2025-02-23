@@ -1,4 +1,4 @@
-// Copyright (c) 2022, the Dart project authors.  Please see the AUTHORS file
+// Copyright (c) 2025, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
@@ -22,7 +22,7 @@ void main() {
     print('Serial number: ${sht4x.getSerialNumber()}');
     print("Current mode ${sht4x.getMode().getInfo()}");
 
-    // default mode - set other [Mode] for heating
+    // default mode - set other [Mode] for e.g. heating
     // sht4x.setMode(Mode.noHeatHighPrecision);
 
     var r = sht4x.getValues();
