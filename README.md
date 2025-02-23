@@ -606,11 +606,11 @@ This project is currently still beta and development is ongoing.
 
 ## 💧 flutter_sensor_tester 
 
-This project extends the flutter_pi_sensor_tester project to a client/server model. 
+This project builds upon the `flutter_pi_sensor_tester` by introducing a client/server architecture, enhancing its functionality for distributed applications.
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/client_server.png "Client Server")
 
-This project is currently alpha and will be published with the next version.
+Currently in its alpha stage, the project is scheduled for release in March 2025.
 
 
 ## 🔬 Tested SoC hardware
@@ -629,6 +629,7 @@ This project is currently alpha and will be published with the next version.
 * [BME280](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme280.dart): Temperature, humidity and pressure sensor.
 * [BME680](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme680.dart): Temperature, humidity pressure and gas (Indoor Airy Quality) sensor.
 * [SHT31](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht31.dart): Temperature and humidity sensor. 
+* [SHT4x](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht4x.dart): Temperature and humidity sensor. 
 * [CozIR](https://github.com/pezi/dart_periphery/blob/main/example/serial_cozir.dart): CO₂, temperature and humidity sensor.
 * [Grove Gesture](https://github.com/pezi/dart_periphery/blob/main/example/i2c_gesture_sensor.dart): can recognize 9 basic gestures.
 * [MPU-6050 Six-Axis](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mpu6050.dart): (Gyro + Accelerometer) sensor.
