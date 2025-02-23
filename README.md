@@ -623,6 +623,7 @@ Currently in its alpha stage, the project is scheduled for release in March 2025
 * [Banana Pi BPI-M1](https://en.wikipedia.org/wiki/Banana_Pi#Banana_Pi_BPI-M1) with a Allwinner A20 Dual-core, OS: [Armbian](https://www.armbian.com/bananapi/)
 * [Banana Pi BPI-F3 16GB](https://wiki.banana-pi.org/Banana_Pi_BPI-F3) with a [SpacemiT K1 8 core RISC-V](https://docs.banana-pi.org/en/BPI-F3/SpacemiT_K1), OS: [Armbian Dev](https://www.armbian.com/bananapi-f3), [Wiki](https://github.com/pezi/dart_periphery/wiki/BPI_F3) article
 
+
 ## 🖥 Supported devices (sensors, actuators, extensions hats and displays)
 
 * [SGP30](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sgp30.dart): tVOC and eCO2 Gas Sensor
