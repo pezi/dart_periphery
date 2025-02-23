@@ -393,8 +393,7 @@ class VL53L0X {
     writeU8(VL53L0Xconst.systemSequenceConfig, 0xE8);
   }
 
-  // Sets the SPAD (single photon avalanche diode) based on code from:
-  // https://github.com/pololu/vl53l0x-arduino/blob/master/VL53L0X.cpp
+  // Sets the SPAD (single photon avalanche diode)
   void _setSPAD() {
     writeRegList([(0x80, 0x01), (0xFF, 0x01), (0x00, 0x00), (0xFF, 0x06)]);
 
@@ -595,9 +594,9 @@ class VL53L0X {
     }
   }
 
-  // Checks if data is available from the sensor. If true a call to .range
-  // will return quickly. If false, calls to .range will wait for the sensor's
-  // next reading to be available
+  // Checks if data is available from the sensor. If true a call to range
+  // will return quickly. If false, calls to range will wait for the sensor's
+  // next reading to be available.
   bool isDataReady() {
     if (!_dataReady) {
       _dataReady = readU8(VL53L0Xconst.resultInterruptStatus) & 0x07 != 0;

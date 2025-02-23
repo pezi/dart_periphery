@@ -639,7 +639,7 @@ This project is currently alpha and will be publishd with the next version.
 * [SI1145](https://github.com/pezi/dart_periphery/blob/main/example/i2c_si1145.dart) sunlight sensor: visible & IR light, UV index
 * [TSL2591](https://github.com/pezi/dart_periphery/blob/main/example/i2c_tsl2591.dart) light sensor
 * [DS1307/DS3231](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ds1307.dart) real time clock support
-* [VL53L0X](https://github.com/pezi/dart_periphery/blob/main/example/i2c_vl53l0x.dart) time of fligth sensor
+* [VL53L0X](https://github.com/pezi/dart_periphery/blob/main/example/i2c_vl53l0x.dart) Time-of-Flight sensor 
 * Analog [Light sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_light_sensor_led.dart)
 * [Button](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_button.dart)
 * [Magenetic switch sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magentic_switch.dart)
