@@ -8,7 +8,7 @@ import 'package:dart_periphery/dart_periphery.dart';
 import 'parse_cmd_line.dart';
 
 const wait = 500;
-const treshold = 100;
+const threshold = 100;
 
 /// https://wiki.seeedstudio.com/Grove-Light_Sensor/
 ///
@@ -36,7 +36,7 @@ void main(List<String> args) {
 
         while (true) {
           var value = hat.analogRead(analogPin);
-          if (value < treshold) {
+          if (value < threshold) {
             if (!ledStatus) {
               ledStatus = true;
               hat.digitalWrite(ledPin, DigitalValue.high);
@@ -63,7 +63,7 @@ void main(List<String> args) {
 
         while (true) {
           var value = hat.analogRead(analogPin);
-          if (value < treshold) {
+          if (value < threshold) {
             if (!ledStatus) {
               ledStatus = true;
               hat.digitalWrite(ledPin, DigitalValue.high);
@@ -91,7 +91,7 @@ void main(List<String> args) {
 
       while (true) {
         var value = hat.readADCraw(analogPin);
-        if (value < treshold) {
+        if (value < threshold) {
           if (!ledStatus) {
             ledStatus = true;
             led.write(true);

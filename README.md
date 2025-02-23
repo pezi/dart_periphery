@@ -38,11 +38,11 @@ Abstract from the project web site:
 
 **dart_periphery** binds the c-periphery library with the help of the [dart:ffi](https://dart.dev/guides/libraries/c-interop) mechanism. 
 Nevertheless, **dart_periphery** tries to be close as possible to the original library. 
-See following [documentation](https://github.com/vsergeev/c-periphery/tree/master/docs). Thanks to **Vanya Sergeev** for his great job!
+See the following [documentation](https://github.com/vsergeev/c-periphery/tree/master/docs). Thanks to **Vanya Sergeev** for his great job!
 
 ## 🤔 Why c-periphery?
 
-The number of GPIO libraries/interfaces is is shrinking:
+The number of GPIO libraries/interfaces is shrinking:
 
 * The widely used wiringpi library is [deprecated](https://hackaday.com/2019/09/18/wiringpi-library-to-be-deprecated).
 * GPIO sysfs is [deprecated](https://www.raspberrypi.org/forums/viewtopic.php?t=274416).
@@ -85,7 +85,7 @@ void main() {
   print('GPIO chip name: ${gpio.getGPIOchipName()}');
   print('GPIO chip label: ${gpio.getGPIOchipLabel()}');
   print('GPIO chip name: ${gpio.getGPIOchipName()}');
-  print('CPIO chip label: ${gpio.getGPIOchipLabel()}');
+  print('GPIO chip label: ${gpio.getGPIOchipLabel()}');
 
   for (var i = 0; i < 10; ++i) {
     gpio.write(true);
@@ -264,7 +264,7 @@ void main() {
 
 ### PWM
 
-Ensure that PWM is correct enabled. e.g. see the following [documentation](https://github.com/dotnet/iot/blob/main/Documentation/raspi-pwm.md) for the Raspberry Pi.
+Ensure that PWM is correctly enabled. e.g. see the following [documentation](https://github.com/dotnet/iot/blob/main/Documentation/raspi-pwm.md) for the Raspberry Pi.
 
 ``` dart
 import 'package:dart_periphery/dart_periphery.dart';
@@ -361,7 +361,7 @@ void main() {
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/hat_adc_demo.jpg "Extension hat - ADC") 
 
-Extension hats, such as the [Grove Base Hat RaspberryPi Zero](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi_Zero), add addidional functionality like ADC (Analog-to-Digital Converter) support. See also complete [example](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_light_sensor_led.dart) with support for FriendlyElec [NanoHat Hub](https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
+Extension hats, such as the [Grove Base Hat RaspberryPi Zero](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi_Zero), add additional functionality like ADC (Analog-to-Digital Converter) support. See also complete [example](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_light_sensor_led.dart) with support for FriendlyElec [NanoHat Hub](https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
 and [Grove Base Hat RaspberryPi](https://www.seeedstudio.com/Grove-Base-Hat-for-Raspberry-Pi.html). 
 
 In this demo, the LED turns on when the value of the light sensor falls below a certain threshold.
@@ -371,7 +371,7 @@ import 'package:dart_periphery/dart_periphery.dart';
 import 'dart:io';
 
 const wait = 150;
-const treshold = 100;
+const threshold = 100;
 
 /// https://wiki.seeedstudio.com/Grove-Light_Sensor/ 
 /// https://www.seeedstudio.com/Grove-Base-Hat-for-Raspberry-Pi.html
@@ -383,7 +383,7 @@ void main() {
   var hat = GroveBaseHat();
   print(hat.getFirmware());
   print(hat.getName());
-  print("Ananlog pin: $analogPin");
+  print("Analog pin: $analogPin");
   print("Led pin: $ledPin");
 
   var led = GPIO(ledPin, GPIOdirection.gpioDirOut);
@@ -393,7 +393,7 @@ void main() {
 
   while (true) {
     var value = hat.readADCraw(analogPin);
-    if (value < treshold) {
+    if (value < threshold) {
       if (!ledStatus) {
         ledStatus = true;
         led.write(true);
@@ -417,7 +417,7 @@ void main() {
 cd ~
 ```
 
-2.) Download the last stable Dart SDK form [archive](https://dart.dev/tools/sdk/archive) for your CPU architecture/OS and unzip it.
+2.) Download the last stable Dart SDK from [archive](https://dart.dev/tools/sdk/archive) for your CPU architecture/OS and unzip it.
 
 ### arm
 
@@ -519,7 +519,7 @@ void reuseTmpFileLibrary(bool reuse)
 useSharedLibrary(); 
 ```
 If this method is called, **dart_periphery** loads the shared library. For this case c-periphery 
-must be installed as a shared library. See for [section Shared Library](https://github.com/vsergeev/c-periphery#shared-library) for details.
+must be installed as a shared library. See the [section Shared Library](https://github.com/vsergeev/c-periphery#shared-library) for details.
 
 To load a custom library call following method
 
@@ -545,7 +545,7 @@ actively used library.
 Library setup override methods, such as: 
 
 ```
-void useSharedLibray();
+void useSharedLibrary();
 void setCustomLibrary(String absolutePath);
 ```
 
@@ -610,7 +610,7 @@ This project extends the flutter_pi_sensor_tester project to a client/server mod
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/client_server.png "Client Server")
 
-This project is currently alpha and will be publishd with the next version.
+This project is currently alpha and will be published with the next version.
 
 
 ## 🔬 Tested SoC hardware
@@ -642,8 +642,8 @@ This project is currently alpha and will be publishd with the next version.
 * [VL53L0X](https://github.com/pezi/dart_periphery/blob/main/example/i2c_vl53l0x.dart) Time-of-Flight sensor 
 * Analog [Light sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_light_sensor_led.dart)
 * [Button](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_button.dart)
-* [Magenetic switch sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magentic_switch.dart)
-* [Magenetic hall sensor ](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magentic_hall.dart)
+* [Magnetic switch sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magnetic_switch.dart)
+* [Magnetic hall sensor ](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magnetic_hall.dart)
 * [Vibration sensor ](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_vibration.dart)
 * [PIR motion sensor ](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_pir_motion.dart)
 * FriendlyElec [NanoHat Hub](https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
