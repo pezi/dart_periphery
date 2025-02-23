@@ -20,7 +20,7 @@ void main() {
 
     var sht31 = SHT31(i2c);
     print(sht31.getStatus());
-    print('Serial number ${sht31.getSerialNumber()}');
+    print('Serial number: ${sht31.getSerialNumber()}');
     print('Sensor heater active: ${sht31.isHeaterOn()}');
 
     var r = sht31.getValues();

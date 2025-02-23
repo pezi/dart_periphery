@@ -3,7 +3,7 @@
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
 
-[![pub package](https://img.shields.io/badge/pub-v0.9.16-orange)](https://pub.dartlang.org/packages/dart_periphery)
+[![pub package](https://img.shields.io/badge/pub-v0.9.17-orange)](https://pub.dartlang.org/packages/dart_periphery)
 [![Pub Points](https://img.shields.io/pub/points/dart_periphery)](https://pub.dev/packages/dart_periphery/score)
 [![All Contributors](https://img.shields.io/github/contributors/pezi/dart_periphery)](https://github.com/pezi/dart_periphery/graphs/contributors)
 [![BSD License](https://img.shields.io/github/license/pezi/dart_periphery)](https://opensource.org/license/bsd-3-clause)
@@ -38,11 +38,11 @@ Abstract from the project web site:
 
 **dart_periphery** binds the c-periphery library with the help of the [dart:ffi](https://dart.dev/guides/libraries/c-interop) mechanism. 
 Nevertheless, **dart_periphery** tries to be close as possible to the original library. 
-See following [documentation](https://github.com/vsergeev/c-periphery/tree/master/docs). Thanks to **Vanya Sergeev** for his great job!
+See the following [documentation](https://github.com/vsergeev/c-periphery/tree/master/docs). Thanks to **Vanya Sergeev** for his great job!
 
 ## 🤔 Why c-periphery?
 
-The number of GPIO libraries/interfaces is is shrinking:
+The number of GPIO libraries/interfaces is shrinking:
 
 * The widely used wiringpi library is [deprecated](https://hackaday.com/2019/09/18/wiringpi-library-to-be-deprecated).
 * GPIO sysfs is [deprecated](https://www.raspberrypi.org/forums/viewtopic.php?t=274416).
@@ -57,7 +57,7 @@ The number of GPIO libraries/interfaces is is shrinking:
 * [Led](#led) (onboard leds) example / [API](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/Led-class.html)
 * [MMIO](#mmio) (Memory Mapped I/O) example / [API](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/MMIO-class.html)
 * [ADC](#adc) (Analog Digital Converter) example / [API-Grove](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/GroveBaseHat-class.html), [API-NanoHatHub](https://pub.dev/documentation/dart_periphery/latest/dart_periphery/NanoHatHub-class.html), [PCF8591](https://github.com/pezi/dart_periphery/blob/main/example/i2c_pcf8591.dart)
-* [DAC](#adc) (Digital Analog Converter) example / [PCF8591](https://github.com/pezi/dart_periphery/blob/main/example/i2c_pcf8591.dart)
+* DAC (Digital Analog Converter) example / [PCF8591](https://github.com/pezi/dart_periphery/blob/main/example/i2c_pcf8591.dart)
 
 
 ## 🪧 Examples
@@ -85,7 +85,7 @@ void main() {
   print('GPIO chip name: ${gpio.getGPIOchipName()}');
   print('GPIO chip label: ${gpio.getGPIOchipLabel()}');
   print('GPIO chip name: ${gpio.getGPIOchipName()}');
-  print('CPIO chip label: ${gpio.getGPIOchipLabel()}');
+  print('GPIO chip label: ${gpio.getGPIOchipLabel()}');
 
   for (var i = 0; i < 10; ++i) {
     gpio.write(true);
@@ -264,7 +264,7 @@ void main() {
 
 ### PWM
 
-Ensure that PWM is correct enabled. e.g. see the following [documentation](https://github.com/dotnet/iot/blob/main/Documentation/raspi-pwm.md) for the Raspberry Pi.
+Ensure that PWM is correctly enabled. e.g. see the following [documentation](https://github.com/dotnet/iot/blob/main/Documentation/raspi-pwm.md) for the Raspberry Pi.
 
 ``` dart
 import 'package:dart_periphery/dart_periphery.dart';
@@ -361,8 +361,8 @@ void main() {
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/hat_adc_demo.jpg "Extension hat - ADC") 
 
-Extension hats, such as the [Grove Base Hat RaspberryPi Zero](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi_Zero), add addidional functionality like ADC (Analog-to-Digital Converter) support. See also complete [example](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_light_sensor_led.dart) with support for FriendlyElec [NanoHat Hub](https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
-and [Grove Base Hat RaspberryPi](https://www.seeedstudio.com/Grove-Base-Hat-for-Raspberry-Pi.html) 
+Extension hats, such as the [Grove Base Hat RaspberryPi Zero](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi_Zero), add additional functionality like ADC (Analog-to-Digital Converter) support. See also complete [example](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_light_sensor_led.dart) with support for FriendlyElec [NanoHat Hub](https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
+and [Grove Base Hat RaspberryPi](https://www.seeedstudio.com/Grove-Base-Hat-for-Raspberry-Pi.html). 
 
 In this demo, the LED turns on when the value of the light sensor falls below a certain threshold.
 
@@ -371,7 +371,7 @@ import 'package:dart_periphery/dart_periphery.dart';
 import 'dart:io';
 
 const wait = 150;
-const treshold = 100;
+const threshold = 100;
 
 /// https://wiki.seeedstudio.com/Grove-Light_Sensor/ 
 /// https://www.seeedstudio.com/Grove-Base-Hat-for-Raspberry-Pi.html
@@ -383,7 +383,7 @@ void main() {
   var hat = GroveBaseHat();
   print(hat.getFirmware());
   print(hat.getName());
-  print("Ananlog pin: $analogPin");
+  print("Analog pin: $analogPin");
   print("Led pin: $ledPin");
 
   var led = GPIO(ledPin, GPIOdirection.gpioDirOut);
@@ -393,7 +393,7 @@ void main() {
 
   while (true) {
     var value = hat.readADCraw(analogPin);
-    if (value < treshold) {
+    if (value < threshold) {
       if (!ledStatus) {
         ledStatus = true;
         led.write(true);
@@ -417,7 +417,7 @@ void main() {
 cd ~
 ```
 
-2.) Download the last stable Dart SDK form [archive](https://dart.dev/tools/sdk/archive) for your CPU architecture/OS and unzip it.
+2.) Download the last stable Dart SDK from [archive](https://dart.dev/tools/sdk/archive) for your CPU architecture/OS and unzip it.
 
 ### arm
 
@@ -519,7 +519,7 @@ void reuseTmpFileLibrary(bool reuse)
 useSharedLibrary(); 
 ```
 If this method is called, **dart_periphery** loads the shared library. For this case c-periphery 
-must be installed as a shared library. See for [section Shared Library](https://github.com/vsergeev/c-periphery#shared-library) for details.
+must be installed as a shared library. See the [section Shared Library](https://github.com/vsergeev/c-periphery#shared-library) for details.
 
 To load a custom library call following method
 
@@ -538,14 +538,14 @@ The appropriate library can be found [here](https://github.com/pezi/dart_periphe
 ## ⏱️ Dart isolates 
 
 Starting from version *0.9.7*, the default library handling mechanism creates a temporary library 
-file, named in the format `pid_1456_libperiphery_arm.so`. The unique process ID for each isolate 
+file, named in the format e.g. `pid_1456_libperiphery_arm.so`. The unique process ID for each isolate 
 prevents repeated creation of the temporary library, avoiding crashes caused by overwriting an 
 actively used library.
 
 Library setup override methods, such as: 
 
 ```
-void useSharedLibray();
+void useSharedLibrary();
 void setCustomLibrary(String absolutePath);
 ```
 
@@ -559,11 +559,11 @@ must be called separately within each isolate. This is necessary because each is
 ### flutter-pi specific methods
 
 ``` dart
-// Loads the libraray form the flutter-pi asset directory.
+// Loads the library from the flutter-pi asset directory.
 void loadLibFromFlutterAssetDir(bool load) 
 ```
 
-the appropriate library from the flutter asset directory. This overwrites the library 
+loads the appropriate library from the flutter asset directory. This overwrites the library 
 self-extraction mechanism.
 
 * ARMv7 library: [libperiphery_arm.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm.so) for Raspberry Pi OS 32-bit
@@ -589,7 +589,7 @@ This [subproject](https://github.com/pezi/flutter_pi_sensor_tester) bases on
 [flutter-pi](https://github.com/ardera/flutter-pi) and implements a simple
 Dart isolate/stream architecture designed to transfer sensor data from an isolate to the Flutter UI:
 
-**Isolate Interface**: This consists of the steps InitTask, MainTask, and ExitTask, along with a 
+**Isolate interface**: This consists of the steps `InitTask`, `MainTask`, and `ExitTask`, along with a 
 limited back channel for controlling the Dart isolate. This setup is typically used for sensor 
 measurements:
 * `InitTask`: Initializes the sensor.
@@ -606,11 +606,11 @@ This project is currently still beta and development is ongoing.
 
 ## 💧 flutter_sensor_tester 
 
-This project extends the flutter_pi_sensor_tester project to a client/server model. 
+This project builds upon the `flutter_pi_sensor_tester` by introducing a client/server architecture, enhancing its functionality for distributed applications.
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/client_server.png "Client Server")
 
-This project is currently alpha and will be publishd with the next version.
+Currently in its alpha stage, the project is scheduled for release in March 2025.
 
 
 ## 🔬 Tested SoC hardware
@@ -630,6 +630,7 @@ This project is currently alpha and will be publishd with the next version.
 * [BME280](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme280.dart): Temperature, humidity and pressure sensor.
 * [BME680](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme680.dart): Temperature, humidity pressure and gas (Indoor Airy Quality) sensor.
 * [SHT31](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht31.dart): Temperature and humidity sensor. 
+* [SHT4x](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht4x.dart): Temperature and humidity sensor. 
 * [CozIR](https://github.com/pezi/dart_periphery/blob/main/example/serial_cozir.dart): CO₂, temperature and humidity sensor.
 * [Grove Gesture](https://github.com/pezi/dart_periphery/blob/main/example/i2c_gesture_sensor.dart): can recognize 9 basic gestures.
 * [MPU-6050 Six-Axis](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mpu6050.dart): (Gyro + Accelerometer) sensor.
@@ -640,11 +641,11 @@ This project is currently alpha and will be publishd with the next version.
 * [SI1145](https://github.com/pezi/dart_periphery/blob/main/example/i2c_si1145.dart) sunlight sensor: visible & IR light, UV index
 * [TSL2591](https://github.com/pezi/dart_periphery/blob/main/example/i2c_tsl2591.dart) light sensor
 * [DS1307/DS3231](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ds1307.dart) real time clock support
-* [VL53L0X](https://github.com/pezi/dart_periphery/blob/main/example/i2c_vl53l0x.dart) time of fligth sensor
+* [VL53L0X](https://github.com/pezi/dart_periphery/blob/main/example/i2c_vl53l0x.dart) Time-of-Flight sensor 
 * Analog [Light sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_light_sensor_led.dart)
 * [Button](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_button.dart)
-* [Magenetic switch sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magentic_switch.dart)
-* [Magenetic hall sensor ](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magentic_hall.dart)
+* [Magnetic switch sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magnetic_switch.dart)
+* [Magnetic hall sensor ](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magnetic_hall.dart)
 * [Vibration sensor ](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_vibration.dart)
 * [PIR motion sensor ](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_pir_motion.dart)
 * FriendlyElec [NanoHat Hub](https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
@@ -676,7 +677,7 @@ c-periphery [test program](https://github.com/vsergeev/c-periphery/blob/master/t
 
 ⁵ no X86/X86_64 SoC for testing available
 
-⁶ only limited tests
+⁶ Banana Pi BPI-F3, only limited tests
 
 
 ## 🙏 Help wanted

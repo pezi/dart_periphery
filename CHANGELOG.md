@@ -1,5 +1,9 @@
+## 0.9.17
+* Add SHT4x temperature and humidity sensor  
+* Rework VL53L0X Time-of-Flight code
+
 ## 0.9.16
-* Add VL53L0X Time of Fligth sensor
+* Add VL53L0X Time-of-Flight sensor
 * Update to Dart 3.7.0
 * Add platform package switch `linux` only   
 * Enable project [WIKI](https://github.com/pezi/dart_periphery/wiki)

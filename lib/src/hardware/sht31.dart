@@ -138,11 +138,10 @@ class SHT31 {
 
     // convert the data
     var temp =
-        ((((data[0] & 0xFF) * 256) + (data[1] & 0xFF)) * 175.0) / 65535.0 -
-            45.0;
+        ((((data[0] & 0xFF) << 8) + (data[1] & 0xFF)) * 175.0) / 65535.0 - 45.0;
 
     var humidity =
-        ((((data[3] & 0xFF) * 256) + (data[4] & 0xFF)) * 100.0) / 65535.0;
+        ((((data[3] & 0xFF) << 8) + (data[4] & 0xFF)) * 100.0) / 65535.0;
     return SHT31result(temp, humidity);
   }
 }

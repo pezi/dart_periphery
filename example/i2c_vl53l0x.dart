@@ -27,7 +27,7 @@ void main(List<String> args) {
       sleep(Duration(seconds: 1));
     }
   } else {
-    print("Continous mode");
+    print("Continuous mode");
     // Optionally adjust the measurement timing budget to change speed and accuracy.
     // See the example here for more details:
     //   https://github.com/pololu/vl53l0x-arduino/blob/master/examples/Single/Single.ino
