@@ -1,5 +1,6 @@
 ## 0.9.18
 * Add AHT20 temperature and humidity sensor
+* Add SSD1306 OLED display 
 
 ## 0.9.17
 * Add SHT4x temperature and humidity sensor  

@@ -1,3 +1,10 @@
+// Copyright (c) 2025, the Dart project authors.  Please see the AUTHORS file
+// for details. All rights reserved. Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
+import 'dart:io';
+import 'package:dart_periphery/dart_periphery.dart';
+
+// Resources:
 // https://github.com/Chouffy/python_sensor_aht20/blob/main/AHT20.py
 // https://github.com/adafruit/Adafruit_CircuitPython_AHTx0/blob/main/adafruit_ahtx0.py
 
@@ -39,4 +46,29 @@ class AHTX0result {
   String toJSON([int fractionDigits = 2]) {
     return '{"temperature":"${temperature.toStringAsFixed(fractionDigits)}","humidity":"${humidity.toStringAsFixed(fractionDigits)}"}';
   }
+}
+
+///  AHT10, AHT20 temperature and humidity sensor.
+///
+/// See for more
+/// * [AHTX0 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ahtx0.dart)
+/// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/ahtx0.dart)
+/// * [Datasheet](https://files.seeedstudio.com/wiki/Grove-AHT20_I2C_Industrial_Grade_Temperature_and_Humidity_Sensor/AHT20-datasheet-2020-4-16.pdf)
+class AHTX0 {
+  final I2C i2c;
+  final int i2cAddress;
+
+  /// Creates a AHTX0 sensor instance that uses the [i2c] bus with
+  /// the optional [i2cAddress].
+  AHTX0(this.i2c, [this.i2cAddress = sht31DefaultI2Caddress]) {
+    reset();
+  }
+
+  /// Resets the sensor.
+  void reset() {
+    i2c.writeByte(i2cAddress, AHTX0command.softReset.command);
+    sleep(Duration(milliseconds: 20));
+  }
+
+  // bool cl
 }
