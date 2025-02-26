@@ -84,6 +84,7 @@ export 'src/hardware/sht31.dart'
         sht31DefaultI2Caddress;
 export 'src/hardware/sht4x.dart'
     show SHT4x, SHT4xresult, SHT4xException, sht4xDefaultI2Caddress, Mode;
+export 'src/hardware/ssd1306.dart' show SSD1306, ssd1306DefaultI2Caddress;
 export 'src/hardware/mlx90615.dart'
     show MLX90615, MLX90615result, MLX90615exception, mlx90615DefaultI2Caddress;
 export 'src/hardware/ds1307.dart'

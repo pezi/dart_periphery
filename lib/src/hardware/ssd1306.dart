@@ -1,8 +1,8 @@
+import 'dart:typed_data';
+
 // Copyright (c) 2025, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-
-import 'dart:typed_data';
 
 import 'package:dart_periphery/dart_periphery.dart';
 
@@ -58,14 +58,14 @@ List<int> _initSequence = [
 
 const int width = 128;
 const int height = 64;
-const int offeset = width ~/ 8;
+const int offset = width ~/ 8;
 
 /// Sensirion SHT4x temperature and humidity sensor with a high accuracy.
 ///
 /// See for more
 /// * [SHT31 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ssd1306.dart)
 /// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/ssd1306.dart)
-/// * [Datasheet](https://www.digikey.com/htmldatasheets/production/2047793/0/0/1/ssd1306.html)
+/// * [Datasheet](https://cdn-shop.adafruit.com/datasheets/SSD1306.pdf)
 class SSD1306 {
   final I2C i2c;
   final int i2cAddress;
@@ -74,17 +74,12 @@ class SSD1306 {
   /// Creates a SSD1306 instance that uses the [i2c] bus with
   /// the optional [i2cAddress].
   SSD1306(this.i2c, [this.i2cAddress = ssd1306DefaultI2Caddress]) {
-    // init
-    for (var cmd in _initSequence) {
-      i2c.writeByteReg(i2cAddress, 0, cmd);
-    }
+    i2c.writeBytesReg(i2cAddress, 0, _initSequence);
   }
 
   /// Resets the internal memory write index to the begin.
   void resetPos() {
-    i2c.writeByteReg(i2cAddress, 0, 0xb0);
-    i2c.writeByteReg(i2cAddress, 0, 0x00);
-    i2c.writeByteReg(i2cAddress, 0, 0x00);
+    i2c.writeBytesReg(i2cAddress, 0, [0xb0, 0x00, 0x10]);
   }
 
   /// Stops the scrolling of the display.
@@ -95,9 +90,8 @@ class SSD1306 {
   /// Clears the display.
   void clear() {
     resetPos();
-    for (int x = 0; x < width * height / 8; x++) {
-      i2c.writeByteReg(i2cAddress, 0x40, 0x00);
-    }
+    i2c.writeBytesReg(
+        i2cAddress, 0x40, List<int>.filled(width * height ~/ 8, 0x00));
   }
 
   /// Sets the [contrast] of the display.
@@ -119,58 +113,53 @@ class SSD1306 {
   /// Initiates vertical scrolling of the display content towards [left],
   /// starting from position [start] and continuing until [end].
   void scrollHorizontally(bool left, int start, int end) {
-    i2c.writeByteReg(
-        i2cAddress,
-        0,
-        left
-            ? Command.leftHorizontalScroll.command
-            : Command.rightHorizontalScroll.command);
-
-    i2c.writeByteReg(i2cAddress, 0, 0x00);
-
-    i2c.writeByteReg(i2cAddress, 0, start);
-    i2c.writeByteReg(i2cAddress, 0, 0x00);
-    i2c.writeByteReg(i2cAddress, 0, end);
-    i2c.writeByteReg(i2cAddress, 0, 0x00);
-    i2c.writeByteReg(i2cAddress, 0, 0xFF);
-    i2c.writeByteReg(i2cAddress, 0, Command.activateScroll.command);
+    i2c.writeBytesReg(i2cAddress, 0, [
+      left
+          ? Command.leftHorizontalScroll.command
+          : Command.rightHorizontalScroll.command,
+      0x00,
+      start,
+      0x00,
+      end,
+      0x00,
+      0xFF,
+      Command.activateScroll.command
+    ]);
   }
 
-  /// Initiates diagonal scrolling of the display content towards [left],  
+  /// Initiates diagonal scrolling of the display content towards [left],
   /// starting from position [start] and continuing until [end].
   void scrollDiagonally(bool left, int start, int end) {
-    i2c.writeByteReg(i2cAddress, 0, Command.setVerticalScrollArea.command);
-    i2c.writeByteReg(i2cAddress, 0, 0x00);
-    i2c.writeByteReg(i2cAddress, 0, height);
-    i2c.writeByteReg(
-        i2cAddress,
-        0,
-        left
-            ? Command.verticalAndLeftHorizontalScroll.command
-            : Command.verticalAndRightHorizontalScroll.command);
-    i2c.writeByteReg(i2cAddress, 0, 0x00);
-
-    i2c.writeByteReg(i2cAddress, 0, start);
-    i2c.writeByteReg(i2cAddress, 0, 0x00);
-
-    i2c.writeByteReg(i2cAddress, 0, end);
-    i2c.writeByteReg(i2cAddress, 0, 0x01);
-    i2c.writeByteReg(i2cAddress, 0, Command.activateScroll.command);
+    i2c.writeBytesReg(i2cAddress, 0, [
+      Command.setVerticalScrollArea.command,
+      0x00,
+      height,
+      left
+          ? Command.verticalAndLeftHorizontalScroll.command
+          : Command.verticalAndRightHorizontalScroll.command,
+      0x00,
+      start,
+      0x00,
+      end,
+      0x01,
+      Command.activateScroll.command
+    ]);
   }
 
   int convertByte(int index, int j) {
     int mask = 1 << j;
-    return ((((_data[index] & 0xff) & mask) != 0) ? (1) : 0) |
-        ((((_data[index + offeset] & 0xff) & mask) != 0) ? (1 << 1) : 0) |
-        ((((_data[index + offeset * 2] & 0xff) & mask) != 0) ? (1 << 2) : 0) |
-        ((((_data[index + offeset * 3] & 0xff) & mask) != 0) ? (1 << 3) : 0) |
-        ((((_data[index + offeset * 4] & 0xff) & mask) != 0) ? (1 << 4) : 0) |
-        ((((_data[index + offeset * 5] & 0xff) & mask) != 0) ? (1 << 5) : 0) |
-        ((((_data[index + offeset * 6] & 0xff) & mask) != 0) ? (1 << 6) : 0) |
-        ((((_data[index + offeset * 7] & 0xff) & mask) != 0) ? (1 << 7) : 0);
+    int byte = 0;
+
+    for (int i = 0; i < 8; i++) {
+      if ((_data[index + offset * i] & mask) != 0) {
+        byte |= (1 << i);
+      }
+    }
+    return byte;
   }
 
-  void render(Uint8List data) {
+  void displayBitmap(Uint8List data) {
+    resetPos();
     _data = data;
     int index = 0;
     int count = 0;
@@ -187,5 +176,10 @@ class SSD1306 {
       index += width;
     }
     i2c.writeBytesReg(i2cAddress, 0x40, buffer.toList());
+  }
+
+  void displayNativeBitmap(Uint8List data) {
+    resetPos();
+    i2c.writeBytesReg(i2cAddress, 0x40, data.toList());
   }
 }
