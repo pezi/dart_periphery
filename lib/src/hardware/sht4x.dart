@@ -71,7 +71,7 @@ class SHT4xresult {
 /// Sensirion SHT4x temperature and humidity sensor with a high accuracy.
 ///
 /// See for more
-/// * [SHT31 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht4x.dart)
+/// * [SHT4x example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht4x.dart)
 /// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/sht4x.dart)
 /// * [Datasheet](https://sensirion.com/media/documents/33FD6951/662A593A/HT_DS_Datasheet_SHT4x.pdf)
 class SHT4x {

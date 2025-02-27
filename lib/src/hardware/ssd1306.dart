@@ -60,10 +60,10 @@ const int width = 128;
 const int height = 64;
 const int offset = width ~/ 8;
 
-/// Sensirion SHT4x temperature and humidity sensor with a high accuracy.
+/// SSD1306 128 x 64 Dot Matrix OLED
 ///
 /// See for more
-/// * [SHT31 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ssd1306.dart)
+/// * [SSD1306 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ssd1306.dart)
 /// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/ssd1306.dart)
 /// * [Datasheet](https://cdn-shop.adafruit.com/datasheets/SSD1306.pdf)
 class SSD1306 {
@@ -146,7 +146,7 @@ class SSD1306 {
     ]);
   }
 
-  int convertByte(int index, int j) {
+  int _convertByte(int index, int j) {
     int mask = 1 << j;
     int byte = 0;
 
@@ -169,17 +169,35 @@ class SSD1306 {
       int pos = index;
       for (int i = 0; i < width / 8; ++i) {
         for (int j = 7; j >= 0; --j) {
-          buffer[count++] = convertByte(pos, j);
+          buffer[count++] = _convertByte(pos, j);
         }
         ++pos;
       }
       index += width;
     }
-    i2c.writeBytesReg(i2cAddress, 0x40, buffer.toList());
+    i2c.writeUint8Reg(i2cAddress, 0x40, buffer);
   }
 
+  /// Displays a bitmap with SSD1306 specific [data].
+  ///
+  ///	*	The display has 8 pages for a 128×64 display (each 8 pixels high).
+  /// *	Each page contains 128 columns.
+  /// * A single byte in the SSD1306 RAM represents 8 vertical pixels, with the LSB (bit 0) at the top and MSB (bit 7) at the bottom.
+  ///
+  /// e.g. 0x18 (00011000b) represents
+  /// ```
+  /// ░ Bit 0
+  /// ░ Bit 1
+  /// ░ Bit 2
+  /// █ Bit 3
+  /// █ Bit 4
+  /// ░ Bit 5
+  /// ░ Bit 6
+  /// ░ Bit 7
+
+  /// ```
   void displayNativeBitmap(Uint8List data) {
     resetPos();
-    i2c.writeBytesReg(i2cAddress, 0x40, data.toList());
+    i2c.writeUint8Reg(i2cAddress, 0x40, data);
   }
 }
