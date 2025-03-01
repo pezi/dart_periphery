@@ -175,7 +175,7 @@ class SSD1306 {
       }
       index += width;
     }
-    i2c.writeUint8Reg(i2cAddress, 0x40, buffer);
+    i2c.writeBytesReg(i2cAddress, 0x40, buffer);
   }
 
   /// Displays a bitmap with SSD1306 specific [data].
