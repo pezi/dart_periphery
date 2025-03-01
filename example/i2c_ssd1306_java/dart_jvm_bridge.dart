@@ -22,12 +22,16 @@ typedef CallCreateEmojiFunc = Pointer<Utf8> Function(
     Pointer<Utf8>, Int32, Int32);
 typedef CallCreateEmoji = Pointer<Utf8> Function(Pointer<Utf8>, int, int);
 
+typedef CallScriptFunc = Pointer<Utf8> Function(Pointer<Utf8>);
+typedef CallScript = Pointer<Utf8> Function(Pointer<Utf8>);
+
 class JVMBridge {
   late DynamicLibrary _lib;
 
   late InitJVM _initJVM;
   late FreeJVM _freeJVM;
   late CallCreateEmoji _callCreateEmoji;
+  late CallScript _callScript;
 
   JVMBridge() {
     // Load the shared library based on the platform
@@ -47,6 +51,8 @@ class JVMBridge {
     _callCreateEmoji =
         _lib.lookupFunction<CallCreateEmojiFunc, CallCreateEmoji>(
             "call_create_emoji");
+    _callScript =
+        _lib.lookupFunction<CallScriptFunc, CallScript>("call_create_script");
 
     // Initialize JVM
     _initJVM();
@@ -61,10 +67,26 @@ class JVMBridge {
     return result;
   }
 
+  String script(String script) {
+    final Pointer<Utf8> scriptPtr = script.toNativeUtf8();
+    final Pointer<Utf8> resultPtr = _callScript(scriptPtr);
+    final String result = resultPtr.toDartString();
+    malloc.free(scriptPtr);
+    return result;
+  }
+
   void dispose() {
     _freeJVM();
   }
 }
+
+var script = "int midY = height / 2;\n" +
+    "int amplitude = height / 3;\n" +
+    "double frequency = 2 * Math.PI / width;\n" +
+    "for (int x = 0; x < width; x++) {\n" +
+    "    int y = midY + (int) (amplitude * Math.sin(frequency * x));\n" +
+    "    image.setRGB(x, y, Color.WHITE.getRGB());\n" +
+    "}\n";
 
 void main() {
   final jvmBridge = JVMBridge();
@@ -78,7 +100,7 @@ void main() {
     var oled = SSD1306(i2c);
 
     oled.clear();
-    String emoji = jvmBridge.createEmojiBMP("💩", 64, 10);
+    String emoji = jvmBridge.script(script);
     Uint8List emojiData = base64.decode(emoji);
     oled.displayBitmap(emojiData);
   } finally {

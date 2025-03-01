@@ -8,7 +8,7 @@
 // gcc  -o  calljava -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/darwin" -L"$JAVA_HOME/lib/server" -ljvm   -o cjava calljava.c
 //  gcc  -o  calljava -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux"    -o cjava calljava.c -L"$JAVA_HOME/lib/server" -ljvm
 // export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-arm64
-// export $LD_LIBRARY_PATH=$JAVA_HOME/lib/server
+// export LD_LIBRARY_PATH=$JAVA_HOME/lib/server:.
 // javac -cp ./lib/bsh-2.0b4.jar at/flutterdev/EmojiBMPGenerator.java
 // https://hildstrom.com/projects/2012/10/jni/index.html
 
@@ -112,6 +112,47 @@ const char *call_create_emoji(const char *input, int heigth, int offset)
     
     // Call the Java method
     jstring j_output = (jstring)(*globalJVMenv->env)->CallObjectMethod(globalJVMenv->env,globalJVMenv->obj,globalJVMenv->midCreate, j_input, heigth, offset);
+    if (j_output == NULL)
+    {
+        fprintf(stderr, "Java method returned NULL\n");
+        (*globalJVMenv->jvm)->DestroyJavaVM(globalJVMenv->jvm);
+        exit(EXIT_FAILURE);
+    }
+
+    // Convert the Java string output to a C string
+    const char *output = (*globalJVMenv->env)->GetStringUTFChars(globalJVMenv->env, j_output, NULL);
+    if (output == NULL)
+    {
+        fprintf(stderr, "Failed to convert Java string to C string\n");
+        (*globalJVMenv->jvm)->DestroyJavaVM(globalJVMenv->jvm);
+        exit(EXIT_FAILURE);
+    }
+
+    // Copy the output to a new C string
+    char *result = strdup(output);
+
+    // Release the Java string and destroy the JVM
+    (*globalJVMenv->env)->ReleaseStringUTFChars(globalJVMenv->env, j_output, output);
+  
+
+    return result;
+}
+
+// Function to call a Java method that accepts and returns a String
+const char *call_create_script(const char *input)
+{
+    // Create a new Java string from the C string input
+    jstring j_input = (*globalJVMenv->env)->NewStringUTF(globalJVMenv->env, input);
+    if (j_input == NULL)
+    {
+        fprintf(stderr, "Failed to create Java string from input\n");
+        (*globalJVMenv->jvm)->DestroyJavaVM(globalJVMenv->jvm);
+        exit(EXIT_FAILURE);
+    }
+
+    
+    // Call the Java method
+    jstring j_output = (jstring)(*globalJVMenv->env)->CallObjectMethod(globalJVMenv->env,globalJVMenv->obj,globalJVMenv->midScript, j_input);
     if (j_output == NULL)
     {
         fprintf(stderr, "Java method returned NULL\n");
