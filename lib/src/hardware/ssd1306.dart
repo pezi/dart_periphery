@@ -158,6 +158,7 @@ class SSD1306 {
     return byte;
   }
 
+  /// Displays a bitmap with SSD1306 specific [data].
   void displayBitmap(Uint8List data) {
     resetPos();
     _data = data;
