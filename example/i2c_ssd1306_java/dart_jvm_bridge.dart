@@ -2,6 +2,16 @@ import 'dart:ffi';
 import 'dart:io';
 import 'package:ffi/ffi.dart';
 
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+
+// Copyright (c) 2025, the Dart project authors.  Please see the AUTHORS file
+// for details. All rights reserved. Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
+
+import 'package:dart_periphery/dart_periphery.dart';
+
 typedef InitJVMFunc = Void Function();
 typedef InitJVM = void Function();
 
@@ -59,12 +69,20 @@ class JVMBridge {
 void main() {
   final jvmBridge = JVMBridge();
 
-  // Call the Java method through the C interface
-  String output = jvmBridge.createEmojiBMP("💩", 64, 10);
-  print("Java method returned: $output");
+  var i2c = I2C(1);
+  try {
+    print("dart_periphery Version: $dartPeripheryVersion");
+    print("c-periphery Version   : ${getCperipheryVersion()}");
+    print('I2C info: ${i2c.getI2Cinfo()}');
 
-  String output2 = jvmBridge.createEmojiBMP("⚓", 64, 10);
-  print("Java method returned: $output2");
+    var oled = SSD1306(i2c);
 
+    oled.clear();
+    String emoji = jvmBridge.createEmojiBMP("💩", 64, 10);
+    Uint8List emojiData = base64.decode(emoji);
+    oled.displayBitmap(emojiData);
+  } finally {
+    i2c.dispose();
+  }
   jvmBridge.dispose();
 }
