@@ -8,7 +8,9 @@ Needed steps to start the demo - tested on a Raspberry Pi
 
 Set the correct JAVA_HOME environment to a JDK
 
-`export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-arm64`
+`sudo apt-get install openjdk-17-jdk`
+
+`export JAVA_HOME=/usr/lib/jvm/default-java`
 
 Compile the Java code
 
@@ -24,7 +26,7 @@ Set the LD_LIBRARY_PATH
 
 Start the program
 
-`dart dart_jvm_bridge.dart`
+`dart i2c_ssd1306_java_awt.dart`
 
 
 
