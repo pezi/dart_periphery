@@ -10,8 +10,8 @@ import 'dart:convert';
 
 import 'package:dart_periphery/dart_periphery.dart';
 
-typedef InitJVMFunc = Void Function();
-typedef InitJVM = void Function();
+typedef InitJVMFunc = Int Function();
+typedef InitJVM = int Function();
 
 typedef FreeJVMFunc = Void Function();
 typedef FreeJVM = void Function();
@@ -23,6 +23,25 @@ typedef CallCreateEmoji = Pointer<Utf8> Function(Pointer<Utf8>, int, int);
 typedef CallScriptFunc = Pointer<Utf8> Function(Pointer<Utf8>);
 typedef CallScript = Pointer<Utf8> Function(Pointer<Utf8>);
 
+enum JvmCreationStatus {
+  jvmCreationOk(0),
+  jvmCreationFailed(1),
+  javaClassNotFound(2),
+  javaMethodNotFound(4),
+  objectCreationFailed(5),
+  unkownErrorCode(-1);
+
+  final int value;
+  const JvmCreationStatus(this.value);
+
+  static JvmCreationStatus fromInt(int value) {
+    return JvmCreationStatus.values.firstWhere(
+      (e) => e.value == value,
+      orElse: () => unkownErrorCode,
+    );
+  }
+}
+
 class JVMBridge {
   late DynamicLibrary _lib;
 
@@ -31,7 +50,14 @@ class JVMBridge {
   late CallCreateEmoji _callCreateEmoji;
   late CallScript _callScript;
 
-  JVMBridge() {
+  static JVMBridge? _instance;
+
+  factory JVMBridge() {
+    _instance ??= JVMBridge._internal();
+    return _instance as JVMBridge;
+  }
+
+  JVMBridge._internal() {
     // Load the shared library based on the platform
     if (Platform.isMacOS) {
       _lib = DynamicLibrary.open("libjvmbridge.dylib");
@@ -53,7 +79,10 @@ class JVMBridge {
         _lib.lookupFunction<CallScriptFunc, CallScript>("call_create_script");
 
     // Initialize JVM
-    _initJVM();
+    var ret = _initJVM();
+    if (ret != JvmCreationStatus.jvmCreationOk.value) {
+      throw Exception(JvmCreationStatus.fromInt(ret).name);
+    }
   }
 
   String createEmojiBMP(String emoji, int size, int offset) {
@@ -96,8 +125,6 @@ void main() {
     print('I2C info: ${i2c.getI2Cinfo()}');
 
     var oled = SSD1306(i2c);
-
-    ;
     oled.displayBitmap(base64.decode(jvmBridge.script(script)));
     sleep(Duration(seconds: 4));
     oled.displayBitmap(base64.decode(jvmBridge.createEmojiBMP("#", 64, 10)));

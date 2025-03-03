@@ -5,14 +5,20 @@
 
 // install_name_tool -add_rpath $JAVA_HOME/lib/server/ ./cjava
 // install_name_tool -add_rpath /Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home/lib/server/ ./cjava
-// gcc  -o  calljava -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/darwin" jvm_bridge.c   -L"$JAVA_HOME/lib/server" -ljvm   
+// gcc  -o  calljava -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/darwin" jvm_bridge.c   -L"$JAVA_HOME/lib/server" -ljvm
 //  gcc  -o  calljava -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" calljava.c -L"$JAVA_HOME/lib/server" -ljvm
 // export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-arm64
 // export LD_LIBRARY_PATH=$JAVA_HOME/lib/server:.
 // javac -cp ./lib/bsh-2.0b4.jar at/flutterdev/EmojiBMPGenerator.java
 // https://hildstrom.com/projects/2012/10/jni/index.html
 
-// 
+#define JVM_CREATION_OK 0
+#define JVM_CREATION_FAILED 1
+#define JAVA_CLASS_NOT_FOUND 2
+#define JAVA_METHOD_NOT_FOUND 4
+#define OBJECT_CREATION_FAILED 5
+
+//
 struct JVMenv
 {
     JavaVM *jvm;
@@ -25,7 +31,8 @@ struct JVMenv
 
 struct JVMenv *globalJVMenv;
 
-void initJVMenv()
+
+int initJVMenv()
 {
     // Initialize JVM options
     JavaVMOption options;
@@ -44,7 +51,7 @@ void initJVMenv()
     if (res != JNI_OK)
     {
         fprintf(stderr, "Failed to create JVM\n");
-        exit(EXIT_FAILURE);
+        return JVM_CREATION_FAILED;
     }
 
     // Define the Java class and method to call
@@ -62,7 +69,7 @@ void initJVMenv()
     {
         fprintf(stderr, "Failed to find Java class %s\n", class_name);
         (*globalJVMenv->jvm)->DestroyJavaVM(globalJVMenv->jvm);
-        exit(EXIT_FAILURE);
+        return JAVA_CLASS_NOT_FOUND;
     }
 
     // Find the Java method create
@@ -71,7 +78,7 @@ void initJVMenv()
     {
         fprintf(stderr, "Failed to find method %s with signature %s\n", method_name_create, method_signature_create);
         (*globalJVMenv->jvm)->DestroyJavaVM(globalJVMenv->jvm);
-        exit(EXIT_FAILURE);
+        return JAVA_METHOD_NOT_FOUND;
     }
 
     // Find the Java method create
@@ -80,7 +87,7 @@ void initJVMenv()
     {
         fprintf(stderr, "Failed to find method %s with signature %s\n", method_name_script, method_signature_script);
         (*globalJVMenv->jvm)->DestroyJavaVM(globalJVMenv->jvm);
-        exit(EXIT_FAILURE);
+        return JAVA_METHOD_NOT_FOUND;
     }
 
     // create object
@@ -89,8 +96,9 @@ void initJVMenv()
     {
         fprintf(stderr, "Failed to allocate Java object\n");
         (*globalJVMenv->jvm)->DestroyJavaVM(globalJVMenv->jvm);
-        exit(EXIT_FAILURE);
+        return OBJECT_CREATION_FAILED;
     }
+    return JVM_CREATION_OK;
 }
 
 void freeJVMenv()
@@ -102,6 +110,7 @@ void freeJVMenv()
             (*globalJVMenv->jvm)->DestroyJavaVM(globalJVMenv->jvm);
         }
         free(globalJVMenv);
+        globalJVMenv = NULL;
     }
 }
 
@@ -185,14 +194,16 @@ const char *call_create_script(const char *input)
 
 int main()
 {
-    initJVMenv();
-    const char *output = call_create_emoji("💩", 64, 10);
-    printf("Java method returned: %s\n", output);
-    free((void *)output); // Free the duplicated string
+    if (initJVMenv() == 0)
+    {
+        const char *output = call_create_emoji("💩", 64, 10);
+        printf("Java method returned: %s\n", output);
+        free((void *)output); // Free the duplicated string
 
-    const char *output1 = call_create_emoji("⚓", 64, 10);
-    printf("Java method returned: %s\n", output1);
-    free((void *)output1); // Free the duplicated string
+        const char *output1 = call_create_emoji("⚓", 64, 10);
+        printf("Java method returned: %s\n", output1);
+        free((void *)output1); // Free the duplicated string
 
-    freeJVMenv();
+        freeJVMenv();
+    }
 }
