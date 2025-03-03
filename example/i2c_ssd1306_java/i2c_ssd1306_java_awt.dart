@@ -88,6 +88,10 @@ class JVMBridge {
   String createEmojiBMP(String emoji, int size, int offset) {
     final Pointer<Utf8> emojiPtr = emoji.toNativeUtf8();
     final Pointer<Utf8> resultPtr = _callCreateEmoji(emojiPtr, size, offset);
+    if (resultPtr == nullptr) {
+      malloc.free(emojiPtr);
+      throw Exception("Internal JVM error");
+    }
     final String result = resultPtr.toDartString();
 
     malloc.free(emojiPtr);
@@ -98,6 +102,10 @@ class JVMBridge {
     final Pointer<Utf8> scriptPtr = script.toNativeUtf8();
     final Pointer<Utf8> resultPtr = _callScript(scriptPtr);
     final String result = resultPtr.toDartString();
+    if (resultPtr == nullptr) {
+      malloc.free(scriptPtr);
+      throw Exception("Internal JVM error");
+    }
     malloc.free(scriptPtr);
     return result;
   }

@@ -123,7 +123,7 @@ const char *call_create_emoji(const char *input, int heigth, int offset)
     {
         fprintf(stderr, "Failed to create Java string from input\n");
         freeJVMenv();
-        exit(EXIT_FAILURE);
+        return NULL;
     }
 
     // Call the Java method
@@ -132,7 +132,7 @@ const char *call_create_emoji(const char *input, int heigth, int offset)
     {
         fprintf(stderr, "Java method returned NULL\n");
         freeJVMenv();
-        exit(EXIT_FAILURE);
+        return NULL;
     }
 
     // Convert the Java string output to a C string
@@ -141,13 +141,13 @@ const char *call_create_emoji(const char *input, int heigth, int offset)
     {
         fprintf(stderr, "Failed to convert Java string to C string\n");
         freeJVMenv();
-        exit(EXIT_FAILURE);
+        return NULL;
     }
 
     // Copy the output to a new C string
     char *result = strdup(output);
 
-    // Release the Java string and destroy the JVM
+    // Release the Java string
     (*globalJVMenv->env)->ReleaseStringUTFChars(globalJVMenv->env, j_output, output);
 
     return result;
@@ -162,7 +162,7 @@ const char *call_create_script(const char *input)
     {
         fprintf(stderr, "Failed to create Java string from input\n");
         freeJVMenv();
-        exit(EXIT_FAILURE);
+        return NULL;
     }
 
     // Call the Java method
@@ -171,7 +171,7 @@ const char *call_create_script(const char *input)
     {
         fprintf(stderr, "Java method returned NULL\n");
         freeJVMenv();
-        exit(EXIT_FAILURE);
+        return NULL;
     }
 
     // Convert the Java string output to a C string
@@ -180,13 +180,13 @@ const char *call_create_script(const char *input)
     {
         fprintf(stderr, "Failed to convert Java string to C string\n");
         freeJVMenv();
-        exit(EXIT_FAILURE);
+        return NULL;
     }
 
     // Copy the output to a new C string
     char *result = strdup(output);
 
-    // Release the Java string and destroy the JVM
+    // Release the Java string
     (*globalJVMenv->env)->ReleaseStringUTFChars(globalJVMenv->env, j_output, output);
 
     return result;
