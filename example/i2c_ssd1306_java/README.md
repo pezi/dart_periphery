@@ -4,11 +4,19 @@ This examples uses the JAVA awt class to generate graphics for the OLED SSD1306.
 
 This demos displays two images, an emoji and a sine curve created by bsh script.
 
-Needed steps to start the demo - tested on a Raspberry Pi
+Needed steps to start the demo - tested on a Raspberry Pi and Armbian
+
+
+Raspberry Pi
+
+`sudo apt-get install openjdk-17-jdk`  
+
+for Armbian a higher JDK version is possible
+
+`sudo apt-get install openjdk-21-jdk`  
 
 Set the correct JAVA_HOME environment to a JDK
 
-`sudo apt-get install openjdk-17-jdk`
 
 `export JAVA_HOME=/usr/lib/jvm/default-java`
 
