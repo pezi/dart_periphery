@@ -10,16 +10,12 @@ import java.util.Base64;
 
 import javax.imageio.ImageIO;
 
-// dart run jnigen --config jnigen.yaml
-// https://dart.dev/interop/java-interop
-// https://snapcraft.io/install/flutter/raspbian
 
-// size 64 offset 10
 public class EmojiBMPGenerator {
     static private int width = 128;
     static private int height = 64;
 
-    static String TEXT_SCRIPT =
+    static String TEST_SCRIPT =
             "int midY = height / 2;\n" +
             "int amplitude = height / 3;\n" +
             "double frequency = 2 * Math.PI / width;\n" +
@@ -102,7 +98,7 @@ public class EmojiBMPGenerator {
     }
 
     public static void main(String[] args) {
-        System.out.println(EmojiBMPGenerator.script("test"));
+        System.out.println(EmojiBMPGenerator.script(EmojiBMPGenerator.TEST_SCRIPT));
         /*
             // Encode pixel data as Base64
 

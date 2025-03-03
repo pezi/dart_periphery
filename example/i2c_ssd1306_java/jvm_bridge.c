@@ -114,7 +114,7 @@ void freeJVMenv()
     }
 }
 
-// Function to call a Java method that accepts and returns a String
+// Function to call a Java method that accepts a String and two ints and returns a String
 const char *call_create_emoji(const char *input, int heigth, int offset)
 {
     // Create a new Java string from the C string input
