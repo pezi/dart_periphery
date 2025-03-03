@@ -1,14 +1,12 @@
+// Copyright (c) 2025, the Dart project authors.  Please see the AUTHORS file
+// for details. All rights reserved. Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
+
 import 'dart:ffi';
 import 'dart:io';
 import 'package:ffi/ffi.dart';
 
 import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
-
-// Copyright (c) 2025, the Dart project authors.  Please see the AUTHORS file
-// for details. All rights reserved. Use of this source code is governed by a
-// BSD-style license that can be found in the LICENSE file.
 
 import 'package:dart_periphery/dart_periphery.dart';
 
@@ -99,10 +97,10 @@ void main() {
 
     var oled = SSD1306(i2c);
 
-    oled.clear();
-    String emoji = jvmBridge.script(script);
-    Uint8List emojiData = base64.decode(emoji);
-    oled.displayBitmap(emojiData);
+    ;
+    oled.displayBitmap(base64.decode(jvmBridge.script(script)));
+    sleep(Duration(seconds: 4));
+    oled.displayBitmap(base64.decode(jvmBridge.createEmojiBMP("#", 64, 10)));
   } finally {
     i2c.dispose();
   }

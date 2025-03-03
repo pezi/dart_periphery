@@ -5,21 +5,21 @@
 
 // install_name_tool -add_rpath $JAVA_HOME/lib/server/ ./cjava
 // install_name_tool -add_rpath /Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home/lib/server/ ./cjava
-// gcc  -o  calljava -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/darwin" -L"$JAVA_HOME/lib/server" -ljvm   -o cjava calljava.c
-//  gcc  -o  calljava -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux"    -o cjava calljava.c -L"$JAVA_HOME/lib/server" -ljvm
+// gcc  -o  calljava -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/darwin" jvm_bridge.c   -L"$JAVA_HOME/lib/server" -ljvm   
+//  gcc  -o  calljava -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" calljava.c -L"$JAVA_HOME/lib/server" -ljvm
 // export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-arm64
 // export LD_LIBRARY_PATH=$JAVA_HOME/lib/server:.
 // javac -cp ./lib/bsh-2.0b4.jar at/flutterdev/EmojiBMPGenerator.java
 // https://hildstrom.com/projects/2012/10/jni/index.html
 
+// 
 struct JVMenv
 {
     JavaVM *jvm;
     JNIEnv *env;
     jclass cls;
-    jmethodID midCreate;
-    jobject objCreate;
-    jmethodID midScript;
+    jmethodID mid_create;
+    jmethodID mid_script;
     jobject obj;
 };
 
@@ -50,7 +50,7 @@ void initJVMenv()
     // Define the Java class and method to call
     const char *class_name = "at/flutterdev/EmojiBMPGenerator"; // Replace with your Java class name
 
-    const char *method_name_create = "createEmojiBMP"; // Replace with your Java method name
+    const char *method_name_create = "createEmoji"; // Replace with your Java method name
     const char *method_signature_create = "(Ljava/lang/String;II)Ljava/lang/String;";
 
     const char *method_name_script = "script"; // Replace with your Java method name
@@ -66,8 +66,8 @@ void initJVMenv()
     }
 
     // Find the Java method create
-    globalJVMenv->midCreate = (*globalJVMenv->env)->GetStaticMethodID(globalJVMenv->env, globalJVMenv->cls, method_name_create, method_signature_create);
-    if (globalJVMenv->midCreate == NULL)
+    globalJVMenv->mid_create = (*globalJVMenv->env)->GetStaticMethodID(globalJVMenv->env, globalJVMenv->cls, method_name_create, method_signature_create);
+    if (globalJVMenv->mid_create == NULL)
     {
         fprintf(stderr, "Failed to find method %s with signature %s\n", method_name_create, method_signature_create);
         (*globalJVMenv->jvm)->DestroyJavaVM(globalJVMenv->jvm);
@@ -75,8 +75,8 @@ void initJVMenv()
     }
 
     // Find the Java method create
-    globalJVMenv->midScript = (*globalJVMenv->env)->GetStaticMethodID(globalJVMenv->env, globalJVMenv->cls, method_name_script, method_signature_script);
-    if (globalJVMenv->midScript == NULL)
+    globalJVMenv->mid_script = (*globalJVMenv->env)->GetStaticMethodID(globalJVMenv->env, globalJVMenv->cls, method_name_script, method_signature_script);
+    if (globalJVMenv->mid_script == NULL)
     {
         fprintf(stderr, "Failed to find method %s with signature %s\n", method_name_script, method_signature_script);
         (*globalJVMenv->jvm)->DestroyJavaVM(globalJVMenv->jvm);
@@ -93,8 +93,16 @@ void initJVMenv()
     }
 }
 
-void freeJVMenv() {
-    (*globalJVMenv->jvm)->DestroyJavaVM(globalJVMenv->jvm);
+void freeJVMenv()
+{
+    if (globalJVMenv != NULL)
+    {
+        if (globalJVMenv->jvm != NULL)
+        {
+            (*globalJVMenv->jvm)->DestroyJavaVM(globalJVMenv->jvm);
+        }
+        free(globalJVMenv);
+    }
 }
 
 // Function to call a Java method that accepts and returns a String
@@ -105,17 +113,16 @@ const char *call_create_emoji(const char *input, int heigth, int offset)
     if (j_input == NULL)
     {
         fprintf(stderr, "Failed to create Java string from input\n");
-        (*globalJVMenv->jvm)->DestroyJavaVM(globalJVMenv->jvm);
+        freeJVMenv();
         exit(EXIT_FAILURE);
     }
 
-    
     // Call the Java method
-    jstring j_output = (jstring)(*globalJVMenv->env)->CallObjectMethod(globalJVMenv->env,globalJVMenv->obj,globalJVMenv->midCreate, j_input, heigth, offset);
+    jstring j_output = (jstring)(*globalJVMenv->env)->CallObjectMethod(globalJVMenv->env, globalJVMenv->obj, globalJVMenv->mid_create, j_input, heigth, offset);
     if (j_output == NULL)
     {
         fprintf(stderr, "Java method returned NULL\n");
-        (*globalJVMenv->jvm)->DestroyJavaVM(globalJVMenv->jvm);
+        freeJVMenv();
         exit(EXIT_FAILURE);
     }
 
@@ -124,7 +131,7 @@ const char *call_create_emoji(const char *input, int heigth, int offset)
     if (output == NULL)
     {
         fprintf(stderr, "Failed to convert Java string to C string\n");
-        (*globalJVMenv->jvm)->DestroyJavaVM(globalJVMenv->jvm);
+        freeJVMenv();
         exit(EXIT_FAILURE);
     }
 
@@ -133,7 +140,6 @@ const char *call_create_emoji(const char *input, int heigth, int offset)
 
     // Release the Java string and destroy the JVM
     (*globalJVMenv->env)->ReleaseStringUTFChars(globalJVMenv->env, j_output, output);
-  
 
     return result;
 }
@@ -146,17 +152,16 @@ const char *call_create_script(const char *input)
     if (j_input == NULL)
     {
         fprintf(stderr, "Failed to create Java string from input\n");
-        (*globalJVMenv->jvm)->DestroyJavaVM(globalJVMenv->jvm);
+        freeJVMenv();
         exit(EXIT_FAILURE);
     }
 
-    
     // Call the Java method
-    jstring j_output = (jstring)(*globalJVMenv->env)->CallObjectMethod(globalJVMenv->env,globalJVMenv->obj,globalJVMenv->midScript, j_input);
+    jstring j_output = (jstring)(*globalJVMenv->env)->CallObjectMethod(globalJVMenv->env, globalJVMenv->obj, globalJVMenv->mid_script, j_input);
     if (j_output == NULL)
     {
         fprintf(stderr, "Java method returned NULL\n");
-        (*globalJVMenv->jvm)->DestroyJavaVM(globalJVMenv->jvm);
+        freeJVMenv();
         exit(EXIT_FAILURE);
     }
 
@@ -165,7 +170,7 @@ const char *call_create_script(const char *input)
     if (output == NULL)
     {
         fprintf(stderr, "Failed to convert Java string to C string\n");
-        (*globalJVMenv->jvm)->DestroyJavaVM(globalJVMenv->jvm);
+        freeJVMenv();
         exit(EXIT_FAILURE);
     }
 
@@ -174,7 +179,6 @@ const char *call_create_script(const char *input)
 
     // Release the Java string and destroy the JVM
     (*globalJVMenv->env)->ReleaseStringUTFChars(globalJVMenv->env, j_output, output);
-  
 
     return result;
 }
@@ -191,5 +195,4 @@ int main()
     free((void *)output1); // Free the duplicated string
 
     freeJVMenv();
-    
 }

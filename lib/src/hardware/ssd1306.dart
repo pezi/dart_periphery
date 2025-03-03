@@ -56,9 +56,9 @@ List<int> _initSequence = [
   0xAF
 ];
 
-const int width = 128;
-const int height = 64;
-const int offset = width ~/ 8;
+const int _width = 128;
+const int _height = 64;
+const int _offset = _width ~/ 8;
 
 /// SSD1306 128 x 64 Dot Matrix OLED
 ///
@@ -91,7 +91,7 @@ class SSD1306 {
   void clear() {
     resetPos();
     i2c.writeBytesReg(
-        i2cAddress, 0x40, List<int>.filled(width * height ~/ 8, 0x00));
+        i2cAddress, 0x40, List<int>.filled(_width * _height ~/ 8, 0x00));
   }
 
   /// Sets the [contrast] of the display.
@@ -133,7 +133,7 @@ class SSD1306 {
     i2c.writeBytesReg(i2cAddress, 0, [
       Command.setVerticalScrollArea.command,
       0x00,
-      height,
+      _height,
       left
           ? Command.verticalAndLeftHorizontalScroll.command
           : Command.verticalAndRightHorizontalScroll.command,
@@ -151,7 +151,7 @@ class SSD1306 {
     int byte = 0;
 
     for (int i = 0; i < 8; i++) {
-      if ((_data[index + offset * i] & mask) != 0) {
+      if ((_data[index + _offset * i] & mask) != 0) {
         byte |= (1 << i);
       }
     }
@@ -166,15 +166,15 @@ class SSD1306 {
     int count = 0;
 
     var buffer = Uint8List(data.length);
-    for (int y = 0; y < height / 8; ++y) {
+    for (int y = 0; y < _height / 8; ++y) {
       int pos = index;
-      for (int i = 0; i < width / 8; ++i) {
+      for (int i = 0; i < _width / 8; ++i) {
         for (int j = 7; j >= 0; --j) {
           buffer[count++] = _convertByte(pos, j);
         }
         ++pos;
       }
-      index += width;
+      index += _width;
     }
     i2c.writeBytesReg(i2cAddress, 0x40, buffer);
   }

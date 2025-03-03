@@ -581,38 +581,6 @@ List<String> getFlutterPiArgs();
 returns the command line parameter list of the `flutter-pi` command. The last parameter contains 
 the asset directory.
 
-## 🌡 flutter_pi_sensor_tester
-
-![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/flutter_sensor_tester.gif "Flutter Sensor Tester")
-
-This [subproject](https://github.com/pezi/flutter_pi_sensor_tester) bases on 
-[flutter-pi](https://github.com/ardera/flutter-pi) and implements a simple
-Dart isolate/stream architecture designed to transfer sensor data from an isolate to the Flutter UI:
-
-**Isolate interface**: This consists of the steps `InitTask`, `MainTask`, and `ExitTask`, along with a 
-limited back channel for controlling the Dart isolate. This setup is typically used for sensor 
-measurements:
-* `InitTask`: Initializes the sensor.
-* `MainTask`: Collects sensor data and passes it to a stream.
-* `ExitTask`: Disposes of the sensor.
-
-**Listening Mode**: Supports user-defined handling for isolate events. 
-This variant remains on standby for data; once data is processed, the result is passed to the stream 
-and subsequently to the Flutter UI. This model is used for actuator control, such as operating a LED.
-
-**Support for Multiple Streams**: Enables handling of multiple data streams simultaneously.
-
-This project is currently still beta and development is ongoing.
-
-## 💧 flutter_sensor_tester 
-
-This project builds upon the `flutter_pi_sensor_tester` by introducing a client/server architecture, enhancing its functionality for distributed applications.
-
-![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/client_server.png "Client Server")
-
-Currently in its alpha stage, the project is scheduled for release in March 2025.
-
-
 ## 🔬 Tested SoC hardware
 
 * [Raspberry Pi 3 Model B](https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/), OS: [Raspberry Pi OS](https://www.raspberrypi.com/software/)
@@ -652,6 +620,37 @@ Currently in its alpha stage, the project is scheduled for release in March 2025
 * [Grove Base Hat RaspberryPi Zero](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi_Zero)
 * [PN532](https://github.com/pezi/dart_periphery/pull/6) NFC Reader Module, Thanks to [UliPrantz](https://github.com/UliPrantz)!
 * SSD1306 OLED (in progress)
+
+## 🌡 flutter_pi_sensor_tester
+
+![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/flutter_sensor_tester.gif "Flutter Sensor Tester")
+
+This [subproject](https://github.com/pezi/flutter_pi_sensor_tester) bases on 
+[flutter-pi](https://github.com/ardera/flutter-pi) and implements a simple
+Dart isolate/stream architecture designed to transfer sensor data from an isolate to the Flutter UI:
+
+**Isolate interface**: This consists of the steps `InitTask`, `MainTask`, and `ExitTask`, along with a 
+limited back channel for controlling the Dart isolate. This setup is typically used for sensor 
+measurements:
+* `InitTask`: Initializes the sensor.
+* `MainTask`: Collects sensor data and passes it to a stream.
+* `ExitTask`: Disposes of the sensor.
+
+**Listening Mode**: Supports user-defined handling for isolate events. 
+This variant remains on standby for data; once data is processed, the result is passed to the stream 
+and subsequently to the Flutter UI. This model is used for actuator control, such as operating a LED.
+
+**Support for Multiple Streams**: Enables handling of multiple data streams simultaneously.
+
+This project is currently still beta and development is ongoing.
+
+## 💧 flutter_sensor_tester 
+
+This project builds upon the `flutter_pi_sensor_tester` by introducing a client/server architecture, enhancing its functionality for distributed applications.
+
+![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/client_server.png "Client Server")
+
+Currently in its alpha stage, the project is scheduled for release in March 2025.
 
 ## 📋 Test matrix
 

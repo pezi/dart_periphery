@@ -1,6 +1,8 @@
 ## 0.9.18
 * Add AHT20 temperature and humidity sensor
-* Add SSD1306 OLED display 
+* Add SSD1306 OLED
+* Add Dart-Java-Bridge example to generate graphics for the SSD1306 OLED 
+* Update c-periphery to v2.4.3
 
 ## 0.9.17
 * Add SHT4x temperature and humidity sensor  

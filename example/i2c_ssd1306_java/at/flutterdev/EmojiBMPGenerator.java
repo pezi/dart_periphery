@@ -3,7 +3,7 @@ package at.flutterdev;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-import java.io.File;
+
 import bsh.Interpreter;
 
 import java.util.Base64;
@@ -16,6 +16,8 @@ import javax.imageio.ImageIO;
 
 // size 64 offset 10
 public class EmojiBMPGenerator {
+    static private int width = 128;
+    static private int height = 64;
 
     static String TEXT_SCRIPT =
             "int midY = height / 2;\n" +
@@ -27,12 +29,11 @@ public class EmojiBMPGenerator {
             "    image.setRGB(x, y, Color.WHITE.getRGB());\n" +
             "}\n";
 
-    public static String createEmojiBMP(String emoji, int size, int offset) {
+    public static String createEmoji(String emoji, int size, int offset) {
         try {
             System.setProperty("java.awt.headless", "true");
 
-            int width = 128;
-            int height = 64;
+          
             // Create a binary BufferedImage
             BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY);
 
@@ -60,8 +61,7 @@ public class EmojiBMPGenerator {
             return Base64.getEncoder().encodeToString(imageBytes);
         } catch (Exception e) {
             e.printStackTrace();
-
-            return e.getMessage();
+            return "* "+ e.getMessage();
         }
 
     }
@@ -70,8 +70,6 @@ public class EmojiBMPGenerator {
         try {
             System.setProperty("java.awt.headless", "true");
 
-            int width = 128;
-            int height = 64;
             // Create a binary BufferedImage
             BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY);
 
@@ -83,26 +81,23 @@ public class EmojiBMPGenerator {
             // Set emoji color and font
             g2d.setColor(Color.WHITE);
 
+            
             Interpreter i = new bsh.Interpreter();
+                // pass all needed
             i.set("image", image);
             i.set("g2d",g2d);
             i.set("width",width);
             i.set("height",height);
             i.eval(script);
-            
-
+           
             g2d.dispose();
             // Extract raw pixel data from BufferedImage
             byte[] imageBytes = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
          
-        
-
-
             return Base64.getEncoder().encodeToString(imageBytes);
         } catch (Exception e) {
             e.printStackTrace();
-
-            return e.getMessage();
+            return "* " + e.getMessage();
         }
     }
 
