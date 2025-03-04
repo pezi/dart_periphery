@@ -55,12 +55,12 @@ int initJVMenv()
     }
 
     // Define the Java class and method to call
-    const char *class_name = "at/flutterdev/EmojiBMPGenerator"; // Replace with your Java class name
+    const char *class_name = "at/flutterdev/EmojiBMPGenerator"; 
 
-    const char *method_name_create = "createEmoji"; // Replace with your Java method name
-    const char *method_signature_create = "(Ljava/lang/String;II)Ljava/lang/String;";
+    const char *method_name_create = "createEmoji";
+    const char *method_signature_create = "([BII)Ljava/lang/String;";
 
-    const char *method_name_script = "script"; // Replace with your Java method name
+    const char *method_name_script = "script";
     const char *method_signature_script = "(Ljava/lang/String;)Ljava/lang/String;";
 
     // Find the Java class
@@ -122,18 +122,20 @@ const char *call_create_emoji(const char *input, int heigth, int offset)
 
     // https://stackoverflow.com/questions/59998653/how-to-pass-a-c-string-emoji-to-java-via-jni
   
-
-    // Create a new Java string from the C string input
-    jstring j_input = (*globalJVMenv->env)->NewStringUTF(globalJVMenv->env, input);
-    if (j_input == NULL)
+    int len = strlen(input);
+    jbyteArray j_bytes = (jbyteArray)(*globalJVMenv->env)->NewByteArray(globalJVMenv->env,len);
+    if (j_bytes == NULL)
     {
-        fprintf(stderr, "Failed to create Java string from input\n");
+        fprintf(stderr, "Failed to create Java byte array from input\n");
         freeJVMenv();
         return NULL;
     }
 
+    (*globalJVMenv->env)->SetByteArrayRegion(globalJVMenv->env,j_bytes,0,len,(jbyte *)input);    
+
+    
     // Call the Java method
-    jstring j_output = (jstring)(*globalJVMenv->env)->CallObjectMethod(globalJVMenv->env, globalJVMenv->obj, globalJVMenv->mid_create, j_input, heigth, offset);
+    jstring j_output = (jstring)(*globalJVMenv->env)->CallObjectMethod(globalJVMenv->env, globalJVMenv->obj, globalJVMenv->mid_create, j_bytes, heigth, offset);
     if (j_output == NULL)
     {
         fprintf(stderr, "Java method returned NULL\n");
@@ -203,11 +205,11 @@ int main()
     if (initJVMenv() == 0)
     {   
         printf("c: 🐵💩⚓\n\n");
-        const char *output = call_create_emoji("8J+QtfCfkqnimpM=", 64, 10);
+        const char *output = call_create_emoji("🐵💩⚓", 64, 10);
         printf("Java method returned: %s\n", output);
         free((void *)output); // Free the duplicated string
 
-        const char *output1 = call_create_emoji("4pqT", 64, 10);
+        const char *output1 = call_create_emoji("⚓", 64, 10);
         printf("Java method returned: %s\n", output1);
         free((void *)output1); // Free the duplicated string
 

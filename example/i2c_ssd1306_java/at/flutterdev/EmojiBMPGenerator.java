@@ -27,13 +27,13 @@ public class EmojiBMPGenerator {
             "    image.setRGB(x, y, Color.WHITE.getRGB());\n" +
             "}\n";
 
-    public static String createEmoji(String emoji, int size, int offset) {
+    public static String createEmoji(byte[] emojiData, int size, int offset) {
         try {
-            System.setProperty("java.awt.headless", "true");
+            
 
-            byte[] decoded = Base64.getDecoder().decode(emoji);    
-            emoji =  new String(decoded, StandardCharsets.UTF_8);    
-          
+            System.setProperty("java.awt.headless", "true");
+ 
+            String emoji = new String(emojiData, StandardCharsets.UTF_8); 
             // Create a binary BufferedImage
             BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY);
 
