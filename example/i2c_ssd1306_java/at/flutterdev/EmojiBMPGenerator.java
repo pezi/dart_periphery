@@ -102,7 +102,7 @@ public class EmojiBMPGenerator {
     }
 
     public static void main(String[] args) {
-        System.out.println(EmojiBMPGenerator.script(EmojiBMPGenerator.TEST_SCRIPT));
+        System.out.println(EmojiBMPGenerator. createEmoji("💩".getBytes(), 64, 10));
         /*
             // Encode pixel data as Base64
 

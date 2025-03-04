@@ -9,6 +9,8 @@ Needed steps to start the demo - tested on a Raspberry Pi and Armbian
 
 Raspberry Pi
 
+apt install fonts-noto-color-emoji
+
 `sudo apt-get install openjdk-17-jdk`  
 
 for Armbian a higher JDK version is possible
@@ -36,5 +38,8 @@ Start the program
 
 `dart i2c_ssd1306_java_awt.dart`
 
-
+// install_name_tool -add_rpath $JAVA_HOME/lib/server/ ./cjava
+// install_name_tool -add_rpath /Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home/lib/server/ ./cjava
+// gcc  -o  calljava -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/darwin" jvm_bridge.c   -L"$JAVA_HOME/lib/server" -ljvm
+//  gcc  -o  calljava -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" calljava.c -L"$JAVA_HOME/lib/server" -ljvm
 
