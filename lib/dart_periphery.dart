@@ -125,7 +125,9 @@ export 'src/i2c.dart'
         I2Cmsg,
         I2CerrorCode,
         I2Cexception,
-        I2C;
+        I2C,
+        RegisterWidth;
+
 export 'src/led.dart' show Led, LedException, LedErrorCode;
 export 'src/library.dart'
     show
