@@ -116,7 +116,13 @@ void freeJVMenv()
 
 // Function to call a Java method that accepts a String and two ints and returns a String
 const char *call_create_emoji(const char *input, int heigth, int offset)
+
+
 {
+
+    // https://stackoverflow.com/questions/59998653/how-to-pass-a-c-string-emoji-to-java-via-jni
+  
+
     // Create a new Java string from the C string input
     jstring j_input = (*globalJVMenv->env)->NewStringUTF(globalJVMenv->env, input);
     if (j_input == NULL)
@@ -195,12 +201,13 @@ const char *call_create_script(const char *input)
 int main()
 {
     if (initJVMenv() == 0)
-    {
-        const char *output = call_create_emoji("💩", 64, 10);
+    {   
+        printf("c: 🐵💩⚓\n\n");
+        const char *output = call_create_emoji("8J+QtfCfkqnimpM=", 64, 10);
         printf("Java method returned: %s\n", output);
         free((void *)output); // Free the duplicated string
 
-        const char *output1 = call_create_emoji("⚓", 64, 10);
+        const char *output1 = call_create_emoji("4pqT", 64, 10);
         printf("Java method returned: %s\n", output1);
         free((void *)output1); // Free the duplicated string
 

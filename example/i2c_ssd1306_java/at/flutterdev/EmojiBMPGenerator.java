@@ -3,7 +3,9 @@ package at.flutterdev;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
-
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import bsh.Interpreter;
 
 import java.util.Base64;
@@ -29,6 +31,8 @@ public class EmojiBMPGenerator {
         try {
             System.setProperty("java.awt.headless", "true");
 
+            byte[] decoded = Base64.getDecoder().decode(emoji);    
+            emoji =  new String(decoded, StandardCharsets.UTF_8);    
           
             // Create a binary BufferedImage
             BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY);
