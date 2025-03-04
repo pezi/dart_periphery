@@ -1,6 +1,7 @@
 ## 0.9.18
 * Add AHT20 temperature and humidity sensor
-* Add AT24C128 256 KB EEPROM
+* Add I2C AT24C128 256 KB EEPROM
+* Export missing I2C enum RegisterWidth (8/16 bit), needed for AT24C128 EEPROM 16 bit addresses  
 * Add SSD1306 OLED
 * Add Dart-Java-Bridge example to generate graphics for the SSD1306 OLED 
 * Update c-periphery to v2.4.3
