@@ -42,7 +42,7 @@ enum JvmCreationStatus {
   }
 }
 
-class JVMBridge {
+class JVMbridge {
   late DynamicLibrary _lib;
 
   late InitJVM _initJVM;
@@ -50,14 +50,14 @@ class JVMBridge {
   late CallCreateEmoji _callCreateEmoji;
   late CallScript _callScript;
 
-  static JVMBridge? _instance;
+  static JVMbridge? _instance;
 
-  factory JVMBridge() {
-    _instance ??= JVMBridge._internal();
-    return _instance as JVMBridge;
+  factory JVMbridge() {
+    _instance ??= JVMbridge._internal();
+    return _instance as JVMbridge;
   }
 
-  JVMBridge._internal() {
+  JVMbridge._internal() {
     // Load the shared library based on the platform
     if (Platform.isMacOS) {
       _lib = DynamicLibrary.open("libjvmbridge.dylib");
@@ -115,6 +115,7 @@ class JVMBridge {
   }
 }
 
+// Java bsh (Bean shell) script
 var script = "int midY = height / 2;\n" +
     "int amplitude = height / 3;\n" +
     "double frequency = 2 * Math.PI / width;\n" +
@@ -124,8 +125,9 @@ var script = "int midY = height / 2;\n" +
     "}\n";
 
 void main() {
-  final jvmBridge = JVMBridge();
-
+  final jvmBridge = JVMbridge();
+  // Select the right I2C bus number /dev/i2c-?
+  // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian), 4 BPI-F3
   var i2c = I2C(1);
   try {
     print("dart_periphery Version: $dartPeripheryVersion");

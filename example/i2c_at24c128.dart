@@ -14,20 +14,22 @@ import 'dart:convert';
 void main() {
   // Select the right I2C bus number /dev/i2c-?
   // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian), 4 BPI-F3
+
+  var defaultAT24C128address = 0x50;
+
   var i2c = I2C(1);
   try {
-    // Be aware, this demo uses a ASCII (8-bit String)
-    // User utf8.encode()
     var data = "The quick brown fox jumps over the lazy dog";
+    // for ASCII data you can use data.codeUnits instead
     var rawData = utf8.encode(data);
-    print("Write test string:  $data");
-    i2c.writeBytesReg(
-        0x50, 0, rawData, BitOrder.msbFirst, RegisterWidth.bits16);
+    print("Write test string: $data");
+    i2c.writeBytesReg(defaultAT24C128address, 0, rawData, BitOrder.msbFirst,
+        RegisterWidth.bits16);
     print("wait..");
     sleep(Duration(seconds: 1));
     print("Read written data from EEPROM");
-    var decoded = utf8.decode(i2c.readBytesReg(
-        0x50, 0, rawData.length, BitOrder.msbFirst, RegisterWidth.bits16));
+    var decoded = utf8.decode(i2c.readBytesReg(defaultAT24C128address, 0,
+        rawData.length, BitOrder.msbFirst, RegisterWidth.bits16));
     print(decoded);
   } finally {
     i2c.dispose();
