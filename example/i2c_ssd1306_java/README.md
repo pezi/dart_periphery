@@ -2,21 +2,21 @@
 
 This examples uses the JAVA awt class to generate graphics for the OLED SSD1306. 
 
-This demos displays two images, an emoji and a sine curve created by a bsh (Java Bean Shell) script.
+This demos displays two images, an emoji and a sine curve created by a `bsh` (Java Bean Shell) script.
 
-## 📖 Steps to start the demo - tested on a Raspberry Pi and Armbian
+## 📖 Steps to start the demo - tested on a Raspberry OS and Armbian
 
 `apt install fonts-noto-color-emoji`
 
 `sudo apt-get install openjdk-17-jdk`  
 
-for Armbian supports higher JDK versione.g. `sudo apt-get install openjdk-21-jdk`  
+Armbian supports higher JDK versione.g. `sudo apt-get install openjdk-21-jdk`  
 
-Set the correct `JAVA_HOME` environment to the JDK
+Set `JAVA_HOME` environment to the JDK
 
 `export JAVA_HOME=/usr/lib/jvm/default-java`
 
-Compile the Java code including the bean shell support.
+Compile the Java code including Bean Shell support.
 
 `javac -cp ./lib/bsh-2.0b4.jar at/flutterdev/EmojiBMPGenerator.java`
 
@@ -24,7 +24,7 @@ Compile the C code as a shared library.
 
 `gcc -shared -o libjvmbridge.so -fPIC jvm_bridge.c  -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" -L"$JAVA_HOME/lib/server" -ljvm`
 
-Set the `LD_LIBRARY_PATH` - jvm lib and `libjvmbridge.so` 
+Set the `LD_LIBRARY_PATH` to include the JVM lib and `libjvmbridge.so` 
 
 `export LD_LIBRARY_PATH=$JAVA_HOME/lib/server:.`
 
@@ -49,6 +49,6 @@ Additonal step for MacOS to set the `RPATH`
 
 `install_name_tool -add_rpath $JAVA_HOME/lib/server/ ./calljava`
 
-# Test the Dart layer
+### Test the Dart layer
 
-Under MacOS a Dart program invoking the JVM runs into the missing `RPATH` problem. You can apply `install_name_tool` to Dart souce file. But you can apply `install_name_tool` to the compiled `dart compile exe test.dart` version of the Dart porgramm.   
+Under MacOS a Dart program invoking the JVM runs into the missing `RPATH` problem. You can not apply `install_name_tool` to a Dart souce file. But you can apply `install_name_tool` to the compiled `dart compile exe test.dart` version of the Dart program.   
