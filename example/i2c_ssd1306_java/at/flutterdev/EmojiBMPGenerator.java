@@ -3,6 +3,8 @@ package at.flutterdev;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.io.File;
+import java.io.FileInputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -44,12 +46,17 @@ public class EmojiBMPGenerator {
 
             // Set emoji color and font
             g2d.setColor(Color.WHITE);
-            g2d.setFont(new Font("Segoe UI Emoji", Font.PLAIN, size));
+            Font font = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream("./font/segoe-ui-emoji.ttf"));
+        
+        
+            g2d.setFont(font.deriveFont(Font.PLAIN,size));
+            //g2d.setFont(new Font("Segoe UI Emoji", Font.PLAIN, size));
 
             // Center the emoji
             // String emoji = "💩";
             FontMetrics fm = g2d.getFontMetrics();
             int x = (width - fm.stringWidth(emoji)) / 2;
+            System.out.println(x);
             int y = height - offset;
 
             // Draw the emoji
@@ -57,6 +64,7 @@ public class EmojiBMPGenerator {
             g2d.dispose();
             // Extract raw pixel data from BufferedImage
             byte[] imageBytes = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+            ImageIO.write(image, "png", new File("output.png"));
             // Encode pixel data as Base64
             return Base64.getEncoder().encodeToString(imageBytes);
         } catch (Exception e) {
@@ -91,9 +99,12 @@ public class EmojiBMPGenerator {
             i.eval(script);
            
             g2d.dispose();
+
+      
+
             // Extract raw pixel data from BufferedImage
-            byte[] imageBytes = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-         
+            byte[] imageBytes = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();    
+
             return Base64.getEncoder().encodeToString(imageBytes);
         } catch (Exception e) {
             e.printStackTrace();

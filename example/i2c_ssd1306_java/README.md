@@ -41,12 +41,10 @@ Armbian supports higher JDK versions e.g.
 
 ## 📣 Additional Information for Development and Testing
 
-Compile the C Program as an Executable
-
-### Test the Java layer  
+### Test the Java layer - main method with test code
 `java -cp ./lib/bsh-2.0b4.jar at/flutterdev/EmojiBMPGenerator.java`
 
-### Test the C layer
+### Test the C layer - main method with test code
 
  Linux:  `gcc -o calljava -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/darwin" jvm_bridge.c -L"$JAVA_HOME/lib/server" -ljvm` 
  
@@ -58,7 +56,7 @@ Additonal step for macOS to set the `RPATH`
 
 ### Test the Dart layer
 
-On macOS, a Dart program invoking the JVM may encounter a missing RPATH issue. Since you cannot apply `install_name_tool` directly to a Dart source file, you need to apply it to the compiled executable version of the Dart program:
+On macOS, a Dart program invoking the JVM may encounter a missing `RPATH` issue. Since you cannot apply `install_name_tool` directly to a Dart source file, you need to apply it to the compiled executable version of the Dart program:
 
 ```
 dart compile exe test.dart
