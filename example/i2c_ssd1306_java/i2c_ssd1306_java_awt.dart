@@ -119,9 +119,10 @@ class JVMbridge {
 var script = "int midY = height / 2;\n" +
     "int amplitude = height / 3;\n" +
     "double frequency = 2 * Math.PI / width;\n" +
+    "int white = Color.WHITE.getRGB();\n" +
     "for (int x = 0; x < width; x++) {\n" +
     "    int y = midY + (int) (amplitude * Math.sin(frequency * x));\n" +
-    "    image.setRGB(x, y, Color.WHITE.getRGB());\n" +
+    "    image.setRGB(x, y, white);\n" +
     "}\n";
 
 void main() {
