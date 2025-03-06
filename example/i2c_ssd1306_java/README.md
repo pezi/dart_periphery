@@ -27,13 +27,13 @@ echo $JAVA_HOME
 3.	Compile the Java code, including BeanShell support:
 
 ```bash
-javac -cp ./lib/bsh-2.0b4.jar at/flutterdev/EmojiBMPGenerator.java`
+javac -cp ./lib/bsh-2.0b4.jar at/flutterdev/EmojiBMPGenerator.java
 ```
 
 4.	Compile the C code as a shared library:
 
 ```bash
-gcc -shared -o libjvmbridge.so -fPIC jvm_bridge.c  -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" -L"$JAVA_HOME/lib/server" -ljvm`
+gcc -shared -o libjvmbridge.so -fPIC jvm_bridge.c  -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" -L"$JAVA_HOME/lib/server" -ljvm
 ```
 
 5.  Set the `LD_LIBRARY_PATH` to include the JVM library and `libjvmbridge.so` 
@@ -45,29 +45,41 @@ export LD_LIBRARY_PATH=$JAVA_HOME/lib/server:.`
 6.	Start the program:
 
 ```bash
-dart i2c_ssd1306_java_awt.dart`
+dart i2c_ssd1306_java_awt.dart
 ```
 
 ## 📣 Additional Information for Development and Testing
 
 ### Test the Java layer - main method with test code
-`java -cp ./lib/bsh-2.0b4.jar at/flutterdev/EmojiBMPGenerator.java`
+```bash
+java -cp ./lib/bsh-2.0b4.jar at/flutterdev/EmojiBMPGenerator.java
+```
 
 ### Test the C layer - main method with test code
 
- Linux:  `gcc -o calljava -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/darwin" jvm_bridge.c -L"$JAVA_HOME/lib/server" -ljvm` 
- 
- macOS: `gcc -o calljava -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" calljava.c -L"$JAVA_HOME/lib/server" -ljvm`
+Linux:  
+
+```bash
+gcc -o calljava -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/darwin" jvm_bridge.c -L"$JAVA_HOME/lib/server" -ljvm
+```
+
+macOS: 
+
+```bash
+gcc -o calljava -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" calljava.c -L"$JAVA_HOME/lib/server" -ljvm
+```
 
 Additonal step for macOS to set the `RPATH`
 
-`install_name_tool -add_rpath $JAVA_HOME/lib/server/ ./calljava`
+```bash
+install_name_tool -add_rpath $JAVA_HOME/lib/server/ ./calljava
+```
 
 ### Test the Dart layer
 
 On macOS, a Dart program invoking the JVM may encounter a missing `RPATH` issue. Since you cannot apply `install_name_tool` directly to a Dart source file, you need to apply it to the compiled executable version of the Dart program:
 
-```
+```bash
 dart compile exe test.dart
 install_name_tool -add_rpath $JAVA_HOME/lib/server/ test
 ```
