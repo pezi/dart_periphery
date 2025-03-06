@@ -26,19 +26,27 @@ echo $JAVA_HOME
 
 3.	Compile the Java code, including BeanShell support:
 
-`javac -cp ./lib/bsh-2.0b4.jar at/flutterdev/EmojiBMPGenerator.java`
+```bash
+javac -cp ./lib/bsh-2.0b4.jar at/flutterdev/EmojiBMPGenerator.java`
+```
 
 4.	Compile the C code as a shared library:
 
-`gcc -shared -o libjvmbridge.so -fPIC jvm_bridge.c  -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" -L"$JAVA_HOME/lib/server" -ljvm`
+```bash
+gcc -shared -o libjvmbridge.so -fPIC jvm_bridge.c  -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" -L"$JAVA_HOME/lib/server" -ljvm`
+```
 
 5.  Set the `LD_LIBRARY_PATH` to include the JVM library and `libjvmbridge.so` 
 
-`export LD_LIBRARY_PATH=$JAVA_HOME/lib/server:.`
+```bash
+export LD_LIBRARY_PATH=$JAVA_HOME/lib/server:.`
+```
 
 6.	Start the program:
 
-`dart i2c_ssd1306_java_awt.dart`
+```bash
+dart i2c_ssd1306_java_awt.dart`
+```
 
 ## 📣 Additional Information for Development and Testing
 
