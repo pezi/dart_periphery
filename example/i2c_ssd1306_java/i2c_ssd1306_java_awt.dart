@@ -135,7 +135,7 @@ void main() {
     print('I2C info: ${i2c.getI2Cinfo()}');
 
     var oled = SSD1306(i2c);
-    oled.displayBitmap(base64.decode(jvmBridge.createEmojiBMP("💩", 64, 10)));
+    oled.displayBitmap(base64.decode(jvmBridge.createEmojiBMP("❤️", 64, 10)));
     sleep(Duration(seconds: 4));
     oled.displayBitmap(base64.decode(jvmBridge.script(script)));
   } finally {

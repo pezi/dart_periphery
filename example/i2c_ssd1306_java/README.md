@@ -7,11 +7,7 @@ The demo displays two images: an emoji and a sine curve, both created using a bs
 
 ## 📖 Steps to Start the Demo (Tested on Raspberry OS and Armbian)
 
-1.	Install the required font package:
-
-`apt install fonts-noto-color-emoji`
-
-2.	Install OpenJDK:
+1.	Install OpenJDK:
 
 `sudo apt-get install openjdk-17-jdk`  
 
@@ -19,23 +15,23 @@ Armbian supports higher JDK versions e.g.
 
 `sudo apt-get install openjdk-21-jdk`  
 
-3.	Set the `JAVA_HOME` environment variable:
+2.	Set the `JAVA_HOME` environment variable:
 
 `export JAVA_HOME=/usr/lib/jvm/default-java`
 
-4.	Compile the Java code, including BeanShell support:
+3.	Compile the Java code, including BeanShell support:
 
 `javac -cp ./lib/bsh-2.0b4.jar at/flutterdev/EmojiBMPGenerator.java`
 
-5.	Compile the C code as a shared library:
+4.	Compile the C code as a shared library:
 
 `gcc -shared -o libjvmbridge.so -fPIC jvm_bridge.c  -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" -L"$JAVA_HOME/lib/server" -ljvm`
 
-6.Set the `LD_LIBRARY_PATH` to include the JVM library and `libjvmbridge.so` 
+5.  Set the `LD_LIBRARY_PATH` to include the JVM library and `libjvmbridge.so` 
 
 `export LD_LIBRARY_PATH=$JAVA_HOME/lib/server:.`
 
-7.	Start the program:
+6.	Start the program:
 
 `dart i2c_ssd1306_java_awt.dart`
 

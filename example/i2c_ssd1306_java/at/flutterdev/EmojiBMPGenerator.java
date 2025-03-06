@@ -50,7 +50,7 @@ public class EmojiBMPGenerator {
 
             if(font == null) {
                 font = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream("./font/segoe-ui-emoji.ttf"));
-                font.deriveFont(Font.PLAIN,size);
+                font = font.deriveFont(Font.PLAIN,size);
             }
 
             g2d.setFont(font);
