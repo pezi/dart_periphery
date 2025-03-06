@@ -1,5 +1,7 @@
 # see README for details
-export JAVA_HOME=/usr/lib/jvm/default-java
+echo "Set Java Home - auto detect"
+export JAVA_HOME=$(update-java-alternatives -l | awk '{print $3}')
+echo $JAVA_HOME
 echo "Compile Java"
 javac -cp ./lib/bsh-2.0b4.jar at/flutterdev/EmojiBMPGenerator.java
 echo "Compile C library"

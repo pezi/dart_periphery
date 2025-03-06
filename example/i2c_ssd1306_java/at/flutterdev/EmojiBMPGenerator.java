@@ -24,10 +24,10 @@ public class EmojiBMPGenerator {
             "int midY = height / 2;\n" +
             "int amplitude = height / 3;\n" +
             "double frequency = 2 * Math.PI / width;\n" +
-
+            "int white = Color.WHITE.getRGB();\n" + 
             "for (int x = 0; x < width; x++) {\n" +
             "    int y = midY + (int) (amplitude * Math.sin(frequency * x));\n" +
-            "    image.setRGB(x, y, Color.WHITE.getRGB());\n" +
+            "    image.setRGB(x, y, white);\n" +
             "}\n";
 
     public static String createEmoji(byte[] emojiData, int size, int offset) {
@@ -49,15 +49,14 @@ public class EmojiBMPGenerator {
             g2d.setColor(Color.WHITE);
 
             if(font == null) {
+                // Warning Noto Color Emoji is not working with a mono color bitmap 
                 font = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream("./font/segoe-ui-emoji.ttf"));
                 font = font.deriveFont(Font.PLAIN,size);
             }
 
             g2d.setFont(font);
-            //g2d.setFont(new Font("Segoe UI Emoji", Font.PLAIN, size));
 
             // Center the emoji
-            // String emoji = "💩";
             FontMetrics fm = g2d.getFontMetrics();
             int x = (width - fm.stringWidth(emoji)) / 2;
             int y = height - offset;
@@ -98,11 +97,13 @@ public class EmojiBMPGenerator {
             
             Interpreter i = new bsh.Interpreter();
         
-            // pass all needed Java obj to the interpreter
+            // pass all needed Java objects to the interpreter
             i.set("image", image);
             i.set("g2d",g2d);
             i.set("width",width);
             i.set("height",height);
+
+            // call script
             i.eval(script);
            
             g2d.dispose();

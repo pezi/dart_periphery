@@ -17,7 +17,12 @@ Armbian supports higher JDK versions e.g.
 
 2.	Set the `JAVA_HOME` environment variable:
 
-`export JAVA_HOME=/usr/lib/jvm/default-java`
+Try autodetection:
+
+```bash
+export JAVA_HOME=$(update-java-alternatives -l | awk '{print $3}')
+echo $JAVA_HOME
+```
 
 3.	Compile the Java code, including BeanShell support:
 
