@@ -16,8 +16,9 @@ import javax.imageio.ImageIO;
 
 
 public class EmojiBMPGenerator {
-    static private int width = 128;
-    static private int height = 64;
+    static final private int width = 128;
+    static final private int height = 64;
+    static private Font font = null;
 
     static String TEST_SCRIPT =
             "int midY = height / 2;\n" +
@@ -46,17 +47,19 @@ public class EmojiBMPGenerator {
 
             // Set emoji color and font
             g2d.setColor(Color.WHITE);
-            Font font = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream("./font/segoe-ui-emoji.ttf"));
-        
-        
-            g2d.setFont(font.deriveFont(Font.PLAIN,size));
+
+            if(font == null) {
+                font = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream("./font/segoe-ui-emoji.ttf"));
+                font.deriveFont(Font.PLAIN,size);
+            }
+
+            g2d.setFont(font);
             //g2d.setFont(new Font("Segoe UI Emoji", Font.PLAIN, size));
 
             // Center the emoji
             // String emoji = "💩";
             FontMetrics fm = g2d.getFontMetrics();
             int x = (width - fm.stringWidth(emoji)) / 2;
-            System.out.println(x);
             int y = height - offset;
 
             // Draw the emoji
@@ -64,7 +67,10 @@ public class EmojiBMPGenerator {
             g2d.dispose();
             // Extract raw pixel data from BufferedImage
             byte[] imageBytes = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-            ImageIO.write(image, "png", new File("output.png"));
+            
+            // for debugging
+            // ImageIO.write(image, "png", new File("output.png"));
+            
             // Encode pixel data as Base64
             return Base64.getEncoder().encodeToString(imageBytes);
         } catch (Exception e) {
@@ -91,7 +97,8 @@ public class EmojiBMPGenerator {
 
             
             Interpreter i = new bsh.Interpreter();
-                // pass all needed
+        
+            // pass all needed Java obj to the interpreter
             i.set("image", image);
             i.set("g2d",g2d);
             i.set("width",width);
