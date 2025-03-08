@@ -16,11 +16,11 @@ void main(List<String> args) {
     print("dart_periphery Version: $dartPeripheryVersion");
     print("c-periphery Version   : ${getCperipheryVersion()}");
     print('I2C info: ${i2c.getI2Cinfo()}');
-    print("SDC30 sensor");
+    print("AHT1X sensor");
     var athx0 = AHTX0(i2c);
     var v = athx0.getValues();
-    print('SHT4x [t°] ${v.temperature.toStringAsFixed(2)}');
-    print('SHT4x [%°] ${v.humidity.toStringAsFixed(2)}');
+    print('AHT1X [t°] ${v.temperature.toStringAsFixed(2)}');
+    print('AHT1X [%°] ${v.humidity.toStringAsFixed(2)}');
   } finally {
     i2c.dispose();
   }
