@@ -2,7 +2,10 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'dart:io';
+
 import 'package:dart_periphery/dart_periphery.dart';
+import 'package:dart_periphery/src/hardware/ahtx0.dart';
 
 //// AHT10, AHT20 temperature and humidity sensor.
 ///
@@ -18,9 +21,17 @@ void main(List<String> args) {
     print('I2C info: ${i2c.getI2Cinfo()}');
     print("AHT1X sensor");
     var athx0 = AHTX0(i2c);
-    var v = athx0.getValues();
-    print('AHT1X [t°] ${v.temperature.toStringAsFixed(2)}');
-    print('AHT1X [%°] ${v.humidity.toStringAsFixed(2)}');
+    late AHTX0result v;
+    while (true) {
+      try {
+        v = athx0.getValues();
+      } on Exception catch (e) {
+        print(e.toString());
+      }
+      print('AHT1X [t°] ${v.temperature.toStringAsFixed(2)}');
+      print('AHT1X [%°] ${v.humidity.toStringAsFixed(2)}');
+      sleep(Duration(seconds: 5));
+    }
   } finally {
     i2c.dispose();
   }
