@@ -7,6 +7,7 @@ import 'package:dart_periphery/dart_periphery.dart';
 // Resources:
 // https://github.com/Chouffy/python_sensor_aht20/blob/main/AHT20.py
 // https://github.com/adafruit/Adafruit_CircuitPython_AHTx0/blob/main/adafruit_ahtx0.py
+// https://github.com/enjoyneering/AHTxx/blob/main/src/AHTxx.cpp
 
 /// Default I2C address of the [AHTX0] sensor
 const int ahtx0DefaultI2Caddress = 0x38;
@@ -57,6 +58,7 @@ class AHTX0result {
 class AHTX0 {
   final I2C i2c;
   final int i2cAddress;
+  bool isAHT20 = false;
 
   /// Creates a AHTX0 sensor instance that uses the [i2c] bus with
   /// the optional [i2cAddress].
@@ -88,6 +90,7 @@ class AHTX0 {
       sleep(Duration(milliseconds: 10));
       i2c.writeBytesReg(
           i2cAddress, AHTX0command.aht20Calibrate.cmd, [0x08, 0x00]);
+      isAHT20 = true;
     }
     int start = DateTime.now().millisecond;
     while (_getStatus() & AHTX0command.statusBusy.cmd != 0) {
@@ -109,9 +112,11 @@ class AHTX0 {
     while (_getStatus() & AHTX0command.statusBusy.cmd == 1) {
       sleep(Duration(milliseconds: 10));
     }
-    var data = i2c.readBytes(i2cAddress, 6);
-    if (!checkCRC(data)) {
-      throw AHTX0exception("CRC8 error");
+    var data = i2c.readBytes(i2cAddress, isAHT20 ? 7 : 6);
+    if (isAHT20) {
+      if (crc8(data.sublist(0, 6)) == data[6]) {
+        throw AHTX0exception("CRC8 error");
+      }
     }
     var humidity =
         ((data[1] << 12) | (data[2] << 4) | (data[3] >> 4)) * 100.0 / 0x100000;
