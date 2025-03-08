@@ -114,7 +114,7 @@ class AHTX0 {
     }
     var data = i2c.readBytes(i2cAddress, isAHT20 ? 7 : 6);
     if (isAHT20) {
-      if (crc8(data.sublist(0, 6)) == data[6]) {
+      if (crc8(data.sublist(0, 6)) != data[6]) {
         throw AHTX0exception("CRC8 error");
       }
     }

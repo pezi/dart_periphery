@@ -598,7 +598,7 @@ the asset directory.
 * [BME680](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme680.dart): Temperature, humidity pressure and gas (Indoor Airy Quality) sensor.
 * [SHT31](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht31.dart): Temperature and humidity sensor. 
 * [SHT4x](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht4x.dart): Temperature and humidity sensor. 
-* [AHT20](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ahtx0.dart)  Temperature and humidity sensor
+* [AHT10/AHT20](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ahtx0.dart)  Temperature and humidity sensor
 * [CozIR](https://github.com/pezi/dart_periphery/blob/main/example/serial_cozir.dart): CO₂, temperature and humidity sensor.
 * [Grove Gesture](https://github.com/pezi/dart_periphery/blob/main/example/i2c_gesture_sensor.dart): can recognize 9 basic gestures.
 * [MPU-6050 Six-Axis](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mpu6050.dart): (Gyro + Accelerometer) sensor.
