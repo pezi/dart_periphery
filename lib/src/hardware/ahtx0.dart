@@ -60,7 +60,7 @@ class AHTX0 {
 
   /// Creates a AHTX0 sensor instance that uses the [i2c] bus with
   /// the optional [i2cAddress].
-  AHTX0(this.i2c, [this.i2cAddress = sht31DefaultI2Caddress]) {
+  AHTX0(this.i2c, [this.i2cAddress = ahtx0DefaultI2Caddress]) {
     reset();
     _calibrate();
   }
