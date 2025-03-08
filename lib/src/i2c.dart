@@ -8,6 +8,7 @@
 // https://github.com/dart-lang/samples/tree/master/ffi
 
 import 'dart:ffi';
+import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
 
@@ -433,6 +434,21 @@ class I2C extends IsolateAPI {
     var result = transfer(data);
     result.dispose();
   }
+
+  void writeUint8Reg(int address, int register, Uint8List byteData,
+      [BitOrder order = BitOrder.msbLast,
+      RegisterWidth width = RegisterWidth.bits8]) {
+    var data = <I2Cmsg>[];
+    var reg = _adjustRegister(register, order, width);
+    var bData = Uint8List(reg.length + byteData.length);
+    bData.addAll(reg);
+    bData.addAll(byteData);
+    data.add(I2Cmsg.buffer(address, [], bData));
+    var result = transfer(data);
+    result.dispose();
+  }
+
+  // Uint8List
 
   /// Writes [byteData] to the I2C device with the [address].
   ///

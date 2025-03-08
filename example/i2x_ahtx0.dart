@@ -4,28 +4,21 @@
 
 import 'package:dart_periphery/dart_periphery.dart';
 
-/// SHT4x - temperature and humidity sensor
+//// AHT10, AHT20 temperature and humidity sensor.
 ///
-/// https://wiki.seeedstudio.com/Grove-SHT4x
-///
-void main() {
+/// https://botland.store/multifunctional-sensors/17199-aht20-temperature-and-humidity-sensor-i2c-adafruit-4566-5904422364311.html
+void main(List<String> args) {
   // Select the right I2C bus number /dev/i2c-?
   // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian), 4 BPI-F3
   var i2c = I2C(1);
+
   try {
     print("dart_periphery Version: $dartPeripheryVersion");
     print("c-periphery Version   : ${getCperipheryVersion()}");
     print('I2C info: ${i2c.getI2Cinfo()}');
-    print("SHT4x sensor");
-
-    var sht4x = SHT4x(i2c);
-    print('Serial number: ${sht4x.getSerialNumber()}');
-    print("Current mode ${sht4x.getMode().getInfo()}");
-
-    // default mode - set other [Mode] for e.g. heating
-    // sht4x.setMode(Mode.noHeatHighPrecision);
-
-    var v = sht4x.getValues();
+    print("SDC30 sensor");
+    var athx0 = AHTX0(i2c);
+    var v = athx0.getValues();
     print('SHT4x [t°] ${v.temperature.toStringAsFixed(2)}');
     print('SHT4x [%°] ${v.humidity.toStringAsFixed(2)}');
   } finally {

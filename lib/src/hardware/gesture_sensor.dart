@@ -20,7 +20,7 @@ const int paj7620AddrBase = 0x00;
 // REGISTER BANK SELECT
 const int paj7620RegisterBankSel = (paj7620AddrBase + 0xEF); //W
 
-/// Default I2C address of the [PAj7620] gesture sensor
+/// Default I2C address of the PAj7620 gesture sensor
 const int paj7620DefaultI2Caddress = 0x73;
 
 // REGISTER BANK 0
@@ -88,7 +88,7 @@ class GestureSensorException implements Exception {
   GestureSensorException(this.errorMsg);
 }
 
-/// Gesture sensor [PAj7620] directions
+/// Gesture sensor PAj7620 directions
 enum Gesture {
   nothing,
   forward,

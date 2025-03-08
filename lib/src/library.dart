@@ -59,7 +59,7 @@ void setCustomLibrary(String absolutePath) {
   _peripheryLibPath = absolutePath;
 }
 
-/// Sets the tmp directory for the extraction of the libperiphery.so file.
+/// Sets the tmp directory for the extraction of the `libperiphery.so` file.
 void setTempDirectory(String tmpDir) {
   _tmpDirectory = tmpDir;
 }

@@ -3,7 +3,7 @@
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
 
-[![pub package](https://img.shields.io/badge/pub-v0.9.17-orange)](https://pub.dartlang.org/packages/dart_periphery)
+[![pub package](https://img.shields.io/badge/pub-v0.9.18-orange)](https://pub.dartlang.org/packages/dart_periphery)
 [![Pub Points](https://img.shields.io/pub/points/dart_periphery)](https://pub.dev/packages/dart_periphery/score)
 [![All Contributors](https://img.shields.io/github/contributors/pezi/dart_periphery)](https://github.com/pezi/dart_periphery/graphs/contributors)
 [![BSD License](https://img.shields.io/github/license/pezi/dart_periphery)](https://opensource.org/license/bsd-3-clause)
@@ -581,6 +581,51 @@ List<String> getFlutterPiArgs();
 returns the command line parameter list of the `flutter-pi` command. The last parameter contains 
 the asset directory.
 
+## 🔬 Tested SoC hardware
+
+* [Raspberry Pi 3 Model B](https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/), OS: [Raspberry Pi OS](https://www.raspberrypi.com/software/)
+* [Raspberry Pi Zero 2 W](https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/), OS: [Raspberry Pi OS](https://www.raspberrypi.com/software/)
+* [NanoPi](https://wiki.friendlyelec.com/wiki/index.php/NanoPi_NEO) with a Allwinner H3, Quad-core 32-bit CPU, OS: [Armbian](https://www.armbian.com/nanopi-neo-core-2-lts/)
+* [NanoPi M1](https://wiki.friendlyelec.com/wiki/index.php/NanoPi_M1) with a Allwinner H3, Quad-core 32-bit CPU: OS [Armbian](https://www.armbian.com/nanopi-m1/)
+* [NanoPi Neo2](https://wiki.friendlyelec.com/wiki/index.php/NanoPi_NEO2) with a Allwinner H5, Quad-core 64-bit CPU, OS: [Armbian](https://www.armbian.com/nanopi-neo-2/)
+* [Banana Pi BPI-M1](https://en.wikipedia.org/wiki/Banana_Pi#Banana_Pi_BPI-M1) with a Allwinner A20 Dual-core, OS: [Armbian](https://www.armbian.com/bananapi/)
+* [Banana Pi BPI-F3 16GB](https://wiki.banana-pi.org/Banana_Pi_BPI-F3) with a [SpacemiT K1 8 core RISC-V](https://docs.banana-pi.org/en/BPI-F3/SpacemiT_K1), OS: [Armbian Dev](https://www.armbian.com/bananapi-f3), [Wiki](https://github.com/pezi/dart_periphery/wiki/BPI_F3) article
+
+
+## 🖥 Supported devices (sensors, actuators, extensions hats and displays)
+
+* [SGP30](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sgp30.dart): tVOC and eCO2 Gas Sensor
+* [BME280](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme280.dart): Temperature, humidity and pressure sensor.
+* [BME680](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme680.dart): Temperature, humidity pressure and gas (Indoor Airy Quality) sensor.
+* [SHT31](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht31.dart): Temperature and humidity sensor. 
+* [SHT4x](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht4x.dart): Temperature and humidity sensor. 
+* [AHT20](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ahtx0.dart)  Temperature and humidity sensor
+* [CozIR](https://github.com/pezi/dart_periphery/blob/main/example/serial_cozir.dart): CO₂, temperature and humidity sensor.
+* [Grove Gesture](https://github.com/pezi/dart_periphery/blob/main/example/i2c_gesture_sensor.dart): can recognize 9 basic gestures.
+* [MPU-6050 Six-Axis](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mpu6050.dart): (Gyro + Accelerometer) sensor.
+* [MCP9808](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mcp9808.dart): high accuracy temperature sensor.
+* [MLX90615](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mlx90615.dart): digital infrared non-contact temperature sensor.
+* [PCF8591](https://github.com/pezi/dart_periphery/blob/main/example/i2c_pcf8591.dart): ADC+DAC combo 
+* [SDC30](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sdc30.dart): CO₂, temperature and humidity sensor.
+* [SI1145](https://github.com/pezi/dart_periphery/blob/main/example/i2c_si1145.dart) sunlight sensor: visible & IR light, UV index
+* [TSL2591](https://github.com/pezi/dart_periphery/blob/main/example/i2c_tsl2591.dart) light sensor
+* [DS1307/DS3231](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ds1307.dart) real time clock support
+* [VL53L0X](https://github.com/pezi/dart_periphery/blob/main/example/i2c_vl53l0x.dart) Time-of-Flight sensor 
+* [AT24C128](https://github.com/pezi/dart_periphery/blob/main/example/i2c_at24c128.dart) 256 KB EEPROM
+* Analog [Light sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_light_sensor_led.dart)
+* [Button](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_button.dart)
+* [Magnetic switch sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magnetic_switch.dart)
+* [Magnetic hall sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magnetic_hall.dart)
+* [Vibration sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_vibration.dart)
+* [PIR motion sensor ](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_pir_motion.dart)
+* [SSD1306](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ssd1306.dart) 128x64 pixel OLED
+* [SSD1306](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ssd1306) 128x64 pixel OLED with Java bridge for image generation
+* FriendlyElec [NanoHat Hub](https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
+* [Grove Base Hat RaspberryPi](https://www.seeedstudio.com/Grove-Base-Hat-for-Raspberry-Pi.html)
+* [Grove Base Hat RaspberryPi Zero](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi_Zero)
+* [PN532](https://github.com/pezi/dart_periphery/pull/6) NFC Reader Module, Thanks to [UliPrantz](https://github.com/UliPrantz)!
+
+
 ## 🌡 flutter_pi_sensor_tester
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/flutter_sensor_tester.gif "Flutter Sensor Tester")
@@ -611,48 +656,6 @@ This project builds upon the `flutter_pi_sensor_tester` by introducing a client/
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/client_server.png "Client Server")
 
 Currently in its alpha stage, the project is scheduled for release in March 2025.
-
-
-## 🔬 Tested SoC hardware
-
-* [Raspberry Pi 3 Model B](https://www.raspberrypi.org/products/raspberry-pi-3-model-b-plus/), OS: [Raspberry Pi OS](https://www.raspberrypi.com/software/)
-* [Raspberry Pi Zero 2 W](https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/), OS: [Raspberry Pi OS](https://www.raspberrypi.com/software/)
-* [NanoPi](https://wiki.friendlyelec.com/wiki/index.php/NanoPi_NEO) with a Allwinner H3, Quad-core 32-bit CPU, OS: [Armbian](https://www.armbian.com/nanopi-neo-core-2-lts/)
-* [NanoPi M1](https://wiki.friendlyelec.com/wiki/index.php/NanoPi_M1) with a Allwinner H3, Quad-core 32-bit CPU: OS [Armbian](https://www.armbian.com/nanopi-m1/)
-* [NanoPi Neo2](https://wiki.friendlyelec.com/wiki/index.php/NanoPi_NEO2) with a Allwinner H5, Quad-core 64-bit CPU, OS: [Armbian](https://www.armbian.com/nanopi-neo-2/)
-* [Banana Pi BPI-M1](https://en.wikipedia.org/wiki/Banana_Pi#Banana_Pi_BPI-M1) with a Allwinner A20 Dual-core, OS: [Armbian](https://www.armbian.com/bananapi/)
-* [Banana Pi BPI-F3 16GB](https://wiki.banana-pi.org/Banana_Pi_BPI-F3) with a [SpacemiT K1 8 core RISC-V](https://docs.banana-pi.org/en/BPI-F3/SpacemiT_K1), OS: [Armbian Dev](https://www.armbian.com/bananapi-f3), [Wiki](https://github.com/pezi/dart_periphery/wiki/BPI_F3) article
-
-
-## 🖥 Supported devices (sensors, actuators, extensions hats and displays)
-
-* [SGP30](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sgp30.dart): tVOC and eCO2 Gas Sensor
-* [BME280](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme280.dart): Temperature, humidity and pressure sensor.
-* [BME680](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme680.dart): Temperature, humidity pressure and gas (Indoor Airy Quality) sensor.
-* [SHT31](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht31.dart): Temperature and humidity sensor. 
-* [SHT4x](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht4x.dart): Temperature and humidity sensor. 
-* [CozIR](https://github.com/pezi/dart_periphery/blob/main/example/serial_cozir.dart): CO₂, temperature and humidity sensor.
-* [Grove Gesture](https://github.com/pezi/dart_periphery/blob/main/example/i2c_gesture_sensor.dart): can recognize 9 basic gestures.
-* [MPU-6050 Six-Axis](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mpu6050.dart): (Gyro + Accelerometer) sensor.
-* [MCP9808](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mcp9808.dart): high accuracy temperature sensor.
-* [MLX90615](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mlx90615.dart): digital infrared non-contact temperature sensor.
-* [PCF8591](https://github.com/pezi/dart_periphery/blob/main/example/i2c_pcf8591.dart): ADC+DAC combo 
-* [SDC30](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sdc30.dart): CO₂, temperature and humidity sensor.
-* [SI1145](https://github.com/pezi/dart_periphery/blob/main/example/i2c_si1145.dart) sunlight sensor: visible & IR light, UV index
-* [TSL2591](https://github.com/pezi/dart_periphery/blob/main/example/i2c_tsl2591.dart) light sensor
-* [DS1307/DS3231](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ds1307.dart) real time clock support
-* [VL53L0X](https://github.com/pezi/dart_periphery/blob/main/example/i2c_vl53l0x.dart) Time-of-Flight sensor 
-* Analog [Light sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_light_sensor_led.dart)
-* [Button](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_button.dart)
-* [Magnetic switch sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magnetic_switch.dart)
-* [Magnetic hall sensor ](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magnetic_hall.dart)
-* [Vibration sensor ](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_vibration.dart)
-* [PIR motion sensor ](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_pir_motion.dart)
-* FriendlyElec [NanoHat Hub](https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
-* [Grove Base Hat RaspberryPi](https://www.seeedstudio.com/Grove-Base-Hat-for-Raspberry-Pi.html)
-* [Grove Base Hat RaspberryPi Zero](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi_Zero)
-* [PN532](https://github.com/pezi/dart_periphery/pull/6) NFC Reader Module, Thanks to [UliPrantz](https://github.com/UliPrantz)!
-* SSD1306 OLED (in progress)
 
 ## 📋 Test matrix
 

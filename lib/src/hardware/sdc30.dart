@@ -61,7 +61,7 @@ class SDC30result {
 
   @override
   String toString() =>
-      'BME280result [CO2=$co2,$temperature, humidity=$humidity]';
+      'SDC30result [CO2=$co2,$temperature, humidity=$humidity]';
 
   /// Returns a [SDC30result] as a JSON string. [fractionDigits] controls the number fraction digits.
   String toJSON([int fractionDigits = 2]) {
@@ -192,7 +192,7 @@ class SDC30 {
 
   /// Returns a [SDC30result] with CO₂, temperature, and humidity.
   ///
-  /// Check [SDC30result.isDataAvailable]  to determine if data is available.
+  /// Check [SDC30result.isDataAvailable] to determine if data is available.
   SDC30result getValues() {
     if (!isDataAvailable()) {
       return SDC30result.empty();

@@ -78,7 +78,7 @@ int crc8(List<int> data) {
 
 /// Checks data chunks according following schema: 2 bytes data and 1 byte crc
 ///
-/// [byte<sub>1</sub>,byte<sub>2</sub>,crc,...]
+/// byte₁,byte₂,crc,...
 bool checkCRC(List<int> data) {
   if (data.length % 3 != 0) {
     return false;

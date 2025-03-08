@@ -75,6 +75,8 @@ export 'src/hardware/sgp30.dart'
         FeatureSetVersion,
         SGP30exception,
         sgp30DefaultI2Caddress;
+export 'src/hardware/ahtx0.dart'
+    show AHTX0, AHTX0exception, AHTX0command, ahtx0DefaultI2Caddress;
 export 'src/hardware/sht31.dart'
     show
         SHT31,
@@ -83,7 +85,8 @@ export 'src/hardware/sht31.dart'
         sht31AlternativeI2Caddress,
         sht31DefaultI2Caddress;
 export 'src/hardware/sht4x.dart'
-    show SHT4x, SHT4xresult, SHT4xexception, sht4xDefaultI2Caddress, Mode;
+    show SHT4x, SHT4xresult, SHT4xException, sht4xDefaultI2Caddress, Mode;
+export 'src/hardware/ssd1306.dart' show SSD1306, ssd1306DefaultI2Caddress;
 export 'src/hardware/mlx90615.dart'
     show MLX90615, MLX90615result, MLX90615exception, mlx90615DefaultI2Caddress;
 export 'src/hardware/ds1307.dart'
@@ -94,7 +97,7 @@ export 'src/hardware/mcp9808.dart'
 export 'src/hardware/sdc30.dart'
     show SDC30, SDC30exception, SDC30result, sdc30DefaultI2Caddress;
 export 'src/hardware/vl53l0x.dart'
-    show VL53L0X, VL53L0Xexception, vl53L0xDefaultI2Caddress;
+    show VL53L0X, VL53L0Xexception, VL53L0Xresult, vl53L0xDefaultI2Caddress;
 export 'src/hardware/si1145.dart'
     show
         SI1145,
@@ -124,7 +127,9 @@ export 'src/i2c.dart'
         I2Cmsg,
         I2CerrorCode,
         I2Cexception,
-        I2C;
+        I2C,
+        RegisterWidth;
+
 export 'src/led.dart' show Led, LedException, LedErrorCode;
 export 'src/library.dart'
     show

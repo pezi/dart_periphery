@@ -1,4 +1,4 @@
-// Copyright (c) 2022, the Dart project authors.  Please see the AUTHORS file
+// Copyright (c) 2025, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 import 'dart:io';
@@ -45,8 +45,8 @@ enum Mode {
 }
 
 /// [SHT4x] exception
-class SHT4xexception implements Exception {
-  SHT4xexception(this.errorMsg);
+class SHT4xException implements Exception {
+  SHT4xException(this.errorMsg);
   final String errorMsg;
   @override
   String toString() => errorMsg;
@@ -71,7 +71,7 @@ class SHT4xresult {
 /// Sensirion SHT4x temperature and humidity sensor with a high accuracy.
 ///
 /// See for more
-/// * [SHT31 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht4x.dart)
+/// * [SHT4x example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht4x.dart)
 /// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/sht4x.dart)
 /// * [Datasheet](https://sensirion.com/media/documents/33FD6951/662A593A/HT_DS_Datasheet_SHT4x.pdf)
 class SHT4x {
@@ -105,7 +105,7 @@ class SHT4x {
     sleep(Duration(milliseconds: 1));
     var data = i2c.readBytes(i2cAddress, 6);
     if (!checkCRC(data)) {
-      throw SHT4xexception('CRC8 error');
+      throw SHT4xException('CRC8 error');
     }
     return (data[0] & 0xff) << 24 |
         (data[1] & 0xff) << 16 |

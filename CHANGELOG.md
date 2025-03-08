@@ -1,3 +1,11 @@
+## 0.9.18
+* Add [AHT20](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ahtx0.dart)  temperature and humidity sensor
+* Add I2C [AT24C128](https://github.com/pezi/dart_periphery/blob/main/example/i2c_at24c128.dart)  256 KB EEPROM
+* Make I2C enum `RegisterWidth` (8/16 bits) public, needed for AT24C128 EEPROM 16 bit addresses  
+* Add [SSD1306](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ssd1306.dart) 128x64 pixel OLED
+* Add Java bridge for [SSD1306](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ssd1306) 128x64 pixel OLED to simplify image generation. 
+* Update c-periphery to `v2.4.3`
+
 ## 0.9.17
 * Add SHT4x temperature and humidity sensor  
 * Rework VL53L0X Time-of-Flight code
@@ -47,8 +55,8 @@
 
 * Improve extension hat support for [Nano Hat](https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub), [Grove Base Hat RaspberryPi](https://www.seeedstudio.com/Grove-Base-Hat-for-Raspberry-Pi.html) and [Grove Base Hat RaspberryPi Zero](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi_Zero)
 * Add [Light sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_light_sensor.dart) example
-* Add [Magenetic switch sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magentic_switch.dart) example
-* Add [Magenetic hall sensor ](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magentic_hall.dart) example
+* Add [Magnetic switch sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magnetic_switch.dart) example
+* Add [Magnetic hall sensor ](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_magnetic_hall.dart) example
 * Add [Vibration sensor ](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_vibration.dart) example
 
 ## 0.9.10
