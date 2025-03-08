@@ -1,10 +1,10 @@
 ## 0.9.18
-* Add AHT20 temperature and humidity sensor
-* Add I2C AT24C128 256 KB EEPROM
-* Export missing I2C enum RegisterWidth (8/16 bit), needed for AT24C128 EEPROM 16 bit addresses  
-* Add SSD1306 OLED
-* Add Dart-Java-Bridge example to generate graphics for the SSD1306 OLED 
-* Update c-periphery to v2.4.3
+* Add [AHT20](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ahtx0.dart)  temperature and humidity sensor
+* Add I2C [AT24C128](https://github.com/pezi/dart_periphery/blob/main/example/i2c_at24c128.dart)  256 KB EEPROM
+* Make I2C enum `RegisterWidth` (8/16 bits) public, needed for AT24C128 EEPROM 16 bit addresses  
+* Add [SSD1306](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ssd1306.dart) 128x64 pixel OLED
+* Add Java bridge for [SSD1306](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ssd1306) 128x64 pixel OLED to simplify image generation. 
+* Update c-periphery to `v2.4.3`
 
 ## 0.9.17
 * Add SHT4x temperature and humidity sensor  

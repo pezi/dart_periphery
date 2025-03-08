@@ -61,7 +61,7 @@ class SDC30result {
 
   @override
   String toString() =>
-      'BME280result [CO2=$co2,$temperature, humidity=$humidity]';
+      'SDC30result [CO2=$co2,$temperature, humidity=$humidity]';
 
   /// Returns a [SDC30result] as a JSON string. [fractionDigits] controls the number fraction digits.
   String toJSON([int fractionDigits = 2]) {

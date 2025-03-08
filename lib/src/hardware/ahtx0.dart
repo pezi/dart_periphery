@@ -20,8 +20,8 @@ enum AHTX0command {
   statusBusy(0x80),
   statusCalibrated(0x08);
 
-  final int command;
-  const AHTX0command(this.command);
+  final int cmd;
+  const AHTX0command(this.cmd);
 }
 
 /// [AHTX0] exception
@@ -62,13 +62,63 @@ class AHTX0 {
   /// the optional [i2cAddress].
   AHTX0(this.i2c, [this.i2cAddress = sht31DefaultI2Caddress]) {
     reset();
+    _calibrate();
   }
 
   /// Resets the sensor.
   void reset() {
-    i2c.writeByte(i2cAddress, AHTX0command.softReset.command);
+    i2c.writeByte(i2cAddress, AHTX0command.softReset.cmd);
     sleep(Duration(milliseconds: 20));
   }
 
-  // bool cl
+  int _getStatus() {
+    return i2c.readByte(i2cAddress);
+  }
+
+  void _calibrate() {
+    bool calibarionFailed = false;
+    // Newer AHT20's may not succeed with old command, so wrapping in try/except
+    try {
+      i2c.writeBytesReg(
+          i2cAddress, AHTX0command.aht10Calibrate.cmd, [0x08, 0x00]);
+    } on Exception {
+      calibarionFailed = true;
+    }
+    if (calibarionFailed) {
+      sleep(Duration(milliseconds: 10));
+      i2c.writeBytesReg(
+          i2cAddress, AHTX0command.aht20Calibrate.cmd, [0x08, 0x00]);
+    }
+    int start = DateTime.now().millisecond;
+    while (_getStatus() & AHTX0command.statusBusy.cmd != 0) {
+      if (DateTime.now().millisecond - start > 3000) {
+        throw AHTX0exception(
+            "Sensor remained busy 3 seconds. Could not be calibrated");
+      }
+      sleep(Duration(milliseconds: 10));
+    }
+    if (_getStatus() & AHTX0command.statusCalibrated.cmd == 0) {
+      throw AHTX0exception("Could not calibrate sensor");
+    }
+  }
+
+  /// Reads a [AHTX0result] from the sensor.
+  AHTX0result getValues() {
+    i2c.writeBytesReg(
+        i2cAddress, AHTX0command.triggerReading.cmd, [0x08, 0x00]);
+    while (_getStatus() & AHTX0command.statusBusy.cmd == 1) {
+      sleep(Duration(milliseconds: 10));
+    }
+    var data = i2c.readBytes(i2cAddress, 6);
+    if (!checkCRC(data)) {
+      throw AHTX0exception("CRC8 error");
+    }
+    var humidity =
+        ((data[1] << 12) | (data[2] << 4) | (data[3] >> 4)) * 100.0 / 0x100000;
+    var temperature = (((data[3] & 0xF) << 16) | (data[4] << 8) | data[5]) *
+            200.0 /
+            0x100000 -
+        50;
+    return AHTX0result(temperature, humidity);
+  }
 }

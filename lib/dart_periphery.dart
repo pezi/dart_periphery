@@ -75,6 +75,8 @@ export 'src/hardware/sgp30.dart'
         FeatureSetVersion,
         SGP30exception,
         sgp30DefaultI2Caddress;
+export 'src/hardware/ahtx0.dart'
+    show AHTX0, AHTX0exception, AHTX0command, ahtx0DefaultI2Caddress;
 export 'src/hardware/sht31.dart'
     show
         SHT31,

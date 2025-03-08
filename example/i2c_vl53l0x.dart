@@ -16,40 +16,44 @@ void main(List<String> args) {
   // Select the right I2C bus number /dev/i2c-?
   // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian), 4 BPI-F3
   var i2c = I2C(1);
-  var v = VL53L0X(i2c);
-  if (args.length != 1) {
-    print("missing parameter: simple or continous");
-  }
-  if (args.first == 'simple') {
-    print("Simple mode");
-    while (true) {
-      print("Distance [mm]: ${v.getRange()}");
-      sleep(Duration(seconds: 1));
+  try {
+    var v = VL53L0X(i2c);
+    if (args.length != 1) {
+      print("missing parameter: simple or continous");
     }
-  } else {
-    print("Continuous mode");
-    // Optionally adjust the measurement timing budget to change speed and accuracy.
-    // See the example here for more details:
-    //   https://github.com/pololu/vl53l0x-arduino/blob/master/examples/Single/Single.ino
-    // For example a higher speed but less accurate timing budget of 20ms:
-    // vl53.measurement_timing_budget = 20000
-    // Or a slower but more accurate timing budget of 200ms:
-    v.setMeasurementTimingBudget(200000);
-    v.startContinuous();
-    try {
+    if (args.first == 'simple') {
+      print("Simple mode");
       while (true) {
-        // try to adjust the sleep time (simulating program doing something else)
-        // and see how fast the sensor returns the range
-        sleep(Duration(microseconds: 100));
-        var time = DateTime.now().millisecondsSinceEpoch;
-        var range = v.getRange();
-        var div = DateTime.now().millisecondsSinceEpoch - time;
-        print("Range: $range mm $div ms");
+        print("Distance [mm]: ${v.getRange()}");
+        sleep(Duration(seconds: 1));
       }
-    } on Exception catch (e) {
-      print('Exception details:\n $e');
-    } finally {
+    } else {
+      print("Continuous mode");
+      // Optionally adjust the measurement timing budget to change speed and accuracy.
+      // See the example here for more details:
+      //   https://github.com/pololu/vl53l0x-arduino/blob/master/examples/Single/Single.ino
+      // For example a higher speed but less accurate timing budget of 20ms:
+      // vl53.measurement_timing_budget = 20000
+      // Or a slower but more accurate timing budget of 200ms:
+      v.setMeasurementTimingBudget(200000);
       v.startContinuous();
+      try {
+        while (true) {
+          // try to adjust the sleep time (simulating program doing something else)
+          // and see how fast the sensor returns the range
+          sleep(Duration(microseconds: 100));
+          var time = DateTime.now().millisecondsSinceEpoch;
+          var range = v.getRange();
+          var div = DateTime.now().millisecondsSinceEpoch - time;
+          print("Range: $range mm $div ms");
+        }
+      } on Exception catch (e) {
+        print('Exception details:\n $e');
+      } finally {
+        v.startContinuous();
+      }
     }
+  } finally {
+    i2c.dispose();
   }
 }
