@@ -21,16 +21,15 @@ void main(List<String> args) {
     print('I2C info: ${i2c.getI2Cinfo()}');
     print("AHT1X sensor");
     var athx0 = AHTX0(i2c);
-    late AHTX0result v;
     while (true) {
       try {
-        v = athx0.getValues();
+        var v = athx0.getValues();
+        print('AHT1X [t°] ${v.temperature.toStringAsFixed(2)}');
+        print('AHT1X [%°] ${v.humidity.toStringAsFixed(2)}');
+        sleep(Duration(seconds: 5));
       } on Exception catch (e) {
         print(e.toString());
       }
-      print('AHT1X [t°] ${v.temperature.toStringAsFixed(2)}');
-      print('AHT1X [%°] ${v.humidity.toStringAsFixed(2)}');
-      sleep(Duration(seconds: 5));
     }
   } finally {
     i2c.dispose();
