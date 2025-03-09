@@ -3,7 +3,7 @@
 * Add I2C [AT24C128](https://github.com/pezi/dart_periphery/blob/main/example/i2c_at24c128.dart)  256 KB EEPROM
 * Make I2C enum `RegisterWidth` (8/16 bits) public, needed for AT24C128 EEPROM 16 bit addresses  
 * Add [SSD1306](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ssd1306.dart) 128x64 pixel OLED
-* Add Java bridge for [SSD1306](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ssd1306) 128x64 pixel OLED to simplify image generation. 
+* Add Java bridge for [SSD1306](https://github.com/pezi/dart_periphery/tree/main/example/i2c_ssd1306_java) 128x64 pixel OLED to simplify image generation. 
 * Update c-periphery to `v2.4.3`
 
 ## 0.9.17
