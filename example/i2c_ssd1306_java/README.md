@@ -57,13 +57,13 @@ java -cp ./lib/bsh-2.0b4.jar at/flutterdev/EmojiBMPGenerator.java
 
 ### Test the C layer - main method with test code
 
-Linux:  
+macOS:   
 
 ```bash
 gcc -o calljava -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/darwin" jvm_bridge.c -L"$JAVA_HOME/lib/server" -ljvm
 ```
 
-macOS: 
+Linux:
 
 ```bash
 gcc -o calljava -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" calljava.c -L"$JAVA_HOME/lib/server" -ljvm
