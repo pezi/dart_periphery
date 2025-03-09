@@ -9,8 +9,10 @@ import 'dart:io';
 void main() {
   var pwm = PWM(0, 0);
   try {
+    print('Dart version: ${Platform.version}');
     print("dart_periphery Version: $dartPeripheryVersion");
     print("c-periphery Version   : ${getCperipheryVersion()}");
+    print('PWM info: ${pwm.getPWMinfo()}');
     print("PWM demo");
 
     print(pwm.getPWMinfo());

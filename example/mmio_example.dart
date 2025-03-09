@@ -54,6 +54,7 @@ void main() {
   var mmio = MMIO.advanced(0, blockSize, '/dev/gpiomem');
   var gpio = MemMappedGPIO(mmio);
   try {
+    print('Dart version: ${Platform.version}');
     print("dart_periphery Version: $dartPeripheryVersion");
     print("c-periphery Version   : ${getCperipheryVersion()}");
     print("MMIO demo");

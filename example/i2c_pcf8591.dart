@@ -27,12 +27,13 @@ void main(List<String> args) {
   } else {
     var i2c = I2C(1);
     try {
-      var pcf = PCF8591(i2c);
-
+      print('Dart version: ${Platform.version}');
       print("dart_periphery Version: $dartPeripheryVersion");
       print("c-periphery Version   : ${getCperipheryVersion()}");
       print('I2C info: ${i2c.getI2Cinfo()}');
       print("MLX90615 sensor");
+
+      var pcf = PCF8591(i2c);
 
       if (args[0] == "write") {
         pcf.setDAC(true);

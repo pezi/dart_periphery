@@ -23,6 +23,7 @@ import 'package:dart_periphery/dart_periphery.dart';
 void main() {
   var s = Serial('/dev/serial0', Baudrate.b9600);
   try {
+    print('Dart version: ${Platform.version}');
     print("dart_periphery Version: $dartPeripheryVersion");
     print("c-periphery Version   : ${getCperipheryVersion()}");
     print('Serial interface info: ${s.getSerialInfo()}');

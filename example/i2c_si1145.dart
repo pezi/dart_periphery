@@ -2,6 +2,8 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'dart:io';
+
 import 'package:dart_periphery/dart_periphery.dart';
 
 /// SI1145 - visible & IR light and UV index sensor
@@ -12,6 +14,7 @@ void main() {
   // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian), 4 BPI-F3
   var i2c = I2C(1);
   try {
+    print('Dart version: ${Platform.version}');
     print("dart_periphery Version: $dartPeripheryVersion");
     print("c-periphery Version   : ${getCperipheryVersion()}");
     print('I2C info: ${i2c.getI2Cinfo()}');

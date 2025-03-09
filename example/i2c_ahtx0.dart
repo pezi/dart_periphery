@@ -15,6 +15,7 @@ void main(List<String> args) {
   var i2c = I2C(1);
 
   try {
+    print('Dart version: ${Platform.version}');
     print("dart_periphery Version: $dartPeripheryVersion");
     print("c-periphery Version   : ${getCperipheryVersion()}");
     print('I2C info: ${i2c.getI2Cinfo()}');
