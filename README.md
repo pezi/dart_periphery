@@ -16,7 +16,7 @@ The repository’s [Wiki](https://github.com/pezi/dart_periphery/wiki) is now en
 
 ## 📖 Introduction
 
-**dart_periphery** is a Dart port of the native [c-periphery library](https://github.com/vsergeev/c-periphery) (v2.4.2) 
+**dart_periphery** is a Dart port of the native [c-periphery library](https://github.com/vsergeev/c-periphery) (v2.4.3) 
 for Linux Peripheral I/O (GPIO, LED, PWM, SPI, I2C, MMIO and Serial peripheral I/O). This package 
 is designed for System on Chips (SoCs) such as Raspberry Pi, NanoPi, Banana Pi, and others.
 
@@ -599,7 +599,7 @@ the asset directory.
 * [BME680](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme680.dart): Temperature, humidity pressure and gas (Indoor Airy Quality) sensor.
 * [SHT31](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht31.dart): Temperature and humidity sensor. 
 * [SHT4x](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht4x.dart): Temperature and humidity sensor. 
-* [AHT20](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ahtx0.dart)  Temperature and humidity sensor
+* [AHT10/AHT20](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ahtx0.dart)  Temperature and humidity sensor
 * [CozIR](https://github.com/pezi/dart_periphery/blob/main/example/serial_cozir.dart): CO₂, temperature and humidity sensor.
 * [Grove Gesture](https://github.com/pezi/dart_periphery/blob/main/example/i2c_gesture_sensor.dart): can recognize 9 basic gestures.
 * [MPU-6050 Six-Axis](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mpu6050.dart): (Gyro + Accelerometer) sensor.
