@@ -1,6 +1,6 @@
 ## 0.9.19
 * Add GPS Air530
-* Update Dart Version to 3.7.1
+* Update Dart Version to `3.8.1`
   
 ## 0.9.18
 * Add [AHT20](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ahtx0.dart) temperature and humidity sensor
