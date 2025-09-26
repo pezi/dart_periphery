@@ -533,7 +533,7 @@ class GroveBaseHat extends IsolateAPI {
 
   /// Reads the raw data of ADC unit, with 12 bits resolution
   /// from the [channel] 0 - 7 and
-  /// returns a ADC result in the range [0 - 4095].
+  /// returns a ADC result in the range \[0 - 4095\].
   int readADCraw(int channel) {
     _checkChannel(channel);
     return _read16BitRegister(0x10 + channel);

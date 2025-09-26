@@ -79,7 +79,7 @@ const int gesClockwiseFlag = 1 << 6;
 const int gesCountClockwiseFlag = 1 << 7;
 const int gesWaveFlag = 1 << 0;
 
-/// [PAj7620] exception
+/// [GestureSensor] exception
 class GestureSensorException implements Exception {
   final String errorMsg;
   @override

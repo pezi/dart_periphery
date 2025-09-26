@@ -192,7 +192,7 @@ class SDC30 {
 
   /// Returns a [SDC30result] with CO₂, temperature, and humidity.
   ///
-  /// Check [SDC30result.isDataAvailable] to determine if data is available.
+  /// Check [SDC30.isDataAvailable] to determine if data is available.
   SDC30result getValues() {
     if (!isDataAvailable()) {
       return SDC30result.empty();
