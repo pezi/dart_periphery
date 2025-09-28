@@ -21,6 +21,7 @@ import 'package:dart_periphery/dart_periphery.dart';
 /// [COZIR CO2 Sensor](https://co2meters.com/Documentation/Manuals/Manual_GC_0024_0025_0026_Revised8.pdf)
 ///
 void main() {
+  // RasperyPi (for Armbian use e.g. /dev/ttyS1)
   var s = Serial('/dev/serial0', Baudrate.b9600);
   try {
     print('Dart version: ${Platform.version}');
