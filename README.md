@@ -10,8 +10,6 @@
 
 ## 📣 Important hints
 
-Added RISC-V support, thanks to [Ali Tariq](https://github.com/alitariq4589) from [10xEngineers](https://10xEngineers.ai) for providing remote access to a Banana Pi BPI-F3 16GB on [Cloud-V](https://cloud-v.co), which enabled building the RISC-V variant of the c-periphery library.
-
 The repository’s [Wiki](https://github.com/pezi/dart_periphery/wiki) is now enabled.
 
 ## 📖 Introduction
@@ -422,14 +420,14 @@ cd ~
 ### arm
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.9.2/sdk/dartsdk-linux-arm-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.9.3/sdk/dartsdk-linux-arm-release.zip
 unzip dartsdk-linux-arm-release.zip
 ```
 
 ### arm64
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.9.2/sdk/dartsdk-linux-arm64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.9.3/sdk/dartsdk-linux-arm64-release.zip
 unzip dartsdk-linux-arm64-release.zip
 ```
 
@@ -445,14 +443,14 @@ unzip dartsdk-linux-ia32-release.zip
 ### X64
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.9.2/sdk/dartsdk-linux-x64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.9.3/sdk/dartsdk-linux-x64-release.zip
 unzip dartsdk-linux-x64-release.zip
 ```
 
 ### RISC-V (RV64GC)
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.9.2/sdk/dartsdk-linux-riscv64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.9.3/sdk/dartsdk-linux-riscv64-release.zip
 unzip dartsdk-linux-riscv64-release.zip
 ```
 
@@ -483,11 +481,11 @@ source ~/.profile
 
 after editing to apply the changes.
 
-Test the installation
+Test the installation 
 
 ``` bash
  dart --version
-Dart SDK version: 3.9.2 (stable) (Wed Aug 27 03:49:40 2025 -0700) on "linux_arm64"
+Dart SDK version: 3.9.3 (stable) (Tue Sep 9 12:02:51 2025 -0700) on "linux_arm64"
 ```
 
 ## 📚 Native libraries

@@ -7,7 +7,7 @@
 // https://github.com/microsoft/IoT-For-Beginners/blob/main/3-transport/lessons/1-location-tracking/pi-gps-sensor.md
 // https://simcom.ee/documents/SIM28/SIM28%40SIM68R%40SIM68V_NMEA%20Messages%20Specification_V1.00.pdf  - page 10
 
-import 'dart:io';
+
 import 'package:dart_periphery/dart_periphery.dart';
 
 const gpsData = '\$GPGGA';
