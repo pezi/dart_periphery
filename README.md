@@ -594,6 +594,7 @@ the asset directory.
 
 ## 🖥 Supported devices (sensors, actuators, extensions hats and displays)
 
+* [Air530](https://github.com/pezi/dart_periphery/blob/main/example/serial_air530.dart) GPS sensor
 * [SGP30](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sgp30.dart): tVOC and eCO2 Gas Sensor
 * [BME280](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme280.dart): Temperature, humidity and pressure sensor.
 * [BME680](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme680.dart): Temperature, humidity pressure and gas (Indoor Airy Quality) sensor.
