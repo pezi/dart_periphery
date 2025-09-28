@@ -347,7 +347,7 @@ class MMIO extends IsolateAPI {
   int operator [](int i) => read32(i);
 
   /// Fast access for [MMIO.write32]
-  operator []=(int i, int value) => write32(i, value); // set
+  void operator []=(int i, int value) => write32(i, value);
 
   void _checkStatus() {
     if (_invalid) {
