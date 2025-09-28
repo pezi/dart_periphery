@@ -1,5 +1,5 @@
 ## 0.9.19
-* Add GPS Air530
+* Add GPS [Air530](https://github.com/pezi/dart_periphery/blob/ps/0.9.19/example/serial_air530.dart)
 * Update Dart Version to `3.9.3`
   
 ## 0.9.18
@@ -23,7 +23,7 @@
 
 ## 0.9.15
 
-* Add DS1307/DS3231 real time clock support
+* Add [DS1307/DS3231](https://github.com/pezi/dart_periphery/blob/ps/0.9.19/example/i2c_ds1307.dart) real time clock support
 * Set Linux system time - `bool setLinuxLocalTime(DateTime dt)`
 * PCF8591 8-bit A/D and D/A converter tested
 * Update to Dart 3.6.2
