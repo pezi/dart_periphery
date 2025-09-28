@@ -85,7 +85,7 @@ class NmeaParser {
                 lat: gllFix.lat,
                 lon: gllFix.lon,
                 msl: null,
-                utc: gllFix!.utc,
+                utc: gllFix.utc,
                 valid: true)
             : const GnssFix(valid: false));
   }
