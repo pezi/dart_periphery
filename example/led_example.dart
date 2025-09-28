@@ -10,6 +10,7 @@ void main() {
   /// Nano Pi power led - see 'ls /sys/class/leds/'
   var led = Led('nanopi:red:pwr');
   try {
+    print('Dart version: ${Platform.version}');
     print("dart_periphery Version: $dartPeripheryVersion");
     print("c-periphery Version   : ${getCperipheryVersion()}\n");
     print('Led handle: ${led.getLedInfo()}');

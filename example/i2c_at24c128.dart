@@ -18,6 +18,11 @@ void main() {
   var defaultAT24C128address = 0x50;
 
   var i2c = I2C(1);
+
+  print('Dart version: ${Platform.version}');
+  print("dart_periphery Version: $dartPeripheryVersion");
+  print("c-periphery Version   : ${getCperipheryVersion()}");
+  print('I2C info: ${i2c.getI2Cinfo()}');
   try {
     var data = "The quick brown fox jumps over the lazy dog";
     // for ASCII data you can use data.codeUnits instead

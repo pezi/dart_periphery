@@ -2,6 +2,8 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'dart:io';
+
 import 'package:dart_periphery/dart_periphery.dart';
 
 /// BME280 - high-precision, low-power combined humidity, pressure, and
@@ -12,6 +14,7 @@ import 'package:dart_periphery/dart_periphery.dart';
 void main() {
   var spi = SPI(0, 0, SPImode.mode0, 1000000);
   try {
+    print('Dart version: ${Platform.version}');
     print("dart_periphery Version: $dartPeripheryVersion");
     print("c-periphery Version   : ${getCperipheryVersion()}");
     print('SPI info: ${spi.getSPIinfo()}');

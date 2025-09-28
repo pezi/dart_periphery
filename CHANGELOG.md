@@ -1,25 +1,29 @@
+## 0.9.19
+* Add GPS [Air530](https://github.com/pezi/dart_periphery/blob/ps/0.9.19/example/serial_air530.dart)
+* Update Dart Version to `3.9.3`
+  
 ## 0.9.18
-* Add [AHT20](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ahtx0.dart)  temperature and humidity sensor
-* Add I2C [AT24C128](https://github.com/pezi/dart_periphery/blob/main/example/i2c_at24c128.dart)  256 KB EEPROM
-* Make I2C enum `RegisterWidth` (8/16 bits) public, needed for AT24C128 EEPROM 16 bit addresses  
+* Add [AHT20](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ahtx0.dart) temperature and humidity sensor
+* Add I2C [AT24C128](https://github.com/pezi/dart_periphery/blob/main/example/i2c_at24c128.dart) 256 KB EEPROM
+* Make I2C enum `RegisterWidth` (8/16 bits) public, needed for [AT24C128](https://github.com/pezi/dart_periphery/blob/main/example/i2c_at24c128.dart) EEPROM 16 bit addresses  
 * Add [SSD1306](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ssd1306.dart) 128x64 pixel OLED
 * Add Java bridge for [SSD1306](https://github.com/pezi/dart_periphery/tree/main/example/i2c_ssd1306_java) 128x64 pixel OLED to simplify image generation. 
 * Update c-periphery to `v2.4.3`
 
 ## 0.9.17
-* Add SHT4x temperature and humidity sensor  
-* Rework VL53L0X Time-of-Flight code
+* Add [SHT4x](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sht4x.dart) temperature and humidity sensor  
+* Rework [VL53L0X](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/vl53l0x.dart) Time-of-Flight code
 
 ## 0.9.16
-* Add VL53L0X Time-of-Flight sensor
-* Update to Dart 3.7.0
+* Add [VL53L0X](https://github.com/pezi/dart_periphery/blob/main/example/i2c_vl53l0x.dart) Time-of-Flight sensor
+* Update to Dart `3.7.0`
 * Add platform package switch `linux` only   
 * Enable project [WIKI](https://github.com/pezi/dart_periphery/wiki)
 * Test dart_periphery on a real [RISC-V Board](https://github.com/pezi/dart_periphery/wiki/BPI_F3)
 
 ## 0.9.15
 
-* Add DS1307/DS3231 real time clock support
+* Add [DS1307/DS3231](https://github.com/pezi/dart_periphery/blob/ps/0.9.19/example/i2c_ds1307.dart) real time clock support
 * Set Linux system time - `bool setLinuxLocalTime(DateTime dt)`
 * PCF8591 8-bit A/D and D/A converter tested
 * Update to Dart 3.6.2

@@ -3,14 +3,12 @@
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
 
-[![pub package](https://img.shields.io/badge/pub-v0.9.18-orange)](https://pub.dartlang.org/packages/dart_periphery)
+[![pub package](https://img.shields.io/badge/pub-v0.9.19-orange)](https://pub.dartlang.org/packages/dart_periphery)
 [![Pub Points](https://img.shields.io/pub/points/dart_periphery)](https://pub.dev/packages/dart_periphery/score)
 [![All Contributors](https://img.shields.io/github/contributors/pezi/dart_periphery)](https://github.com/pezi/dart_periphery/graphs/contributors)
 [![BSD License](https://img.shields.io/github/license/pezi/dart_periphery)](https://opensource.org/license/bsd-3-clause)
 
 ## 📣 Important hints
-
-Added RISC-V support, thanks to [Ali Tariq](https://github.com/alitariq4589) from [10xEngineers](https://10xEngineers.ai) for providing remote access to a Banana Pi BPI-F3 16GB on [Cloud-V](https://cloud-v.co), which enabled building the RISC-V variant of the c-periphery library.
 
 The repository’s [Wiki](https://github.com/pezi/dart_periphery/wiki) is now enabled.
 
@@ -422,35 +420,37 @@ cd ~
 ### arm
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.7.0/sdk/dartsdk-linux-arm-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.9.3/sdk/dartsdk-linux-arm-release.zip
 unzip dartsdk-linux-arm-release.zip
 ```
 
 ### arm64
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.7.0/sdk/dartsdk-linux-arm64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.9.3/sdk/dartsdk-linux-arm64-release.zip
 unzip dartsdk-linux-arm64-release.zip
 ```
 
-### IA32
+### IA32 (deprecated)
+
+Warning Dart 3.7.3 is the last version with ia32 support!
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.7.0/sdk/dartsdk-linux-ia32-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.7.3/sdk/dartsdk-linux-ia32-release.zip
 unzip dartsdk-linux-ia32-release.zip
 ```
 
 ### X64
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.7.0/sdk/dartsdk-linux-x64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.9.3/sdk/dartsdk-linux-x64-release.zip
 unzip dartsdk-linux-x64-release.zip
 ```
 
 ### RISC-V (RV64GC)
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.7.0/sdk/dartsdk-linux-riscv64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.9.3/sdk/dartsdk-linux-riscv64-release.zip
 unzip dartsdk-linux-riscv64-release.zip
 ```
 
@@ -481,11 +481,11 @@ source ~/.profile
 
 after editing to apply the changes.
 
-Test the installation
+Test the installation 
 
 ``` bash
-dart --version
-Dart SDK version: 3.7.0 (stable) (Wed Feb 5 04:53:58 2025 -0800) on "linux_riscv64"
+ dart --version
+Dart SDK version: 3.9.3 (stable) (Tue Sep 9 12:02:51 2025 -0700) on "linux_arm64"
 ```
 
 ## 📚 Native libraries
@@ -619,7 +619,7 @@ the asset directory.
 * [Vibration sensor](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_vibration.dart)
 * [PIR motion sensor ](https://github.com/pezi/dart_periphery/blob/main/example/extension_hats/hat_pir_motion.dart)
 * [SSD1306](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ssd1306.dart) 128x64 pixel OLED
-* [SSD1306](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ssd1306) 128x64 pixel OLED with Java bridge for image generation
+* [SSD1306](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ssd1306_java) 128x64 pixel OLED with Java bridge for image generation
 * FriendlyElec [NanoHat Hub](https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
 * [Grove Base Hat RaspberryPi](https://www.seeedstudio.com/Grove-Base-Hat-for-Raspberry-Pi.html)
 * [Grove Base Hat RaspberryPi Zero](https://wiki.seeedstudio.com/Grove_Base_Hat_for_Raspberry_Pi_Zero)

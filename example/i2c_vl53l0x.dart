@@ -17,6 +17,12 @@ void main(List<String> args) {
   // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian), 4 BPI-F3
   var i2c = I2C(1);
   try {
+    print('Dart version: ${Platform.version}');
+    print("dart_periphery Version: $dartPeripheryVersion");
+    print("c-periphery Version   : ${getCperipheryVersion()}");
+    print('I2C info: ${i2c.getI2Cinfo()}');
+    print("VL53L0X sensor");
+
     var v = VL53L0X(i2c);
     if (args.length != 1) {
       print("missing parameter: simple or continous");

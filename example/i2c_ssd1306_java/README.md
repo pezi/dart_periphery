@@ -39,7 +39,7 @@ gcc -shared -o libjvmbridge.so -fPIC jvm_bridge.c  -I"$JAVA_HOME/include" -I"$JA
 5.  Set the `LD_LIBRARY_PATH` to include the JVM library and `libjvmbridge.so` 
 
 ```bash
-export LD_LIBRARY_PATH=$JAVA_HOME/lib/server:.`
+export LD_LIBRARY_PATH=$JAVA_HOME/lib/server:.
 ```
 
 6.	Start the program:
@@ -57,16 +57,16 @@ java -cp ./lib/bsh-2.0b4.jar at/flutterdev/EmojiBMPGenerator.java
 
 ### Test the C layer - main method with test code
 
-Linux:  
+macOS:   
 
 ```bash
 gcc -o calljava -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/darwin" jvm_bridge.c -L"$JAVA_HOME/lib/server" -ljvm
 ```
 
-macOS: 
+Linux:
 
 ```bash
-gcc -o calljava -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" calljava.c -L"$JAVA_HOME/lib/server" -ljvm
+gcc -o calljava -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" jvm_bridge.c -L"$JAVA_HOME/lib/server" -ljvm
 ```
 
 Additonal step for macOS to set the `RPATH`

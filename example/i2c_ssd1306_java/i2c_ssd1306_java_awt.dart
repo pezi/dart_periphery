@@ -116,14 +116,15 @@ class JVMbridge {
 }
 
 // Java bsh (Bean shell) script
-var script = "int midY = height / 2;\n" +
-    "int amplitude = height / 3;\n" +
-    "double frequency = 2 * Math.PI / width;\n" +
-    "int white = Color.WHITE.getRGB();\n" +
-    "for (int x = 0; x < width; x++) {\n" +
-    "    int y = midY + (int) (amplitude * Math.sin(frequency * x));\n" +
-    "    image.setRGB(x, y, white);\n" +
-    "}\n";
+var script = """int midY = height / 2;
+int amplitude = height / 3;
+double frequency = 2 * Math.PI / width;
+int white = Color.WHITE.getRGB();
+for (int x = 0; x < width; x++) {
+    int y = midY + (int) (amplitude * Math.sin(frequency * x));
+    image.setRGB(x, y, white);
+}
+""";
 
 void main() {
   final jvmBridge = JVMbridge();
@@ -131,6 +132,7 @@ void main() {
   // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian), 4 BPI-F3
   var i2c = I2C(1);
   try {
+    print('Dart version: ${Platform.version}');
     print("dart_periphery Version: $dartPeripheryVersion");
     print("c-periphery Version   : ${getCperipheryVersion()}");
     print('I2C info: ${i2c.getI2Cinfo()}');

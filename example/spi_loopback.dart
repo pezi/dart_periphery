@@ -2,13 +2,18 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'dart:io';
+
 import 'package:dart_periphery/dart_periphery.dart';
 
 /// SPI loopback test
 void main() {
   var spi = SPI(0, 0, SPImode.mode0, 500000);
   try {
-    print('SPI info:${spi.getSPIinfo()}');
+    print('Dart version: ${Platform.version}');
+    print("dart_periphery Version: $dartPeripheryVersion");
+    print("c-periphery Version   : ${getCperipheryVersion()}");
+    print('SPI info: ${spi.getSPIinfo()}');
     var data = <int>[for (int i = 0; i < 10; ++i) i];
     var result = spi.transfer(data, false);
     var index = 0;
