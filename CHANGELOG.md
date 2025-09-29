@@ -1,3 +1,6 @@
+## 0.9.20
+*
+
 ## 0.9.19
 * Add GPS [Air530](https://github.com/pezi/dart_periphery/blob/main/example/serial_air530.dart)
 * Update Dart Version to `3.9.3`
