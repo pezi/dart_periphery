@@ -68,7 +68,7 @@ final _nativePWMdisable = intVoidM('pwm_disable');
 final _nativePWMchip = intVoidM('pwm_chip');
 
 // unsigned int pwm_channel(pwm_t *pwm);
-final _nativePWMchannel = intVoidM('pwm_chip');
+final _nativePWMchannel = intVoidM('pwm_channel');
 
 // int pwm_get_period_ns(pwm_t *pwm, uint64_t *period_ns);
 final _nativePWMgetPeriodNs = intVoidUint64PtrM('pwm_get_period_ns');
@@ -162,8 +162,12 @@ class PWM {
       return throw PWMexception(
           PWMerrorCode.pwmErrorOpen, 'Error opening PWM chip/channel');
     }
-    _checkError(_nativePWMopen(pwmHandle, chip, channel));
-
+    try {
+      _checkError(_nativePWMopen(pwmHandle, chip, channel));
+    } catch (e) {
+      _nativePWMfree(pwmHandle);
+      rethrow;
+    }
     return pwmHandle;
   }
 
@@ -187,8 +191,11 @@ class PWM {
   void dispose() {
     _checkStatus();
     _invalid = true;
-    _checkError(_nativePWMclose(_pwmHandle));
-    _nativePWMfree(_pwmHandle);
+    try {
+      _checkError(_nativePWMclose(_pwmHandle));
+    } finally {
+      _nativePWMfree(_pwmHandle);
+    }
   }
 
   /// Enables the PWM output.
@@ -267,66 +274,79 @@ class PWM {
 
   /// Gets the period in nanoseconds of the PWM.
   int getPeriodNs() {
+    _checkStatus();
     return _getInt64Value(_nativePWMgetPeriodNs);
   }
 
   // Gets the output state of the PWM.
   bool getEnabled() {
+    _checkStatus();
     return _getBoolValue(_nativePWMgetEndabled);
   }
 
   /// Sets the period in [nanoseconds] of the PWM.
   void setPeriodNs(int nanoseconds) {
+    _checkStatus();
     _checkError(_nativePWMsetPeriodNs(_pwmHandle, nanoseconds));
   }
 
   /// Sets the output state of the PWM.
   void setEnabled(bool flag) {
+    _checkStatus();
     _checkError(_nativePWMsetEnabled(_pwmHandle, flag == true ? 1 : 0));
   }
 
   /// Gets the duty cycle in nanoseconds of the PWM.
   int getDutyCycleNs() {
+    _checkStatus();
     return _getInt64Value(_nativePWMgetDutyCycleNs);
   }
 
   /// Sets the duty cycle in [nanoseconds] of the PWM.
   void setDutyCycleNs(int nanoseconds) {
+    _checkStatus();
     _checkError(_nativePWMsetDutyCycleNs(_pwmHandle, nanoseconds));
   }
 
   /// Gets the period in seconds of the PWM.
   double getPeriod() {
+    _checkStatus();
     return _getDoubleValue(_nativePWMgetPeriod);
   }
 
   /// Sets the period in [seconds] of the PWM.
   void setPeriod(double seconds) {
+    _checkStatus();
     _checkError(_nativePWMsetPeriod(_pwmHandle, seconds));
   }
 
   /// Gets the duty cycle as a ratio between 0.0 to 1.0 in second of the PWM.
   double getDutyCycle() {
+    _checkStatus();
     return _getDoubleValue(_nativePWMgetDutyCycle);
   }
 
   /// Sets the [dutyCycle] as a ratio between 0.0 to 1.0 in second of the PWM.
   void setDutyCycle(double dutyCycle) {
+    _checkStatus();
     _checkError(_nativePWMsetCycle(_pwmHandle, dutyCycle));
   }
 
   /// Gets the frequency in Hz of the PWM.
   double getFrequency() {
+    _checkStatus();
     return _getDoubleValue(_nativePWMgetFrequency);
   }
 
   /// Sets the [frequency] in Hz of the PWM.
   void setFrequency(double frequency) {
+    _checkStatus();
     _checkError(_nativePWMsetFrequency(_pwmHandle, frequency));
   }
 
   /// Returns the polarity of the PWM.
   Polarity getPolarity() {
+    _checkStatus();
     switch (_getInt32Value(_nativePWMgetPolarity)) {
       case 0:
         return Polarity.pwmPolarityNormal;
@@ -339,16 +359,19 @@ class PWM {
 
   /// Sets the output [polarity] of the PWM.
   void setPolarity(Polarity polarity) {
+    _checkStatus();
     _checkError(_nativePWMsetPolarity(_pwmHandle, polarity.index));
   }
 
   /// Return the chip number of the PWM handle.
   int getChip() {
+    _checkStatus();
     return _nativePWMchip(_pwmHandle);
   }
 
   /// Returns the channel number of the PWM handle.
   int getChannel() {
+    _checkStatus();
     return _nativePWMchannel(_pwmHandle);
   }
 }
