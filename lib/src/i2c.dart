@@ -272,26 +272,30 @@ String _getErrmsg(Pointer<Void> handle) {
 class I2C extends IsolateAPI {
   static const String _i2cBasePath = '/dev/i2c-';
   late Pointer<Void> _i2cHandle;
+  late Pointer<Utf8> _nativeName;
   final String path;
   final int busNum;
   bool _invalid = false;
 
   /// Opens the i2c-dev device at the specified path (e.g. "/dev/i2c-[busNum]").
-  I2C(this.busNum)
-      : path = _i2cBasePath + busNum.toString(),
-        _i2cHandle = _openI2C(_i2cBasePath + busNum.toString());
+  I2C(this.busNum) : path = _i2cBasePath + busNum.toString() {
+    var tupple = _openI2C(_i2cBasePath + busNum.toString());
+    _i2cHandle = tupple.$1;
+    _nativeName = tupple.$2;
+  }
 
   /// Duplicates an existing [I2C] from a JSON string. This special constructor
   /// is used to transfer an existing [I2C] to an other isolate.
   I2C.isolate(String json)
       : path = jsonMap(json)['path'] as String,
         busNum = jsonMap(json)['bus'] as int,
-        _i2cHandle = Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int);
+        _i2cHandle = Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int),
+        _nativeName = Pointer<Utf8>.fromAddress(jsonMap(json)['name'] as int);
 
   /// Converts a [I2C] to a JSON string. See constructor [isolate] for details.
   @override
   String toJson() {
-    return '{"class":"I2C","path":"$path","bus":$busNum,"handle":${_i2cHandle.address}}';
+    return '{"class":"I2C","path":"$path","bus":$busNum,"handle":${_i2cHandle.address},"name":${_nativeName.address}}';
   }
 
   void _checkStatus() {
@@ -301,14 +305,21 @@ class I2C extends IsolateAPI {
     }
   }
 
-  static Pointer<Void> _openI2C(String path) {
+  static (Pointer<Void>, Pointer<Utf8>) _openI2C(String path) {
     var i2cHandle = _nativeI2Cnew();
     if (i2cHandle == nullptr) {
       return throw I2Cexception(
           I2CerrorCode.i2cErrorOpen, 'Error opening I2C bus');
     }
-    _checkError(_nativeI2Copen(i2cHandle, path.toNativeUtf8()));
-    return i2cHandle;
+    var nativePath = path.toNativeUtf8();
+    try {
+      _checkError(_nativeI2Copen(i2cHandle, nativePath));
+    } catch (_) {
+      _nativeI2Cfree(i2cHandle);
+      malloc.free(nativePath);
+      rethrow;
+    }
+    return (i2cHandle, nativePath);
   }
 
   /// Converts the native error code [value] to [I2CerrorCode].
@@ -365,7 +376,12 @@ class I2C extends IsolateAPI {
   NativeI2CmsgHelper transfer(List<I2Cmsg> data) {
     _checkStatus();
     var nativeMsg = I2Cmsg._toNative(data);
-    _checkError(_nativeI2ctransfer(_i2cHandle, nativeMsg, data.length));
+    try {
+      _checkError(_nativeI2ctransfer(_i2cHandle, nativeMsg, data.length));
+    } catch (_) {
+      NativeI2CmsgHelper(nativeMsg, data.length).dispose();
+      rethrow;
+    }
     return NativeI2CmsgHelper(nativeMsg, data.length);
   }
 
@@ -647,6 +663,7 @@ class I2C extends IsolateAPI {
     _invalid = true;
     _checkError(_nativeI2Cclose(_i2cHandle));
     _nativeI2Cfree(_i2cHandle);
+    malloc.free(_nativeName);
   }
 
   /// Returns the address of the internal handle.
