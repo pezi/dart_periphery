@@ -240,6 +240,7 @@ class SPI extends IsolateAPI {
 
   bool _invalid = false;
   late Pointer<Void> _spiHandle;
+  Pointer<Utf8>? _nativePath;
 
   void _checkSPI(int bus, int chip) {
     if (bus < 0) {
@@ -267,18 +268,27 @@ class SPI extends IsolateAPI {
         extraFlags = 0,
         path = '/dev/spidev$bus.$chip' {
     _checkSPI(bus, chip);
-    _spiHandle = _spiOpen(path, mode, maxSpeed);
+    var tupple = _spiOpen(path, mode, maxSpeed);
+    _spiHandle = tupple.$1;
+    _nativePath = tupple.$2;
   }
 
-  Pointer<Void> _spiOpen(String path, SPImode mode, int maxSpeed) {
+  (Pointer<Void>, Pointer<Utf8>) _spiOpen(
+      String path, SPImode mode, int maxSpeed) {
     var spiHandle = _nativeSPInew();
     if (spiHandle == nullptr) {
       return throw SPIexception(
           SPIerrorCode.spiErrorOpen, 'Error opening SPI bus');
     }
-    _checkError(
-        _nativeSPIopen(spiHandle, path.toNativeUtf8(), mode.index, maxSpeed));
-    return spiHandle;
+    var nativePath = path.toNativeUtf8();
+    try {
+      _checkError(_nativeSPIopen(spiHandle, nativePath, mode.index, maxSpeed));
+    } catch (_) {
+      _nativeSPIfree(spiHandle);
+      malloc.free(nativePath);
+      rethrow;
+    }
+    return (spiHandle, nativePath);
   }
 
   /// Opens the SPI device at the specified path ("/dev/spidev[bus].[chip]"),
@@ -292,8 +302,10 @@ class SPI extends IsolateAPI {
       this.bitsPerWord, this.extraFlags)
       : path = '/dev/spidev$bus.$chip' {
     _checkSPI(bus, chip);
-    _spiHandle = _spiOpenAdvanced(
+    var tupple = _spiOpenAdvanced(
         path, mode, maxSpeed, bitOrder, bitsPerWord, extraFlags);
+    _spiHandle = tupple.$1;
+    _nativePath = tupple.$2;
   }
 
   /// Duplicates an existing [SPI] from a JSON string. This special constructor
@@ -307,18 +319,27 @@ class SPI extends IsolateAPI {
         extraFlags = jsonMap(json)['flags'] as int,
         bitOrder = BitOrder.values[_jsonMap(json)['bitOrder'] as int],
         mode = SPImode.values[_jsonMap(json)['mode'] as int],
-        _spiHandle = Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int);
+        _spiHandle = Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int) {
+    _map.clear();
+  }
 
-  Pointer<Void> _spiOpenAdvanced(String path, SPImode mode, int maxSpeed,
-      BitOrder bitOrder, int bitsPerWord, int extraFlags) {
+  (Pointer<Void>, Pointer<Utf8>) _spiOpenAdvanced(String path, SPImode mode,
+      int maxSpeed, BitOrder bitOrder, int bitsPerWord, int extraFlags) {
     var spiHandle = _nativeSPInew();
     if (spiHandle == nullptr) {
       return throw SPIexception(
           SPIerrorCode.spiErrorOpen, 'Error opening SPI bus');
     }
-    _checkError(_nativeSPIopenAdvanced(spiHandle, path.toNativeUtf8(),
-        mode.index, maxSpeed, bitOrder.index, bitsPerWord, extraFlags));
-    return spiHandle;
+    var nativePath = path.toNativeUtf8();
+    try {
+      _checkError(_nativeSPIopenAdvanced(spiHandle, nativePath, mode.index,
+          maxSpeed, bitOrder.index, bitsPerWord, extraFlags));
+    } catch (_) {
+      _nativeSPIfree(spiHandle);
+      malloc.free(nativePath);
+      rethrow;
+    }
+    return (spiHandle, nativePath);
   }
 
   /// Opens the SPI device at the specified [path], with the specified SPI mode,
@@ -332,20 +353,29 @@ class SPI extends IsolateAPI {
   SPI.openAdvanced2(this.bus, this.chip, this.path, this.mode, this.maxSpeed,
       this.bitOrder, this.bitsPerWord, this.extraFlags) {
     _checkSPI(bus, chip);
-    _spiHandle = _spiOpenAdvanced2(
+    var tupple = _spiOpenAdvanced2(
         path, mode, maxSpeed, bitOrder, bitsPerWord, extraFlags);
+    _spiHandle = tupple.$1;
+    _nativePath = tupple.$2;
   }
 
-  Pointer<Void> _spiOpenAdvanced2(String path, SPImode mode, int maxSpeed,
-      BitOrder bitOrder, int bitsPerWord, int extraFlags) {
+  (Pointer<Void>, Pointer<Utf8>) _spiOpenAdvanced2(String path, SPImode mode,
+      int maxSpeed, BitOrder bitOrder, int bitsPerWord, int extraFlags) {
     var spiHandle = _nativeSPInew();
     if (spiHandle == nullptr) {
       return throw SPIexception(
           SPIerrorCode.spiErrorOpen, 'Error opening SPI bus');
     }
-    _checkError(_nativeSPIopenAdvanced2(spiHandle, path.toNativeUtf8(),
-        mode.index, maxSpeed, bitOrder.index, bitsPerWord, extraFlags));
-    return spiHandle;
+    var nativePath = path.toNativeUtf8();
+    try {
+      _checkError(_nativeSPIopenAdvanced2(spiHandle, nativePath, mode.index,
+          maxSpeed, bitOrder.index, bitsPerWord, extraFlags));
+    } catch (_) {
+      _nativeSPIfree(spiHandle);
+      malloc.free(nativePath);
+      rethrow;
+    }
+    return (spiHandle, nativePath);
   }
 
   /// Converts the native error code [value] to [GPIOerrorCode].
@@ -443,8 +473,14 @@ class SPI extends IsolateAPI {
   void dispose() {
     _checkStatus();
     _invalid = true;
-    _checkError(_nativeSPIclose(_spiHandle));
-    _nativeSPIfree(_spiHandle);
+    try {
+      _checkError(_nativeSPIclose(_spiHandle));
+    } finally {
+      _nativeSPIfree(_spiHandle);
+      if (_nativePath != null) {
+        malloc.free(_nativePath!);
+      }
+    }
   }
 
   /// Returns a string representation of the spi handle.

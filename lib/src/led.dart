@@ -102,7 +102,8 @@ class LedException implements Exception {
 /// LED wrapper functions for Linux userspace sysfs LEDs.
 class Led {
   final String name;
-  final Pointer<Void> _ledHandle;
+  late Pointer<Void> _ledHandle;
+  Pointer<Utf8>? _nativeName;
   bool _invalid = false;
 
   /// Open the sysfs LED with the specified name.
@@ -110,7 +111,11 @@ class Led {
   /// 'ls /sys/class/leds/' to list all available leds.
   /// c-periphery [Led](https://github.com/vsergeev/c-periphery/blob/master/docs/led.md)
   /// documentation.
-  Led(this.name) : _ledHandle = _openLed(name);
+  Led(this.name) {
+    var tupple = _openLed(name);
+    _ledHandle = tupple.$1;
+    _nativeName = tupple.$2;
+  }
 
   void _checkStatus() {
     if (_invalid) {
@@ -119,13 +124,20 @@ class Led {
     }
   }
 
-  static Pointer<Void> _openLed(String name) {
+  static (Pointer<Void>, Pointer<Utf8>) _openLed(String name) {
     var ledHandle = _nativeLedNew();
     if (ledHandle == nullptr) {
       return throw LedException(LedErrorCode.ledErrorOpen, 'led_new() failed');
     }
-    _checkError(_nativeLedOpen(ledHandle, name.toNativeUtf8()));
-    return ledHandle;
+    var nativeName = name.toNativeUtf8();
+    try {
+      _checkError(_nativeLedOpen(ledHandle, nativeName));
+    } catch (_) {
+      _nativeLedFree(ledHandle);
+      malloc.free(nativeName);
+      rethrow;
+    }
+    return (ledHandle, nativeName);
   }
 
   /// Converts the native error code [value] to [LedErrorCode].
@@ -167,8 +179,14 @@ class Led {
   void dispose() {
     _checkStatus();
     _invalid = true;
-    _checkError(_nativeLedClose(_ledHandle));
-    _nativeLedFree(_ledHandle);
+    try {
+      _checkError(_nativeLedClose(_ledHandle));
+    } finally {
+      _nativeLedFree(_ledHandle);
+      if (_nativeName != null) {
+        malloc.free(_nativeName!);
+      }
+    }
   }
 
   /// Returns the libc errno of the last failure that occurred.

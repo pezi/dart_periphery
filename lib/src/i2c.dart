@@ -661,9 +661,12 @@ class I2C extends IsolateAPI {
   void dispose() {
     _checkStatus();
     _invalid = true;
-    _checkError(_nativeI2Cclose(_i2cHandle));
-    _nativeI2Cfree(_i2cHandle);
-    malloc.free(_nativeName);
+    try {
+      _checkError(_nativeI2Cclose(_i2cHandle));
+    } finally {
+      _nativeI2Cfree(_i2cHandle);
+      malloc.free(_nativeName);
+    }
   }
 
   /// Returns the address of the internal handle.

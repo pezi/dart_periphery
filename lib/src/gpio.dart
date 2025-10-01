@@ -726,10 +726,13 @@ class GPIO extends IsolateAPI {
   void dispose() {
     _checkStatus();
     _invalid = true;
-    _checkError(_nativeGPIOclose(_gpioHandle));
-    _nativeGPIOfree(_gpioHandle);
-    for (var p in _freeList) {
-      malloc.free(p);
+    try {
+      _checkError(_nativeGPIOclose(_gpioHandle));
+    } finally {
+      _nativeGPIOfree(_gpioHandle);
+      for (var p in _freeList) {
+        malloc.free(p);
+      }
     }
   }
 
