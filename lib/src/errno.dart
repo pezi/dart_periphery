@@ -299,13 +299,13 @@ final _list = <Errno>[
   Errno(ERRNO.enomsg, 'No message of desired type'),
   Errno(ERRNO.eidrm, 'Identifier removed'),
   Errno(ERRNO.echrng, 'Channel number out of range'),
-  Errno(ERRNO.el2nsync, 'Level  not synchronized'),
-  Errno(ERRNO.el3hlt, 'Level  halted'),
-  Errno(ERRNO.el3rst, 'Level  reset'),
+  Errno(ERRNO.el2nsync, 'Level 2 not synchronized'),
+  Errno(ERRNO.el3hlt, 'Level 3 halted'),
+  Errno(ERRNO.el3rst, 'Level 3 reset'),
   Errno(ERRNO.elnrng, 'Link number out of range'),
   Errno(ERRNO.eunatch, 'Protocol driver not attached'),
   Errno(ERRNO.enocsi, 'No CSI structure available'),
-  Errno(ERRNO.el2hlt, 'Level  halted'),
+  Errno(ERRNO.el2hlt, 'Level 2 halted'),
   Errno(ERRNO.ebade, 'Invalid exchange'),
   Errno(ERRNO.ebadr, 'Invalid request descriptor'),
   Errno(ERRNO.exfull, 'Exchange full'),
@@ -368,7 +368,7 @@ final _list = <Errno>[
   Errno(ERRNO.econnrefused, 'Connection refused'),
   Errno(ERRNO.ehostdown, 'Host is down'),
   Errno(ERRNO.ehostunreach, 'No route to host'),
-  Errno(ERRNO.ealready, ' Operation already in progress'),
+  Errno(ERRNO.ealready, 'Operation already in progress'),
   Errno(ERRNO.einprogress, 'Operation now in progress'),
   Errno(ERRNO.estale, 'Stale NFS file handle'),
   Errno(ERRNO.euclean, 'Structure needs cleaning'),
@@ -388,15 +388,15 @@ class ErrnoNotFound implements Exception {
 
 /// Helper class for Linux errno.h definitions.
 class Errno {
-  final ERRNO erno;
+  final ERRNO errno;
   final String description;
 
-  Errno(this.erno, this.description);
+  Errno(this.errno, this.description);
 
   // Gets Errno by name.
   static Errno findByName(String name) {
     for (var e in _list) {
-      if (e.erno.name == name) {
+      if (e.errno.name == name) {
         return e;
       }
     }
