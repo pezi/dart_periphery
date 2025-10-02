@@ -35,7 +35,7 @@ AirQuality getAirQuality(int iaq) {
   return AirQuality.invalidValue;
 }
 
-/// IAQ values: excellent - invalidValue - contaning range and color
+/// IAQ values: excellent - invalidValue - containing range and color
 ///
 /// [source](https://community.bosch-sensortec.com/t5/MEMS-sensors-forum/BME680-688-IAQ-meaning/td-p/45196).
 enum AirQuality {
