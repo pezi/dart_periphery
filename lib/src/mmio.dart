@@ -2,9 +2,9 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-// https://github.com/vsergeev/c-periphery/blob/master/docs/i2c.md
-// https://github.com/vsergeev/c-periphery/blob/master/src/i2c.c
-// https://github.com/vsergeev/c-periphery/blob/master/src/i2c.h
+// https://github.com/vsergeev/c-periphery/blob/master/docs/mmio.md
+// https://github.com/vsergeev/c-periphery/blob/master/src/mmio.c
+// https://github.com/vsergeev/c-periphery/blob/master/src/mmio.h
 // https://github.com/dart-lang/samples/tree/master/ffi
 
 import 'dart:ffi';
@@ -230,9 +230,9 @@ class MMIO extends IsolateAPI {
   /// devices, e.g. `/dev/gpiomem`.
   /// Neither base nor size need be aligned to a page boundary.
   MMIO.advanced(this.base, this.size, this.path) {
-    var tupple = _mmioOpenAdvanced(base, size, path);
-    _mmioHandle = tupple.$1;
-    _nativePath = tupple.$2;
+    var tuple = _mmioOpenAdvanced(base, size, path);
+    _mmioHandle = tuple.$1;
+    _nativePath = tuple.$2;
   }
 
   static (Pointer<Void>, Pointer<Utf8>) _mmioOpenAdvanced(

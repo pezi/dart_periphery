@@ -112,9 +112,9 @@ class Led {
   /// c-periphery [Led](https://github.com/vsergeev/c-periphery/blob/master/docs/led.md)
   /// documentation.
   Led(this.name) {
-    var tupple = _openLed(name);
-    _ledHandle = tupple.$1;
-    _nativeName = tupple.$2;
+    var tuple = _openLed(name);
+    _ledHandle = tuple.$1;
+    _nativeName = tuple.$2;
   }
 
   void _checkStatus() {

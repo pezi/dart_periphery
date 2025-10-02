@@ -279,9 +279,9 @@ class I2C extends IsolateAPI {
 
   /// Opens the i2c-dev device at the specified path (e.g. "/dev/i2c-[busNum]").
   I2C(this.busNum) : path = _i2cBasePath + busNum.toString() {
-    var tupple = _openI2C(_i2cBasePath + busNum.toString());
-    _i2cHandle = tupple.$1;
-    _nativeName = tupple.$2;
+    var tuple = _openI2C(_i2cBasePath + busNum.toString());
+    _i2cHandle = tuple.$1;
+    _nativeName = tuple.$2;
   }
 
   /// Duplicates an existing [I2C] from a JSON string. This special constructor
@@ -395,7 +395,7 @@ class I2C extends IsolateAPI {
     result.dispose();
   }
 
-  /// Helper method to handle [resgisters]´s bit [order]/ [width].
+  /// Helper method to handle [register]´s bit [order]/ [width].
   List<int> _adjustRegister(int register, BitOrder order, RegisterWidth width) {
     if (width == RegisterWidth.bits8) {
       if (register > 0xFF) {

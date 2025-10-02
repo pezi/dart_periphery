@@ -13,9 +13,9 @@ const wait = 500;
 ///
 /// Usage: [nano|grove|grovePlus] analogPin
 void main(List<String> args) {
-  var tupple = checkArgs(args, "analogPin");
-  var pin = tupple.$2;
-  var hat = tupple.$1;
+  var tuple = checkArgs(args, "analogPin");
+  var pin = tuple.$2;
+  var hat = tuple.$1;
   switch (hat) {
     case Hat.nano:
       {

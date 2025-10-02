@@ -144,8 +144,8 @@ class PollMultipleEvent {
     return eventCounter == 0 ? true : false;
   }
 
-  /// Checks if an edge event occured for a [gpio]
-  bool hasEventOccured(GPIO gpio) {
+  /// Checks if an edge event occurred for a [gpio]
+  bool hasEventOccurred(GPIO gpio) {
     var index = 0;
     for (var g in gpios) {
       if (g._gpioHandle == gpio._gpioHandle) {
@@ -478,9 +478,9 @@ class GPIO extends IsolateAPI {
   GPIO(this.line, this.direction, [this.chip = 0])
       : path = _gpioBasePath + chip.toString(),
         name = '' {
-    var tupple = _openGPIO(_gpioBasePath + chip.toString(), line, direction);
-    _gpioHandle = tupple.$1;
-    _freeList = tupple.$2;
+    var tuple = _openGPIO(_gpioBasePath + chip.toString(), line, direction);
+    _gpioHandle = tuple.$1;
+    _freeList = tuple.$2;
   }
 
   static (Pointer<Void>, List<Pointer>) _openGPIO(
@@ -509,10 +509,9 @@ class GPIO extends IsolateAPI {
   GPIO.name(this.name, this.direction, [this.chip = 0])
       : path = _gpioBasePath + chip.toString(),
         line = -1 {
-    var tupple =
-        _openNameGPIO(_gpioBasePath + chip.toString(), name, direction);
-    _gpioHandle = tupple.$1;
-    _freeList = tupple.$2;
+    var tuple = _openNameGPIO(_gpioBasePath + chip.toString(), name, direction);
+    _gpioHandle = tuple.$1;
+    _freeList = tuple.$2;
   }
 
   static (Pointer<Void>, List<Pointer>) _openNameGPIO(
@@ -545,10 +544,10 @@ class GPIO extends IsolateAPI {
       : path = _gpioBasePath + chip.toString(),
         name = '',
         direction = config.direction {
-    var tupple =
+    var tuple =
         _openAdvancedGPIO(_gpioBasePath + chip.toString(), line, config);
-    _gpioHandle = tupple.$1;
-    _freeList = tupple.$2;
+    _gpioHandle = tuple.$1;
+    _freeList = tuple.$2;
   }
 
   static (Pointer<Void>, List<Pointer>) _openAdvancedGPIO(
@@ -583,10 +582,10 @@ class GPIO extends IsolateAPI {
       : path = _gpioBasePath + chip.toString(),
         line = -1,
         direction = config.direction {
-    var tupple =
+    var tuple =
         _openNameAdvancedGPIO(_gpioBasePath + chip.toString(), name, config);
-    _gpioHandle = tupple.$1;
-    _freeList = tupple.$2;
+    _gpioHandle = tuple.$1;
+    _freeList = tuple.$2;
   }
   static (Pointer<Void>, List<Pointer>) _openNameAdvancedGPIO(
       String path, String name, GPIOconfig config) {

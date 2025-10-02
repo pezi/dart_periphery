@@ -268,9 +268,9 @@ class SPI extends IsolateAPI {
         extraFlags = 0,
         path = '/dev/spidev$bus.$chip' {
     _checkSPI(bus, chip);
-    var tupple = _spiOpen(path, mode, maxSpeed);
-    _spiHandle = tupple.$1;
-    _nativePath = tupple.$2;
+    var tuple = _spiOpen(path, mode, maxSpeed);
+    _spiHandle = tuple.$1;
+    _nativePath = tuple.$2;
   }
 
   (Pointer<Void>, Pointer<Utf8>) _spiOpen(
@@ -302,10 +302,10 @@ class SPI extends IsolateAPI {
       this.bitsPerWord, this.extraFlags)
       : path = '/dev/spidev$bus.$chip' {
     _checkSPI(bus, chip);
-    var tupple = _spiOpenAdvanced(
+    var tuple = _spiOpenAdvanced(
         path, mode, maxSpeed, bitOrder, bitsPerWord, extraFlags);
-    _spiHandle = tupple.$1;
-    _nativePath = tupple.$2;
+    _spiHandle = tuple.$1;
+    _nativePath = tuple.$2;
   }
 
   /// Duplicates an existing [SPI] from a JSON string. This special constructor
@@ -353,10 +353,10 @@ class SPI extends IsolateAPI {
   SPI.openAdvanced2(this.bus, this.chip, this.path, this.mode, this.maxSpeed,
       this.bitOrder, this.bitsPerWord, this.extraFlags) {
     _checkSPI(bus, chip);
-    var tupple = _spiOpenAdvanced2(
+    var tuple = _spiOpenAdvanced2(
         path, mode, maxSpeed, bitOrder, bitsPerWord, extraFlags);
-    _spiHandle = tupple.$1;
-    _nativePath = tupple.$2;
+    _spiHandle = tuple.$1;
+    _nativePath = tuple.$2;
   }
 
   (Pointer<Void>, Pointer<Utf8>) _spiOpenAdvanced2(String path, SPImode mode,
