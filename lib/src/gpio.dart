@@ -2,7 +2,6 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:convert';
 // https://github.com/vsergeev/c-periphery/blob/master/docs/gpio.md
 // https://github.com/vsergeev/c-periphery/blob/master/src/gpio.c
 // https://github.com/vsergeev/c-periphery/blob/master/src/gpio.h
@@ -18,7 +17,13 @@ import 'library.dart';
 import 'signature.dart';
 
 /// Result codes of the [GPIO.poll].
-enum GPIOpolling { success, timeout }
+enum GPIOpolling {
+  /// Poll operation completed successfully with an event
+  success,
+
+  /// Poll operation timed out without an event
+  timeout
+}
 
 /// Mapped native [GPIO] error codes with the same index, but different
 /// leading sign.
@@ -56,16 +61,16 @@ enum GPIOerrorCode {
 
 /// [GPIO] input/output direction
 enum GPIOdirection {
-  ///  Input
+  /// Input direction
   gpioDirIn,
 
-  /// Output, initialized to low
+  /// Output direction, initialized to low
   gpioDirOut,
 
-  /// output, initialized to low
+  /// Output direction, initialized to low
   gpioDirOutLow,
 
-  /// output, initialized to high
+  /// Output direction, initialized to high
   gpioDirOutHigh
 }
 
@@ -89,10 +94,10 @@ enum GPIObias {
   /// Default line bias
   gpioBiasDefault,
 
-  /// Pull-up
+  /// Pull-up resistor enabled
   gpioBiasPullUp,
 
-  /// Pull-down *
+  /// Pull-down resistor enabled
   gpioBiasPullDown,
 
   /// Disable line bias
@@ -104,10 +109,10 @@ enum GPIOdrive {
   /// Default line drive (push-pull)
   gpioDriveDefault,
 
-  /// Open drain
+  /// Open drain output
   gpioDriveOpenDrain,
 
-  ///  Open source
+  /// Open source output
   gpioDriveOpenSource,
 }
 
@@ -389,15 +394,6 @@ int _checkError(int value) {
   return value;
 }
 
-final Map<String, dynamic> _map = {};
-
-Map<String, dynamic> _jsonMap(String json) {
-  if (_map.isEmpty) {
-    _map.addAll(jsonDecode(json) as Map<String, dynamic>);
-  }
-  return _map;
-}
-
 /// GPIO wrapper functions for Linux userspace character device gpio-cdev
 /// and sysfs GPIOs.
 ///
@@ -627,12 +623,8 @@ class GPIO extends IsolateAPI {
         line = jsonMap(json)['line'] as int,
         name = jsonMap(json)['name'] as String,
         path = jsonMap(json)['path'] as String,
-        direction = GPIOdirection.values[_jsonMap(json)['direction'] as int],
-        _gpioHandle =
-            Pointer<Void>.fromAddress(_jsonMap(json)['handle'] as int) {
-    // reset JSON cache map
-    _map.clear();
-  }
+        direction = GPIOdirection.values[jsonMap(json)['direction'] as int],
+        _gpioHandle = Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int);
 
   static Pointer<Void> _openSysfsGPIO(int line, GPIOdirection direction) {
     var gpioHandle = _nativeGPIOnew();
