@@ -164,7 +164,7 @@ class RawLuminosity {
 /// TSL2591 sensor for visible, IR light, full spectrum and lux
 ///
 /// See for more
-/// * [SI1145 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_tsl2591.dart)
+/// * [TSL2591 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_tsl2591.dart)
 /// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/tsl2591.dart)
 /// * [Datasheet](https://cdn-shop.adafruit.com/datasheets/TSL25911_Datasheet_EN_v1.pdf)
 class TSL2591 {
@@ -173,7 +173,7 @@ class TSL2591 {
   IntegrationTime time;
   Gain gain;
 
-  /// Creates a SI1145 sensor instance that uses the [i2c] bus with
+  /// Creates a TSL2591 sensor instance that uses the [i2c] bus with
   /// the optional [i2cAddress] with optional
   TSL2591(this.i2c,
       [this.time = IntegrationTime.time100ms,
@@ -242,7 +242,7 @@ class TSL2591 {
 
   /// Sets the [IntegrationTime].
   void setIntegrationTime(IntegrationTime time) {
-    var value = (_readByte(Register.control) & 0xF8) | gain.value;
+    var value = (_readByte(Register.control) & 0xF8) | time.value;
     _writeByte(Register.control, value);
     this.time = time;
   }

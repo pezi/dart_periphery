@@ -378,7 +378,7 @@ class SPI extends IsolateAPI {
     return (spiHandle, nativePath);
   }
 
-  /// Converts the native error code [value] to [GPIOerrorCode].
+  /// Converts the native error code [value] to [SPIerrorCode].
   static SPIerrorCode getSPIerrorCode(int value) {
     // must be negative
     if (value >= 0) {

@@ -110,7 +110,7 @@ class SSD1306 {
     i2c.writeByteReg(i2cAddress, 0, Command.displayOff.command);
   }
 
-  /// Initiates vertical scrolling of the display content towards [left],
+  /// Initiates horizontal scrolling of the display content towards [left],
   /// starting from position [start] and continuing until [end].
   void scrollHorizontally(bool left, int start, int end) {
     i2c.writeBytesReg(i2cAddress, 0, [
