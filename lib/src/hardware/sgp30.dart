@@ -113,7 +113,7 @@ class SGP30result {
   /// Returns a [SGP30result] object as a JSON string. [fractionDigits]
   /// controls the number of fraction digits.
   String toJSON([int fractionDigits = 2]) {
-    return '{"co2Equivalent":"${co2Equivalent.toStringAsFixed(fractionDigits)}","totalVOC":"${totalVOC.toStringAsFixed(fractionDigits)}"}';
+    return '{"co2Equivalent":"$co2Equivalent","totalVOC":"$totalVOC"}';
   }
 }
 
@@ -195,7 +195,8 @@ class SGP30 {
   FeatureSetVersion getFeatureSetVersion() {
     var result = _command(
         cmdGetFeatureSet, cmdGetFeatureSetWords, cmdGetFeatureSetDelayMs);
-    return FeatureSetVersion(result[0], result[0]);
+    int raw = result[0];
+    return FeatureSetVersion((raw >> 12) & 0xf, raw & 0xFF);
   }
 
   /// Initializes the sensor for measurement.

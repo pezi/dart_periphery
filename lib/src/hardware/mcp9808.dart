@@ -4,6 +4,9 @@
 
 import 'package:dart_periphery/dart_periphery.dart';
 
+// Resouces
+// https://ww1.microchip.com/downloads/en/DeviceDoc/25095A.pdf
+
 /// [MCP9808] temperature degree resolution
 ///
 /// Higher values allow for faster measurement, though with reduced accuracy.

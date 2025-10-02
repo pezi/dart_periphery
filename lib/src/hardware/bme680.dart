@@ -353,7 +353,7 @@ class BME680result {
       'BME680result [temperature=$temperature, pressure=$pressure, humidity=$humidity,gasResistance=$gasResistance,airQualityScore=$airQualityScore]';
 
   String _toJSONbase([int fractionDigits = 2]) {
-    return '{"temperature":"${temperature.toStringAsFixed(fractionDigits)}","pressure":"${pressure.toStringAsFixed(fractionDigits)}","humidity":"${humidity.toStringAsFixed(fractionDigits)},"airQualityScore":${airQualityScore.toStringAsFixed(fractionDigits)}"';
+    return '{"temperature":"${temperature.toStringAsFixed(fractionDigits)}","pressure":"${pressure.toStringAsFixed(fractionDigits)}","humidity":"${humidity.toStringAsFixed(fractionDigits)}","airQualityScore":"${airQualityScore.toStringAsFixed(fractionDigits)}"';
   }
 
   /// Returns a [BME680result] as a JSON string with only temperature, pressure,
@@ -364,7 +364,7 @@ class BME680result {
     if (allVars == false) {
       return '${_toJSONbase(fractionDigits)}}';
     } else {
-      return '${_toJSONbase(fractionDigits)},"gasResistance":"${gasResistance.toStringAsFixed(fractionDigits)}","isHeaterTempStable":"$isHeaterTempStable","gasResistance":"$gasResistance","isGasMeasurementValid":"$isGasMeasurementValid","gasMeasurementIndex":"$gasMeasurementIndex","measureIndex":"$measureIndex"}';
+      return '${_toJSONbase(fractionDigits)},"gasResistance":"${gasResistance.toStringAsFixed(fractionDigits)}","isHeaterTempStable":"$isHeaterTempStable","isGasMeasurementValid":"$isGasMeasurementValid","gasMeasurementIndex":"$gasMeasurementIndex","measureIndex":"$measureIndex"}';
     }
   }
 }
@@ -583,7 +583,7 @@ class BME680 {
   void setPowerMode(PowerMode powerMode) {
     _setRegByte(configT_PmodeAddress, modeMask, modePostion, powerMode.index);
 
-    powerMode = powerMode;
+    _powerMode = powerMode;
 
     // Wait for the power mode to switch to the requested value
     while (getPowerMode() != powerMode) {

@@ -61,7 +61,7 @@ class SDC30result {
 
   @override
   String toString() =>
-      'SDC30result [CO2=$co2,$temperature, humidity=$humidity]';
+      'SDC30result [CO2=$co2, temperature=$temperature, humidity=$humidity]';
 
   /// Returns a [SDC30result] as a JSON string. [fractionDigits] controls the number fraction digits.
   String toJSON([int fractionDigits = 2]) {
@@ -80,7 +80,7 @@ class SDC30 {
   final I2C i2c;
   final int i2cAddress;
 
-  /// Creates a MCP9808 sensor instance that uses the [i2c] bus with
+  /// Creates a SDC30 sensor instance that uses the [i2c] bus with
   /// the optional [i2cAddress].
   SDC30(this.i2c, [this.i2cAddress = sdc30DefaultI2Caddress]) {
     setMeasurementInterval(2);
@@ -104,7 +104,7 @@ class SDC30 {
   }
 
   /// Returns if auto self calibration is enabled.
-  bool isAutoSelfCalibrationl() {
+  bool isAutoSelfCalibration() {
     return getCommandValue(Command.automaticSelfCalibration) != 0;
   }
 
@@ -134,7 +134,7 @@ class SDC30 {
   /// Sets the pressure compenstation. This is passed during measurement startup.
   /// [pressureMillibar] can be 700 to 1200
   void setAmbientPressure(int pressureMillibar) {
-    if (pressureMillibar < 700 || pressureMillibar > pressureMillibar) {
+    if (pressureMillibar < 700 || pressureMillibar > 1200) {
       return;
     }
     sendCommand(Command.setTemperatureOffset, pressureMillibar);

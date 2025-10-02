@@ -65,7 +65,7 @@ const int standby500ms = 4;
 const int standby1s = 5;
 
 /// 10 ms
-const int atandby10ms = 6;
+const int standby10ms = 6;
 
 /// 20 ms
 const int standby20ms = 7;
@@ -211,7 +211,7 @@ class BME280 {
         _model = BME280model.bme280;
         break;
       default:
-        throw BME280exception('Unknown modelwith ID: $id');
+        throw BME280exception('Unknown model with ID: $id');
     }
     _readCoefficients();
     setOperatingModes(OversamplingMultiplier.x1, OversamplingMultiplier.x1,
@@ -376,7 +376,7 @@ class BME280 {
       if (isDataAvailable()) {
         return true;
       }
-      Duration(milliseconds: interval);
+      sleep(Duration(milliseconds: interval));
     }
     return false;
   }
@@ -407,7 +407,7 @@ class BME280 {
     var tx = List<int>.filled(length + 1, 0);
     tx[0] = register | 0x80;
     _spi.transfer(tx, true);
-    return tx;
+    return tx.sublist(1);
   }
 
   void _writeByte(int register, int value) {

@@ -42,7 +42,7 @@ void main() {
     print("Get current RTC date and time");
     print(rtc.getDateTime());
 
-    if (rtc.isDS2131) {
+    if (rtc.isDS3231) {
       print("RTC on board temperature sensor: ${rtc.getTemperature()}");
     }
 

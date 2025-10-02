@@ -476,12 +476,10 @@ class GestureSensor {
       default:
         var data = i2c.readByteReg(paj7620DefaultI2Caddress, 0x44);
         if (data == gesWaveFlag) {
-          Gesture.wave;
+          return Gesture.wave;
         } else {
           return Gesture.nothing;
         }
-        break;
     }
-    return Gesture.nothing;
   }
 }
