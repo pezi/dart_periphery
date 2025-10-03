@@ -195,7 +195,7 @@ class SSD1306 {
   /// ░ Bit 5
   /// ░ Bit 6
   /// ░ Bit 7
-
+  ///
   /// ```
   void displayNativeBitmap(Uint8List data) {
     resetPos();

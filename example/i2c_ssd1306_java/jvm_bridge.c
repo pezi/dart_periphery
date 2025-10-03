@@ -80,13 +80,8 @@ int initJVMenv() {
         return JAVA_METHOD_NOT_FOUND;
     }
 
-    // Allocate a new Java object instance of the found class
-    globalJVMenv->obj = (*globalJVMenv->env)->AllocObject(globalJVMenv->env, globalJVMenv->cls);
-    if (globalJVMenv->obj == NULL) {
-        fprintf(stderr, "Failed to allocate Java object\n");
-        (*globalJVMenv->jvm)->DestroyJavaVM(globalJVMenv->jvm);
-        return OBJECT_CREATION_FAILED;
-    }
+    // No need to allocate object for static methods
+    globalJVMenv->obj = NULL;
 
     return JVM_CREATION_OK; // Initialization successful
 }
@@ -103,7 +98,7 @@ void freeJVMenv() {
 }
 
 // Function to call the Java 'createEmoji' method which takes a byte array, two ints and returns a String
-const char *call_create_emoji(const char *input, int heigth, int offset) {
+const char *call_create_emoji(const char *input, int height, int offset) {
     // Convert the C-string input to a Java byte array
     int len = strlen(input);
     jbyteArray j_bytes = (jbyteArray)(*globalJVMenv->env)->NewByteArray(globalJVMenv->env, len);
@@ -116,8 +111,8 @@ const char *call_create_emoji(const char *input, int heigth, int offset) {
     // Copy the content of the input C-string into the Java byte array
     (*globalJVMenv->env)->SetByteArrayRegion(globalJVMenv->env, j_bytes, 0, len, (jbyte *)input);    
 
-    // Call the Java method 'createEmoji' on the allocated object
-    jstring j_output = (jstring)(*globalJVMenv->env)->CallObjectMethod(globalJVMenv->env, globalJVMenv->obj, globalJVMenv->mid_create, j_bytes, heigth, offset);
+    // Call the static Java method 'createEmoji'
+    jstring j_output = (jstring)(*globalJVMenv->env)->CallStaticObjectMethod(globalJVMenv->env, globalJVMenv->cls, globalJVMenv->mid_create, j_bytes, height, offset);
     if (j_output == NULL) {
         fprintf(stderr, "Java method returned NULL\n");
         freeJVMenv();
@@ -151,8 +146,8 @@ const char *call_create_script(const char *input) {
         return NULL;
     }
 
-    // Call the Java method 'script' on the allocated object
-    jstring j_output = (jstring)(*globalJVMenv->env)->CallObjectMethod(globalJVMenv->env, globalJVMenv->obj, globalJVMenv->mid_script, j_input);
+    // Call the static Java method 'script'
+    jstring j_output = (jstring)(*globalJVMenv->env)->CallStaticObjectMethod(globalJVMenv->env, globalJVMenv->cls, globalJVMenv->mid_script, j_input);
     if (j_output == NULL) {
         fprintf(stderr, "Java method returned NULL\n");
         freeJVMenv();

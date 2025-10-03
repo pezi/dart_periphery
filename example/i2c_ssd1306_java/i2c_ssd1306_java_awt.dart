@@ -29,7 +29,7 @@ enum JvmCreationStatus {
   javaClassNotFound(2),
   javaMethodNotFound(4),
   objectCreationFailed(5),
-  unkownErrorCode(-1);
+  unknownErrorCode(-1);
 
   final int value;
   const JvmCreationStatus(this.value);
@@ -37,7 +37,7 @@ enum JvmCreationStatus {
   static JvmCreationStatus fromInt(int value) {
     return JvmCreationStatus.values.firstWhere(
       (e) => e.value == value,
-      orElse: () => unkownErrorCode,
+      orElse: () => unknownErrorCode,
     );
   }
 }
@@ -93,7 +93,6 @@ class JVMbridge {
       throw Exception("Internal JVM error");
     }
     final String result = resultPtr.toDartString();
-
     malloc.free(emojiPtr);
     return result;
   }
@@ -101,11 +100,11 @@ class JVMbridge {
   String script(String script) {
     final Pointer<Utf8> scriptPtr = script.toNativeUtf8();
     final Pointer<Utf8> resultPtr = _callScript(scriptPtr);
-    final String result = resultPtr.toDartString();
     if (resultPtr == nullptr) {
       malloc.free(scriptPtr);
       throw Exception("Internal JVM error");
     }
+    final String result = resultPtr.toDartString();
     malloc.free(scriptPtr);
     return result;
   }
@@ -138,9 +137,9 @@ void main() {
     print('I2C info: ${i2c.getI2Cinfo()}');
 
     var oled = SSD1306(i2c);
-    oled.displayBitmap(base64.decode(jvmBridge.createEmojiBMP("❤️", 64, 10)));
+    oled.displayBitmap(base64Decode(jvmBridge.createEmojiBMP("❤️", 64, 10)));
     sleep(Duration(seconds: 4));
-    oled.displayBitmap(base64.decode(jvmBridge.script(script)));
+    oled.displayBitmap(base64Decode(jvmBridge.script(script)));
   } finally {
     i2c.dispose();
   }
