@@ -73,7 +73,7 @@
 
 ## 0.9.9
 
-* Add [SDC30](https://www.seeedstudio.com/Grove-CO2-Temperature-Humidity-Sensor-SCD30-p-2911.html) - CO2, temperature amd humidity sensor
+* Add [SCD30](https://www.seeedstudio.com/Grove-CO2-Temperature-Humidity-Sensor-SCD30-p-2911.html) - CO2, temperature amd humidity sensor
 * internal pre-build c-periphery libraries are compressed using the xz format 
   
 ## 0.9.8

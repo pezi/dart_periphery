@@ -19,7 +19,7 @@ void main() {
     print("dart_periphery Version: $dartPeripheryVersion");
     print("c-periphery Version   : ${getCperipheryVersion()}");
     print('I2C info: ${i2c.getI2Cinfo()}');
-    print("SDC30 sensor");
+    print("SGP30 sensor");
 
     var s = SGP30(i2c);
     print('Serial number: ${s.getSerialId()}');
