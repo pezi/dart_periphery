@@ -272,13 +272,16 @@ String _getErrmsg(Pointer<Void> handle) {
 class I2C extends IsolateAPI {
   static const String _i2cBasePath = '/dev/i2c-';
   late Pointer<Void> _i2cHandle;
-  late Pointer<Utf8> _nativeName;
+  Pointer<Utf8>? _nativeName;
   final String path;
   final int busNum;
+  final bool isolate;
   bool _invalid = false;
 
   /// Opens the i2c-dev device at the specified path (e.g. "/dev/i2c-[busNum]").
-  I2C(this.busNum) : path = _i2cBasePath + busNum.toString() {
+  I2C(this.busNum)
+      : path = _i2cBasePath + busNum.toString(),
+        isolate = false {
     var tuple = _openI2C(_i2cBasePath + busNum.toString());
     _i2cHandle = tuple.$1;
     _nativeName = tuple.$2;
@@ -290,12 +293,12 @@ class I2C extends IsolateAPI {
       : path = jsonMap(json)['path'] as String,
         busNum = jsonMap(json)['bus'] as int,
         _i2cHandle = Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int),
-        _nativeName = Pointer<Utf8>.fromAddress(jsonMap(json)['name'] as int);
+        isolate = true;
 
   /// Converts a [I2C] to a JSON string. See constructor [isolate] for details.
   @override
   String toJson() {
-    return '{"class":"I2C","path":"$path","bus":$busNum,"handle":${_i2cHandle.address},"name":${_nativeName.address}}';
+    return '{"class":"I2C","path":"$path","bus":$busNum,"handle":${_i2cHandle.address}}';
   }
 
   void _checkStatus() {
@@ -665,7 +668,9 @@ class I2C extends IsolateAPI {
       _checkError(_nativeI2Cclose(_i2cHandle));
     } finally {
       _nativeI2Cfree(_i2cHandle);
-      malloc.free(_nativeName);
+      if (_nativeName != null) {
+        malloc.free(_nativeName!);
+      }
     }
   }
 
@@ -709,5 +714,10 @@ class I2C extends IsolateAPI {
   @override
   void setHandle(int handle) {
     _i2cHandle = Pointer<Void>.fromAddress(handle);
+  }
+
+  @override
+  bool isIsolate() {
+    return isolate;
   }
 }

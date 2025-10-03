@@ -154,6 +154,7 @@ class PWMexception implements Exception {
 class PWM extends IsolateAPI {
   final int chip;
   final int channel;
+  final bool isolate;
   late Pointer<Void> _pwmHandle;
   bool _invalid = false;
 
@@ -177,7 +178,9 @@ class PWM extends IsolateAPI {
   static const double dutyThreeQuarters = 0.75;
   static const double dutyFull = 1.0;
 
-  PWM(this.chip, this.channel) : _pwmHandle = _openPWM(chip, channel) {
+  PWM(this.chip, this.channel)
+      : _pwmHandle = _openPWM(chip, channel),
+        isolate = false {
     if (chip < 0) {
       throw PWMexception(
           PWMerrorCode.pwmErrorArg, 'Chip number must be non-negative');
@@ -191,7 +194,8 @@ class PWM extends IsolateAPI {
   PWM.isolate(String json)
       : chip = jsonMap(json)['chip'] as int,
         channel = jsonMap(json)['channel'] as int,
-        _pwmHandle = Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int);
+        _pwmHandle = Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int),
+        isolate = true;
 
   void _checkStatus() {
     if (_invalid) {
@@ -479,5 +483,10 @@ class PWM extends IsolateAPI {
   @override
   void setHandle(int handle) {
     _pwmHandle = Pointer<Void>.fromAddress(handle);
+  }
+
+  @override
+  bool isIsolate() {
+    return isolate;
   }
 }

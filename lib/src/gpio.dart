@@ -419,6 +419,8 @@ class GPIO extends IsolateAPI {
   /// input/output GPIO direction
   final GPIOdirection direction;
 
+  final bool isolate;
+
   /// GPIO name, is empty if [GPIO.line] is used
   final String name;
   late Pointer<Void> _gpioHandle;
@@ -473,7 +475,8 @@ class GPIO extends IsolateAPI {
   /// Use [GPIO.setBaseGPIOpath] to change the default character device path.
   GPIO(this.line, this.direction, [this.chip = 0])
       : path = _gpioBasePath + chip.toString(),
-        name = '' {
+        name = '',
+        isolate = false {
     var tuple = _openGPIO(_gpioBasePath + chip.toString(), line, direction);
     _gpioHandle = tuple.$1;
     _freeList = tuple.$2;
@@ -504,7 +507,8 @@ class GPIO extends IsolateAPI {
   /// Use [GPIO.setBaseGPIOpath] to change the default character device path.
   GPIO.name(this.name, this.direction, [this.chip = 0])
       : path = _gpioBasePath + chip.toString(),
-        line = -1 {
+        line = -1,
+        isolate = false {
     var tuple = _openNameGPIO(_gpioBasePath + chip.toString(), name, direction);
     _gpioHandle = tuple.$1;
     _freeList = tuple.$2;
@@ -539,7 +543,8 @@ class GPIO extends IsolateAPI {
   GPIO.advanced(this.line, GPIOconfig config, [this.chip = 0])
       : path = _gpioBasePath + chip.toString(),
         name = '',
-        direction = config.direction {
+        direction = config.direction,
+        isolate = false {
     var tuple =
         _openAdvancedGPIO(_gpioBasePath + chip.toString(), line, config);
     _gpioHandle = tuple.$1;
@@ -577,7 +582,8 @@ class GPIO extends IsolateAPI {
   GPIO.nameAdvanced(this.name, GPIOconfig config, [this.chip = 0])
       : path = _gpioBasePath + chip.toString(),
         line = -1,
-        direction = config.direction {
+        direction = config.direction,
+        isolate = false {
     var tuple =
         _openNameAdvancedGPIO(_gpioBasePath + chip.toString(), name, config);
     _gpioHandle = tuple.$1;
@@ -614,7 +620,8 @@ class GPIO extends IsolateAPI {
       : chip = -1,
         path = '',
         name = '',
-        _gpioHandle = _openSysfsGPIO(line, direction);
+        _gpioHandle = _openSysfsGPIO(line, direction),
+        isolate = false;
 
   /// Duplicates an existing [GPIO] from a JSON string. This special constructor
   /// is used to transfer an existing [GPIO] to an isolate.
@@ -624,7 +631,8 @@ class GPIO extends IsolateAPI {
         name = jsonMap(json)['name'] as String,
         path = jsonMap(json)['path'] as String,
         direction = GPIOdirection.values[jsonMap(json)['direction'] as int],
-        _gpioHandle = Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int);
+        _gpioHandle = Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int),
+        isolate = true;
 
   static Pointer<Void> _openSysfsGPIO(int line, GPIOdirection direction) {
     var gpioHandle = _nativeGPIOnew();
@@ -867,6 +875,11 @@ class GPIO extends IsolateAPI {
   @override
   IsolateAPI fromJson(String json) {
     return GPIO.isolate(json);
+  }
+
+  @override
+  bool isIsolate() {
+    return isolate;
   }
 
   @override

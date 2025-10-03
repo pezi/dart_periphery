@@ -8,4 +8,5 @@ abstract class IsolateAPI {
   IsolateAPI fromJson(String json);
   int getHandle();
   void setHandle(int handle);
+  bool isIsolate();
 }

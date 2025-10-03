@@ -3,7 +3,6 @@
 // BSD-style license that can be found in the LICENSE file.
 
 /*
-  https://github.com/adafruit/Adafruit_CircuitPython_VEML7700/blob/main/adafruit_veml7700.py
   https://github.com/iavorvel/MyLD2410/blob/master/src/MyLD2410.cpp
   https://github.com/csRon/HLK-LD2410B
   https://github.com/aakash30jan/Radar-24GHz-HLK-LD2410B

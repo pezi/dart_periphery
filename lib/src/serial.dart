@@ -316,15 +316,16 @@ class Serial extends IsolateAPI {
   final StopBits stopbits;
   final bool xonxoff;
   final bool rtscts;
+  final bool isolate;
   late Pointer<Void> _serialHandle;
-  late Pointer<Utf8> _devicePath;
+  Pointer<Utf8>? _devicePath;
   bool _invalid = false;
 
   /// Converts a [Serial] to a JSON string. See constructor [isolate] for
   /// details.
   @override
   String toJson() {
-    return '{"class":"Serial","path":"$path","baudrate":${baudrate.index},"databits":${databits.index},"parity":${parity.index},"stopbits":${stopbits.index},"xonxoff":$xonxoff,"rtscts":$rtscts,"handle":${_serialHandle.address},"device_path":${_devicePath.address}}';
+    return '{"class":"Serial","path":"$path","baudrate":${baudrate.index},"databits":${databits.index},"parity":${parity.index},"stopbits":${stopbits.index},"xonxoff":$xonxoff,"rtscts":$rtscts,"handle":${_serialHandle.address}}';
   }
 
   void _checkStatus() {
@@ -377,7 +378,8 @@ class Serial extends IsolateAPI {
         parity = Parity.parityNone,
         stopbits = StopBits.sb1,
         rtscts = false,
-        xonxoff = false {
+        xonxoff = false,
+        isolate = false {
     var result = _openSerial(path, baudrate);
     _serialHandle = result.$1;
     _devicePath = result.$2;
@@ -412,7 +414,8 @@ class Serial extends IsolateAPI {
   /// databits can be 5, 6, 7, or 8. parity can be PARITY_NONE, PARITY_ODD,
   /// or PARITY_EVEN . StopBits can be 1 or 2.
   Serial.advanced(this.path, this.baudrate, this.databits, this.parity,
-      this.stopbits, this.xonxoff, this.rtscts) {
+      this.stopbits, this.xonxoff, this.rtscts)
+      : isolate = false {
     var result = _openSerialAdvanced(
         path, baudrate, databits, parity, stopbits, xonxoff, rtscts);
     _serialHandle = result.$1;
@@ -431,8 +434,7 @@ class Serial extends IsolateAPI {
         xonxoff = jsonMap(json)['xonxoff'] as bool,
         _serialHandle =
             Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int),
-        _devicePath =
-            Pointer<Utf8>.fromAddress(jsonMap(json)['device_path'] as int);
+        isolate = true;
 
   static (Pointer<Void>, Pointer<Utf8>) _openSerialAdvanced(
       String path,
@@ -599,7 +601,9 @@ class Serial extends IsolateAPI {
       _checkError(_nativeSerialClose(_serialHandle));
     } finally {
       _nativeSerialFree(_serialHandle);
-      malloc.free(_devicePath);
+      if (_devicePath != null) {
+        malloc.free(_devicePath!);
+      }
     }
   }
 
@@ -858,5 +862,10 @@ class Serial extends IsolateAPI {
   @override
   void setHandle(int handle) {
     _serialHandle = Pointer<Void>.fromAddress(handle);
+  }
+
+  @override
+  bool isIsolate() {
+    return isolate;
   }
 }

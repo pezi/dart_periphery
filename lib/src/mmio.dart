@@ -194,6 +194,7 @@ class MMIO extends IsolateAPI {
   final int base;
   final int size;
   final String path;
+  final bool isolate;
   Pointer<Utf8>? _nativePath;
 
   /// Maps the region of physical memory specified by the [base] physical address and [size] in bytes, using
@@ -202,7 +203,8 @@ class MMIO extends IsolateAPI {
   /// Neither base nor size need be aligned to a page boundary.
   MMIO(this.base, this.size)
       : path = '',
-        _mmioHandle = _mmioOpen(base, size);
+        _mmioHandle = _mmioOpen(base, size),
+        isolate = false;
 
   /// Duplicates an existing [MMIO] from a JSON string. This special constructor
   /// is used to transfer an existing [MMIO] to an other isolate.
@@ -210,7 +212,8 @@ class MMIO extends IsolateAPI {
       : base = jsonMap(json)['base'] as int,
         size = jsonMap(json)['size'] as int,
         path = jsonMap(json)['path'] as String,
-        _mmioHandle = Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int);
+        _mmioHandle = Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int),
+        isolate = true;
 
   static Pointer<Void> _mmioOpen(int base, int size) {
     var mmioHandle = _nativeMMIOnew();
@@ -229,7 +232,7 @@ class MMIO extends IsolateAPI {
   /// This open function can be used with sandboxed memory character
   /// devices, e.g. `/dev/gpiomem`.
   /// Neither base nor size need be aligned to a page boundary.
-  MMIO.advanced(this.base, this.size, this.path) {
+  MMIO.advanced(this.base, this.size, this.path) : isolate = false {
     var tuple = _mmioOpenAdvanced(base, size, path);
     _mmioHandle = tuple.$1;
     _nativePath = tuple.$2;
@@ -417,5 +420,10 @@ class MMIO extends IsolateAPI {
   @override
   String toJson() {
     return '{"class":"MMIO","base":"$base","size":$size,"path":"$path","handle":${_mmioHandle.address}}';
+  }
+
+  @override
+  bool isIsolate() {
+    return isolate;
   }
 }

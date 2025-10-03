@@ -1,5 +1,5 @@
 ## 0.9.20
-*
+* Fix problems found with the help of ChatGPT and Kiro
 
 ## 0.9.19
 * Add GPS [Air530](https://github.com/pezi/dart_periphery/blob/main/example/serial_air530.dart)

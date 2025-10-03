@@ -200,15 +200,6 @@ int _checkError(int value) {
   return value;
 }
 
-final Map<String, dynamic> _map = {};
-
-Map<String, dynamic> _jsonMap(String json) {
-  if (_map.isEmpty) {
-    _map.addAll(jsonDecode(json) as Map<String, dynamic>);
-  }
-  return _map;
-}
-
 /// SPI wrapper functions for Linux userspace `spidev` devices.
 ///
 /// c-periphery [SPI](https://github.com/vsergeev/c-periphery/blob/master/docs/spi.md)
@@ -238,6 +229,8 @@ class SPI extends IsolateAPI {
   /// SPI extra flags
   final int extraFlags;
 
+  final bool isolate;
+
   bool _invalid = false;
   late Pointer<Void> _spiHandle;
   Pointer<Utf8>? _nativePath;
@@ -266,7 +259,8 @@ class SPI extends IsolateAPI {
       : bitOrder = BitOrder.msbFirst,
         bitsPerWord = 8,
         extraFlags = 0,
-        path = '/dev/spidev$bus.$chip' {
+        path = '/dev/spidev$bus.$chip',
+        isolate = false {
     _checkSPI(bus, chip);
     var tuple = _spiOpen(path, mode, maxSpeed);
     _spiHandle = tuple.$1;
@@ -300,7 +294,8 @@ class SPI extends IsolateAPI {
   /// [extraFlags] specified additional flags bitwise-ORed with the SPI mode.
   SPI.openAdvanced(this.bus, this.chip, this.mode, this.maxSpeed, this.bitOrder,
       this.bitsPerWord, this.extraFlags)
-      : path = '/dev/spidev$bus.$chip' {
+      : path = '/dev/spidev$bus.$chip',
+        isolate = false {
     _checkSPI(bus, chip);
     var tuple = _spiOpenAdvanced(
         path, mode, maxSpeed, bitOrder, bitsPerWord, extraFlags);
@@ -317,11 +312,10 @@ class SPI extends IsolateAPI {
         bus = jsonMap(json)['bus'] as int,
         bitsPerWord = jsonMap(json)['bits'] as int,
         extraFlags = jsonMap(json)['flags'] as int,
-        bitOrder = BitOrder.values[_jsonMap(json)['bitOrder'] as int],
-        mode = SPImode.values[_jsonMap(json)['mode'] as int],
-        _spiHandle = Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int) {
-    _map.clear();
-  }
+        bitOrder = BitOrder.values[jsonMap(json)['bitOrder'] as int],
+        mode = SPImode.values[jsonMap(json)['mode'] as int],
+        _spiHandle = Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int),
+        isolate = true;
 
   (Pointer<Void>, Pointer<Utf8>) _spiOpenAdvanced(String path, SPImode mode,
       int maxSpeed, BitOrder bitOrder, int bitsPerWord, int extraFlags) {
@@ -351,7 +345,8 @@ class SPI extends IsolateAPI {
   /// [BitOrder.msbLast], [bitsPerWord] specifies the transfer word size.
   /// [extraFlags] specified additional flags bitwise-ORed with the SPI mode.
   SPI.openAdvanced2(this.bus, this.chip, this.path, this.mode, this.maxSpeed,
-      this.bitOrder, this.bitsPerWord, this.extraFlags) {
+      this.bitOrder, this.bitsPerWord, this.extraFlags)
+      : isolate = false {
     _checkSPI(bus, chip);
     var tuple = _spiOpenAdvanced2(
         path, mode, maxSpeed, bitOrder, bitsPerWord, extraFlags);
@@ -616,5 +611,10 @@ class SPI extends IsolateAPI {
   @override
   void setHandle(int handle) {
     _spiHandle = Pointer<Void>.fromAddress(handle);
+  }
+
+  @override
+  bool isIsolate() {
+    return isolate;
   }
 }

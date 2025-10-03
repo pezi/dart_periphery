@@ -44,4 +44,9 @@ class DummyDev implements IsolateAPI {
             Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int);
 
   void dispose() {}
+
+  @override
+  bool isIsolate() {
+    return false;
+  }
 }
