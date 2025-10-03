@@ -2,12 +2,12 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:convert';
 // https://github.com/vsergeev/c-periphery/blob/master/docs/serial.md
 // https://github.com/vsergeev/c-periphery/blob/master/src/serial.c
 // https://github.com/vsergeev/c-periphery/blob/master/src/serial.h
 // https://github.com/dart-lang/samples/tree/master/ffi
 
+import 'dart:convert';
 import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';

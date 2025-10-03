@@ -2,7 +2,6 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:convert';
 // https://github.com/vsergeev/c-periphery/blob/master/docs/spi.md
 // https://github.com/vsergeev/c-periphery/blob/master/src/spi.c
 // https://github.com/vsergeev/c-periphery/blob/master/src/spi.h
