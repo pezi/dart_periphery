@@ -1,4 +1,4 @@
-// Copyright (c) 2022, the Dart project authors.  Please see the AUTHORS file
+// Copyright (c) 2022,2025 the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
@@ -9,8 +9,10 @@
 
 import 'dart:ffi';
 
+import 'package:dart_periphery/dart_periphery.dart';
 import 'package:ffi/ffi.dart';
 
+import 'json.dart';
 import 'signature.dart';
 
 /// [Led] error code
@@ -100,21 +102,35 @@ class LedException implements Exception {
 }
 
 /// LED wrapper functions for Linux userspace sysfs LEDs.
-class Led {
+class Led extends IsolateAPI {
   final String name;
   late Pointer<Void> _ledHandle;
   Pointer<Utf8>? _nativeName;
   bool _invalid = false;
+  final bool isolate;
 
   /// Open the sysfs LED with the specified name.
   ///
   /// 'ls /sys/class/leds/' to list all available leds.
   /// c-periphery [Led](https://github.com/vsergeev/c-periphery/blob/master/docs/led.md)
   /// documentation.
-  Led(this.name) {
+  Led(this.name) : isolate = false {
     var tuple = _openLed(name);
     _ledHandle = tuple.$1;
     _nativeName = tuple.$2;
+  }
+
+  /// Duplicates an existing [Led] from a JSON string. This special constructor
+  /// is used to transfer an existing [Led] to another isolate.
+  Led.isolate(String json)
+      : name = jsonMap(json)['name'] as String,
+        _ledHandle = Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int),
+        isolate = true;
+
+  /// Converts a [Led] to a JSON string. See constructor [isolate] for details.
+  @override
+  String toJson() {
+    return '{"class":"Led","name":"$name","handle":${_ledHandle.address}}';
   }
 
   void _checkStatus() {
@@ -247,5 +263,26 @@ class Led {
     } finally {
       malloc.free(data);
     }
+  }
+
+  @override
+  IsolateAPI fromJson(String json) {
+    return Led.isolate(json);
+  }
+
+  /// Set the address of the internal handle.
+  @override
+  void setHandle(int handle) {
+    _ledHandle = Pointer<Void>.fromAddress(handle);
+  }
+
+  @override
+  bool isIsolate() {
+    return isolate;
+  }
+
+  @override
+  int getHandle() {
+    return _ledHandle.address;
   }
 }

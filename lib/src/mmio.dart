@@ -342,7 +342,7 @@ class MMIO extends IsolateAPI {
     _checkError(_nativeMMIOwrite8(_mmioHandle, offset, value));
   }
 
-  /// Writes an byte array from mapped physical memory, starting at the
+  /// Writes a byte array from mapped physical memory, starting at the
   /// specified byte offset, relative to the base address
   /// the MMIO handle was opened with.
   void write(int offset, List<int> data) {
