@@ -11,7 +11,7 @@ const wait = 150;
 
 /// https://wiki.seeedstudio.com/Grove-Magnetic_Switch/
 ///
-/// Usage: [nano|grove|grovePlus] mageneticSwitchPin ledPin
+/// Usage: [gpio|nano|grove|grovePlus] mageneticSwitchPin ledPin
 void main(List<String> args) {
   String pinInfo = "Magenetic switch pin";
   var tuple = checkArgs2Pins(args, "mageneticSwitchPin", "ledPin");

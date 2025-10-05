@@ -1,11 +1,23 @@
-// Copyright (c) 2024, the Dart project authors.  Please see the AUTHORS file
+// Copyright (c) 2024,2025 the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:io';
 
 /// Supported extensions hats
-enum Hat { gpio, nano, grove, grovePlus }
+enum Hat {
+  /// Generic GPIO - no Hat needed
+  gpio,
+
+  /// FriendlyElec Nano hat
+  nano,
+
+  /// SeeedStudio Grove hat
+  grove,
+
+  /// Seeed Studio Grove Plus hat
+  grovePlus
+}
 
 void usage(String pin) {
   print("Parameter: [nano|grove|grovePlus] $pin");

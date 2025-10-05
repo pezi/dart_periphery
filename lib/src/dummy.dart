@@ -1,4 +1,4 @@
-// Copyright (c) 2022, the Dart project authors.  Please see the AUTHORS file
+// Copyright (c) 2022,2025 the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
@@ -11,9 +11,11 @@ import 'dart:ffi';
 class DummyDev implements IsolateAPI {
   static int handleCounter = 1;
   Pointer<Void> _dummyHandle;
+  final bool isolate;
 
-  // address which stands for all answers of the universe
-  DummyDev() : _dummyHandle = Pointer.fromAddress(handleCounter++);
+  DummyDev()
+      : _dummyHandle = Pointer.fromAddress(handleCounter++),
+        isolate = false;
 
   @override
   IsolateAPI fromJson(String json) {
@@ -41,12 +43,13 @@ class DummyDev implements IsolateAPI {
 
   DummyDev.isolate(String json)
       : _dummyHandle =
-            Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int);
+            Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int),
+        isolate = true;
 
   void dispose() {}
 
   @override
   bool isIsolate() {
-    return false;
+    return isolate;
   }
 }

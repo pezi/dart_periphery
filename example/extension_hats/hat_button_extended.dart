@@ -11,7 +11,7 @@ const holdTime = 1000;
 
 /// https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_Button
 ///
-/// Usage: [nano|grove|grovePlus] buttonPin ledPin
+/// Usage: [gpio|nano|grove|grovePlus] buttonPin ledPin
 void main(List<String> args) {
   String pinInfo = "Button pin";
   var tuple = checkArgs2Pins(args, "buttonPin", "ledPin");

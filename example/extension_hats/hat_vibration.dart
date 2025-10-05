@@ -12,7 +12,7 @@ const wait = 150;
 /// https://wiki.seeedstudio.com/Grove-Vibration_Sensor_SW-420/
 
 ///
-/// Usage: [nano|grove|grovePlus] vibrationPin ledPin
+/// Usage: [gpio|nano|grove|grovePlus] vibrationPin ledPin
 void main(List<String> args) {
   String pinInfo = "Vibration pin";
   var tuple = checkArgs2Pins(args, "vibrationPin", "ledPin");

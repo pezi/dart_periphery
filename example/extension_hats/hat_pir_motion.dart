@@ -11,7 +11,7 @@ const wait = 200;
 
 /// https://wiki.seeedstudio.com/Grove-PIR_Motion_Sensor/
 ///
-/// Usage: [nano|grove|grovePlus] pirMotionPin ledPin
+/// Usage: [gpio|nano|grove|grovePlus] pirMotionPin ledPin
 void main(List<String> args) {
   String pinInfo = "PIR motion pin";
   var tuple = checkArgs2Pins(args, "pirMotionPin", "ledPin");

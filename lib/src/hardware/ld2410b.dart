@@ -19,6 +19,73 @@ enum TargetState {
   unknown,
 }
 
+/// Engineering mode data containing energy values for each distance gate
+class EngineeringData {
+  final int maxMovingDistanceGate;
+  final int maxStaticDistanceGate;
+  final List<int>
+      movingEnergyGates; // Energy values for each moving distance gate
+  final List<int>
+      staticEnergyGates; // Energy values for each static distance gate
+
+  const EngineeringData({
+    required this.maxMovingDistanceGate,
+    required this.maxStaticDistanceGate,
+    required this.movingEnergyGates,
+    required this.staticEnergyGates,
+  });
+
+  @override
+  String toString() {
+    return 'EngineeringData(maxMovingDistanceGate: $maxMovingDistanceGate, '
+        'maxStaticDistanceGate: $maxStaticDistanceGate, '
+        'movingEnergyGates: $movingEnergyGates, '
+        'staticEnergyGates: $staticEnergyGates)';
+  }
+}
+
+class RadarReading {
+  final DateTime timestamp;
+  final TargetState targetState;
+  final int movingTargetDistance;
+  final int movingTargetEnergy;
+  final int staticTargetDistance;
+  final int staticTargetEnergy;
+  final int detectionDistance;
+  final EngineeringData? engineeringData;
+
+  RadarReading({
+    required this.targetState,
+    required this.movingTargetDistance,
+    required this.movingTargetEnergy,
+    required this.staticTargetDistance,
+    required this.staticTargetEnergy,
+    required this.detectionDistance,
+    this.engineeringData,
+  }) : timestamp = DateTime.now();
+
+  /// Check if the radar reading contains valid data
+  bool isValid() {
+    return (0 <= detectionDistance &&
+            detectionDistance <= 600) && // Max 6m detection range
+        (-100 <= movingTargetEnergy && movingTargetEnergy <= 100) &&
+        (-100 <= staticTargetEnergy && staticTargetEnergy <= 100) &&
+        (targetState != TargetState.unknown);
+  }
+
+  @override
+  String toString() {
+    return 'RadarReading(timestamp: $timestamp, '
+        'targetState: $targetState, '
+        'movingTargetDistance: $movingTargetDistance, '
+        'movingTargetEnergy: $movingTargetEnergy, '
+        'staticTargetDistance: $staticTargetDistance, '
+        'staticTargetEnergy: $staticTargetEnergy, '
+        'detectionDistance: $detectionDistance, '
+        'engineeringData: $engineeringData)';
+  }
+}
+
 final List<int> commandHeader = [0xFD, 0xFC, 0xFB, 0xFA];
 final List<int> commandTail = [0x04, 0x03, 0x02, 0x01];
 final List<int> reportHeader = [0xF4, 0xF3, 0xF2, 0xF1];
