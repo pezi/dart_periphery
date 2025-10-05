@@ -411,12 +411,7 @@ class SPI extends IsolateAPI {
       for (var v in data) {
         input[index++] = v;
       }
-      if (reuseBuffer) {
-        inPtr = outPtr = input;
-      } else {
-        inPtr = input;
-        outPtr = malloc<Uint8>(data.length);
-      }
+      outPtr = malloc<Uint8>(data.length);
 
       _checkError(_nativeTransfer(_spiHandle, inPtr, outPtr, data.length));
 
@@ -438,7 +433,7 @@ class SPI extends IsolateAPI {
       if (inPtr != nullptr) {
         malloc.free(inPtr);
       }
-      if (outPtr != nullptr && !reuseBuffer) {
+      if (outPtr != nullptr) {
         malloc.free(outPtr);
       }
     }
