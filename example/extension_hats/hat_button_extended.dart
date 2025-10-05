@@ -14,7 +14,7 @@ const holdTime = 1000;
 /// Usage: [gpio|nano|grove|grovePlus] buttonPin ledPin
 void main(List<String> args) {
   String pinInfo = "Button pin";
-  var tuple = checkArgs2Pins(args, "buttonPin", "ledPin");
+  var tuple = checkArgs2Pins(false, args, "buttonPin", "ledPin");
   var buttonPin = tuple.$2;
   var ledPin = tuple.$3;
   var hat = tuple.$1;

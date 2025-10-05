@@ -15,7 +15,7 @@ const wait = 150;
 /// Usage: [gpio|nano|grove|grovePlus] vibrationPin ledPin
 void main(List<String> args) {
   String pinInfo = "Vibration pin";
-  var tuple = checkArgs2Pins(args, "vibrationPin", "ledPin");
+  var tuple = checkArgs2Pins(false, args, "vibrationPin", "ledPin");
   var vibrationPin = tuple.$2;
   var ledPin = tuple.$3;
   var hat = tuple.$1;

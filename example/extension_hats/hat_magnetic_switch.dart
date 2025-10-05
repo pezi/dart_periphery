@@ -14,7 +14,7 @@ const wait = 150;
 /// Usage: [gpio|nano|grove|grovePlus] mageneticSwitchPin ledPin
 void main(List<String> args) {
   String pinInfo = "Magenetic switch pin";
-  var tuple = checkArgs2Pins(args, "mageneticSwitchPin", "ledPin");
+  var tuple = checkArgs2Pins(false, args, "mageneticSwitchPin", "ledPin");
   var magnetPin = tuple.$2;
   var ledPin = tuple.$3;
   var hat = tuple.$1;

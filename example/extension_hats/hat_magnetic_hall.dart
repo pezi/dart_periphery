@@ -14,7 +14,7 @@ const wait = 150;
 /// Usage: [gpio|nano|grove|grovePlus] hallPin ledPin
 void main(List<String> args) {
   String pinInfo = "Hall pin";
-  var tuple = checkArgs2Pins(args, "hallPin", "ledPin");
+  var tuple = checkArgs2Pins(false, args, "hallPin", "ledPin");
   var magnetPin = tuple.$2;
   var ledPin = tuple.$3;
   var hat = tuple.$1;

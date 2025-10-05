@@ -14,7 +14,7 @@ const wait = 200;
 /// Usage: [gpio|nano|grove|grovePlus] pirMotionPin ledPin
 void main(List<String> args) {
   String pinInfo = "PIR motion pin";
-  var tuple = checkArgs2Pins(args, "pirMotionPin", "ledPin");
+  var tuple = checkArgs2Pins(false, args, "pirMotionPin", "ledPin");
   var pirMotionPin = tuple.$2;
   var ledPin = tuple.$3;
   var hat = tuple.$1;

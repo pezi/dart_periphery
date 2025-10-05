@@ -18,7 +18,7 @@ const threshold = 100;
 /// Usage: [nano|grove|grovePlus] analogPin
 void main(List<String> args) {
   String pinInfo = "Analog pin";
-  var tuple = checkArgs2Pins(args, "analogPin", "ledPin");
+  var tuple = checkArgs2Pins(true, args, "analogPin", "ledPin");
   var analogPin = tuple.$2;
   var ledPin = tuple.$3;
   var hat = tuple.$1;
