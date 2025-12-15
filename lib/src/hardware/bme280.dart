@@ -407,6 +407,7 @@ class BME280 {
     var tx = List<int>.filled(length + 1, 0);
     tx[0] = register | 0x80;
     _spi.transfer(tx, true);
+
     return tx.sublist(1);
   }
 

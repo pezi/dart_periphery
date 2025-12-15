@@ -402,24 +402,25 @@ class SPI extends IsolateAPI {
   /// Returns a `List<int>` result buffer.
   List<int> transfer(List<int> data, bool reuseBuffer) {
     // ignore: avoid_init_to_null
-    Pointer<Uint8> inPtr = nullptr;
-    // ignore: avoid_init_to_null
     Pointer<Uint8> outPtr = nullptr;
-    var input = malloc<Uint8>(data.length);
+    var inPtr = malloc<Uint8>(data.length);
     try {
       var index = 0;
       for (var v in data) {
-        input[index++] = v;
+        inPtr[index++] = v;
       }
-      outPtr = malloc<Uint8>(data.length);
-
-      _checkError(_nativeTransfer(_spiHandle, inPtr, outPtr, data.length));
+      if (!reuseBuffer) {
+        outPtr = malloc<Uint8>(data.length);
+        _checkError(_nativeTransfer(_spiHandle, inPtr, outPtr, data.length));
+      } else {
+        _checkError(_nativeTransfer(_spiHandle, inPtr, inPtr, data.length));
+      }
 
       List<int> result;
       var length = data.length;
       if (reuseBuffer) {
         for (var i = 0; i < data.length; ++i) {
-          data[i] = outPtr[i];
+          data[i] = inPtr[i];
         }
         return data;
       } else {
