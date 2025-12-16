@@ -416,7 +416,6 @@ class SPI extends IsolateAPI {
         _checkError(_nativeTransfer(_spiHandle, inPtr, inPtr, data.length));
       }
 
-      List<int> result;
       var length = data.length;
       if (reuseBuffer) {
         for (var i = 0; i < data.length; ++i) {
@@ -424,7 +423,7 @@ class SPI extends IsolateAPI {
         }
         return data;
       } else {
-        result = List<int>.filled(length, 0);
+        List<int> result = List<int>.filled(length, 0);
         for (var i = 0; i < length; ++i) {
           result[i] = outPtr[i];
         }
