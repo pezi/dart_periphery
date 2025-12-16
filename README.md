@@ -3,7 +3,7 @@
 
 ![alt text](https://raw.githubusercontent.com/pezi/dart_periphery_img/main/header.jpg "Title")
 
-[![pub package](https://img.shields.io/badge/pub-v0.9.19-orange)](https://pub.dartlang.org/packages/dart_periphery)
+[![pub package](https://img.shields.io/badge/pub-v0.9.20-orange)](https://pub.dartlang.org/packages/dart_periphery)
 [![Pub Points](https://img.shields.io/pub/points/dart_periphery)](https://pub.dev/packages/dart_periphery/score)
 [![All Contributors](https://img.shields.io/github/contributors/pezi/dart_periphery)](https://github.com/pezi/dart_periphery/graphs/contributors)
 [![BSD License](https://img.shields.io/github/license/pezi/dart_periphery)](https://opensource.org/license/bsd-3-clause)
@@ -14,7 +14,7 @@ The repository’s [Wiki](https://github.com/pezi/dart_periphery/wiki) is now en
 
 ## 📖 Introduction
 
-**dart_periphery** is a Dart port of the native [c-periphery library](https://github.com/vsergeev/c-periphery) (v2.4.3) 
+**dart_periphery** is a Dart port of the native [c-periphery library](https://github.com/vsergeev/c-periphery) (v2.5.0) 
 for Linux Peripheral I/O (GPIO, LED, PWM, SPI, I2C, MMIO and Serial peripheral I/O). This package 
 is designed for System on Chips (SoCs) such as Raspberry Pi, NanoPi, Banana Pi, and others.
 
@@ -115,7 +115,7 @@ import 'package:dart_periphery/dart_periphery.dart';
 /// low-power combined humidity, pressure, and temperature sensor.
 void main() {
   // Select the right I2C bus number /dev/i2c-?
-  // 1 for Raspbery Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
+  // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
   var i2c = I2C(1);
   try {
     print('I2C info:' + i2c.getI2Cinfo());
@@ -142,7 +142,7 @@ import 'package:dart_periphery/dart_periphery.dart';
 /// quick response and integrated temperature & humidity sensor.
 void main() {
   // Select the right I2C bus number /dev/i2c-?
-  // 1 for Raspbery Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
+  // 1 for Raspberry Pi, 0 for NanoPi (Armbian), 2 Banana Pi (Armbian)
   var i2c = I2C(1);
   try {
     var sht31 = SHT31(i2c);
@@ -420,14 +420,14 @@ cd ~
 ### arm
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.9.3/sdk/dartsdk-linux-arm-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.10.4/sdk/dartsdk-linux-arm-release.zip
 unzip dartsdk-linux-arm-release.zip
 ```
 
 ### arm64
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.9.3/sdk/dartsdk-linux-arm64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.10.4/sdk/dartsdk-linux-arm64-release.zip
 unzip dartsdk-linux-arm64-release.zip
 ```
 
@@ -443,14 +443,14 @@ unzip dartsdk-linux-ia32-release.zip
 ### X64
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.9.3/sdk/dartsdk-linux-x64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.10.4/sdk/dartsdk-linux-x64-release.zip
 unzip dartsdk-linux-x64-release.zip
 ```
 
 ### RISC-V (RV64GC)
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.9.3/sdk/dartsdk-linux-riscv64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.10.4/sdk/dartsdk-linux-riscv64-release.zip
 unzip dartsdk-linux-riscv64-release.zip
 ```
 
@@ -485,7 +485,7 @@ Test the installation
 
 ``` bash
  dart --version
-Dart SDK version: 3.9.3 (stable) (Tue Sep 9 12:02:51 2025 -0700) on "linux_arm64"
+Dart SDK version: 3.10.4 (stable) (Tue Dec 9 00:01:55 2025 -0800) on "linux_arm"
 ```
 
 ## 📚 Native libraries
@@ -594,6 +594,7 @@ the asset directory.
 
 ## 🖥 Supported devices (sensors, actuators, extensions hats and displays)
 
+* [Air530](https://github.com/pezi/dart_periphery/blob/main/example/serial_air530.dart) GPS sensor
 * [SGP30](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sgp30.dart): tVOC and eCO2 Gas Sensor
 * [BME280](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme280.dart): Temperature, humidity and pressure sensor.
 * [BME680](https://github.com/pezi/dart_periphery/blob/main/example/i2c_bme680.dart): Temperature, humidity pressure and gas (Indoor Airy Quality) sensor.
@@ -606,7 +607,7 @@ the asset directory.
 * [MCP9808](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mcp9808.dart): high accuracy temperature sensor.
 * [MLX90615](https://github.com/pezi/dart_periphery/blob/main/example/i2c_mlx90615.dart): digital infrared non-contact temperature sensor.
 * [PCF8591](https://github.com/pezi/dart_periphery/blob/main/example/i2c_pcf8591.dart): ADC+DAC combo 
-* [SDC30](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sdc30.dart): CO₂, temperature and humidity sensor.
+* [SCD30](https://github.com/pezi/dart_periphery/blob/main/example/i2c_scd30.dart): CO₂, temperature and humidity sensor.
 * [SI1145](https://github.com/pezi/dart_periphery/blob/main/example/i2c_si1145.dart) sunlight sensor: visible & IR light, UV index
 * [TSL2591](https://github.com/pezi/dart_periphery/blob/main/example/i2c_tsl2591.dart) light sensor
 * [DS1307/DS3231](https://github.com/pezi/dart_periphery/blob/main/example/i2c_ds1307.dart) real time clock support

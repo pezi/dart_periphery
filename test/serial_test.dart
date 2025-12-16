@@ -27,7 +27,7 @@ void testOpenConfigClose(String device) {
     // isolate test
     var isolate = Serial.isolate(serial.toJson());
     passert(serial.path == isolate.path);
-    passert(serial.rtsct == isolate.rtsct);
+    passert(serial.rtscts == isolate.rtscts);
     passert(serial.baudrate == isolate.baudrate);
     passert(serial.stopbits == isolate.stopbits);
     passert(serial.databits == isolate.databits);

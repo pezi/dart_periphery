@@ -11,6 +11,13 @@ import 'package:dart_periphery/dart_periphery.dart';
 ///
 ///  https://wiki.seeedstudio.com/Grove-Barometer_Sensor-BME280/
 ///
+/// VIN -> 3.3V
+/// GND -> GND
+/// SCL (SCK) -> SCLK (Pin 23 / GPIO 11)
+/// SDA (MOSI) -> MOSI (Pin 19 / GPIO 10)
+/// SDO (MISO) -> MISO (Pin 21 / GPIO 9)
+/// CS (CSB) -> CE0 (Pin 24 / GPIO 8) Note: You can also use CE1 if you change the code to device 1.
+
 void main() {
   var spi = SPI(0, 0, SPImode.mode0, 1000000);
   try {

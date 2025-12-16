@@ -1,3 +1,7 @@
+// Copyright (c) 2025, the Java project authors.  Please see the AUTHORS file
+// for details. All rights reserved. Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
+
 package at.flutterdev;
 
 import java.awt.*;
@@ -9,9 +13,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import bsh.Interpreter;
-
-import java.util.Base64;
-
 import javax.imageio.ImageIO;
 
 
@@ -49,9 +50,11 @@ public class EmojiBMPGenerator {
             g2d.setColor(Color.WHITE);
 
             if(font == null) {
-                // Warning Noto Color Emoji is not working with a mono color bitmap 
-                font = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream("./font/segoe-ui-emoji.ttf"));
-                font = font.deriveFont(Font.PLAIN,size);
+                try (FileInputStream fis = new FileInputStream("./font/segoe-ui-emoji.ttf")) {
+                    // Warning Noto Color Emoji is not working with a mono color bitmap 
+                    font = Font.createFont(Font.TRUETYPE_FONT, fis);
+                    font = font.deriveFont(Font.PLAIN, size);
+                }
             }
 
             g2d.setFont(font);
@@ -74,7 +77,7 @@ public class EmojiBMPGenerator {
             return Base64.getEncoder().encodeToString(imageBytes);
         } catch (Exception e) {
             e.printStackTrace();
-            return "* "+ e.getMessage();
+            return "Exception "+ e.getMessage();
         }
 
     }
@@ -108,20 +111,18 @@ public class EmojiBMPGenerator {
            
             g2d.dispose();
 
-      
-
             // Extract raw pixel data from BufferedImage
             byte[] imageBytes = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();    
 
             return Base64.getEncoder().encodeToString(imageBytes);
         } catch (Exception e) {
             e.printStackTrace();
-            return "* " + e.getMessage();
+            return "Exception " + e.getMessage();
         }
     }
 
     public static void main(String[] args) {
-        System.out.println(EmojiBMPGenerator. createEmoji("💩".getBytes(), 64, 10));
+        System.out.println(EmojiBMPGenerator.createEmoji("💩".getBytes(), 64, 10));
         /*
             // Encode pixel data as Base64
 

@@ -46,9 +46,9 @@ void main() {
     for (var i = 0; i < 20; ++i) {
       s.writeString('Q\r\n');
       event = s.read(256, 1000);
-      var tupple = convert(event.toString());
+      var tuple = convert(event.toString());
       print(
-          "H: ${tupple.$1.toStringAsFixed(1)} T: ${tupple.$2.toStringAsFixed(1)} CO2:${tupple.$3.toInt()}");
+          "H: ${tuple.$1.toStringAsFixed(1)} T: ${tuple.$2.toStringAsFixed(1)} CO2:${tuple.$3.toInt()}");
       sleep(Duration(seconds: 5));
     }
   } finally {

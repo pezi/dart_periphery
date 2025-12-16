@@ -2,7 +2,6 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:convert';
 // https://github.com/vsergeev/c-periphery/blob/master/docs/gpio.md
 // https://github.com/vsergeev/c-periphery/blob/master/src/gpio.c
 // https://github.com/vsergeev/c-periphery/blob/master/src/gpio.h
@@ -18,7 +17,13 @@ import 'library.dart';
 import 'signature.dart';
 
 /// Result codes of the [GPIO.poll].
-enum GPIOpolling { success, timeout }
+enum GPIOpolling {
+  /// Poll operation completed successfully with an event
+  success,
+
+  /// Poll operation timed out without an event
+  timeout
+}
 
 /// Mapped native [GPIO] error codes with the same index, but different
 /// leading sign.
@@ -56,16 +61,16 @@ enum GPIOerrorCode {
 
 /// [GPIO] input/output direction
 enum GPIOdirection {
-  ///  Input
+  /// Input direction
   gpioDirIn,
 
-  /// Output, initialized to low
+  /// Output direction, initialized to low
   gpioDirOut,
 
-  /// output, initialized to low
+  /// Output direction, initialized to low
   gpioDirOutLow,
 
-  /// output, initialized to high
+  /// Output direction, initialized to high
   gpioDirOutHigh
 }
 
@@ -89,10 +94,10 @@ enum GPIObias {
   /// Default line bias
   gpioBiasDefault,
 
-  /// Pull-up
+  /// Pull-up resistor enabled
   gpioBiasPullUp,
 
-  /// Pull-down *
+  /// Pull-down resistor enabled
   gpioBiasPullDown,
 
   /// Disable line bias
@@ -104,10 +109,10 @@ enum GPIOdrive {
   /// Default line drive (push-pull)
   gpioDriveDefault,
 
-  /// Open drain
+  /// Open drain output
   gpioDriveOpenDrain,
 
-  ///  Open source
+  /// Open source output
   gpioDriveOpenSource,
 }
 
@@ -144,8 +149,8 @@ class PollMultipleEvent {
     return eventCounter == 0 ? true : false;
   }
 
-  /// Checks if an edge event occured for a [gpio]
-  bool hasEventOccured(GPIO gpio) {
+  /// Checks if an edge event occurred for a [gpio]
+  bool hasEventOccurred(GPIO gpio) {
     var index = 0;
     for (var g in gpios) {
       if (g._gpioHandle == gpio._gpioHandle) {
@@ -389,20 +394,11 @@ int _checkError(int value) {
   return value;
 }
 
-final Map<String, dynamic> _map = {};
-
-Map<String, dynamic> _jsonMap(String json) {
-  if (_map.isEmpty) {
-    _map.addAll(jsonDecode(json) as Map<String, dynamic>);
-  }
-  return _map;
-}
-
 /// GPIO wrapper functions for Linux userspace character device gpio-cdev
 /// and sysfs GPIOs.
 ///
 /// Character device GPIOs were introduced in Linux kernel version 4.8. If the
-/// toolchain used to compiled c-periphery contains Linux kernel headers
+/// toolchain used to compile c-periphery contains Linux kernel headers
 /// older than 4.8 (i.e. linux/gpio.h is missing), then only legacy
 /// sysfs GPIOs will be supported.
 ///
@@ -423,15 +419,19 @@ class GPIO extends IsolateAPI {
   /// input/output GPIO direction
   final GPIOdirection direction;
 
+  final bool isolate;
+
   /// GPIO name, is empty if [GPIO.line] is used
   final String name;
   late Pointer<Void> _gpioHandle;
+  List<Pointer> _freeList = [];
+
   bool _invalid = false;
 
   /// Converts a [GPIO] to a JSON string. See constructor [isolate] for details.
   @override
   String toJson() {
-    return '{"class":GPIO","path":"$path","chip":$chip,"line":$line,"direction":${direction.index},"name":"$name","handle":${_gpioHandle.address}}';
+    return '{"class":"GPIO","path":"$path","chip":$chip,"line":$line,"direction":${direction.index},"name":"$name","handle":${_gpioHandle.address}}';
   }
 
   /// Sets an alternative [chipBasePath], default value is '/dev/gpiochip'
@@ -476,18 +476,28 @@ class GPIO extends IsolateAPI {
   GPIO(this.line, this.direction, [this.chip = 0])
       : path = _gpioBasePath + chip.toString(),
         name = '',
-        _gpioHandle =
-            _openGPIO(_gpioBasePath + chip.toString(), line, direction);
+        isolate = false {
+    var tuple = _openGPIO(_gpioBasePath + chip.toString(), line, direction);
+    _gpioHandle = tuple.$1;
+    _freeList = tuple.$2;
+  }
 
-  static Pointer<Void> _openGPIO(
+  static (Pointer<Void>, List<Pointer>) _openGPIO(
       String path, int line, GPIOdirection direction) {
     var gpioHandle = _nativeGPIOnew();
     if (gpioHandle == nullptr) {
       return throw GPIOexception(GPIOerrorCode.gpioErrorOpen, openError);
     }
-    _checkError(_nativeGPIOopen(
-        gpioHandle, path.toNativeUtf8(), line, direction.index));
-    return gpioHandle;
+    var nativePath = path.toNativeUtf8();
+    try {
+      _checkError(
+          _nativeGPIOopen(gpioHandle, nativePath, line, direction.index));
+    } catch (_) {
+      _nativeGPIOfree(gpioHandle);
+      malloc.free(nativePath);
+      rethrow;
+    }
+    return (gpioHandle, [nativePath]);
   }
 
   /// Opens the character device GPIO with the specified GPIO [name] and
@@ -498,18 +508,30 @@ class GPIO extends IsolateAPI {
   GPIO.name(this.name, this.direction, [this.chip = 0])
       : path = _gpioBasePath + chip.toString(),
         line = -1,
-        _gpioHandle =
-            _openNameGPIO(_gpioBasePath + chip.toString(), name, direction);
+        isolate = false {
+    var tuple = _openNameGPIO(_gpioBasePath + chip.toString(), name, direction);
+    _gpioHandle = tuple.$1;
+    _freeList = tuple.$2;
+  }
 
-  static Pointer<Void> _openNameGPIO(
+  static (Pointer<Void>, List<Pointer>) _openNameGPIO(
       String path, String name, GPIOdirection direction) {
     var gpioHandle = _nativeGPIOnew();
     if (gpioHandle == nullptr) {
       return throw GPIOexception(GPIOerrorCode.gpioErrorOpen, openError);
     }
-    _checkError(_nativeGPIOopenName(
-        gpioHandle, path.toNativeUtf8(), name.toNativeUtf8(), direction.index));
-    return gpioHandle;
+    var nativePath = path.toNativeUtf8();
+    var nativeName = name.toNativeUtf8();
+    try {
+      _checkError(_nativeGPIOopenName(
+          gpioHandle, nativePath, nativeName, direction.index));
+    } catch (_) {
+      _nativeGPIOfree(gpioHandle);
+      malloc.free(nativePath);
+      malloc.free(nativeName);
+      rethrow;
+    }
+    return (gpioHandle, [nativePath, nativeName]);
   }
 
   /// Opens the character device GPIO with the specified GPIO [line] and
@@ -522,18 +544,33 @@ class GPIO extends IsolateAPI {
       : path = _gpioBasePath + chip.toString(),
         name = '',
         direction = config.direction,
-        _gpioHandle =
-            _openAdvancedGPIO(_gpioBasePath + chip.toString(), line, config);
+        isolate = false {
+    var tuple =
+        _openAdvancedGPIO(_gpioBasePath + chip.toString(), line, config);
+    _gpioHandle = tuple.$1;
+    _freeList = tuple.$2;
+  }
 
-  static Pointer<Void> _openAdvancedGPIO(
+  static (Pointer<Void>, List<Pointer>) _openAdvancedGPIO(
       String path, int line, GPIOconfig config) {
     var gpioHandle = _nativeGPIOnew();
     if (gpioHandle == nullptr) {
       return throw GPIOexception(GPIOerrorCode.gpioErrorOpen, openError);
     }
-    _checkError(_nativeGPIOopenAdvanced(
-        gpioHandle, path.toNativeUtf8(), line, config._toNative()));
-    return gpioHandle;
+    var nativePath = path.toNativeUtf8();
+    var nativeConfig = config._toNative();
+    try {
+      _checkError(
+        _nativeGPIOopenAdvanced(gpioHandle, nativePath, line, nativeConfig),
+      );
+    } catch (_) {
+      _nativeGPIOfree(gpioHandle);
+      malloc.free(nativeConfig.ref.label);
+      malloc.free(nativeConfig);
+      malloc.free(nativePath);
+      rethrow;
+    }
+    return (gpioHandle, [nativeConfig.ref.label, nativeConfig, nativePath]);
   }
 
   /// Opens the character device GPIO with the specified GPIO [name] and the
@@ -546,18 +583,36 @@ class GPIO extends IsolateAPI {
       : path = _gpioBasePath + chip.toString(),
         line = -1,
         direction = config.direction,
-        _gpioHandle = _openNameAdvancedGPIO(
-            _gpioBasePath + chip.toString(), name, config);
-
-  static Pointer<Void> _openNameAdvancedGPIO(
+        isolate = false {
+    var tuple =
+        _openNameAdvancedGPIO(_gpioBasePath + chip.toString(), name, config);
+    _gpioHandle = tuple.$1;
+    _freeList = tuple.$2;
+  }
+  static (Pointer<Void>, List<Pointer>) _openNameAdvancedGPIO(
       String path, String name, GPIOconfig config) {
     var gpioHandle = _nativeGPIOnew();
     if (gpioHandle == nullptr) {
       return throw GPIOexception(GPIOerrorCode.gpioErrorOpen, openError);
     }
-    _checkError(_nativeGPIOopenNameAdvanced(gpioHandle, path.toNativeUtf8(),
-        name.toNativeUtf8(), config._toNative()));
-    return gpioHandle;
+    var nativePath = path.toNativeUtf8();
+    var nativeName = name.toNativeUtf8();
+    var nativeConfig = config._toNative();
+    try {
+      _checkError(_nativeGPIOopenNameAdvanced(
+          gpioHandle, nativePath, nativeName, nativeConfig));
+    } catch (_) {
+      _nativeGPIOfree(gpioHandle);
+      malloc.free(nativeConfig.ref.label);
+      malloc.free(nativeConfig);
+      malloc.free(nativePath);
+      malloc.free(nativeName);
+      rethrow;
+    }
+    return (
+      gpioHandle,
+      [nativeConfig.ref.label, nativeConfig, nativePath, nativeName]
+    );
   }
 
   /// Opens the sysfs GPIO with the specified [line] and [direction].
@@ -565,7 +620,8 @@ class GPIO extends IsolateAPI {
       : chip = -1,
         path = '',
         name = '',
-        _gpioHandle = _openSysfsGPIO(line, direction);
+        _gpioHandle = _openSysfsGPIO(line, direction),
+        isolate = false;
 
   /// Duplicates an existing [GPIO] from a JSON string. This special constructor
   /// is used to transfer an existing [GPIO] to an isolate.
@@ -574,9 +630,9 @@ class GPIO extends IsolateAPI {
         line = jsonMap(json)['line'] as int,
         name = jsonMap(json)['name'] as String,
         path = jsonMap(json)['path'] as String,
-        direction = GPIOdirection.values[_jsonMap(json)['direction'] as int],
-        _gpioHandle =
-            Pointer<Void>.fromAddress(_jsonMap(json)['handle'] as int);
+        direction = GPIOdirection.values[jsonMap(json)['direction'] as int],
+        _gpioHandle = Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int),
+        isolate = true;
 
   static Pointer<Void> _openSysfsGPIO(int line, GPIOdirection direction) {
     var gpioHandle = _nativeGPIOnew();
@@ -669,8 +725,14 @@ class GPIO extends IsolateAPI {
   void dispose() {
     _checkStatus();
     _invalid = true;
-    _checkError(_nativeGPIOclose(_gpioHandle));
-    _nativeGPIOfree(_gpioHandle);
+    try {
+      _checkError(_nativeGPIOclose(_gpioHandle));
+    } finally {
+      _nativeGPIOfree(_gpioHandle);
+      for (var p in _freeList) {
+        malloc.free(p);
+      }
+    }
   }
 
   int _getInt32Value(intVoidInt32PtrF f) {
@@ -813,6 +875,11 @@ class GPIO extends IsolateAPI {
   @override
   IsolateAPI fromJson(String json) {
     return GPIO.isolate(json);
+  }
+
+  @override
+  bool isIsolate() {
+    return isolate;
   }
 
   @override

@@ -5,7 +5,7 @@
 import 'package:dart_periphery/dart_periphery.dart';
 import 'dart:io';
 
-/// SDC30 - CO2, temperature and humidity sensor
+/// SCD30 - CO2, temperature and humidity sensor
 ///
 /// https://www.seeedstudio.com/Grove-CO2-Temperature-Humidity-Sensor-SCD30-p-2911.html
 ///
@@ -18,9 +18,9 @@ void main() {
     print("dart_periphery Version: $dartPeripheryVersion");
     print("c-periphery Version   : ${getCperipheryVersion()}");
     print('I2C info: ${i2c.getI2Cinfo()}');
-    print("SDC30 sensor");
+    print("SCD30 sensor");
 
-    var s = SDC30(i2c);
+    var s = SCD30(i2c);
     var firmware = s.getFirmwareVersion();
     print("Firmware: ${firmware >> 8}.${firmware & 0xff}");
     while (true) {

@@ -2,9 +2,9 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-// https://github.com/vsergeev/c-periphery/blob/master/docs/i2c.md
-// https://github.com/vsergeev/c-periphery/blob/master/src/i2c.c
-// https://github.com/vsergeev/c-periphery/blob/master/src/i2c.h
+// https://github.com/vsergeev/c-periphery/blob/master/docs/mmio.md
+// https://github.com/vsergeev/c-periphery/blob/master/src/mmio.c
+// https://github.com/vsergeev/c-periphery/blob/master/src/mmio.h
 // https://github.com/dart-lang/samples/tree/master/ffi
 
 import 'dart:ffi';
@@ -120,7 +120,7 @@ final _nativeMMIOreadBuf = _peripheryLib
 
 // int mmio_write32(mmio_t *mmio, uintptr_t offset, uint32_t value);
 // ignore: camel_case_types
-typedef _mmioWrite32 = Int64 Function(
+typedef _mmioWrite32 = Int32 Function(
     Pointer<Void> handle, IntPtr offset, Uint32 value);
 typedef _MMIOwrite32 = int Function(
     Pointer<Void> handle, int offset, int value);
@@ -131,7 +131,7 @@ final _nativeMMIOwrite32 = _peripheryLib
 
 // int mmio_write16(mmio_t *mmio, uintptr_t offset, uint16_t value);
 // ignore: camel_case_types
-typedef _mmioWrite16 = Int64 Function(
+typedef _mmioWrite16 = Int32 Function(
     Pointer<Void> handle, IntPtr offset, Uint16 value);
 
 final _nativeMMIOwrite16 = _peripheryLib
@@ -140,7 +140,7 @@ final _nativeMMIOwrite16 = _peripheryLib
 
 // int mmio_write8(mmio_t *mmio, uintptr_t offset, uint8_t value);
 // ignore: camel_case_types
-typedef _mmioWrite8 = Int64 Function(
+typedef _mmioWrite8 = Int32 Function(
     Pointer<Void> handle, IntPtr offset, Uint8 value);
 
 final _nativeMMIOwrite8 = _peripheryLib
@@ -149,7 +149,7 @@ final _nativeMMIOwrite8 = _peripheryLib
 
 // int mmio_write(mmio_t *mmio, uintptr_t offset, const uint8_t *buf, size_t len);
 // ignore: camel_case_types
-typedef _mmioWriteBuf = Int64 Function(
+typedef _mmioWriteBuf = Int32 Function(
     Pointer<Void> handle, IntPtr offset, Pointer<Uint8> value, IntPtr len);
 
 typedef _MMIOwriteBuf = int Function(
@@ -194,6 +194,8 @@ class MMIO extends IsolateAPI {
   final int base;
   final int size;
   final String path;
+  final bool isolate;
+  Pointer<Utf8>? _nativePath;
 
   /// Maps the region of physical memory specified by the [base] physical address and [size] in bytes, using
   /// the default `/dev/mem` memory character device.
@@ -201,7 +203,8 @@ class MMIO extends IsolateAPI {
   /// Neither base nor size need be aligned to a page boundary.
   MMIO(this.base, this.size)
       : path = '',
-        _mmioHandle = _mmioOpen(base, size);
+        _mmioHandle = _mmioOpen(base, size),
+        isolate = false;
 
   /// Duplicates an existing [MMIO] from a JSON string. This special constructor
   /// is used to transfer an existing [MMIO] to an other isolate.
@@ -209,7 +212,8 @@ class MMIO extends IsolateAPI {
       : base = jsonMap(json)['base'] as int,
         size = jsonMap(json)['size'] as int,
         path = jsonMap(json)['path'] as String,
-        _mmioHandle = Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int);
+        _mmioHandle = Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int),
+        isolate = true;
 
   static Pointer<Void> _mmioOpen(int base, int size) {
     var mmioHandle = _nativeMMIOnew();
@@ -228,18 +232,28 @@ class MMIO extends IsolateAPI {
   /// This open function can be used with sandboxed memory character
   /// devices, e.g. `/dev/gpiomem`.
   /// Neither base nor size need be aligned to a page boundary.
-  MMIO.advanced(this.base, this.size, this.path)
-      : _mmioHandle = _mmioOpenAdvanced(base, size, path);
+  MMIO.advanced(this.base, this.size, this.path) : isolate = false {
+    var tuple = _mmioOpenAdvanced(base, size, path);
+    _mmioHandle = tuple.$1;
+    _nativePath = tuple.$2;
+  }
 
-  static Pointer<Void> _mmioOpenAdvanced(int base, int size, String path) {
+  static (Pointer<Void>, Pointer<Utf8>) _mmioOpenAdvanced(
+      int base, int size, String path) {
     var mmioHandle = _nativeMMIOnew();
     if (mmioHandle == nullptr) {
       return throw MMIOexception(
           MMIOerrorCode.mmioErrorOpen, 'Error opening MMIO interface');
     }
-    _checkError(
-        _nativeMMIOopenAdvanced(mmioHandle, base, size, path.toNativeUtf8()));
-    return mmioHandle;
+    var nativePath = path.toNativeUtf8();
+    try {
+      _checkError(_nativeMMIOopenAdvanced(mmioHandle, base, size, nativePath));
+    } catch (_) {
+      _nativeMMIOfree(mmioHandle);
+      malloc.free(nativePath);
+      rethrow;
+    }
+    return (mmioHandle, nativePath);
   }
 
   /// Converts the native error code [value] to [MMIOerrorCode].
@@ -328,7 +342,7 @@ class MMIO extends IsolateAPI {
     _checkError(_nativeMMIOwrite8(_mmioHandle, offset, value));
   }
 
-  /// Writes an byte array from mapped physical memory, starting at the
+  /// Writes a byte array from mapped physical memory, starting at the
   /// specified byte offset, relative to the base address
   /// the MMIO handle was opened with.
   void write(int offset, List<int> data) {
@@ -347,7 +361,7 @@ class MMIO extends IsolateAPI {
   int operator [](int i) => read32(i);
 
   /// Fast access for [MMIO.write32]
-  operator []=(int i, int value) => write32(i, value); // set
+  void operator []=(int i, int value) => write32(i, value);
 
   void _checkStatus() {
     if (_invalid) {
@@ -360,8 +374,14 @@ class MMIO extends IsolateAPI {
   void dispose() {
     _checkStatus();
     _invalid = true;
-    _checkError(_nativeMMIOclose(_mmioHandle));
-    _nativeMMIOfree(_mmioHandle);
+    try {
+      _checkError(_nativeMMIOclose(_mmioHandle));
+    } finally {
+      if (_nativePath != null) {
+        malloc.free(_nativePath!);
+      }
+      _nativeMMIOfree(_mmioHandle);
+    }
   }
 
   /// Returns the libc errno of the last failure that occurred.
@@ -400,5 +420,10 @@ class MMIO extends IsolateAPI {
   @override
   String toJson() {
     return '{"class":"MMIO","base":"$base","size":$size,"path":"$path","handle":${_mmioHandle.address}}';
+  }
+
+  @override
+  bool isIsolate() {
+    return isolate;
   }
 }

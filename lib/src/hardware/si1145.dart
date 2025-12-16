@@ -281,7 +281,7 @@ class SI1145result {
       'SI1145result [visible=$visible, ir=$ir, uvIndexRaw=$uvIndexRaw]';
 
   String toJSON() {
-    return '{"visible":"$visible","ir","$ir","uvIndexRaw","$uvIndexRaw"}';
+    return '{"visible":"$visible","ir":"$ir","uvIndexRaw":"$uvIndexRaw"}';
   }
 
   /// Returns the adjusted UV index.

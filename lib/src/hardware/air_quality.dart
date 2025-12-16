@@ -1,4 +1,4 @@
-// Copyright (c) 2024, the Flutter project authors.  Please see the AUTHORS file
+// Copyright (c) 2024, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
@@ -35,7 +35,7 @@ AirQuality getAirQuality(int iaq) {
   return AirQuality.invalidValue;
 }
 
-/// IAQ values: excellent - invalidValue - contaning range and color
+/// IAQ values: excellent - invalidValue - containing range and color
 ///
 /// [source](https://community.bosch-sensortec.com/t5/MEMS-sensors-forum/BME680-688-IAQ-meaning/td-p/45196).
 enum AirQuality {

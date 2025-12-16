@@ -11,13 +11,13 @@ const wait = 150;
 
 /// https://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_Button
 ///
-/// Usage: [nano|grove|grovePlus] buttonPin ledPin
+/// Usage: [gpio|nano|grove|grovePlus] buttonPin ledPin
 void main(List<String> args) {
   String pinInfo = "Button pin";
-  var tupple = checkArgs2Pins(args, "buttonPin", "ledPin");
-  var buttonPin = tupple.$2;
-  var ledPin = tupple.$3;
-  var hat = tupple.$1;
+  var tuple = checkArgs2Pins(false, args, "buttonPin", "ledPin");
+  var buttonPin = tuple.$2;
+  var ledPin = tuple.$3;
+  var hat = tuple.$1;
   switch (hat) {
     case Hat.nano:
       var hat = NanoHatHub();

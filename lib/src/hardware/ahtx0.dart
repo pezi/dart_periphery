@@ -92,9 +92,9 @@ class AHTX0 {
           i2cAddress, AHTX0command.aht20Calibrate.cmd, [0x08, 0x00]);
       isAHT20 = true;
     }
-    int start = DateTime.now().millisecond;
+    int start = DateTime.now().millisecondsSinceEpoch;
     while (_getStatus() & AHTX0command.statusBusy.cmd != 0) {
-      if (DateTime.now().millisecond - start > 3000) {
+      if (DateTime.now().millisecondsSinceEpoch - start > 3000) {
         throw AHTX0exception(
             "Sensor remained busy 3 seconds. Could not be calibrated");
       }

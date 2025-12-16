@@ -307,6 +307,11 @@ class ArduinoBasedHat extends IsolateAPI {
   String toJson() {
     return i2c.toJson();
   }
+
+  @override
+  bool isIsolate() {
+    return false;
+  }
 }
 
 /// Extension hat from [FriendlyARM](http://wiki.friendlyelec.com/wiki/index.php/BakeBit_-_NanoHat_Hub)
@@ -499,9 +504,12 @@ const int rpiZeroHatPid = 0x05;
 /// | and RPISER           |                                     |
 class GroveBaseHat extends IsolateAPI {
   final I2C i2c;
+  final bool isolate;
   int _id = 0;
-  GroveBaseHat([int i2cBus = 1]) : i2c = I2C(i2cBus);
-  GroveBaseHat.isolate(this.i2c);
+  GroveBaseHat([int i2cBus = 1])
+      : i2c = I2C(i2cBus),
+        isolate = false;
+  GroveBaseHat.isolate(this.i2c) : isolate = true;
 
   /// Returns the internal hardware id of the hat.
   /// RPI_HAT_PID (0x4) for a `Grove Base Hat RPi`, and
@@ -602,5 +610,10 @@ class GroveBaseHat extends IsolateAPI {
   @override
   String toJson() {
     return i2c.toJson();
+  }
+
+  @override
+  bool isIsolate() {
+    return isolate;
   }
 }

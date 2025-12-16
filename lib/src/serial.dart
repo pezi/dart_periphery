@@ -2,12 +2,12 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:convert';
 // https://github.com/vsergeev/c-periphery/blob/master/docs/serial.md
 // https://github.com/vsergeev/c-periphery/blob/master/src/serial.c
 // https://github.com/vsergeev/c-periphery/blob/master/src/serial.h
 // https://github.com/dart-lang/samples/tree/master/ffi
 
+import 'dart:convert';
 import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
@@ -51,7 +51,7 @@ class SerialReadEvent {
   }
 
   /// Converts the serial data (UTF8 format) to a string.
-  String uf8ToString([bool allowMalformed = false]) {
+  String utf8ToString([bool allowMalformed = false]) {
     if (count == 0) {
       return '';
     }
@@ -208,7 +208,7 @@ final _nativeSerialSetParity = intVoidIntM('serial_set_parity');
 final _nativeSerialSetStopbits = intVoidIntM('serial_set_stopbits');
 
 // int serial_set_xonxoff(serial_t *serial, bool enabled);
-final _nativeSerialSetXonxof = intVoidInt8M('serial_set_xonxoff');
+final _nativeSerialSetXonxoff = intVoidInt8M('serial_set_xonxoff');
 
 // int serial_set_rtscts(serial_t *serial, bool enabled)
 final _nativeSerialSetRtscts = intVoidInt8M('serial_set_rtscts');
@@ -315,15 +315,17 @@ class Serial extends IsolateAPI {
   final Parity parity;
   final StopBits stopbits;
   final bool xonxoff;
-  final bool rtsct;
+  final bool rtscts;
+  final bool isolate;
   late Pointer<Void> _serialHandle;
+  Pointer<Utf8>? _devicePath;
   bool _invalid = false;
 
   /// Converts a [Serial] to a JSON string. See constructor [isolate] for
   /// details.
   @override
   String toJson() {
-    return '{"class":"Serial","path":"$path","baudrate":${baudrate.index},"databits":${databits.index},"parity":${parity.index},"stopbits":${stopbits.index},"xonxoff":$xonxoff,"rtsct":$rtsct,"handle":${_serialHandle.address}}';
+    return '{"class":"Serial","path":"$path","baudrate":${baudrate.index},"databits":${databits.index},"parity":${parity.index},"stopbits":${stopbits.index},"xonxoff":$xonxoff,"rtscts":$rtscts,"handle":${_serialHandle.address}}';
   }
 
   void _checkStatus() {
@@ -375,33 +377,50 @@ class Serial extends IsolateAPI {
       : databits = DataBits.db8,
         parity = Parity.parityNone,
         stopbits = StopBits.sb1,
-        rtsct = false,
+        rtscts = false,
         xonxoff = false,
-        _serialHandle = _openSerial(path, baudrate);
+        isolate = false {
+    var result = _openSerial(path, baudrate);
+    _serialHandle = result.$1;
+    _devicePath = result.$2;
+  }
 
-  static Pointer<Void> _openSerial(String path, Baudrate baudrate) {
+  static (Pointer<Void>, Pointer<Utf8>) _openSerial(
+      String path, Baudrate baudrate) {
     var serialHandle = _nativeSerialNew();
     if (serialHandle == nullptr) {
       return throw SerialException(
           SerialErrorCode.serialErrorOpen, 'Error opening serial interface');
     }
-    _checkError(_nativeSerialOpen(
-        serialHandle, path.toNativeUtf8(), baudrate2Int(baudrate)));
-    return serialHandle;
+
+    var nativePath = path.toNativeUtf8();
+    try {
+      _checkError(
+          _nativeSerialOpen(serialHandle, nativePath, baudrate2Int(baudrate)));
+    } catch (_) {
+      _nativeSerialFree(serialHandle);
+      malloc.free(nativePath);
+      rethrow;
+    }
+    return (serialHandle, nativePath);
   }
 
   /// Opens the `tty` device at the specified [path]
   /// (e.g. "/dev/ttyUSB0"), with the specified [baudrate], [databits],
   /// [parity], [stopbits], software flow control ([xonxoff]), and hardware
-  /// flow control ([rtsct]) settings.
+  /// flow control ([rtscts]) settings.
   ///
   /// serial should be a valid pointer to an allocated Serial handle structure.
   /// databits can be 5, 6, 7, or 8. parity can be PARITY_NONE, PARITY_ODD,
   /// or PARITY_EVEN . StopBits can be 1 or 2.
   Serial.advanced(this.path, this.baudrate, this.databits, this.parity,
-      this.stopbits, this.xonxoff, this.rtsct)
-      : _serialHandle = _openSerialAdvanced(
-            path, baudrate, databits, parity, stopbits, xonxoff, rtsct);
+      this.stopbits, this.xonxoff, this.rtscts)
+      : isolate = false {
+    var result = _openSerialAdvanced(
+        path, baudrate, databits, parity, stopbits, xonxoff, rtscts);
+    _serialHandle = result.$1;
+    _devicePath = result.$2;
+  }
 
   /// Duplicates an existing [Serial] from a JSON string. This special
   /// constructor is used to transfer an existing [GPIO] to an other isolate.
@@ -411,34 +430,42 @@ class Serial extends IsolateAPI {
         databits = DataBits.values[jsonMap(json)['databits'] as int],
         stopbits = StopBits.values[jsonMap(json)['stopbits'] as int],
         parity = Parity.values[jsonMap(json)['parity'] as int],
-        rtsct = jsonMap(json)['rtsct'] as bool,
+        rtscts = jsonMap(json)['rtscts'] as bool,
         xonxoff = jsonMap(json)['xonxoff'] as bool,
         _serialHandle =
-            Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int);
+            Pointer<Void>.fromAddress(jsonMap(json)['handle'] as int),
+        isolate = true;
 
-  static Pointer<Void> _openSerialAdvanced(
+  static (Pointer<Void>, Pointer<Utf8>) _openSerialAdvanced(
       String path,
       Baudrate baudrate,
       DataBits databits,
       Parity parity,
       StopBits stopbits,
       bool xonxoff,
-      bool rtsct) {
+      bool rtscts) {
     var serialHandle = _nativeSerialNew();
     if (serialHandle == nullptr) {
       return throw SerialException(
           SerialErrorCode.serialErrorOpen, 'Error opening serial interface');
     }
-    _checkError(_nativeOpenAdvanced(
-        serialHandle,
-        path.toNativeUtf8(),
-        baudrate2Int(baudrate),
-        databits2Int(databits),
-        parity.index,
-        stopbits2Int(stopbits),
-        xonxoff ? 1 : 0,
-        rtsct ? 1 : 0));
-    return serialHandle;
+    var nativePath = path.toNativeUtf8();
+    try {
+      _checkError(_nativeOpenAdvanced(
+          serialHandle,
+          nativePath,
+          baudrate2Int(baudrate),
+          databits2Int(databits),
+          parity.index,
+          stopbits2Int(stopbits),
+          xonxoff ? 1 : 0,
+          rtscts ? 1 : 0));
+    } catch (_) {
+      _nativeSerialFree(serialHandle);
+      malloc.free(nativePath);
+      rethrow;
+    }
+    return (serialHandle, nativePath);
   }
 
   /// Polls for data available for reading from the serial port.
@@ -570,8 +597,14 @@ class Serial extends IsolateAPI {
   void dispose() {
     _checkStatus();
     _invalid = true;
-    _checkError(_nativeSerialClose(_serialHandle));
-    _nativeSerialFree(_serialHandle);
+    try {
+      _checkError(_nativeSerialClose(_serialHandle));
+    } finally {
+      _nativeSerialFree(_serialHandle);
+      if (_devicePath != null) {
+        malloc.free(_devicePath!);
+      }
+    }
   }
 
   /// Returns the address of the internal handle.
@@ -627,6 +660,8 @@ class Serial extends IsolateAPI {
         return Baudrate.b500000;
       case 576000:
         return Baudrate.b576000;
+      case 921600:
+        return Baudrate.b921600;
       case 1000000:
         return Baudrate.b1000000;
       case 1152000:
@@ -719,7 +754,7 @@ class Serial extends IsolateAPI {
   /// [flag] enables, or disables the setXONXOFF protocol.
   void setXONXOFF(bool flag) {
     _checkStatus();
-    _checkError(_nativeSerialSetXonxof(_serialHandle, flag == true ? 1 : 0));
+    _checkError(_nativeSerialSetXonxoff(_serialHandle, flag == true ? 1 : 0));
   }
 
   /// Returns if the RTS/CTS (request to send/ clear to send) flow control is
@@ -827,5 +862,10 @@ class Serial extends IsolateAPI {
   @override
   void setHandle(int handle) {
     _serialHandle = Pointer<Void>.fromAddress(handle);
+  }
+
+  @override
+  bool isIsolate() {
+    return isolate;
   }
 }

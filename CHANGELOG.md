@@ -1,5 +1,10 @@
+## 0.9.20
+* Fix problems found with the help of ChatGPT and Kiro
+* Update c-periphery to `2.5.0`
+* Update Dart Version to `3.10.4`
+
 ## 0.9.19
-* Add GPS [Air530](https://github.com/pezi/dart_periphery/blob/ps/0.9.19/example/serial_air530.dart)
+* Add GPS [Air530](https://github.com/pezi/dart_periphery/blob/main/example/serial_air530.dart)
 * Update Dart Version to `3.9.3`
   
 ## 0.9.18
@@ -70,7 +75,7 @@
 
 ## 0.9.9
 
-* Add [SDC30](https://www.seeedstudio.com/Grove-CO2-Temperature-Humidity-Sensor-SCD30-p-2911.html) - CO2, temperature amd humidity sensor
+* Add [SCD30](https://www.seeedstudio.com/Grove-CO2-Temperature-Humidity-Sensor-SCD30-p-2911.html) - CO2, temperature amd humidity sensor
 * internal pre-build c-periphery libraries are compressed using the xz format 
   
 ## 0.9.8

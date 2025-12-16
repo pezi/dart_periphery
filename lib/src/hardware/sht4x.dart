@@ -81,7 +81,7 @@ class SHT4x {
 
   /// Creates a SHT4x sensor instance that uses the [i2c] bus with
   /// the optional [i2cAddress].
-  SHT4x(this.i2c, [this.i2cAddress = sht31DefaultI2Caddress]) {
+  SHT4x(this.i2c, [this.i2cAddress = sht4xDefaultI2Caddress]) {
     reset();
   }
 
@@ -120,7 +120,7 @@ class SHT4x {
     sleep(Duration(milliseconds: _mode.delay));
     var data = i2c.readBytes(i2cAddress, 6);
     if (!checkCRC(data)) {
-      throw SHT31exception('CRC8 error');
+      throw SHT4xException('CRC8 error');
     }
     var temp =
         ((((data[0] & 0xFF) << 8) + (data[1] & 0xFF)) * 175.0) / 65535.0 - 45.0;

@@ -2,20 +2,31 @@
 
 This example uses the Java AWT class to generate graphics for the OLED SSD1306.
 
-The demo displays two images: an emoji and a sine curve, both created using a bsh (Java BeanShell) script.
+The demo displays two images: an emoji and a sine curve, both created using a BSH (Java BeanShell) script.
+
+
+## 📋 Prerequisites
+
+- Raspberry Pi or compatible SBC with I2C support
+- SSD1306 OLED display connected via I2C
+- OpenJDK 17 or higher
+- Dart SDK installed
+- `dart_periphery` package
 
 
 ## 📖 Steps to Start the Demo (Tested on Raspberry OS and Armbian)
 
-1.	Install OpenJDK:
+### Step 1.	Install OpenJDK:
 
 `sudo apt-get install openjdk-17-jdk`  
 
 Armbian supports higher JDK versions e.g. 
 
-`sudo apt-get install openjdk-21-jdk`  
+```bash
+sudo apt install openjdk-21-jre-headless
+```
 
-2.	Set the `JAVA_HOME` environment variable:
+### Step 2.	Set the `JAVA_HOME` environment variable:
 
 Try autodetection:
 
@@ -24,25 +35,25 @@ export JAVA_HOME=$(update-java-alternatives -l | awk '{print $3}')
 echo $JAVA_HOME
 ```
 
-3.	Compile the Java code, including BeanShell support:
+### Step 3. Compile the Java code, including BeanShell support:
 
 ```bash
 javac -cp ./lib/bsh-2.0b4.jar at/flutterdev/EmojiBMPGenerator.java
 ```
 
-4.	Compile the C code as a shared library:
+### Step 4.	Compile the C code as a shared library:
 
 ```bash
 gcc -shared -o libjvmbridge.so -fPIC jvm_bridge.c  -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" -L"$JAVA_HOME/lib/server" -ljvm
 ```
 
-5.  Set the `LD_LIBRARY_PATH` to include the JVM library and `libjvmbridge.so` 
+### Step 5.  Set the `LD_LIBRARY_PATH` to include the JVM library and `libjvmbridge.so` 
 
 ```bash
 export LD_LIBRARY_PATH=$JAVA_HOME/lib/server:.
 ```
 
-6.	Start the program:
+### Step 6.	Start the program:
 
 ```bash
 dart i2c_ssd1306_java_awt.dart
@@ -69,7 +80,7 @@ Linux:
 gcc -o calljava -I"$JAVA_HOME/include" -I"$JAVA_HOME/include/linux" jvm_bridge.c -L"$JAVA_HOME/lib/server" -ljvm
 ```
 
-Additonal step for macOS to set the `RPATH`
+Additional step for macOS to set the `RPATH`
 
 ```bash
 install_name_tool -add_rpath $JAVA_HOME/lib/server/ ./calljava

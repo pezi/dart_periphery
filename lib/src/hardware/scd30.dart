@@ -1,4 +1,4 @@
-// Copyright (c) 2024, the Dart project authors.  Please see the AUTHORS file
+// Copyright (c) 2024,2025 the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
@@ -9,7 +9,7 @@ import 'package:dart_periphery/dart_periphery.dart';
 import 'dart:typed_data';
 import 'dart:io';
 
-/// [SDC30] commands
+/// [SCD30] commands
 enum Command {
   continuousMeasurement(0x0010),
   setMeasurementInterval(0x4600),
@@ -27,20 +27,20 @@ enum Command {
   const Command(this.value);
 }
 
-/// Default I2C address of the [SDC30] sensor
-const int sdc30DefaultI2Caddress = 0x61;
+/// Default I2C address of the [SCD30] sensor
+const int scd30DefaultI2Caddress = 0x61;
 
-/// [SDC30] exception
-class SDC30exception implements Exception {
+/// [SCD30] exception
+class SCD30exception implements Exception {
   final String errorMsg;
   @override
   String toString() => errorMsg;
 
-  SDC30exception(this.errorMsg);
+  SCD30exception(this.errorMsg);
 }
 
-/// [SDC30] measured data: CO2, temperature and humidity.
-class SDC30result {
+/// [SCD30] measured data: CO2, temperature and humidity.
+class SCD30result {
   final bool available;
 
   /// CO2 PPM
@@ -52,8 +52,8 @@ class SDC30result {
   /// relative humidity %
   final double humidity;
 
-  SDC30result(this.co2, this.temperature, this.humidity) : available = true;
-  SDC30result.empty()
+  SCD30result(this.co2, this.temperature, this.humidity) : available = true;
+  SCD30result.empty()
       : available = false,
         co2 = 0,
         temperature = 0,
@@ -61,28 +61,28 @@ class SDC30result {
 
   @override
   String toString() =>
-      'SDC30result [CO2=$co2,$temperature, humidity=$humidity]';
+      'SCD30result [CO2=$co2, temperature=$temperature, humidity=$humidity]';
 
-  /// Returns a [SDC30result] as a JSON string. [fractionDigits] controls the number fraction digits.
+  /// Returns a [SCD30result] as a JSON string. [fractionDigits] controls the number fraction digits.
   String toJSON([int fractionDigits = 2]) {
     return '{"CO2":"${co2.toStringAsFixed(fractionDigits)}","temperature":"${temperature.toStringAsFixed(fractionDigits)}","humidity":"${humidity.toStringAsFixed(fractionDigits)}"}';
   }
 }
 
-/// SDC30 CO₂ & Temperature & Humidity Sensor
+/// SCD30 CO₂ & Temperature & Humidity Sensor
 ///
 /// See for more
-/// * [SDC30 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_sdc30.dart)
-/// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/sdc30.dart)
+/// * [SCD30 example code](https://github.com/pezi/dart_periphery/blob/main/example/i2c_SCD30.dart)
+/// * [Source code](https://github.com/pezi/dart_periphery/blob/main/lib/src/hardware/SCD30.dart)
 /// * [Datasheet](https://sensirion.com/media/documents/4EAF6AF8/61652C3C/Sensirion_CO2_Sensors_SCD30_Datasheet.pdf)
 /// * Technical resource [seedstudio](https://www.seeedstudio.com/Grove-CO2-Temperature-Humidity-Sensor-SCD30-p-2911.html)
-class SDC30 {
+class SCD30 {
   final I2C i2c;
   final int i2cAddress;
 
-  /// Creates a MCP9808 sensor instance that uses the [i2c] bus with
+  /// Creates a SCD30 sensor instance that uses the [i2c] bus with
   /// the optional [i2cAddress].
-  SDC30(this.i2c, [this.i2cAddress = sdc30DefaultI2Caddress]) {
+  SCD30(this.i2c, [this.i2cAddress = scd30DefaultI2Caddress]) {
     setMeasurementInterval(2);
   }
 
@@ -104,7 +104,7 @@ class SDC30 {
   }
 
   /// Returns if auto self calibration is enabled.
-  bool isAutoSelfCalibrationl() {
+  bool isAutoSelfCalibration() {
     return getCommandValue(Command.automaticSelfCalibration) != 0;
   }
 
@@ -134,7 +134,7 @@ class SDC30 {
   /// Sets the pressure compenstation. This is passed during measurement startup.
   /// [pressureMillibar] can be 700 to 1200
   void setAmbientPressure(int pressureMillibar) {
-    if (pressureMillibar < 700 || pressureMillibar > pressureMillibar) {
+    if (pressureMillibar < 700 || pressureMillibar > 1200) {
       return;
     }
     sendCommand(Command.setTemperatureOffset, pressureMillibar);
@@ -190,31 +190,31 @@ class SDC30 {
     return byteData.getFloat32(0, Endian.big);
   }
 
-  /// Returns a [SDC30result] with CO₂, temperature, and humidity.
+  /// Returns a [SCD30result] with CO₂, temperature, and humidity.
   ///
-  /// Check [SDC30.isDataAvailable] to determine if data is available.
-  SDC30result getValues() {
+  /// Check [SCD30.isDataAvailable] to determine if data is available.
+  SCD30result getValues() {
     if (!isDataAvailable()) {
-      return SDC30result.empty();
+      return SCD30result.empty();
     }
     var address = <int>[];
     address.add(Command.readMeasurement.value >> 8);
     address.add(Command.readMeasurement.value & 0xFF);
-    i2c.writeBytes(sdc30DefaultI2Caddress, address);
+    i2c.writeBytes(scd30DefaultI2Caddress, address);
     sleep(const Duration(microseconds: 3));
-    var data = i2c.readBytes(sdc30DefaultI2Caddress, 18);
+    var data = i2c.readBytes(scd30DefaultI2Caddress, 18);
 
     // check crc8 for the byte tripplets
     for (var i = 0; i < 18; i += 3) {
       if (_crc8(data, i) != (data[i + 2] & 0xff)) {
-        throw SDC30exception('CRC8 error');
+        throw SCD30exception('CRC8 error');
       }
     }
 
     var co2 = _floatFromBytes(data, 0);
     var temperature = _floatFromBytes(data, 6);
     var humidity = _floatFromBytes(data, 12);
-    return SDC30result(co2, temperature, humidity);
+    return SCD30result(co2, temperature, humidity);
   }
 
   // Sends a command along with arguments and CRC
@@ -223,7 +223,7 @@ class SDC30 {
     data.add(command.value >> 8);
     data.add(command.value & 0xFF);
     data.add(_crc8(data));
-    i2c.writeBytes(sdc30DefaultI2Caddress, data);
+    i2c.writeBytes(scd30DefaultI2Caddress, data);
   }
 
   /// Reads a word from a [command] register.
@@ -231,9 +231,9 @@ class SDC30 {
     var address = <int>[];
     address.add(command.value >> 8);
     address.add(command.value & 0xFF);
-    i2c.writeBytes(sdc30DefaultI2Caddress, address);
+    i2c.writeBytes(scd30DefaultI2Caddress, address);
     sleep(const Duration(microseconds: 3));
-    var data = i2c.readBytes(sdc30DefaultI2Caddress, 2);
+    var data = i2c.readBytes(scd30DefaultI2Caddress, 2);
     return (data[0] & 0xff) << 8 | (data[1] & 0xff);
   }
 
@@ -245,7 +245,7 @@ class SDC30 {
     data.add(argument >> 8);
     data.add(argument & 0xFF);
     data.add(_crc8(data));
-    i2c.writeBytes(sdc30DefaultI2Caddress, data);
+    i2c.writeBytes(scd30DefaultI2Caddress, data);
   }
 
   /// Returns the value for a [Command]
@@ -253,11 +253,11 @@ class SDC30 {
     var address = <int>[];
     address.add(command.value >> 8);
     address.add(command.value & 0xFF);
-    i2c.writeBytes(sdc30DefaultI2Caddress, address);
+    i2c.writeBytes(scd30DefaultI2Caddress, address);
     sleep(const Duration(microseconds: 3));
-    var data = i2c.readBytes(sdc30DefaultI2Caddress, 3);
+    var data = i2c.readBytes(scd30DefaultI2Caddress, 3);
     if (_crc8(data) != (data[2] & 0xff)) {
-      throw SDC30exception('CRC8 error');
+      throw SCD30exception('CRC8 error');
     }
     return (data[0] & 0xff) << 8 | (data[1] & 0xff);
   }

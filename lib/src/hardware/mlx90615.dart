@@ -45,7 +45,7 @@ class MLX90615result {
 
   @override
   String toString() =>
-      'MCP9808result [type=${type.name}, temperature=$temperature]';
+      'MLX90615result [type=${type.name}, temperature=$temperature]';
 
   /// Returns a [MLX90615result] as a JSON string. [fractionDigits] controls the
   /// number fraction digits.
@@ -123,14 +123,14 @@ class MLX90615 {
   double getObjectTemperature([bool crcCheck = true]) {
     var value = _read16(objectTemperature, crcCheck);
     if (value > 0x7FFF) {
-      throw MCP9808exception('Invalid object temperature error');
+      throw MLX90615exception('Invalid object temperature error');
     }
     return (value * 2 - 27315) / 100.0;
   }
 
   /// Reads the unique sensor Id, a 32 bits integer stored in EEPROM
   int getId([bool crcCheck = true]) {
-    return _read16(regIdLow, crcCheck) | _read16(regIdHigh, crcCheck);
+    return _read16(regIdLow, crcCheck) | _read16(regIdHigh, crcCheck) << 16;
   }
 
   /// Reads the EEPROM returning a list of 16 values, each one a 16

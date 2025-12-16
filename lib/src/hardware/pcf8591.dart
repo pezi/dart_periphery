@@ -25,7 +25,7 @@ class PCF8591exception implements Exception {
 }
 
 const pcf8591lowerLimit = 2.5;
-const pcf8591UpperLimit = 6.0;
+const pcf8591upperLimit = 6.0;
 const pcf8591enableDAC = 0x40;
 
 class PCF8591 {
@@ -37,7 +37,7 @@ class PCF8591 {
 
   PCF8591(this.i2c,
       [double refVoltage = 3.3, this.i2cAddress = pcf8591DefaultI2Caddress]) {
-    if (refVoltage <= pcf8591lowerLimit || refVoltage >= pcf8591UpperLimit) {
+    if (refVoltage <= pcf8591lowerLimit || refVoltage >= pcf8591upperLimit) {
       throw PCF8591exception("Reference voltage must be from 2.5 - 6.0");
     }
     referenceVoltage = refVoltage;

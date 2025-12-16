@@ -148,16 +148,16 @@ Future<void> testLoopback(int pinInput, int pinOutput) async {
 
     // Check poll falling 1 -> 0 interrupt
     gpioOut.write(false);
-    passert(GPIO.pollMultiple([gpioIn], 1000).hasEventOccured(gpioIn));
+    passert(GPIO.pollMultiple([gpioIn], 1000).hasEventOccurred(gpioIn));
     passert(!gpioIn.read());
 
     // Check poll rising 0 -> 1 interrupt
     gpioOut.write(true);
-    passert(GPIO.pollMultiple([gpioIn], 1000).hasEventOccured(gpioIn));
+    passert(GPIO.pollMultiple([gpioIn], 1000).hasEventOccurred(gpioIn));
     passert(gpioIn.read());
 
     // Check poll timeout
-    passert(!GPIO.pollMultiple([gpioIn], 1000).hasEventOccured(gpioIn));
+    passert(!GPIO.pollMultiple([gpioIn], 1000).hasEventOccurred(gpioIn));
   } finally {
     gpioIn.dispose();
     gpioOut.dispose();

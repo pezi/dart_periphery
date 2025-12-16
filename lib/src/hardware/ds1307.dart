@@ -40,7 +40,7 @@ enum DS1307reg {
   controlReg(0x7),
   ramlReg(0x8),
 
-  /// DS2131 only
+  /// DS3231 only
   temperature(0x11);
 
   const DS1307reg(this.reg);
@@ -73,13 +73,13 @@ int dec2bcd(int value) {
 class DS1307 {
   final I2C i2c;
   final int i2cAddress;
-  final bool isDS2131;
+  final bool isDS3231;
   bool _halt;
 
   // Creates a DS1307/DS3231 rtc instance that uses the [i2c] bus with
   /// the optional [i2cAddress].
   DS1307(this.i2c,
-      [this.isDS2131 = false, this.i2cAddress = ds1307DefaultI2Caddress])
+      [this.isDS3231 = false, this.i2cAddress = ds1307DefaultI2Caddress])
       : _halt = false {
     // minimal self test
     //
@@ -153,7 +153,7 @@ class DS1307 {
     if (halt) {
       reg |= DS1307reg.chipHalt.reg;
     } else {
-      reg |= ~DS1307reg.chipHalt.reg;
+      reg &= ~DS1307reg.chipHalt.reg;
     }
     _halt = halt;
     i2c.writeByteReg(ds1307DefaultI2Caddress, DS1307reg.dateTime.reg, reg);
@@ -164,10 +164,10 @@ class DS1307 {
     return _halt;
   }
 
-  /// Returns the temperature of the DS2131 build in temperature sensor.
+  /// Returns the temperature of the DS3231 build in temperature sensor.
   double getTemperature() {
-    if (!isDS2131) {
-      throw DS1307exception("Only supported for a DS2131");
+    if (!isDS3231) {
+      throw DS1307exception("Only supported for a DS3231");
     }
     var reg =
         i2c.readBytesReg(ds1307DefaultI2Caddress, DS1307reg.temperature.reg, 2);

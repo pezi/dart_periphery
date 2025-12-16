@@ -55,6 +55,7 @@ export 'src/hardware/extension_hat.dart'
         BakeBitLedBar,
         GrovePiPlusHat,
         GroveBaseHat;
+export 'src/hardware/air530.dart' show GnssFix, NmeaParser;
 export 'src/hardware/gesture_sensor.dart'
     show
         GestureSensor,
@@ -94,8 +95,8 @@ export 'src/hardware/ds1307.dart'
 export 'src/hardware/linux_local_time.dart' show setLinuxLocalTime;
 export 'src/hardware/mcp9808.dart'
     show MCP9808, MCP9808result, MCP9808exception, mcp9808DefaultI2Caddress;
-export 'src/hardware/sdc30.dart'
-    show SDC30, SDC30exception, SDC30result, sdc30DefaultI2Caddress;
+export 'src/hardware/scd30.dart'
+    show SCD30, SCD30exception, SCD30result, scd30DefaultI2Caddress;
 export 'src/hardware/vl53l0x.dart'
     show VL53L0X, VL53L0Xexception, VL53L0Xresult, vl53L0xDefaultI2Caddress;
 export 'src/hardware/si1145.dart'

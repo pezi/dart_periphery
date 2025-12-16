@@ -8,7 +8,7 @@
 // https://simcom.ee/documents/SIM28/SIM28%40SIM68R%40SIM68V_NMEA%20Messages%20Specification_V1.00.pdf  - page 10
 
 /*
-Exmaple 
+Example meassurement - Racibórz, Poland  
 
 $GNGGA,062151.000,5005.12390,N,01811.91859,E,1,05,6.0,202.8,M,41.8,M,,*49
 $GNGLL,5005.12390,N,01811.91859,E,062151.000,A,A*4A
@@ -85,7 +85,7 @@ class NmeaParser {
                 lat: gllFix.lat,
                 lon: gllFix.lon,
                 msl: null,
-                utc: gllFix!.utc,
+                utc: gllFix.utc,
                 valid: true)
             : const GnssFix(valid: false));
   }

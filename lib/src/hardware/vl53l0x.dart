@@ -235,7 +235,7 @@ class VL53L0X {
   /// Creates a VL53L0X sensor instance that uses the [i2c] bus with
   /// optional parameters: [timeout] budget in millisecounds and [i2cAddress].
   VL53L0X(this.i2c,
-      [this.timeout = 0, this.i2cAddress = ds1307DefaultI2Caddress]) {
+      [this.timeout = 0, this.i2cAddress = vl53L0xDefaultI2Caddress]) {
     // the original python code works with microseconds, but millisecounds
     // is more usual
     if (timeout > 0) {
