@@ -1,5 +1,7 @@
 ## 0.9.20
 * Fix problems found with the help of ChatGPT and Kiro
+* Update c-periphery to `2.5.0`
+* Update Dart Version to `3.10.4`
 
 ## 0.9.19
 * Add GPS [Air530](https://github.com/pezi/dart_periphery/blob/main/example/serial_air530.dart)
