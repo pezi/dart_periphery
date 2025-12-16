@@ -1,3 +1,5 @@
+## 0.9.21
+
 ## 0.9.20
 * Fix problems found with the help of ChatGPT and Kiro
 * Update c-periphery to `2.5.0`
