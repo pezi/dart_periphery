@@ -14,7 +14,7 @@ The repository’s [Wiki](https://github.com/pezi/dart_periphery/wiki) is now en
 
 ## 📖 Introduction
 
-**dart_periphery** is a Dart port of the native [c-periphery library](https://github.com/vsergeev/c-periphery) (v2.5.0) 
+**dart_periphery** is a Dart port of the native [c-periphery library](https://github.com/vsergeev/c-periphery) (v2.5.2) 
 for Linux Peripheral I/O (GPIO, LED, PWM, SPI, I2C, MMIO and Serial peripheral I/O). This package 
 is designed for System on Chips (SoCs) such as Raspberry Pi, NanoPi, Banana Pi, and others.
 
@@ -69,7 +69,7 @@ import 'package:dart_periphery/dart_periphery.dart';
 import 'dart:io';
 
 void main() {
-  var config = GPIOconfig();
+  var config = GPIOconfig.defaultValues();
   config.direction = GPIOdirection.gpioDirOut;
   print('Native c-periphery Version :  ${getCperipheryVersion()}');
   print('GPIO test');
@@ -420,37 +420,28 @@ cd ~
 ### arm
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.10.4/sdk/dartsdk-linux-arm-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.14.0/sdk/dartsdk-linux-arm-release.zip
 unzip dartsdk-linux-arm-release.zip
 ```
 
 ### arm64
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.10.4/sdk/dartsdk-linux-arm64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.14.0/sdk/dartsdk-linux-arm64-release.zip
 unzip dartsdk-linux-arm64-release.zip
-```
-
-### IA32 (deprecated)
-
-Warning Dart 3.7.3 is the last version with ia32 support!
-
-``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.7.3/sdk/dartsdk-linux-ia32-release.zip
-unzip dartsdk-linux-ia32-release.zip
 ```
 
 ### X64
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.10.4/sdk/dartsdk-linux-x64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.14.0/sdk/dartsdk-linux-x64-release.zip
 unzip dartsdk-linux-x64-release.zip
 ```
 
 ### RISC-V (RV64GC)
 
 ``` bash
-wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.10.4/sdk/dartsdk-linux-riscv64-release.zip
+wget https://storage.googleapis.com/dart-archive/channels/stable/release/3.14.0/sdk/dartsdk-linux-riscv64-release.zip
 unzip dartsdk-linux-riscv64-release.zip
 ```
 
@@ -484,8 +475,8 @@ after editing to apply the changes.
 Test the installation 
 
 ``` bash
- dart --version
-Dart SDK version: 3.10.4 (stable) (Tue Dec 9 00:01:55 2025 -0800) on "linux_arm"
+dart --version
+Dart SDK version: 3.14.0 (stable) (Wed Nov 4 16:28:39 2026 -0800) on "linux_arm64"
 ```
 
 ## 📚 Native libraries
@@ -494,7 +485,6 @@ Dart SDK version: 3.10.4 (stable) (Tue Dec 9 00:01:55 2025 -0800) on "linux_arm"
 
 * [Abi.linuxArm](https://api.flutter.dev/flutter/dart-ffi/Abi/linuxArm-constant.html) - [libperiphery_arm.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm.so)
 * [Abi.linuxArm64](https://api.flutter.dev/flutter/dart-ffi/Abi/linuxArm64-constant.html) - [libperiphery_arm64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_arm64.so)
-* [Abi.linuxIA32](https://api.flutter.dev/flutter/dart-ffi/Abi/linuxIA32-constant.html) - [libperiphery_ia32.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_ia32.so)
 * [Abi.linuxX64](https://api.flutter.dev/flutter/dart-ffi/Abi/linuxX64-constant.html) - [libperiphery_x64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_x64.so)
 * [Abi.linuxRiscv64](https://api.flutter.dev/flutter/dart-ffi/Abi/linuxRiscv64-constant.html)  - [libperiphery_riscv64.so](https://github.com/pezi/dart_periphery/raw/main/lib/src/native/libperiphery_riscv64.so)
 

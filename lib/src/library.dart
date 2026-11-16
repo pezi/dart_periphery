@@ -208,9 +208,6 @@ DynamicLibrary loadPeripheryLib() {
           case Abi.linuxArm64:
             base64EncodedLib = arm64;
             break;
-          case Abi.linuxIA32:
-            base64EncodedLib = ia32;
-            break;
           case Abi.linuxX64:
             base64EncodedLib = x64;
             break;

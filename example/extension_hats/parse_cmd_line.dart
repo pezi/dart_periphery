@@ -4,8 +4,6 @@
 
 import 'dart:io';
 
-import 'package:dart_periphery/src/gpio.dart';
-
 /// Supported extensions hats
 enum Hat {
   /// Generic GPIO - no Hat needed

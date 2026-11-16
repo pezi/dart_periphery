@@ -20,4 +20,4 @@ String getCperipheryVersion() {
 }
 
 /// dart_periphery version
-const String dartPeripheryVersion = '0.9.20';
+const String dartPeripheryVersion = '0.9.21';

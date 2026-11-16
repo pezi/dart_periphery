@@ -61,6 +61,27 @@ void testOpenConfigClose(String device) {
     led.setBrightness(0);
     sleep(Duration(seconds: 1));
     passert(led.getBrightness() == 0);
+
+    // Check triggers (c-periphery >= v2.5.0)
+    var triggers = led.getTriggers();
+    passert(triggers.isNotEmpty);
+    passert(triggers.length == led.getTriggersCount());
+    passert(triggers.first == led.getTriggersEntry(0));
+    var trigger = led.getTrigger();
+    passert(triggers.contains(trigger));
+
+    // Invalid trigger
+    try {
+      led.setTrigger('');
+    } on LedException catch (e) {
+      if (e.errorCode != LedErrorCode.ledErrorArg) {
+        rethrow;
+      }
+    }
+
+    // Set the active trigger again
+    led.setTrigger(trigger);
+    passert(led.getTrigger() == trigger);
   } finally {
     led.dispose();
   }

@@ -13,6 +13,7 @@ export 'src/gpio.dart'
         GPIOdirection,
         GPIOedge,
         GPIObias,
+        GPIOeventClock,
         GPIO,
         GPIOdrive,
         GPIOreadEvent,
@@ -157,5 +158,5 @@ export 'src/serial.dart'
         SerialErrorCode,
         Parity,
         Serial;
-export 'src/spi.dart' show SPI, SPImode, SPIexception;
+export 'src/spi.dart' show SPI, SPImode, SPImsg, SPIexception;
 export 'src/version.dart' show getCperipheryVersion, dartPeripheryVersion;

@@ -10,6 +10,7 @@
 import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
+import 'package:meta/meta.dart';
 
 import 'isolate_api.dart';
 import 'json.dart';
@@ -89,6 +90,21 @@ enum GPIOedge {
   gpioEdgeBoth
 }
 
+/// [GPIO] event clock - the clock source of the edge event timestamps
+/// returned by [GPIO.readEvent].
+///
+/// Requires c-periphery v2.5.0 or newer and a character device GPIO.
+enum GPIOeventClock {
+  /// Realtime clock
+  gpioEventClockRealtime,
+
+  /// Monotonic clock
+  gpioEventClockMonotonic,
+
+  /// Hardware Timestamping Engine
+  gpioEventClockHte,
+}
+
 /// [GPIO] bias
 enum GPIObias {
   /// Default line bias
@@ -163,17 +179,54 @@ class PollMultipleEvent {
 }
 
 /* Configuration structure for gpio_open_*advanced() functions
+   c-periphery >= v2.5.0
+
+typedef struct gpio_config {
+    gpio_direction_t direction;
+    gpio_edge_t edge;
+    gpio_event_clock_t event_clock;
+    uint32_t debounce_us;
+    gpio_bias_t bias;
+    gpio_drive_t drive;
+    bool inverted;
+    const char *label; // Can be NULL for default consumer label
+} gpio_config_t;
+
+sizeof(gpio_config_t): 40 bytes (64-bit), 32 bytes (32-bit)
+*/
+final class _GPIOconfig extends Struct {
+  @Int32()
+  external int direction;
+  @Int32()
+  external int edge;
+  @Int32()
+  external int eventClock;
+  @Uint32()
+  external int debounceUs;
+  @Int32()
+  external int bias;
+  @Int32()
+  external int drive;
+  @Bool() // C bool: 1 byte, the padding up to label is added by dart:ffi
+  external bool inverted;
+  external Pointer<Utf8> label;
+}
+
+/* Configuration structure for gpio_open_*advanced() functions
+   c-periphery < v2.5.0
+
 typedef struct gpio_config {
     gpio_direction_t direction;
     gpio_edge_t edge;
     gpio_bias_t bias;
     gpio_drive_t drive;
     bool inverted;
-    const char *label; 
+    const char *label;
 } gpio_config_t;
-*/
 
-final class _GPIOconfig extends Struct {
+sizeof(gpio_config_t): 32 bytes (64-bit), 24 bytes (32-bit)
+*/
+final class _GPIOconfigLegacy extends Struct {
   @Int32()
   external int direction;
   @Int32()
@@ -182,10 +235,23 @@ final class _GPIOconfig extends Struct {
   external int bias;
   @Int32()
   external int drive;
-  @Int32() // this a bool value, but inside a struct 3 padding bytes are added for a 32-bit alignment
-  external int inverted;
+  @Bool()
+  external bool inverted;
   external Pointer<Utf8> label;
 }
+
+/// c-periphery v2.5.0 inserted the fields `event_clock` and `debounce_us`
+/// into `gpio_config_t`. The loaded library is probed for a symbol introduced
+/// together with this layout change to pass the matching struct layout.
+final bool _hasEventClockAndDebounce =
+    _peripheryLib.providesSymbol('gpio_set_debounce_us');
+
+/// Sizes of the native `gpio_config_t` mappings: (c-periphery >= v2.5.0,
+/// c-periphery < v2.5.0). Guard against layout drift, see
+/// test/native_struct_layout_test.dart
+@visibleForTesting
+(int, int) gpioConfigNativeSizes() =>
+    (sizeOf<_GPIOconfig>(), sizeOf<_GPIOconfigLegacy>());
 
 /// Configuration class for [GPIO.advanced] and [GPIO.nameAdvanced].
 class GPIOconfig {
@@ -194,26 +260,74 @@ class GPIOconfig {
   GPIObias bias;
   GPIOdrive drive;
   bool inverted;
-  // GPIO name
+
+  /// GPIO line consumer label, an empty label selects the default
+  /// consumer label of the c-periphery library.
   String label;
+
+  /// Clock source of the edge event timestamps.
+  ///
+  /// Requires c-periphery v2.5.0 or newer.
+  GPIOeventClock eventClock;
+
+  /// Debounce period in microseconds, 0 disables debouncing.
+  ///
+  /// Requires c-periphery v2.5.0 or newer.
+  int debounceUs;
+
   GPIOconfig(this.direction, this.edge, this.bias, this.drive, this.inverted,
-      this.label);
+      this.label,
+      {this.eventClock = GPIOeventClock.gpioEventClockRealtime,
+      this.debounceUs = 0});
   GPIOconfig.defaultValues()
       : direction = GPIOdirection.gpioDirIn,
         edge = GPIOedge.gpioEdgeNone,
         bias = GPIObias.gpioBiasDefault,
         drive = GPIOdrive.gpioDriveDefault,
         inverted = false,
-        label = '';
-  Pointer<_GPIOconfig> _toNative() {
-    var cfg = malloc<_GPIOconfig>(1);
-    cfg.ref.direction = direction.index;
-    cfg.ref.edge = edge.index;
-    cfg.ref.bias = bias.index;
-    cfg.ref.drive = drive.index;
-    cfg.ref.inverted = inverted ? 1 : 0;
-    cfg.ref.label = label.toNativeUtf8();
-    return cfg;
+        label = '',
+        eventClock = GPIOeventClock.gpioEventClockRealtime,
+        debounceUs = 0;
+
+  /// Converts this configuration to the native `gpio_config_t` layout of
+  /// the loaded c-periphery library. Returns the zero initialized struct
+  /// and the label pointer - both must be freed by the caller.
+  (Pointer<Void>, Pointer<Utf8>) _toNative() {
+    if (debounceUs < 0 || debounceUs > 0xffffffff) {
+      throw GPIOexception(GPIOerrorCode.gpioErrorArg,
+          'Invalid debounce period: $debounceUs µs');
+    }
+    if (!_hasEventClockAndDebounce &&
+        (eventClock != GPIOeventClock.gpioEventClockRealtime ||
+            debounceUs != 0)) {
+      throw GPIOexception(GPIOerrorCode.gpioErrorUnsupported,
+          'Event clock and debounce period require c-periphery >= v2.5.0');
+    }
+    // NULL selects the default consumer label
+    final Pointer<Utf8> nativeLabel =
+        label.isEmpty ? nullptr : label.toNativeUtf8();
+    if (_hasEventClockAndDebounce) {
+      final cfg = calloc<_GPIOconfig>();
+      cfg.ref
+        ..direction = direction.index
+        ..edge = edge.index
+        ..eventClock = eventClock.index
+        ..debounceUs = debounceUs
+        ..bias = bias.index
+        ..drive = drive.index
+        ..inverted = inverted
+        ..label = nativeLabel;
+      return (cfg.cast<Void>(), nativeLabel);
+    }
+    final cfg = calloc<_GPIOconfigLegacy>();
+    cfg.ref
+      ..direction = direction.index
+      ..edge = edge.index
+      ..bias = bias.index
+      ..drive = drive.index
+      ..inverted = inverted
+      ..label = nativeLabel;
+    return (cfg.cast<Void>(), nativeLabel);
   }
 }
 
@@ -276,6 +390,17 @@ final _nativeGPIOsetDirection = intVoidIntM('gpio_set_direction');
 // int gpio_set_edge(gpio_t *gpio, gpio_edge_t edge);
 final _nativeGPIOsetEdge = intVoidIntM('gpio_set_edge');
 
+// int gpio_set_event_clock(gpio_t *gpio, gpio_event_clock_t event_clock);
+// c-periphery >= v2.5.0, lazy lookup on first usage
+final _nativeGPIOsetEventClock = intVoidIntM('gpio_set_event_clock');
+
+// int gpio_set_debounce_us(gpio_t *gpio, uint32_t debounce_us);
+// c-periphery >= v2.5.0, lazy lookup on first usage
+final _nativeGPIOsetDebounceUs = _peripheryLib
+    .lookup<NativeFunction<Int32 Function(Pointer<Void>, Uint32)>>(
+        'gpio_set_debounce_us')
+    .asFunction<int Function(Pointer<Void>, int)>();
+
 // int gpio_set_bias(gpio_t *gpio, gpio_bias_t bias);
 final _nativeGPIOsetBias = intVoidIntM('gpio_set_bias');
 
@@ -290,6 +415,17 @@ final _nativeGPIOgetDirection = intVoidInt32PtrM('gpio_get_direction');
 
 // int gpio_get_edge(gpio_t *gpio, gpio_edge_t *edge);
 final _nativeGPIOgetEdge = intVoidInt32PtrM('gpio_get_edge');
+
+// int gpio_get_event_clock(gpio_t *gpio, gpio_event_clock_t *event_clock);
+// c-periphery >= v2.5.0, lazy lookup on first usage
+final _nativeGPIOgetEventClock = intVoidInt32PtrM('gpio_get_event_clock');
+
+// int gpio_get_debounce_us(gpio_t *gpio, uint32_t *debounce_us);
+// c-periphery >= v2.5.0, lazy lookup on first usage
+final _nativeGPIOgetDebounceUs = _peripheryLib
+    .lookup<NativeFunction<Int32 Function(Pointer<Void>, Pointer<Uint32>)>>(
+        'gpio_get_debounce_us')
+    .asFunction<int Function(Pointer<Void>, Pointer<Uint32>)>();
 
 // int gpio_get_bias(gpio_t *gpio, gpio_bias_t *bias);
 final _nativeGPIOgetBias = intVoidInt32PtrM('gpio_get_bias');
@@ -322,10 +458,10 @@ final _nativeGPIOopenName = _peripheryLib
 
 // int open_advanced(gpio_t *gpio, const char *path, unsigned int line, const gpio_config_t *config);
 // ignore: camel_case_types
-typedef _gpioOpenAdvanced = Int32 Function(Pointer<Void> handle,
-    Pointer<Utf8> path, Int32 line, Pointer<_GPIOconfig> config);
-typedef _GPIOopenAdvanced = int Function(Pointer<Void> handle,
-    Pointer<Utf8> path, int line, Pointer<_GPIOconfig> config);
+typedef _gpioOpenAdvanced = Int32 Function(
+    Pointer<Void> handle, Pointer<Utf8> path, Int32 line, Pointer<Void> config);
+typedef _GPIOopenAdvanced = int Function(
+    Pointer<Void> handle, Pointer<Utf8> path, int line, Pointer<Void> config);
 final _nativeGPIOopenAdvanced = _peripheryLib
     .lookup<NativeFunction<_gpioOpenAdvanced>>('gpio_open_advanced')
     .asFunction<_GPIOopenAdvanced>();
@@ -343,9 +479,9 @@ final _nativeGPIOopenSysfs = _peripheryLib
 // int gpio_open_name_advanced(gpio_t *gpio, const char *path, const char *name, const gpio_config_t *config);
 // ignore: camel_case_types
 typedef _gpioOpenNameAdvanced = Int32 Function(Pointer<Void> handle,
-    Pointer<Utf8> path, Pointer<Utf8> name, Pointer<_GPIOconfig> config);
+    Pointer<Utf8> path, Pointer<Utf8> name, Pointer<Void> config);
 typedef _GPIOopenNameAdvanced = int Function(Pointer<Void> handle,
-    Pointer<Utf8> path, Pointer<Utf8> name, Pointer<_GPIOconfig> config);
+    Pointer<Utf8> path, Pointer<Utf8> name, Pointer<Void> config);
 final _nativeGPIOopenNameAdvanced = _peripheryLib
     .lookup<NativeFunction<_gpioOpenNameAdvanced>>('gpio_open_name_advanced')
     .asFunction<_GPIOopenNameAdvanced>();
@@ -557,20 +693,27 @@ class GPIO extends IsolateAPI {
     if (gpioHandle == nullptr) {
       return throw GPIOexception(GPIOerrorCode.gpioErrorOpen, openError);
     }
+    final Pointer<Void> nativeConfig;
+    final Pointer<Utf8> nativeLabel;
+    try {
+      (nativeConfig, nativeLabel) = config._toNative();
+    } catch (_) {
+      _nativeGPIOfree(gpioHandle);
+      rethrow;
+    }
     var nativePath = path.toNativeUtf8();
-    var nativeConfig = config._toNative();
     try {
       _checkError(
         _nativeGPIOopenAdvanced(gpioHandle, nativePath, line, nativeConfig),
       );
     } catch (_) {
       _nativeGPIOfree(gpioHandle);
-      malloc.free(nativeConfig.ref.label);
-      malloc.free(nativeConfig);
+      malloc.free(nativeLabel);
+      calloc.free(nativeConfig);
       malloc.free(nativePath);
       rethrow;
     }
-    return (gpioHandle, [nativeConfig.ref.label, nativeConfig, nativePath]);
+    return (gpioHandle, [nativeLabel, nativeConfig, nativePath]);
   }
 
   /// Opens the character device GPIO with the specified GPIO [name] and the
@@ -595,24 +738,28 @@ class GPIO extends IsolateAPI {
     if (gpioHandle == nullptr) {
       return throw GPIOexception(GPIOerrorCode.gpioErrorOpen, openError);
     }
+    final Pointer<Void> nativeConfig;
+    final Pointer<Utf8> nativeLabel;
+    try {
+      (nativeConfig, nativeLabel) = config._toNative();
+    } catch (_) {
+      _nativeGPIOfree(gpioHandle);
+      rethrow;
+    }
     var nativePath = path.toNativeUtf8();
     var nativeName = name.toNativeUtf8();
-    var nativeConfig = config._toNative();
     try {
       _checkError(_nativeGPIOopenNameAdvanced(
           gpioHandle, nativePath, nativeName, nativeConfig));
     } catch (_) {
       _nativeGPIOfree(gpioHandle);
-      malloc.free(nativeConfig.ref.label);
-      malloc.free(nativeConfig);
+      malloc.free(nativeLabel);
+      calloc.free(nativeConfig);
       malloc.free(nativePath);
       malloc.free(nativeName);
       rethrow;
     }
-    return (
-      gpioHandle,
-      [nativeConfig.ref.label, nativeConfig, nativePath, nativeName]
-    );
+    return (gpioHandle, [nativeLabel, nativeConfig, nativePath, nativeName]);
   }
 
   /// Opens the sysfs GPIO with the specified [line] and [direction].
@@ -767,6 +914,36 @@ class GPIO extends IsolateAPI {
     return GPIOedge.values[_getInt32Value(_nativeGPIOgetEdge)];
   }
 
+  void _checkEventClockAndDebounceSupport() {
+    if (!_hasEventClockAndDebounce) {
+      throw GPIOexception(GPIOerrorCode.gpioErrorUnsupported,
+          'Event clock and debounce period require c-periphery >= v2.5.0');
+    }
+  }
+
+  /// Returns the event clock of the GPIO.
+  ///
+  /// Requires c-periphery v2.5.0 or newer.
+  GPIOeventClock getGPIOeventClock() {
+    _checkEventClockAndDebounceSupport();
+    return GPIOeventClock.values[_getInt32Value(_nativeGPIOgetEventClock)];
+  }
+
+  /// Returns the debounce period of the GPIO in microseconds.
+  ///
+  /// Requires c-periphery v2.5.0 or newer.
+  int getGPIOdebounceUs() {
+    _checkStatus();
+    _checkEventClockAndDebounceSupport();
+    var data = calloc<Uint32>();
+    try {
+      _checkError(_nativeGPIOgetDebounceUs(_gpioHandle, data));
+      return data.value;
+    } finally {
+      calloc.free(data);
+    }
+  }
+
   /// Returns the property bias of the GPIO.
   GPIObias getGPIObias() {
     return GPIObias.values[_getInt32Value(_nativeGPIOgetBias)];
@@ -792,6 +969,30 @@ class GPIO extends IsolateAPI {
   void setGPIOedge(GPIOedge edge) {
     _checkStatus();
     _checkError(_nativeGPIOsetEdge(_gpioHandle, edge.index));
+  }
+
+  /// Sets the [eventClock] of the GPIO, the clock source of the edge event
+  /// timestamps returned by [readEvent].
+  ///
+  /// Requires c-periphery v2.5.0 or newer.
+  void setGPIOeventClock(GPIOeventClock eventClock) {
+    _checkStatus();
+    _checkEventClockAndDebounceSupport();
+    _checkError(_nativeGPIOsetEventClock(_gpioHandle, eventClock.index));
+  }
+
+  /// Sets the debounce period of the GPIO to [debounceUs] microseconds,
+  /// 0 disables debouncing.
+  ///
+  /// Requires c-periphery v2.5.0 or newer.
+  void setGPIOdebounceUs(int debounceUs) {
+    _checkStatus();
+    _checkEventClockAndDebounceSupport();
+    if (debounceUs < 0 || debounceUs > 0xffffffff) {
+      throw GPIOexception(GPIOerrorCode.gpioErrorArg,
+          'Invalid debounce period: $debounceUs µs');
+    }
+    _checkError(_nativeGPIOsetDebounceUs(_gpioHandle, debounceUs));
   }
 
   /// Sets the [bias] of the GPIO.

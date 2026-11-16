@@ -74,6 +74,26 @@ final _nativeMMIOopenAdvanced = _peripheryLib
     .lookup<NativeFunction<_mmioOpenAdvanced>>('mmio_open_advanced')
     .asFunction<_MMIOopenAdvanced>();
 
+// int mmio_read64(mmio_t *mmio, uintptr_t offset, uint64_t *value);
+// c-periphery >= v2.5.0, lazy lookup on first usage
+final _nativeMMIOread64 = _peripheryLib
+    .lookup<
+        NativeFunction<
+            Int32 Function(Pointer<Void> handle, IntPtr offset,
+                Pointer<Uint64> value)>>('mmio_read64')
+    .asFunction<
+        int Function(
+            Pointer<Void> handle, int offset, Pointer<Uint64> value)>();
+
+// int mmio_write64(mmio_t *mmio, uintptr_t offset, uint64_t value);
+// c-periphery >= v2.5.0, lazy lookup on first usage
+final _nativeMMIOwrite64 = _peripheryLib
+    .lookup<
+        NativeFunction<
+            Int32 Function(Pointer<Void> handle, IntPtr offset,
+                Uint64 value)>>('mmio_write64')
+    .asFunction<int Function(Pointer<Void> handle, int offset, int value)>();
+
 // int mmio_read32(mmio_t *mmio, uintptr_t offset, uint32_t *value);
 // ignore: camel_case_types
 typedef _mmioRead_32 = Int32 Function(
@@ -272,6 +292,24 @@ class MMIO extends IsolateAPI {
     return MMIOerrorCode.values[value];
   }
 
+  /// Reads 64-bits from mapped physical memory, starting at the specified byte
+  /// offset, relative to the base address the MMIO handle was opened with.
+  ///
+  /// A Dart `int` is a signed 64-bit value: a register value with the most
+  /// significant bit set is returned as a negative number with the identical
+  /// bit pattern.
+  ///
+  /// Requires c-periphery v2.5.0 or newer.
+  int read64(int offset) {
+    var data = malloc<Uint64>(1);
+    try {
+      _checkError(_nativeMMIOread64(_mmioHandle, offset, data));
+      return data.value;
+    } finally {
+      malloc.free(data);
+    }
+  }
+
   /// Reads 32-bits from mapped physical memory, starting at the specified byte
   /// offset, relative to the base address the MMIO handle was opened with.
   int read32(int offset) {
@@ -322,6 +360,17 @@ class MMIO extends IsolateAPI {
     } finally {
       malloc.free(buf);
     }
+  }
+
+  /// Writes 64-bits to mapped physical memory, starting at the specified
+  /// byte offset, relative to the base address the MMIO handle was opened with.
+  ///
+  /// The bit pattern of the signed 64-bit Dart `int` [value] is written
+  /// unchanged.
+  ///
+  /// Requires c-periphery v2.5.0 or newer.
+  void write64(int offset, int value) {
+    _checkError(_nativeMMIOwrite64(_mmioHandle, offset, value));
   }
 
   /// Writes 32-bits from mapped physical memory, starting at the specified

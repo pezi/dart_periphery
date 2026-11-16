@@ -4,7 +4,6 @@
 
 import 'dart:io';
 import 'package:dart_periphery/dart_periphery.dart';
-import 'package:dart_periphery/src/hardware/air530.dart';
 
 /// GPS Sensor
 ///

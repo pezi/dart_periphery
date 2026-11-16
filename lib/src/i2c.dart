@@ -54,12 +54,21 @@ enum I2CmsgFlags {
 }
 
 /// Helper class mapped to the C struct i2c_msg
+///
+/// ```c
+/// struct i2c_msg {
+///   __u16 addr;
+///   __u16 flags;
+///   __u16 len;
+///   __u8 *buf;
+/// };
+/// ```
 base class NativeI2Cmsg extends Struct {
-  @Int16()
+  @Uint16()
   external int addr;
-  @Int16()
+  @Uint16()
   external int flags;
-  @Int16()
+  @Uint16()
   external int len;
   external Pointer<Uint8> buf;
 

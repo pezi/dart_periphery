@@ -20,7 +20,7 @@ dependencies:
   stack_trace: ^1.12.1
   meta: ^1.16.0
   async: ^2.13.0
-  archive: ^4.0.7
+  archive: ^4.7.1
 
  
 dev_dependencies:

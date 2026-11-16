@@ -75,6 +75,30 @@ final _nativeLedGetMaxBrightness = intVoidInt32PtrM('led_get_max_brightness');
 // int led_set_brightness(led_t *led, unsigned int brightness);
 final _nativeLedSetBrightness = intVoidIntM('led_set_brightness');
 
+// int led_get_trigger(led_t *led, char *str, size_t len);
+// c-periphery >= v2.5.0, lazy lookup on first usage
+final _nativeLedGetTrigger = intVoidUtf8sizeTM('led_get_trigger');
+
+// int led_set_trigger(led_t *led, const char *trigger);
+// c-periphery >= v2.5.0, lazy lookup on first usage
+final _nativeLedSetTrigger = voidVoidUtf8M('led_set_trigger');
+
+// int led_get_triggers_count(led_t *led, unsigned int *count);
+// c-periphery >= v2.5.0, lazy lookup on first usage
+final _nativeLedGetTriggersCount = intVoidInt32PtrM('led_get_triggers_count');
+
+// int led_get_triggers_entry(led_t *led, unsigned int index, char *str, size_t len);
+// c-periphery >= v2.5.0, lazy lookup on first usage
+// (dart:ffi Uint32 is shadowed in this file, Int32 has the same ABI here)
+final _nativeLedGetTriggersEntry = loadPeripheryLib()
+    .lookup<
+        NativeFunction<
+            Int32 Function(Pointer<Void> handle, Int32 index, Pointer<Utf8> str,
+                Size len)>>('led_get_triggers_entry')
+    .asFunction<
+        int Function(
+            Pointer<Void> handle, int index, Pointer<Utf8> str, int len)>();
+
 const bufferLen = 256;
 
 int _checkError(int value) {
@@ -239,6 +263,81 @@ class Led extends IsolateAPI {
   void setBrightness(int value) {
     _checkStatus();
     _checkError(_nativeLedSetBrightness(_ledHandle, value));
+  }
+
+  /// Returns the active trigger of the led, e.g. `none`, `heartbeat`
+  /// or `mmc0`.
+  ///
+  /// Requires c-periphery v2.5.0 or newer.
+  String getTrigger() {
+    _checkStatus();
+    var data = malloc<Int8>(bufferLen).cast<Utf8>();
+    try {
+      _checkError(_nativeLedGetTrigger(_ledHandle, data, bufferLen));
+      return data.toDartString();
+    } finally {
+      malloc.free(data);
+    }
+  }
+
+  /// Sets the active [trigger] of the led. See [getTriggers] for the triggers
+  /// supported by the led.
+  ///
+  /// Requires c-periphery v2.5.0 or newer.
+  void setTrigger(String trigger) {
+    _checkStatus();
+    if (trigger.isEmpty || trigger.contains(RegExp(r'\s'))) {
+      throw LedException(
+          LedErrorCode.ledErrorArg, "Invalid led trigger '$trigger'");
+    }
+    var nativeTrigger = trigger.toNativeUtf8();
+    try {
+      _checkError(_nativeLedSetTrigger(_ledHandle, nativeTrigger));
+    } finally {
+      malloc.free(nativeTrigger);
+    }
+  }
+
+  /// Returns the number of triggers supported by the led.
+  ///
+  /// Requires c-periphery v2.5.0 or newer.
+  int getTriggersCount() {
+    _checkStatus();
+    var data = malloc<Int32>(1);
+    try {
+      _checkError(_nativeLedGetTriggersCount(_ledHandle, data));
+      return data[0];
+    } finally {
+      malloc.free(data);
+    }
+  }
+
+  /// Returns the trigger at the position [index] of the list of triggers
+  /// supported by the led, [index] starts with 0. See [getTriggersCount].
+  ///
+  /// Requires c-periphery v2.5.0 or newer.
+  String getTriggersEntry(int index) {
+    _checkStatus();
+    if (index < 0) {
+      throw LedException(
+          LedErrorCode.ledErrorArg, 'Invalid led trigger index $index');
+    }
+    var data = malloc<Int8>(bufferLen).cast<Utf8>();
+    try {
+      _checkError(
+          _nativeLedGetTriggersEntry(_ledHandle, index, data, bufferLen));
+      return data.toDartString();
+    } finally {
+      malloc.free(data);
+    }
+  }
+
+  /// Returns all triggers supported by the led.
+  ///
+  /// Requires c-periphery v2.5.0 or newer.
+  List<String> getTriggers() {
+    var count = getTriggersCount();
+    return [for (var i = 0; i < count; ++i) getTriggersEntry(i)];
   }
 
   /// Returns a string representation of the led handle.
