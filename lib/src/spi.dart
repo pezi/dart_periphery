@@ -10,6 +10,7 @@
 import 'dart:ffi';
 
 import 'package:ffi/ffi.dart';
+import 'package:meta/meta.dart';
 
 import 'hardware/utils/byte_buffer.dart';
 import 'isolate_api.dart';
@@ -60,6 +61,74 @@ class SPIexception implements Exception {
   String toString() => errorMsg;
 }
 
+/* Message structure for spi_transfer_advanced()
+   c-periphery >= v2.5.0
+
+typedef struct spi_msg {
+    const uint8_t *txbuf;
+    uint8_t *rxbuf;
+    size_t len;
+    bool deselect;
+    uint16_t deselect_delay_us;
+    uint8_t word_delay_us;
+} spi_msg_t;
+
+sizeof(spi_msg_t): 32 bytes (64-bit), 20 bytes (32-bit)
+*/
+final class _SPImsg extends Struct {
+  external Pointer<Uint8> txbuf;
+  external Pointer<Uint8> rxbuf;
+  @Size()
+  external int len;
+  @Bool()
+  external bool deselect;
+  @Uint16()
+  external int deselectDelayUs;
+  @Uint8()
+  external int wordDelayUs;
+}
+
+/// Size of the native `spi_msg_t` mapping. Guard against layout drift, see
+/// test/native_struct_layout_test.dart
+@visibleForTesting
+int spiMsgNativeSize() => sizeOf<_SPImsg>();
+
+/// Message for [SPI.transferAdvanced].
+class SPImsg {
+  /// Data to shift out.
+  final List<int> data;
+
+  /// If true, the data shifted in during this message is returned by
+  /// [SPI.transferAdvanced], for false the received data is discarded.
+  final bool read;
+
+  /// If true, the device is deselected after this message before
+  /// reselecting it for the following message.
+  final bool deselect;
+
+  /// Delay in microseconds before the deselection, if [deselect] is true.
+  /// Range 0 - 65535. May be silently ignored by the SPI controller.
+  final int deselectDelayUs;
+
+  /// Delay in microseconds between the words within this message.
+  /// Range 0 - 255. May be silently ignored by the SPI controller.
+  final int wordDelayUs;
+
+  /// Creates a message which shifts out [data], while shifting in the
+  /// same number of words.
+  SPImsg(this.data,
+      {this.read = true,
+      this.deselect = false,
+      this.deselectDelayUs = 0,
+      this.wordDelayUs = 0});
+
+  /// Creates a message which shifts in [len] words, while shifting out zeros.
+  SPImsg.read(int len,
+      {this.deselect = false, this.deselectDelayUs = 0, this.wordDelayUs = 0})
+      : data = List<int>.filled(len, 0),
+        read = true;
+}
+
 final DynamicLibrary _peripheryLib = loadPeripheryLib();
 
 // spi_t *spi_new(void);
@@ -92,6 +161,16 @@ typedef _SpiTransfer = int Function(
 final _nativeTransfer = _peripheryLib
     .lookup<NativeFunction<_spiTransfer>>('spi_transfer')
     .asFunction<_SpiTransfer>();
+
+// int spi_transfer_advanced(spi_t *spi, const spi_msg_t *msgs, size_t count);
+// c-periphery >= v2.5.0, lazy lookup on first usage
+final _nativeTransferAdvanced = _peripheryLib
+    .lookup<
+        NativeFunction<
+            Int32 Function(Pointer<Void> handle, Pointer<_SPImsg> msgs,
+                Size count)>>('spi_transfer_advanced')
+    .asFunction<
+        int Function(Pointer<Void> handle, Pointer<_SPImsg> msgs, int count)>();
 
 // int spi_open(spi_t *spi, const char *path, unsigned int mode, uint32_t max_speed);
 // ignore: camel_case_types
@@ -456,6 +535,64 @@ class SPI extends IsolateAPI {
     }
     _checkError(_nativeTransfer(_spiHandle, inPtr, outPtr, len));
     return outPtr;
+  }
+
+  /// Transfers multiple [messages] in one SPI transaction, with an optional
+  /// deselect between the messages, a deselect delay and a word delay -
+  /// see [SPImsg].
+  ///
+  /// Returns one result buffer per message with the data shifted in, in the
+  /// order of [messages]. The buffer is empty for messages
+  /// with [SPImsg.read] = false.
+  ///
+  /// Requires c-periphery v2.5.0 or newer.
+  List<List<int>> transferAdvanced(List<SPImsg> messages) {
+    _checkStatus();
+    for (var m in messages) {
+      if (m.deselectDelayUs < 0 || m.deselectDelayUs > 0xffff) {
+        throw SPIexception(SPIerrorCode.spiErrorArg,
+            'Invalid deselect delay: ${m.deselectDelayUs} µs');
+      }
+      if (m.wordDelayUs < 0 || m.wordDelayUs > 0xff) {
+        throw SPIexception(SPIerrorCode.spiErrorArg,
+            'Invalid word delay: ${m.wordDelayUs} µs');
+      }
+    }
+    if (messages.isEmpty) {
+      return [];
+    }
+    // zero initialized: unused buffer pointers are NULL
+    final msgs = calloc<_SPImsg>(messages.length);
+    try {
+      for (var i = 0; i < messages.length; ++i) {
+        final m = messages[i];
+        final len = m.data.length;
+        final msg = msgs[i];
+        msg.txbuf = malloc<Uint8>(len);
+        msg.txbuf.asTypedList(len).setAll(0, m.data);
+        if (m.read) {
+          msg.rxbuf = calloc<Uint8>(len);
+        }
+        msg.len = len;
+        msg.deselect = m.deselect;
+        msg.deselectDelayUs = m.deselectDelayUs;
+        msg.wordDelayUs = m.wordDelayUs;
+      }
+      _checkError(_nativeTransferAdvanced(_spiHandle, msgs, messages.length));
+      return [
+        for (var i = 0; i < messages.length; ++i)
+          messages[i].read
+              ? List<int>.of(msgs[i].rxbuf.asTypedList(msgs[i].len))
+              : <int>[]
+      ];
+    } finally {
+      for (var i = 0; i < messages.length; ++i) {
+        // free(NULL) is a no-op
+        malloc.free(msgs[i].txbuf);
+        calloc.free(msgs[i].rxbuf);
+      }
+      calloc.free(msgs);
+    }
   }
 
   /// Releases all internal native resources.

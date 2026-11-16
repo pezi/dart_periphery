@@ -1,3 +1,14 @@
+## 0.9.21
+* Fix [#55](https://github.com/pezi/dart_periphery/issues/55): `GPIO.advanced()` / `GPIO.nameAdvanced()` passed a `gpio_config_t` with the pre-2.5.0 layout to c-periphery `2.5.x` (bias ignored, random `inverted`, open failures)
+* Add `GPIOconfig.eventClock` and `GPIOconfig.debounceUs`, `GPIO.getGPIOeventClock()`, `GPIO.setGPIOeventClock()`, `GPIO.getGPIOdebounceUs()` and `GPIO.setGPIOdebounceUs()`
+* An empty `GPIOconfig.label` now selects the default c-periphery consumer label
+* Fix signedness of the `NativeI2Cmsg` fields (`__u16`)
+* Add the missing c-periphery `2.5.0` API
+  * MMIO: `MMIO.read64()` and `MMIO.write64()`
+  * SPI: `SPI.transferAdvanced()` with `SPImsg` for transferring multiple messages, with optional deselect between messages, deselect delay and word delay
+  * LED: `Led.getTrigger()`, `Led.setTrigger()`, `Led.getTriggers()`, `Led.getTriggersCount()` and `Led.getTriggersEntry()`
+* Update c-periphery to `2.5.2`
+
 ## 0.9.20
 * Fix problems found with the help of ChatGPT and Kiro
 * Update c-periphery to `2.5.0`

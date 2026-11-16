@@ -9,7 +9,9 @@ import 'package:dart_periphery/dart_periphery.dart';
 /// BME280 - high-precision, low-power combined humidity, pressure, and
 /// temperature sensor
 ///
-///  https://wiki.seeedstudio.com/Grove-Barometer_Sensor-BME280/
+/// https://wiki.seeedstudio.com/Grove-Barometer_Sensor-BME280/
+///
+/// SPI Wirering Raspberry Pi
 ///
 /// VIN -> 3.3V
 /// GND -> GND

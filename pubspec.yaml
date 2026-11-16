@@ -1,5 +1,5 @@
 name: dart_periphery
-version: 0.9.20
+version: 0.9.21
 description:  >- 
   dart_periphery is a Dart port of the native c-periphery library for Linux Peripheral I/O (GPIO, LED, PWM, SPI, I2C, MMIO, ADC and Serial peripheral I/O).
 
@@ -20,7 +20,7 @@ dependencies:
   stack_trace: ^1.12.1
   meta: ^1.16.0
   async: ^2.13.0
-  archive: ^4.0.7
+  archive: ^4.7.1
 
  
 dev_dependencies:
